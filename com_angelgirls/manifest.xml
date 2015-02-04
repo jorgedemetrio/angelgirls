@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.2" method="upgrade">
+  <name>Angel Girls</name>
+  <version>1.0.0</version>
+  <creationDate>Jan 2015</creationDate>
+  <author>Jorge Demetiro</author>
+  <authorEmail>jorge.demetrio@alldreams.com.br</authorEmail>
+  <authorUrl>http://www.alldreams.com.br</authorUrl>
+  <copyright>All rights reserved.</copyright>
+  <license>GNU General Public License</license>
+  <description>Componente de gestão de galerias.</description>
+
+    <install>
+        <sql>
+            <file charset="utf8" driver="mysql">install/installsql.mysql.utf8.php</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file charset="utf8" driver="mysql">install/uninstallsql.mysql.utf8.php</file>
+        </sql>
+    </uninstall>
+
+    <languages folder="site/language">
+        <language tag="pt-BR">pt-BR/pt-BR.com_angelgirls.ini</language>
+    </languages>
+
+  <files folder="site">
+    <file>controller.php</file>
+    <file>angelgirls.php</file>
+
+    <folder>assets</folder>
+    <folder>controllers</folder>
+    <folder>helpers</folder>
+    <folder>models</folder>
+    <folder>views</folder>
+  </files>
+
+    <administration>
+    <menu>AngelGirls</menu>
+
+    <submenu>
+      <menu link='option=com_angelgirls&amp;view=fotos&amp;layout=list'>fotos</menu>
+      <menu link='option=com_angelgirls&amp;view=perfils&amp;layout=list'>perfils</menu>
+      <menu link='option=com_angelgirls&amp;view=emails&amp;layout=list'>emails</menu>
+      <menu link='option=com_angelgirls&amp;view=telefones&amp;layout=list'>telefones</menu>
+      <menu link='option=com_angelgirls&amp;view=enderecos&amp;layout=list'>enderecos</menu>
+      <menu link='option=com_angelgirls&amp;view=galerias&amp;layout=list'>galerias</menu>
+      <menu link='option=com_angelgirls&amp;view=sessoes&amp;layout=list'>sessoes</menu>
+      <menu link='option=com_angelgirls&amp;view=concursos&amp;layout=list'>concursos</menu>
+      <menu link='option=com_angelgirls&amp;view=agendas&amp;layout=list'>agendas</menu>
+      <menu link='option=com_angelgirls&amp;view=conteudos_associados&amp;layout=list'>conteudos_associados</menu>
+    </submenu>
+
+
+        <languages folder="admin/language">
+            <language tag="pt-BR">pt-BR/pt-BR.com_angelgirls.ini</language>
+        </languages>
+
+        <files folder="admin">
+      <file>config.xml</file>
+      <file>controller.php</file>
+      <file>angelgirls.php</file>
+
+      <folder>assets</folder>
+      <folder>controllers</folder>
+      <folder>help</folder>
+      <folder>helpers</folder>
+      <folder>install</folder>
+      <folder>models</folder>
+      <folder>tables</folder>
+      <folder>views</folder>
+        </files>
+    </administration>
+</extension>

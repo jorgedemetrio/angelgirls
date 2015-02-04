@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+  <layout title="Details Layout">
+    <message>
+      Details Layout
+    </message>
+  </layout>
+  <state>
+    <name>Details Layout</name>
+    <description>This Details Layout displays a single sessoes and it’s details.</description>
+    <params>
+      <param name="id" type="sql" label="Select a Sessoes" query="SELECT `id`, `id` AS `title` FROM `#__angelgirls_sessoes`" key_field="id" value_field="title" />
+    </params>
+  </state>
+</metadata>
