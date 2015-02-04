@@ -18,6 +18,7 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
+
 /**
  * AngelGirls Component Perfils Controller
  *
@@ -51,15 +52,112 @@ class AngelGirlsControllerPerfils extends AngelGirlsController
      */
     public function save()
     {
+
         JRequest::checkToken() or jexit('Invalid Token');
+        JModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models/');
         $model = $this->getModel('Perfils');
-        if ($model->save()) {
+        $modelEmail = $this->getModel('Emails');
+        $modelUser = $this->getModel('Users');
+        
+        /**
+            INT
+			INTEGER
+			FLOAT
+			DOUBLE
+			BOOL
+			BOOLEAN
+			WORD
+			ALNUM
+			CMD
+			BASE64
+			STRING
+			ARRAY
+			PATH
+			USERNAME
+         */
+        // Campo Obrigatório para quem participa de concurso
+        $cpf = JRequest::getVar('cpf', '', 'post','string');
+        
+        
+        
+        if ($model->save() && $modelEmail->save()) {
             $msg = JText::_('Object created successfully!');
-            $url = 'index.php?option=com_angelgirls&view=Perfils&layout=list';
+            $url = 'index.php?option=com_angelgirls&view=Emails&layout=list';
+            
+            
+            //$user = JFactory::getUser();
+            /* mysql_escape_string(
+            printf
+            $db = JFactory::getDbo();
+ 			$query = $db->getQuery(true);
+            $query->select($db->quoteName(array('user_id', 'profile_key', 'profile_value', 'ordering')));
+            $query->from($db->quoteName('#__user_profiles'));
+            $query->where($db->quoteName('profile_key') . ' LIKE '. $db->quote('\'custom.%\''));
+            $query->order('ordering ASC');
+            $db->setQuery($query);
+            $results = $db->loadObjectList();
+            
+            
+            $db->nameQuote('field_name')
+            $query="SELECT username FROM users WHERE name='me'"; 
+ 			$db->setQuery($query); 
+ 			$row = $db->loadRow();
+ 			$result = $db->loadResult(); 
+ 			$row = $db->loadObject(); 
+ 			$rows = $db->loadObjectList(); 
+ 			
+            */
+            
         } else {
             $msg = JText::_('Error while created object: '.$model->getError());
             $url = 'index.php?option=com_angelgirls&view=Perfils&layout=new';
         }
         $this->setRedirect(JRoute::_($url), $msg);
     }
+    
+    
+    private function _validaCPF($cpf = null) {
+    
+    	// Verifica se um número foi informado
+    	if(empty($cpf)) {
+    		return false;
+    	}
+    
+    	// Elimina possivel mascara
+    	$cpf = ereg_replace('[^0-9]', '', $cpf);
+    	$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+    	 
+    	// Verifica se o numero de digitos informados é igual a 11
+    	if (strlen($cpf) != 11) {
+    		return false;
+    	}
+    	// Verifica se nenhuma das sequências invalidas abaixo
+    	// foi digitada. Caso afirmativo, retorna falso
+    	else if ($cpf == '00000000000' ||
+    			$cpf == '11111111111' ||
+    			$cpf == '22222222222' ||
+    			$cpf == '33333333333' ||
+    			$cpf == '44444444444' ||
+    			$cpf == '55555555555' ||
+    			$cpf == '66666666666' ||
+    			$cpf == '77777777777' ||
+    			$cpf == '88888888888' ||
+    			$cpf == '99999999999') {
+    				return false;
+    				// Calcula os digitos verificadores para verificar se o
+    				// CPF é válido
+		} else {
+			for ($t = 9; $t < 11; $t++) {
+				for ($d = 0, $c = 0; $c < $t; $c++) {
+					$d += $cpf{$c} * (($t + 1) - $c);
+				}
+				$d = ((10 * $d) % 11) % 10;
+				if ($cpf{$c} != $d) {
+					return false;
+				}
+			}
+    		return true;
+    	}
+    }
+    
 }

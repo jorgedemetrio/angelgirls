@@ -115,7 +115,11 @@ class AngelGirlsModelEmails extends JModelLegacy
      */
     private function _loadItems()
     {
-        $this->_items = $this->_getList('SELECT * FROM `#__angelgirls_emails`');
+    	$user = JFactory::getUser();
+    	
+        $this->_items = $this->_getList(
+        		
+        		printf("SELECT * FROM `#__angelgirls_emails` WHERE `user_id` = %d", $user->id));
         return is_null($this->_items) ? false : true;
     }
 }

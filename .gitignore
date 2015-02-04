@@ -435,3 +435,7 @@
 /index.php
 /joomla.xml
 /*.txt
+*.buildpath
+*.project
+*.prefs
+com_angelgirls/.settings/org.eclipse.wst.common.project.facet.core.xml
