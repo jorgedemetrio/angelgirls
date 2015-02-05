@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+  <layout title="Details Layout">
+    <message>
+      Resultado da busca
+    </message>
+  </layout>
+  <state>
+    <name>Resultado da busca</name>
+    <description>Resultado da busca.</description>
+  </state>
+</metadata>
