@@ -43,9 +43,9 @@
     <submenu>
       <menu link='option=com_angelgirls&amp;view=fotos&amp;layout=list'>fotos</menu>
       <menu link='option=com_angelgirls&amp;view=perfils&amp;layout=list'>perfils</menu>
-      <!--menu link='option=com_angelgirls&amp;view=emails&amp;layout=list'>emails</menu>
+      <menu link='option=com_angelgirls&amp;view=emails&amp;layout=list'>emails</menu>
       <menu link='option=com_angelgirls&amp;view=telefones&amp;layout=list'>telefones</menu>
-      <menu link='option=com_angelgirls&amp;view=enderecos&amp;layout=list'>enderecos</menu-->
+      <menu link='option=com_angelgirls&amp;view=enderecos&amp;layout=list'>enderecos</menu>
       <menu link='option=com_angelgirls&amp;view=galerias&amp;layout=list'>galerias</menu>
       <menu link='option=com_angelgirls&amp;view=sessoes&amp;layout=list'>sessoes</menu>
       <menu link='option=com_angelgirls&amp;view=concursos&amp;layout=list'>concursos</menu>
