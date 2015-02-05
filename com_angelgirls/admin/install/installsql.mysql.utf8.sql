@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `#__angelgirls_perfils` (
 CREATE TABLE IF NOT EXISTS `#__angelgirls_emails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
-  `emails` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
   `created_on` DATETIME NOT NULL,
   `edited_on` DATETIME NOT NULL,
   `id_created_by` INT(11) NOT NULL,

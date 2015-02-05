@@ -115,6 +115,46 @@ class AngelGirlsControllerPerfils extends AngelGirlsController
         $this->setRedirect(JRoute::_($url), $msg);
     }
     
+    public function validarExite(){
+    	$db = JFactory::getDbo();
+    	$user = JFactory::getUser();
+    	$documento = JRequest::getVar('documento', null, 'post','string');
+    	$email = JRequest::getVar('email', null, 'post','string');
+    	
+    	if(null!=$user){
+	    	$db->setQuery("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s'  AND  user_id = %d ", $documento, $user->id);
+		   	$retorno = $this->_db->loadObjectList();
+		   	if(isset($retorno) && sizeof($retorno)>0){
+		   		JResponse::setBody("false");
+		   		return;
+		   	}
+		   	
+		   	$db->setQuery("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' AND  user_id = %d ", $email, $user->id);
+		   	$retorno = $this->_db->loadObjectList();
+		   	if(isset($retorno) && sizeof($retorno)>0){
+		   		JResponse::setBody("false");
+		   		return;
+		   	}
+    	}
+    	else{
+    		$db->setQuery("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s' ", $documento);
+    		$retorno = $this->_db->loadObjectList();
+    		if(isset($retorno) && sizeof($retorno)>0){
+    			JResponse::setBody("false");
+    			return;
+    		}
+    		
+    		$db->setQuery("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' ", $email);
+    		$retorno = $this->_db->loadObjectList();
+    		if(isset($retorno) && sizeof($retorno)>0){
+    			JResponse::setBody("false");
+    			return;
+    		}
+    	}
+	   	
+	   	JResponse::setBody("true");
+        return;        
+    }
     
     private function _validaCPF($cpf = null) {
     

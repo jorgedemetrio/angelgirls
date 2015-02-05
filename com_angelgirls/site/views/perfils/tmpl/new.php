@@ -6,10 +6,10 @@
  *
  * @category  Template
  * @package   AngelGirls
- * @author    Jorge Demetiro <jorge.demetrio@alldreams.com.br>
+ * @author	Jorge Demetiro <jorge.demetrio@alldreams.com.br>
  * @copyright All rights reserved.
  * @license   GNU General Public License
- * @link      http://www.alldreams.com.br
+ * @link	  http://www.alldreams.com.br
  */
 
 // Check to ensure this file is included in Joomla!
@@ -23,58 +23,83 @@ $params = array('smilies'=> '0', 'html' => '1', 'style'  => '1', 'layer'  => '0'
 ?>
 
 <h1><?php echo JText::_('Add Perfils'); ?></h1>
-<form id="new_perfils" name="new_perfils" method="post" onsubmit="return document.formvalidator.isValid(this)">
-<table border="0" cellspacing="1" cellpadding="1">
-            <tr>
-                <td width="100" align="right" class="key"><label for="descricao"> <?php echo JText::_('Descricao'); ?>:</label></td>
-                <td><?php echo $editor->display('descricao', $this->item->descricao, '400', '400', '20', '20', false, $params); ?></td>
-        </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="documento"> <?php echo JText::_('Documento'); ?>:</label></td>
-                <td><input class="text_area" type="text" name="documento" id="documento" size="32" maxlength="250" value="<?php echo $this->item->documento;?>" /></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="foto_perfil"> <?php echo JText::_('Foto Perfil'); ?>:</label></td>
-                <td><input class="text_area" type="text" name="foto_perfil" id="foto_perfil" size="32" maxlength="250" value="<?php echo $this->item->foto_perfil;?>" /></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="apelido"> <?php echo JText::_('Apelido'); ?>:</label></td>
-                <td><input class="text_area" type="text" name="apelido" id="apelido" size="32" maxlength="250" value="<?php echo $this->item->apelido;?>" /></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="tipo_perfil"> <?php echo JText::_('Tipo Perfil'); ?>:</label></td>
-                <td><input class="text_area" type="text" name="tipo_perfil" id="tipo_perfil" size="32" maxlength="250" value="<?php echo $this->item->tipo_perfil;?>" /></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="published"> <?php echo JText::_('Published'); ?>:</label></td>
-                <td>
-                  <?php
-                  foreach (array(JText::_("No"), JText::_("Yes")) as $key => $value) {
-                      $c = '';
-                      if($this->item->published == $key) $c = " checked='checked' ";
-                      echo "<input type='radio' name='published' id='published_$key' $c value='$key' /> <label for='published_$key'>$value</label><br />";
-                  }
-                  ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="status"> <?php echo JText::_('Status'); ?>:</label></td>
-                <td><input class="text_area" type="text" name="status" id="status" size="32" maxlength="250" value="<?php echo $this->item->status;?>" /></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="publicar"> <?php echo JText::_('Publicar'); ?>:</label></td>
-                <td><?php echo JHtml::calendar($this->item->publicar,'created_on', 'created_on', '%Y-%m-%d');?></td>
-            </tr>
-            <tr>
-                <td width="100" align="right" class="key"><label for="despublicar"> <?php echo JText::_('Despublicar'); ?>:</label></td>
-                <td><?php echo JHtml::calendar($this->item->despublicar,'created_on', 'created_on', '%Y-%m-%d');?></td>
-            </tr>
-
-</table>
-    <?php echo JHTML::_('form.token'); ?>
-    <input type="submit" value="<?php echo JText::_('Submit'); ?>" />
-    <input type="hidden" name="option" value="com_angelgirls" />
-    <input type="hidden" name="task" value="save" />
-    <input type="hidden" name="view" value="perfils" />
-    <input type="hidden" name="controller" value="perfils" />
+<form id="new_perfils" name="new_perfils" method="post" enctype="multipart/form-data"> <!--  onsubmit="return document.formvalidator.isValid(this)"  -->
+	<table border="0" cellspacing="0" cellpadding="0" summary="<?php echo JText::_('Add Perfils'); ?>" title="<?php echo JText::_('Add Perfils'); ?>">
+		<tr>
+			<td width="100" align="right" class="key"><label for="apelido"> <?php echo JText::_('Apelido'); ?>:</label></td>
+			<td><input class="text_area  required" type="text" name="apelido" id="apelido" size="32" maxlength="250" value="<?php echo $this->item->apelido;?>" /><?php echo JText::_('Obrigatorio'); ?></td>
+		</tr>
+		<tr>
+			<td width="100" align="right" class="key"><label for="foto_perfil"> <?php echo JText::_('Foto Perfil'); ?>:</label></td>
+			<td><input class="text_area  required" type="file" name="foto_perfil" id="foto_perfil" size="32" maxlength="250" value="<?php echo $this->item->foto_perfil;?>" /><?php echo JText::_('Obrigatorio'); ?></td>
+		</tr>
+		<tr>
+			<td width="100" align="right" class="key"><label for="documento"> <?php echo JText::_('Documento'); ?>:</label></td>
+			<td><input class="text_area  required" type="text" name="documento" id="documento" size="32" maxlength="15" value="<?php echo $this->item->documento;?>" /><?php echo JText::_('Obrigatorio'); ?></td>
+		</tr>
+		<tr>
+			<td width="100" align="right" class="key"><label for="senha"> <?php echo JText::_('Senha'); ?>:</label></td>
+			<td><input class="text_area  required" type="password" name="senha" id="senha" size="32" maxlength="15" value="<?php echo $this->item->documento;?>" /><?php echo JText::_('Obrigatorio'); ?></td>
+		</tr>
+		<tr>
+			<td width="100" align="right" class="key"><label for="confsenha"> <?php echo JText::_('Conf. Senha'); ?>:</label></td>
+			<td><input class="text_area  required" type="password" name="confsenha" id="confsenha" size="32" maxlength="15" value="<?php echo $this->item->documento;?>" /><?php echo JText::_('Obrigatorio'); ?></td>
+		</tr>
+		<tr>
+			<td width="100" align="right" class="key"><label for="email"> <?php echo JText::_('Email'); ?>:</label></td>
+			<td><input class="text_area email required" type="text" name="email" id="email" size="32" maxlength="250" value="<?php echo $this->item->email;?>" /></td>
+		</tr>
+	</table>
+	<?php echo JHTML::_('form.token'); ?>
+	<input type="submit" value="<?php echo JText::_('Submit'); ?>" />
+	<input type="hidden" name="option" value="com_angelgirls" />
+	<input type="hidden" name="task" value="save" />
+	<input type="hidden" name="view" value="perfils" />
+	<input type="hidden" name="controller" value="perfils" />
 </form>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#documento").mask("999.999.999-99");
+	$('#new_perfils').validate({
+		rules: {
+			apelido: {
+				required: true,
+				minlength: 2
+			},
+			foto_perfil: {
+				required: true
+			},
+			documento: {
+				required: true
+				minlength: 14
+				remote: 
+			},
+			senha: {
+				required: true,
+				minlength: 5
+			},
+			confsenha: {
+				required: true,
+				minlength: 5
+				equalTo: $('#senha').val()
+			},
+			email: {
+				required: true,
+				email:true,
+				minlength: 2,
+				remote: {
+					url: "<?php echo(JRoot::_('index2.php?controller=perfils&task=validarExite')); ?>",
+					type: "post",
+					data: {
+						email: $( "#email" ).val(),
+						documento: $( "#documento" ).val()						
+					}
+				}
+			}
+		}
+		messages{
+		}
+	});
+});
+
+</script>
