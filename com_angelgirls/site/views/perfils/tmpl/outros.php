@@ -8,8 +8,9 @@
 	
 	<div class="divLabelCampo">e-mail prinicpal:</div>
 	<div class="divValorCampo"><?php echo(JRequest::get('nome')) ?></div>
+	
+	<<a>cadastrar</a>
 </div>
-
 <div id="formEmail" class="formulario">
 	<h2><?php echo JText::_('Add Emails'); ?></h2>
 	<form id="new_emails" name="new_emails" method="post" onsubmit="return document.formvalidator.isValid(this)">
