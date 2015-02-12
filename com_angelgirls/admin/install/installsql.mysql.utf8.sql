@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `#__angelgirls_perfils` (
   `apelido` VARCHAR(255) DEFAULT NULL,
   `tipo_perfil` VARCHAR(255) NOT NULL,
   `published` INT(1) NOT NULL,
+  `receber_email` INT(1) NOT NULL,
   `status` VARCHAR(255) NOT NULL,
   `created_on` DATETIME NOT NULL,
   `edited_on` DATETIME NOT NULL,

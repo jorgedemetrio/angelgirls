@@ -71,7 +71,7 @@ class JTableFotos extends JTable
     /**
      * @var long Views
      */
-    var $views = ;
+    var $views = 0 ;
 
     /**
      * @var int Total Gostei
