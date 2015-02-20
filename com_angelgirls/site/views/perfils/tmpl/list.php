@@ -28,10 +28,8 @@ defined('_JEXEC') or die('Restricted access');
             <th><?php echo JText::_('Foto Perfil'); ?></th>
             <th><?php echo JText::_('Published'); ?></th>
             <th><?php echo JText::_('Edited On'); ?></th>
-
         </tr>
     </thead>
-
     <?php foreach ($this->items as $item) : ?>
     <?php $link = JRoute::_('index.php?option=com_angelgirls&amp;view=perfils&amp;layout=details&amp;id='.$item->id); ?>
         <tr>

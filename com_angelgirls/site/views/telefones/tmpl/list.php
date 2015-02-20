@@ -26,7 +26,6 @@ defined('_JEXEC') or die('Restricted access');
             <th><?php echo JText::_('Telefone'); ?></th>
             <th><?php echo JText::_('Ddd'); ?></th>
             <th><?php echo JText::_('Edited On'); ?></th>
-
         </tr>
     </thead>
 
@@ -36,7 +35,6 @@ defined('_JEXEC') or die('Restricted access');
             <td><?php echo "<a href='$link'>".$item->telefone."</a>"; ?></td>
             <td><?php echo "<a href='$link'>".$item->ddd."</a>"; ?></td>
             <td><?php echo "<a href='$link'>".$item->edited_on."</a>"; ?></td>
-
         </tr>
     <?php endforeach; ?>
     </table>

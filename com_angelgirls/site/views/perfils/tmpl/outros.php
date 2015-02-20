@@ -137,10 +137,16 @@ $(document).ready(function(){
 	<div class="divLabelCampo"><?php echo JText::_('Email'); ?>:</div>
 	<div class="divValorCampo"><?php echo(JRequest::get('email')) ?></div>
 	
-	<div>
-	<a href="JavaScript:document.showForm('#formEmail');">Cadastrar novo e-mail</a>
-	<a href="JavaScript:document.showForm('#formEndereco');">Cadastrar novo endereço</a>
-	<a href="JavaScript:document.showForm('#formTelefone');">Cadastrar novo telefone</a>
+	<div class="bts">
+		<div>
+			<a href="JavaScript:document.showForm('#formEmail');">Cadastrar novo e-mail</a>
+		</div>
+		<div>
+			<a href="JavaScript:document.showForm('#formEndereco');">Cadastrar novo endereço</a>
+		</div>
+		<div>
+			<a href="JavaScript:document.showForm('#formTelefone');">Cadastrar novo telefone</a>
+		</div>
 	</div>
 </div>
 <div id="formEmail" class="formulario">
@@ -249,7 +255,7 @@ $(document).ready(function(){
 	<?php if(count($this->emails) > 0) : ?>
 		<div id="emails_list">
 		<p><?php echo JText::_('Below is a list of all current Emails'); ?>.</p>
-		<table border="0" cellspacing="1" cellpadding="1" 
+		<table border="1" cellspacing="1" cellpadding="1" 
 		    	summary="<?php echo JText::_('Below is a list of all current Emails'); ?>" 
 		    	title="<?php echo JText::_('Below is a list of all current Emails'); ?>"
 		    	class="tabelaDados">
@@ -291,7 +297,7 @@ $(document).ready(function(){
 	<?php if(count($this->enderecos) > 0) : ?>
 	<div id="enderecos_list">
 	    <p><?php echo JText::_('Below is a list of all current Enderecos'); ?>.</p>
-	    <table border="0" cellspacing="1" cellpadding="1"
+	    <table border="1" cellspacing="1" cellpadding="1"
 	    	summary="<?php echo JText::_('Below is a list of all current Enderecos'); ?>"
 	    	title="<?php echo JText::_('Below is a list of all current Enderecos'); ?>"
 	    	class="tabelaDados">
@@ -328,15 +334,15 @@ $(document).ready(function(){
 	<?php if(count($this->telefones) > 0) : ?>
 	<div id="telefones_list">
 	    <p><?php echo JText::_('Below is a list of all current Telefones'); ?>.</p>
-	    <table border="0" cellspacing="1" cellpadding="1"
+	    <table border="1" cellspacing="1" cellpadding="1"
 	    	summary="<?php echo JText::_('Below is a list of all current Telefones'); ?>"
 	    	title="<?php echo JText::_('Below is a list of all current Telefones'); ?>"
 	    	class="tabelaDados">
 	    <thead>
 	        <tr>
 	        	<th></th>
-	            <th><?php echo JText::_('Telefone'); ?></th>
 	            <th><?php echo JText::_('Ddd'); ?></th>
+	            <th><?php echo JText::_('Telefone'); ?></th>
 	            <th><?php echo JText::_('Edited On'); ?></th>
 	        </tr>
 	    </thead>
@@ -347,8 +353,8 @@ $(document).ready(function(){
 	    	$remover=JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);?>
 	        <tr>
 				<td><a href="JavaScript: document.redirectRemover('<?php echo($remover);?>');">R</a></td>
-	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->telefone."</a>"; ?></td>
 	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->ddd."</a>"; ?></td>
+	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->telefone."</a>"; ?></td>
 	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->edited_on."</a>"; ?></td>
 	        </tr>
 	    <?php endforeach; ?>
