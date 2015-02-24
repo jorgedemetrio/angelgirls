@@ -122,39 +122,78 @@ class AngelGirlsControllerPerfils extends AngelGirlsController
     	$email = JRequest::getVar('email', null, 'post','string');
     	
     	if(null!=$user){
-	    	$db->setQuery("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s'  AND  user_id = %d ", $documento, $user->id);
-		   	$retorno = $this->_db->loadObjectList();
+	    	$db->setQuery(printf("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s'  AND  user_id = %d ", $documento, $user->id));
+		   	$retorno = $db->loadObjectList();
 		   	if(isset($retorno) && sizeof($retorno)>0){
 		   		JResponse::setBody("false");
 		   		return;
 		   	}
 		   	
-		   	$db->setQuery("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' AND  user_id = %d ", $email, $user->id);
-		   	$retorno = $this->_db->loadObjectList();
+		   	$db->setQuery(printf("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' AND  user_id = %d ", $email, $user->id));
+		   	$retorno = $db->loadObjectList();
 		   	if(isset($retorno) && sizeof($retorno)>0){
 		   		JResponse::setBody("false");
 		   		return;
 		   	}
     	}
     	else{
-    		$db->setQuery("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s' ", $documento);
-    		$retorno = $this->_db->loadObjectList();
+    		$db->setQuery(printf("SELECT * FROM `#__angelgirls_perfils` WHERE `published` = 1 AND `documento` = '%s' ", $documento));
+    		$retorno = $db->loadObjectList();
     		if(isset($retorno) && sizeof($retorno)>0){
     			JResponse::setBody("false");
     			return;
     		}
     		
-    		$db->setQuery("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' ", $email);
-    		$retorno = $this->_db->loadObjectList();
+    		$db->setQuery(printf("SELECT * FROM `#__angelgirls_emails` WHERE `published` = 1 AND `emails` = '%s' ", $email));
+    		$retorno = $db->loadObjectList();
     		if(isset($retorno) && sizeof($retorno)>0){
     			JResponse::setBody("false");
     			return;
     		}
+    		
     	}
 	   	
 	   	JResponse::setBody("true");
-        return;        
+        return;
     }
+    
+    
+    
+    
+    function pricipalEmail(){
+    	$db = JFactory::getDbo();
+    	$user = JFactory::getUser();
+		$idEmail = JRequest::get('id',null,'GET','int');
+    		
+    	$db->setQuery(printf("SELECT `emails` FROM `#__angelgirls_emails` WHERE `published` = 1 AND `id` = %d ", $idEmail));
+    	$retorno = $db->loadObject();
+    	if(isset($retorno)){
+	    	$db->setQuery(printf("UPDATE `#__users` SET `email` = '%s' WHERE id = %d ", $retorno->emails, $user->id));
+	    	$db->update();
+    	}
+    	
+    }
+    
+    function saveEmail(){
+    
+    }
+    
+    function saveEndereco(){
+    
+    }
+    
+    function removerEndereco(){
+    
+    }
+    
+    function saveTelefone(){
+    
+    }
+    
+    function removerEmail(){
+    
+    }
+
     
     private function _validaCPF($cpf = null) {
     

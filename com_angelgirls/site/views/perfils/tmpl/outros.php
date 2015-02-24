@@ -158,7 +158,7 @@ $(document).ready(function(){
 		    <?php echo JHTML::_('form.token'); ?>
 		    <input type="submit" value="<?php echo JText::_('Submit'); ?>" />
 		    <input type="hidden" name="option" value="com_angelgirls" />
-		    <input type="hidden" name="task" value="save" />
+		    <input type="hidden" name="task" value="saveEmail" />
 		    <input type="hidden" name="view" value="emails" />
 		    <input type="hidden" name="controller" value="perfils" />
 		    <input type="hidden" name="id" value="" id="idEmail"/>
@@ -220,7 +220,7 @@ $(document).ready(function(){
 		    <?php echo JHTML::_('form.token'); ?>
 		    <input type="submit" value="<?php echo JText::_('Submit'); ?>" />
 		    <input type="hidden" name="option" value="com_angelgirls" />
-		    <input type="hidden" name="task" value="save" />
+		    <input type="hidden" name="task" value="saveEndereco" />
 		    <input type="hidden" name="view" value="enderecos" />
 		    <input type="hidden" name="controller" value="perfils" />
 		    <input type="hidden" name="id" value="" id="idEndereco"/>
@@ -242,7 +242,7 @@ $(document).ready(function(){
 		    <?php echo JHTML::_('form.token'); ?>
 		    <input type="submit" value="<?php echo JText::_('Submit'); ?>" />
 		    <input type="hidden" name="option" value="com_angelgirls" />
-		    <input type="hidden" name="task" value="save" />
+		    <input type="hidden" name="task" value="saveTelefone" />
 		    <input type="hidden" name="view" value="telefones" />
 		    <input type="hidden" name="controller" value="perfils" />
 		    <input type="hidden" name="id" value="" id="idTelefone"/>
@@ -270,12 +270,12 @@ $(document).ready(function(){
 			    <tbody>
 			    <?php foreach ($this->emails as $item) : ?>
 			    <?php $link = "JavaScript: document.editarEmails(" . $item->id .", '" . $item->emails . "')"; 
-			    	  $remover=JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);
-			    	  $pricipal=JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=pricipalEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);
+			    	  $remover = JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);
+			    	  $pricipal = JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=pricipalEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);
 			    	  
 			    	?>
 			        <tr>
-			        	<?php if($item->principal): ?>
+			        	<?php if(!$item->principal): ?>
 			        	<td><a href="JavaScript: document.redirectRemover('<?php echo($pricipal);?>');">P</a></td>
 			        	<td><a href="JavaScript: document.redirectRemover('<?php echo($remover);?>');">R</a></td>
 			        	<?php else:?>
@@ -313,7 +313,7 @@ $(document).ready(function(){
 	    <?php foreach ($this->enderecos as $item) : ?>
 	    <?php //$link = JRoute::_('index.php?option=com_angelgirls&amp;view=enderecos&amp;layout=details&amp;id='.$item->id);
 			$link = "JavaScript: document.editarEndereco(" . $item->id. ", '" . $item->logradouro. "', '" . $item->endereco. "', '" . $item->numero. "', '" . $item->complemento. "', '" . $item->bairro. "', '" . $item->cidade. "', '" . $item->pais. "', '" . $item->cep."')";
-			$remover=JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEndereco&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);?>
+			$remover = JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEndereco&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);?>
 	        <tr>
 				<td><a href="JavaScript: document.redirectRemover('<?php echo($remover);?>');">R</a></td>
 	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->endereco."</a>"; ?></td>
@@ -350,7 +350,7 @@ $(document).ready(function(){
 	    <?php foreach ($this->telefones as $item) : ?>
 	    <?php //$link = JRoute::_('index.php?option=com_angelgirls&amp;view=telefones&amp;layout=details&amp;id='.$item->id);
 			$link = "JavaScript: document.editarTelefone(".$item->id . ", '" . $item->ddd . "', '" . $item->telefone . "')";
-	    	$remover=JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);?>
+	    	$remover = JRoute::_('index.php?option=com_angelgirls&amp;controller=perfils&amp;task=removerEmail&amp;flago='. JRequest::get('flago').'&amp;id='.$item->id);?>
 	        <tr>
 				<td><a href="JavaScript: document.redirectRemover('<?php echo($remover);?>');">R</a></td>
 	            <td><?php echo "<a href='$link' title='" . JText::_('Edit') . "'>".$item->ddd."</a>"; ?></td>
