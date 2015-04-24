@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="2.5.0" client="site" method="upgrade">
+    <name>Making Ofs</name>
+    <author>Jorge Demetrio</author>
+    <creationDate>Abr 2015</creationDate>
+    <copyright>Copyright (C) 2015 </copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>jorge.demetrio@alldreams.com.br</authorEmail>
+    <authorUrl>www.angelgirls.com</authorUrl>
+    <version>1.0</version>
+    <description>Exibe os making Ofs na home</description>
+    <files>
+        <filename module="mod_makingof">mod_makingof.php</filename>
+        <filename>index.html</filename>
+        <filename>mod_makingof.xml</filename>
+        <filename>helper.php</filename>
+        <filename>tmpl/default.php</filename>
+        <filename>tmpl/index.html</filename>
+    </files>
+    <config>
+        <fields name="params">   
+                <fieldset name="basic">
+                    <field 
+                        name="quantidade" 
+                        type="integer" 
+                        default="" 
+                        label="Quantidade máxima" 
+                        description="Quantidade máxima de registros a ser exibidos">
+                    </field>
+<!-- 
+                     <field name="headingtext" type="text" default="Bootstrap Block" label="Heading Text" description="The text for the heading">
+                    </field>
+
+                    <field name="paragraphtext" type="text" default="This is the Bootstrap Block module for Joomla. To edit this text and more, visit the module in the module manager and change the parameters" label="Paragraph Text" description="The text for the paragraph">
+                    </field>
+
+                     <field name="headingcolor" type="color" default="#333"
+                        label="Heading Text Color"
+        description="The color of the heading" />
+
+        <field name="paragraphcolor" type="color" default="#333"
+                        label="Paragraph Text Color"
+        description="The color of the paragraph" />
+
+                     <field name="show_icon" type="radio" default="0" label="Show Icon" description="Choose to show a font-awesome icon">
+                        <option value="0">No</option>
+                         <option value="1">Yes</option>
+                    </field>
+
+                    <field name="icon" type="text" default="fa fa-check-square" label="Icon Class" description="Font-awesome icon class - eg. fa fa-iconname">
+                    </field>
+
+                    <field
+                    name="icon_position"
+                    type="list"
+                    default="heading-left"
+                    label="Icon Position"
+                    description="Choose a position for the icon">
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="heading-left">Heading Left</option>
+                    <option value="heading-right">Heading Right</option>
+                    <option value="center-top">Center Top</option>
+                    <option value="center-mid">Center Middle</option>
+                </field>
+
+                <field
+                    name="icon_size"
+                    type="list"
+                    default="fa-1"
+                    label="Icon Size"
+                    description="Choose a pre-defined size for the icon">
+                    <option value="fa-1">1</option>
+                    <option value="fa-2">2</option>
+                    <option value="fa-3">3</option>
+                    <option value="fa-4">4</option>
+                    <option value="fa-5">5</option>
+                    <option value="fa-6">6</option>
+                </field>
+
+                 <field name="icon_extra" type="text" label="Extra Icon Classes" description="If you have any extra fa classes or custom classes place them here">
+                    </field>
+
+                    <field name="show_read_more" type="radio" default="0" label="Show Readmore" description="Choose to show a read more button">
+                         <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </field>
+
+                    <field name="read_more_text" type="text" default="Read More" label="Read More Text" description="The text in the read more button">
+                    </field>
+
+                     <field name="read_more_link" type="url" default="#" label="Read More Link" description="The url to link to">
+                    </field>
+
+                    <field name="buttonstyle" type="text" default="btn btn-primary" label="Button Class" description="Add the Bootstrap class for your button - http://getbootstrap.com/css/#buttons">
+                    </field>
+                    <field name="center_read_more" type="radio" default="0" label="Center Button" description="Choose to center the button">
+                         <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </field>-->
+                </fieldset>
+        </fields>
+    </config>
+</extension>
