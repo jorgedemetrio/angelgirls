@@ -1,7 +1,169 @@
-<html>
-	<tile>Fal
-	<body>
+<?php
+$telefones = JRequest::getVar("telefones");
+$emails = JRequest::getVar("emails");
+?>
+<script>
+$(document).ready(function(){
+	$('#fromTelefone').submit(function(){
 	
-		<img  src="">
-	</body>
-</html>
+	});
+	$('#fromEmail').submit(function(){
+	
+	});
+	$('#telefone').mask('00000-0000');
+});
+</script>
+<table>
+	<tr><!-- formulários -->
+		<td>
+			<form method="POST" enctype="multipart/form-data" name="fromTelefone" id="fromTelefone" action="<?php echo(JRoute::_('index.php?option=com_&task=salvar_telefone'));?>">
+				<fieldset>
+					<legend><?php echo(JText::_('Telefone'));?></legend>
+					<input type="hidden" value="" name="id" id="idTelefone"/>
+					<?php echo JHtml::_( 'form.token' ); ?>
+					<div class="fieldForm">
+						<label for="tipo"><?php echo(JText::_('Tipo de telefone'));?></label>
+						<select name="tipo" id="tipo" data-validation="required"  required
+							data-validation-help="<?php echo(JText::_('Digite um Tipo'));?>"
+							data-validation-error-msg="<?php echo(JText::_('Tipo é um campo obrigatorio'));?>">
+							<option></option>
+							<option value="E">Celular</option>
+							<option value="C">Comercial</option>
+							<option value="R">Recado</option>
+							<option value="S">Residencial</option>
+							<option value="W">Whatzapp</option>
+							<option value="O">Outro</option>
+						</select>
+					</div>
+					<div class="fieldForm">
+						<label for="ddd"><?php echo(JText::_('DDD'));?>*</label>
+						<input type="text" data-validation="required,number" name="ddd" id="ddd" maxlength="2" 
+							data-validation-help="<?php echo(JText::_('Digite um DDD'));?>"  required
+							data-validation-error-msg="<?php echo(JText::_('DDD é um campo obrigatorio'));?>"/>
+					</div>
+					<div class="fieldForm">
+						<label for="telefone"><?php echo(JText::_('Telefone'));?>*</label>
+						<input type="text" data-validation="required,custom" name="telefone" id="telefone" maxlength="14" 
+							data-validation-regexp="^([0-9]{5}\-[0-9]{4})$" required
+							data-validation-help="<?php echo(JText::_('Digite um telefone'));?>"
+							data-validation-error-msg="<?php echo(JText::_('Telefone é um campo obrigatorio'));?>"/>
+					</div>
+				</fieldset>
+				<div class="botoes">
+					<input type="submit" value="<?php echo(JText::_('Salvar')); ?>" />
+				</div>
+			</form>
+		</td>
+		<td>
+			<form method="POST" enctype="multipart/form-data" name="fromEmail" id="fromEmail" action="<?php echo(JRoute::_('index.php?option=com_&task=salvar_email'));?>">
+				<fieldset>
+					<legend><?php echo(JText::_('e-mail'));?></legend>
+					<?php echo JHtml::_( 'form.token' ); ?>
+					<input type="hidden" value="" name="id" id="idEmail"/>
+					<div class="fieldForm">
+						<label for="email"><?php echo(JText::_('e-mail'));?>*</label>
+						<input type="email" data-validation="required,email" name="email" id="email" maxlength="250" 
+							data-validation-help="<?php echo(JText::_('Digite um e-mail válido'));?>"  required
+							data-validation-error-msg="<?php echo(JText::_('E-mail é um campo obrigatorio'));?>"/>
+					</div>
+				</fieldset>
+				<div class="botoes">
+					<input type="submit" value="<?php echo(JText::_('Salvar')); ?>" />
+				</div>
+			</form>
+		</td>
+	</tr>
+	<tr><!-- listas -->
+		<td>
+			<table summary="<?php echo(JText::_('Telefones'));?>" title="<?php echo(JText::_('Telefones'));?>">
+				<caption><?php echo(JText::_('Telefones'));?></caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th><?php echo(JText::_('Tipo'));?></th>
+						<th><?php echo(JText::_('DDD'));?></th>
+						<th><?php echo(JText::_('Telefone'));?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php 
+					$t="even";
+					foreach ($telefones as $telefone){?>
+					<tr class="<?php echo($t); ?>">
+						<td class="<?php echo($t); ?>">
+							<a href='<?php echo(JRoute::_('index.php?option=com_&task=remover_telefone&id='.$telefone->id));?>'><img src="<?php echo(JURI::root('images/remover.gif'));?>" title="<?php echo(JText::_('Remover'));?>"/></a>
+						</td>
+						<td class="<?php echo($t); ?>"><?php echo($telefone->tipo); ?></td>
+						<td class="<?php echo($t); ?>"><?php echo($telefone->ddd); ?></td>
+						<td class="<?php echo($t); ?>"><?php echo($telefone->telefone); ?></td>
+					</tr>
+					<?php 
+						if($t=="even"){
+							$t="odd";
+						}
+						else{
+							$t="even";
+						}
+					} ?>
+				</tbody>
+			</table>
+		</td>
+		<td>
+			<table summary="<?php echo(JText::_('Emails'));?>" title="<?php echo(JText::_('Emails'));?>">
+				<caption><?php echo(JText::_('Emails'));?></caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th></th>
+						<th><?php echo(JText::_('e-mail'));?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php 
+					$t="even";
+					foreach ($emails as $email){?>
+					<tr class="<?php echo($t); ?>">
+						<?php 
+						//1 É um e-mail valido e padrão.
+						//2 É um e-mail aguardando validação.
+						if($email->padrao != 1 && $email->padrao != 2) {?>
+						<td class="<?php echo($t); ?>">
+							<a href='<?php echo(JRoute::_('index.php?option=com_&task=remover_email&id='.$email->id));?>'><img src="<?php echo(JURI::root('images/remover.gif'));?>" title="<?php echo(JText::_('Remover'));?>"/></a>
+						</td>
+						<td class="<?php echo($t); ?>">
+							<a href='<?php echo(JRoute::_('index.php?option=com_&task=default_email&id='.$email->id));?>'><img src="<?php echo(JURI::root('images/default.gif'));?>" title="<?php echo(JText::_('Definir como padrão'));?>"/></a>
+						</td>
+						<?php
+						}
+						else{?>
+						<td class="<?php echo($t); ?>"></td>
+						<?php
+							if($email->padrao == 2) {?>
+						<td class="<?php echo($t); ?>">
+							<a href='<?php echo(JRoute::_('index.php?option=com_&task=reenviar_emailConfirmacao&id='.$email->id));?>'><img src="<?php echo(JURI::root('images/reenviarconfirmacao.gif'));?>" title="<?php echo(JText::_('Reenviar e-mail de confirmação'));?>"/></a>
+						</td>
+						<?php
+							}
+							else{?>
+						<td class="<?php echo($t); ?>"></td>						
+						<?php
+							}
+						} ?>
+						<td class="<?php echo($t); ?>"><?php echo($email->email); ?></td>
+					</tr>
+					<?php 
+						if($t=="even"){
+							$t="odd";
+						}
+						else{
+							$t="even";
+						}
+					} ?>
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+
+
+

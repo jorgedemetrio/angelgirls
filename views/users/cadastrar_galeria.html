@@ -1,18 +1,18 @@
 <script>
 $(document).ready(function(){
 	$('#fromGaleria').submit(function(){
-		$('#fromGaleria')
+	
 	});
 });
 </script>
-<form method="POST" enctype="multipart/form-data" name="fromGaleria" id="fromGaleria" action="<?php echo(JRoute::_('index.php?option=com_&task='));?>">
+<form method="POST" enctype="multipart/form-data" name="fromGaleria" id="fromGaleria" action="<?php echo(JRoute::_('index.php?option=com_&task=salvar_galeria'));?>">
 	<fieldset>
 		<?php echo JHtml::_( 'form.token' ); ?>
 		<div class="fieldForm">
 			<label for="nome"><?php echo(JText::_('Nome'));?></label>
 			<input type="text" data-validation="required" name="nome" id="nome" maxlength="50" 
 				data-validation-help="<?php echo(JText::_('Nome do album que deseja criar'));?>"
-				data-validation-error-msg="<?php echo(JText::_('Nome do album que deseja criar'));?>"/>
+				data-validation-error-msg="<?php echo(JText::_('Nome do album que deseja criar'));?>" required="required"/>
 		</div>
 		<div class="fieldForm">
 			<label for="descricao"><?php echo(JText::_('Descri&ccedil;&atilde;o'));?></label>
@@ -24,13 +24,14 @@ $(document).ready(function(){
 			<label for="fotos"><?php echo(JText::_('Selecione as fotos'));?></label>
 			<input name="fotos[]" id="fotos" data-validation="required" 
 				data-validation-help="<?php echo(JText::_('Selecione as fotos do album.'));?>" 
-				data-validation-error-msg="<?php echo(JText::_('Selecione as fotos do album.'));?>"  accept="image/*" type=file multiple />
+				data-validation-error-msg="<?php echo(JText::_('Selecione as fotos do album.'));?>"  accept="image/*" type="file" multiple="multiple"
+				required="required"/>
 		</div>
 		<div class="fieldForm">
-			<label for="fotos"><?php echo(JText::_('Aceita todos os termos'));?></label>
+			<label for="fotos"><?php echo(JText::_('Aceita todos os termos'));?></label> <a href="<?php echo(JRoute::_('index.php?option=com_&task='));?>"><?php echo(JText::_('Leia os termos clicando aqui termos')); ?></a>
 			<input name="termos" id="termos" type="checkbox" data-validation="required" 
 				data-validation-help="<?php echo(JText::_('Aceita todos os termos'));?>"
-				data-validation-error-msg="<?php echo(JText::_('Deve aceitar todos os termos'));?>"/>
+				data-validation-error-msg="<?php echo(JText::_('Deve aceitar todos os termos'));?>"  required="required"/>
 		</div>
 	</fieldset>
 	<div class="botoes">

@@ -1,7 +1,131 @@
-<html>
-	<tile>Fal
-	<body>
+<?php
+$enderecos = JRequest::getVar("enderecos");
+$estados = JRequest::getVar("estados");
+?>
+<script>
+$(document).ready(function(){
+	$('#fromEndereco').submit(function(){
 	
-		<img  src="">
-	</body>
-</html>
+	});
+	$('#cep').mask('00000-000');
+	
+	$('#cep').blur(function(){
+			//Janela de aguarder
+			//Busca Endereço
+			//Preencher formulario se achar
+			//Fecha Janela de aguarde
+	});
+	
+	$('#estado').change(function(){
+			//Carregar cidades
+	});
+});
+</script>
+
+<form method="POST" enctype="multipart/form-data" name="fromEndereco" id="fromEndereco" action="<?php echo(JRoute::_('index.php?option=com_&task=salvar_endereco'));?>">
+	<fieldset>
+		<legend><?php echo(JText::_('Endereço'));?></legend>
+		<?php echo JHtml::_( 'form.token' ); ?>
+		<input type="hidden" value="" name="id" id="idEmail"/>
+		<div class="fieldForm">
+			<label for="tipo"><?php echo(JText::_('Tipo de telefone'));?>*</label>
+			<select name="tipo" id="tipo" data-validation="required" 
+				data-validation-help="<?php echo(JText::_('Digite um Tipo'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Tipo é um campo obrigatorio'));?>">
+				<option></option>
+				<option value="R">Residencial</option>
+				<option value="T">Trabalho</option>
+				<option value="O">Outro</option>
+			</select>
+		</div>
+		<div class="fieldForm">
+			<label for="cep"><?php echo(JText::_('CEP'));?>*</label>
+			<input type="text" data-validation="required,custom" name="cep" id="cep" maxlength="9" 
+				data-validation-regexp="^([0-9]{5}\-[0-9]{3})$"
+				data-validation-help="<?php echo(JText::_('Digite um CEP'));?>"
+				data-validation-error-msg="<?php echo(JText::_('CEP é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="endereco"><?php echo(JText::_('Endereço'));?>*</label>
+			<input type="text" data-validation="required" name="endereco" id="endereco" maxlength="250" 
+				data-validation-help="<?php echo(JText::_('Digite um endereço'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Endereço é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="numero"><?php echo(JText::_('Numero'));?>*</label>
+			<input type="text" data-validation="required" name="numero" id="numero" maxlength="6" 
+				data-validation-help="<?php echo(JText::_('Digite um endereço'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Endereço é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="complemento"><?php echo(JText::_('Complemento'));?></label>
+			<input type="text"  name="complemento" id="complemento" maxlength="250" 
+				data-validation-help="<?php echo(JText::_('Digite um complemento'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="bairro"><?php echo(JText::_('Bairro'));?>*</label>
+			<input type="text" data-validation="required" name="bairro" id="bairro" maxlength="250" 
+				data-validation-help="<?php echo(JText::_('Digite um bairro'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Bairro é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="estado"><?php echo(JText::_('Estado'));?>*</label>
+			<select name="estado" id="estado" data-validation="required" 
+				data-validation-help="<?php echo(JText::_('Selecione um estado'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Estado é um campo obrigatorio'));?>">
+				<option></option>
+				<?php 
+				foreach ($estados as $estado){?>
+					<option value="<?php echo($estado->id)?>">*<?php echo($estado->nome)?></option>
+				<?php }?>
+			</select>
+		</div>
+		<div class="fieldForm">
+			<label for="cidade"><?php echo(JText::_('Cidade'));?>*</label>
+			<select name="cidade" id="cidade" data-validation="required" 
+				data-validation-help="<?php echo(JText::_('Selecione um cidade'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Cidade é um campo obrigatorio'));?>">
+				<option></option>
+			</select>
+		</div>
+	</fieldset>
+	<div class="botoes">
+		<input type="submit" value="<?php echo(JText::_('Salvar')); ?>" />
+	</div>
+</form>
+<table summary="<?php echo(JText::_('Endereços'));?>" title="<?php echo(JText::_('Endereços'));?>">
+	<thead>
+		<caption><?php echo(JText::_('Endereços'));?></caption>
+		<tr>
+			<th></th>
+			<th><?php echo(JText::_('Endereço'));?></th>
+			<th><?php echo(JText::_('Numero'));?></th>
+			<th><?php echo(JText::_('Bairro'));?></th>
+			<th><?php echo(JText::_('Estado'));?></th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php 
+		$t="even";
+		foreach ($enderecos as $endereco){?>
+		<tr class="<?php echo($t); ?>">
+			<td class="<?php echo($t); ?>">
+				<a href='<?php echo(JRoute::_('index.php?option=com_&task=remover_endereco&id='.$endereco->id));?>'><img src="<?php echo(JURI::root('images/remover.gif'));?>" title="<?php echo(JText::_('Remover'));?>"/></a>
+			</td>
+			<td class="<?php echo($t); ?>"><?php echo($endereco->endereco); ?></td>
+			<td class="<?php echo($t); ?>"><?php echo($endereco->numero); ?></td>
+			<td class="<?php echo($t); ?>"><?php echo($endereco->bairro); ?></td>
+			<td class="<?php echo($t); ?>"><?php echo($endereco->estado); ?></td>
+		</tr>
+		<?php 
+			if($t=="even"){
+				$t="odd";
+			}
+			else{
+				$t="even";
+			}
+		} ?>
+	</tbody>
+</table>
+
+

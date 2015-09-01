@@ -1,7 +1,171 @@
-<html>
-	<tile>Fal
-	<body>
+<?php
+$enderecos = JRequest::getVar("enderecos");
+$estados = JRequest::getVar("estados");
+?>
+<script>
+$(document).ready(function(){
+	$('#fromUsuario').submit(function(){
 	
-		<img  src="">
-	</body>
-</html>
+	});
+
+	$('#nascimento').mask('00/00/0000');
+	
+	
+	$('#estado').change(function(){
+			//Carregar cidades
+	});
+	
+	$('#bntAdicionarRedeSocial').click(function(){
+		var tr = document.createElement('TR');
+		
+		
+		$('#redesSociais').addRow(tr);
+	});
+});
+</script>
+<form method="POST" enctype="multipart/form-data" name="fromUsuario" id="fromUsuario" action="<?php echo(JRoute::_('index.php?option=com_&task=salvar_endereco'));?>">
+	<?php echo JHtml::_( 'form.token' ); ?>
+	<fieldset>
+		<legend><?php echo(JText::_('Cadastro básico'));?></legend>
+
+		<div class="fieldForm">
+			<label for="nome"><?php echo(JText::_('Nome'));?>*</label>
+			<input type="text" data-validation="required,length" data-validation-length="min5" minlength="5" name="nome" id="nome" maxlength="150" 
+				data-validation-help="<?php echo(JText::_('Digite um nome'));?>" 
+				data-validation-error-msg="<?php echo(JText::_('Nome é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="sobrenome"><?php echo(JText::_('Sobre nome'));?>*</label>
+			<input type="text" data-validation="required" name="sobrenome" id="sobrenome" maxlength="150" 
+				data-validation-help="<?php echo(JText::_('Digite um sobre nome'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Sobre nome é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="apelido"><?php echo(JText::_('Apelido'));?></label>
+			<input type="text" name="apelido" id="apelido" maxlength="70" 
+				data-validation-help="<?php echo(JText::_('Digite um apelido'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="usuario"><?php echo(JText::_('Usuário'));?>*</label>
+			<input type="text" data-validation="required,length" name="usuario" id="usuario" maxlength="25" 
+				data-validation-help="<?php echo(JText::_('Digite um usuario'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Usuário é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="senha"><?php echo(JText::_('Senha'));?>*</label>
+			<input type="password" data-validation="required" name="senha" id="senha" maxlength="20" 
+				data-validation-help="<?php echo(JText::_('Digite um endereço'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Endereço é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="senha2"><?php echo(JText::_('Confirmando a senha'));?>*</label>
+			<input type="password" data-validation="required" name="senha2" id="senha2" maxlength="20" 
+				data-validation-help="<?php echo(JText::_('Conformação de senha'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Conformação de senha é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="email"><?php echo(JText::_('E-mail principal'));?>*</label>
+			<input type="email"  data-validation="required,email" name="email" id="email" maxlength="250"
+				data-validation-help="<?php echo(JText::_('E-mail princicpal'));?>"			
+				data-validation-help="<?php echo(JText::_('E-mail principal é obrigatori e será válidade.'));?>"/>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend><?php echo(JText::_('Dados pessoais'));?></legend>
+		<div class="fieldForm">
+			<label for="profissao"><?php echo(JText::_('Profissao'));?></label>
+			<input type="text" name="profissao" id="profissao" maxlength="150" 
+				data-validation-help="<?php echo(JText::_('Digite uma profissão'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="sexoMasculino"><?php echo(JText::_('Masculino'));?></label>
+			<input type="radio" data-validation="required" name="sexo" id="sexoMasculino" value="M"
+				data-validation-help="<?php echo(JText::_('Selecione um sexo'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Sexo é um campo obrigatorio'));?>"/>
+			<label for="sexoFeminino"><?php echo(JText::_('Feminio'));?></label>
+			<input type="radio" data-validation="required" name="sexo" id="sexoFeminino" value="F"
+				data-validation-help="<?php echo(JText::_('Selecione um sexo'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Sexo é um campo obrigatorio'));?>"/>
+		</div>
+		<div class="fieldForm">
+			<label for="nascimento"><?php echo(JText::_('Data nascimento'));?>*</label>
+			<input type="text" name="nascimento" data-validation="required,date" data-validation-format="dd/mm/yyyy" id="nascimento" maxlength="10" 
+				data-validation-help="<?php echo(JText::_('Digite uma data de nascimento'));?>"/>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend><?php echo(JText::_('Localização'));?></legend>
+		<div class="fieldForm">
+			<label for="estado"><?php echo(JText::_('Estado'));?>*</label>
+			<select name="estado" id="estado" data-validation="required" 
+				data-validation-help="<?php echo(JText::_('Selecione um estado'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Estado é um campo obrigatorio'));?>">
+				<option></option>
+				<?php 
+				foreach ($estados as $estado){?>
+					<option value="<?php echo($estado->id)?>">*<?php echo($estado->nome)?></option>
+				<?php }?>
+			</select>
+		</div>
+		<div class="fieldForm">
+			<label for="cidade"><?php echo(JText::_('Cidade'));?>*</label>
+			<select name="cidade" id="cidade" data-validation="required" 
+				data-validation-help="<?php echo(JText::_('Selecione um cidade'));?>"
+				data-validation-error-msg="<?php echo(JText::_('Cidade é um campo obrigatorio'));?>">
+				<option></option>
+			</select>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend><?php echo(JText::_('Redes Sociais'));?></legend>
+		<div class="fieldForm">
+			<label for="redeSocial"><?php echo(JText::_('Rede Social'));?></label>
+			<select name="redeSocial" id="redeSocial" 
+				data-validation-help="<?php echo(JText::_('Selecione uma rede'));?>">
+				<option></option>
+				<option value="F">Facebook</option>
+				<option value="G">G+ (G Plus)</option>
+				<option value="L">Flickr</option>
+				<option value="T">Tumblr</option>
+				<option value="I">Instagram</option>
+				<option value="M">MIrc</option>
+				<option value="C">ICQ</option>
+				<option value="S">Skype</option>
+				<option value="V">VK</option>
+				<option value="O">Outro</option>
+			</select>
+		</div>
+		<div class="fieldForm">
+			<label for="contatoRede"><?php echo(JText::_('Contato/URL'));?></label>
+			<input type="text" name="contatoRede" id="contatoRede" maxlength="150" 
+				data-validation-help="<?php echo(JText::_('Digite um contato/url'));?>"/>
+		</div>
+		<div class="botoes">
+			<input type="buttom" value="<?php echo(JText::_('Salvar')); ?>" id="bntAdicionarRedeSocial" name="bntAdicionarRedeSocial"/>
+		</div>
+		<div class="fieldForm">
+			<table id="redesSociais">
+				<thead>
+					<th></th>
+					<th></th>
+					<th><?php echo(JText::_('Rede'));?></th>
+					<th><?php echo(JText::_('Contato'));?></th>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</fieldset>
+	<div class="fieldForm">
+		<label for="fotos"><?php echo(JText::_('Aceita todos os termos'));?></label> <a href="<?php echo(JRoute::_('index.php?option=com_&task='));?>"><?php echo(JText::_('Leia os termos clicando aqui termos')); ?></a>
+		<input name="termos" id="termos" type="checkbox" data-validation="required"  required
+			data-validation-help="<?php echo(JText::_('Aceita todos os termos'));?>"
+			data-validation-error-msg="<?php echo(JText::_('Deve aceitar todos os termos'));?>"/>
+	</div>
+	<div class="botoes">
+		<input type="submit" value="<?php echo(JText::_('Salvar')); ?>" />
+	</div>
+</form>
+
+
+
