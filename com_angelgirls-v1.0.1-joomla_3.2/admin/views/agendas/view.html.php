@@ -44,6 +44,11 @@ class AngelgirlsViewagendas extends JViewLegacy
 				
 		// Check for tag type
 		//$this->checkTags = JHelperTags::getTypes('objectList', array($this->state->get('category.extension') . '.category'), true);
+		
+		
+		$agenda =& JRequest::getVar('agenda');
+		
+		$this->item = $agenda; 
 
 	}
 
@@ -52,19 +57,22 @@ class AngelgirlsViewagendas extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-		$layout = JRequest::setVar('layout');
+		$layout = JRequest::getVar('layout');
 		
-		JToolBarHelper::title(JText::_('Angelgirls Agenda'), 'angelgirls');
+		JToolBarHelper::title(JText::_('Gerenciador de Agenda'), 'angelgirls');
+		
+		
+		
 		
 		if($layout==null || $layout=='default'){
-			JToolBarHelper::deleteList('', 'angelgirls.delete');
-			JToolBarHelper::editList('angelgirls.edit');
+			JToolBarHelper::deleteList('', 'deleteAgenda');
+			JToolBarHelper::editList('editAgenda');
 			JToolBarHelper::addNew('addAgenda');
 		}
 		elseif($layout!=null && $layout=='cadastro'){
-			JToolBarHelper::apply('aplicar');
-			JToolBarHelper::save('salvar');
-			JToolBarHelper::cancel('carregar');
+			JToolBarHelper::apply('applayAgenda');
+			JToolBarHelper::save('saveAngenda');
+			JToolBarHelper::cancel('listAgenda');
 		}
 	}
 

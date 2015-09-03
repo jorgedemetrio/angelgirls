@@ -19,7 +19,7 @@ jimport('joomla.filter.filteroutput');
 $lista = JRequest::getVar('lista');
 if(JRequest::getVar('task')==null || JRequest::getVar('task')==''){
 	$mainframes = JFactory::getApplication();
-	$mainframes->redirect(JRoute::_('index.php?option=com_angelgirls&task=carregar',false),"");
+	$mainframes->redirect(JRoute::_('index.php?option=com_angelgirls&task=listAgenda',false),"");
 	exit();    
 }
 
@@ -50,19 +50,18 @@ $params = array('smilies'=> '0', 'html' => '1', 'style'  => '1', 'layer'  => '0'
 	</div>
 </form>
 
-<table class="adminform"><tr><td>
-<div id="agendas">
-    <form action="index.php" method="post" name="adminForm" id="adminForm">
+
+<form action="index.php" method="post" name="adminForm" id="adminForm">
     <div id="editcell">
-        <table class="adminlist">
+        <table class="adminlist table table-striped" width="90%" align="center">
         <thead>
             <tr>
-                <th width="5"><?php echo JText::_('ID'); ?></th>
-                <th width="20"><input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($this->items); ?>);" /></th>
-                  <th><?php echo JText::_('Titulo'); ?></th>
-                  <th><?php echo JText::_('Data'); ?></th>
-                  <th><?php echo JText::_('Id Created By'); ?></th>
-                  <th><?php echo JText::_('Id Edited By'); ?></th>
+                <th width="5" class="nowrap center hidden-phone"><?php echo JText::_('ID'); ?></th>
+                <th width="20" class="nowrap center hidden-phone"><input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($lista); ?>);" /></th>
+                <th class="nowrap center hidden-phone"><?php echo JText::_('Titulo'); ?></th>
+                <th class="nowrap center hidden-phone"><?php echo JText::_('Data'); ?></th>
+                <th class="nowrap center hidden-phone"><?php echo JText::_('Criador'); ?></th>
+                <th class="nowrap center hidden-phone"><?php echo JText::_('Editor'); ?></th>
 
             </tr>
         </thead>
@@ -73,16 +72,15 @@ $params = array('smilies'=> '0', 'html' => '1', 'style'  => '1', 'layer'  => '0'
 				foreach($lista as $row){
 					JFilterOutput::objectHTMLSafe($row);
 					$checked = JHTML::_('grid.id', $i, $row->id);
-					$link = JRoute::_('index.php?option=com_angelgirls&view=agendas&task=edit&cid[]='. $row->id);
+					$link = JRoute::_('index.php?option=com_angelgirls&view=agendas&task=editAgenda&id='. $row->id, false);
 			?>
-					<tr class="<?php echo "row$k"; ?>">
-					   <td><?php echo $row->id; ?></td>
-					   <td><?php echo $checked; ?></td>
-					   <td><?php echo "<a href='$link'>".$row->titulo."</a>"; ?></td>
-					   <td><?php echo "<a href='$link'>".$row->data."</a>"; ?></td>
-					   <td><?php echo JHTML::_('grid.published', $row, $i); ?></td>
-					   <td><?php echo "<a href='$link'>".$row->id_created_by."</a>"; ?></td>
-					   <td><?php echo "<a href='$link'>".$row->id_edited_by."</a>"; ?></td>
+					<tr class="<?php echo "row$k ".($k==1?"odd":"even"); ?>">
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo $row->id; ?></td>
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo $checked; ?></td>
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo "<a href='$link'>".$row->titulo."</a>"; ?></td>
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo "<a href='$link'>".$row->data."</a>"; ?></td>
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo "<a href='$link'>".$row->criador."</a>"; ?></td>
+					   <td class="has-context <?php echo "row$k ".($k==1?"odd":"even"); ?>"><?php echo "<a href='$link'>".$row->editor."</a>"; ?></td>
 					</tr>
 			<?php
 					$k = 1 - $k;
@@ -98,5 +96,4 @@ $params = array('smilies'=> '0', 'html' => '1', 'style'  => '1', 'layer'  => '0'
     <input type="hidden" name="view" value="agendas" />
     <input type="hidden" name="controller" value="agendas" />
 </form>
-</div>
-</td></tr></table>
+

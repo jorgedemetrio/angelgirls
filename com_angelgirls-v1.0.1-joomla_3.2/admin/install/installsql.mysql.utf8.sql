@@ -20,6 +20,8 @@ CREATE TABLE `#__angelgirls_agenda` (
 		`audiencia_ngostou` INT DEFAULT 0,
 		`audiencia_view` INT DEFAULT 0,
 		
+		`data` DATE NOT NULL, 
+		
 		`id_tema` INT,
 		`id_modelo` INT,
 		`id_locacao` INT,
@@ -328,7 +330,7 @@ CREATE TABLE `#__angelgirls_tema` (
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
 		
-		`possui_foto` ENUM('S','N') NOT NULL , 
+		`nome_foto` varchar(100) NOT NULL,
 		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
