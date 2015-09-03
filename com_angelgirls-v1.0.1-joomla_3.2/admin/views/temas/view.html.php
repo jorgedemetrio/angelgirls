@@ -38,6 +38,10 @@ class AngelgirlsViewtemas extends JViewLegacy
 
 		// Set the document
 		$this->setDocument();
+		
+		$tema =& JRequest::getVar('tema');
+		
+		$this->item = $tema;
 	}
 
 	/**
@@ -45,7 +49,23 @@ class AngelgirlsViewtemas extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-		JToolBarHelper::title(JText::_('Angelgirls Manager'), 'angelgirls');
+			$layout = JRequest::getVar('layout');
+		
+		JToolBarHelper::title(JText::_('Gerenciador de Temas'), 'angelgirls');
+		
+		
+		
+		
+		if($layout==null || $layout=='default'){
+			JToolBarHelper::deleteList('', 'deleteTema');
+			JToolBarHelper::editList('editTema');
+			JToolBarHelper::addNew('addTema');
+		}
+		elseif($layout!=null && $layout=='cadastro'){
+			JToolBarHelper::apply('applayTema');
+			JToolBarHelper::save('saveAngenda');
+			JToolBarHelper::cancel('listTema');
+		}
 	}
 
 	/**

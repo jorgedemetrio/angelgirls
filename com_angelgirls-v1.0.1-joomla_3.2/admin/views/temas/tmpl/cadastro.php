@@ -39,92 +39,27 @@ $locacoes = JRequest::getVar('locacoes');
 JFactory::getDocument()->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
-		if (task == "listAgenda" || document.formvalidator.isValid(document.getElementById("adminForm")))
+		if (task == "listTema" || document.formvalidator.isValid(document.getElementById("adminForm")))
 		{
 			Joomla.submitform(task, document.getElementById("adminForm"));
 		}
 	};
 ');
 ?>
-<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-	<?php echo JHtml::_('form.token'); ?>	
+<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
+	<?php echo JHtml::_('form.token'); ?>
     <div class="col100">
         <fieldset class="adminAgenda"><legend><?php echo JText::_('Agenda'); ?></legend>
 			<table class="admintable" align="center">
 				<tr>
-					<th align="center" class="key" colspan="2"><label for="titulo"> <?php echo JText::_('Titulo'); ?>:</label></th>
-					<td align="center" class="key" colspan="2"><label for="descricao_google"> <?php echo JText::_('Meta descri&ccedil&atilde;o'); ?>:</label></td>
+					<th align="center" class="key"><label for="nome"> <?php echo JText::_('Nome'); ?>:</label></th>
+					<td align="center" class="key"><label for="foto"> <?php echo JText::_('Foto'); ?>:</label></td>
+					<td  align="center" class="key"><label for="meta_descricao"> <?php echo JText::_('Meta dado'); ?>:</label></td>
 				</tr>
 				<tr>
-					<td colspan="2"><input class="text_area required" style="width: 300px;" type="text" name="titulo"  id="titulo" size="32" maxlength="250" value="<?php echo $this->item->titulo;?>" /></td>
-					<td colspan="2"><input class="text_area required" style="width: 250px;" type="text" name="descricao_google" id="descricao_google" size="32" maxlength="250" value="<?php echo $this->item->descricao_google;?>" /></td>
-				</tr>
-				<tr>
-					<td  align="center" class="key"><label for="tipo"> <?php echo JText::_('Tipo'); ?>:</label></td>
-					<th align="center" class="key"><label for="data"> <?php echo JText::_('Data Evento'); ?>:</label></th>
-					<th align="center" class="key"><label for="publicar"> <?php echo JText::_('Data Publica&ccedil;&atilde;o'); ?>:</label></th>
-				</tr>
-				<tr>
-					<td>
-						<select name="tipo" id="tipo" class="required">
-							<option></option>
-							<option value="SESSAO">SESS&ATILDE;O</option>
-						</select>
-					</td>
-					<td><?php echo JHtml::calendar($this->item->data,'data', 'data', '%d/%m/%Y');?></td>
-					<td><?php echo JHtml::calendar($this->item->publicar,'publicar', 'publicar', '%d/%m/%Y');?></td>
-				</tr>
-				<tr>
-					<td  align="center" class="key"><label for="publicar"> <?php echo JText::_('Fotografo'); ?>:</label></td>
-					<td  align="center" class="key"><label for="despublicar"> <?php echo JText::_('Modelo'); ?>:</label></td>
-					<td align="center" class="key"><label for="descricao_google"> <?php echo JText::_('Tema'); ?>:</label></td><td>
-					<td align="center" class="key"><label for="descricao_google"> <?php echo JText::_('Locacao'); ?>:</label></td>
-				</tr>
-				<tr>
-					<td>
-						<select name="id_fotografo" id="id_fotografo">
-							<option></option>
-							<?php 
-							foreach ($fotografos as $fotografo){
-							?>
-								<option value="<?php echo($fotografo->id); ?>"><?php echo($fotografo->nome); ?></option>
-							<?php 
-							}?>
-						</select>
-					</td>
-					<td>
-						<select name="id_modelo" id="id_modelo">
-							<option></option>
-							<?php 
-							foreach ($modelos as $modelo){
-							?>
-								<option value="<?php echo($modelo->id); ?>"><?php echo($modelo->nome); ?></option>
-							<?php 
-							}?>
-						</select>
-					</td>
-					<td>
-						<select name="id_tema" id="id_tema">
-							<option></option>
-							<?php 
-							foreach ($temas as $tema){
-							?>
-								<option value="<?php echo($tema->id); ?>"><?php echo($tema->nome); ?></option>
-							<?php 
-							}?>
-						</select>
-					</td>
-					<td>
-						<select name="id_locacao" id="id_locacao">
-							<option></option>
-							<?php 
-							foreach ($locacoes as $locacoe){
-							?>
-								<option value="<?php echo($locacoe->id); ?>"><?php echo($locacoe->nome); ?></option>
-							<?php 
-							}?>
-						</select>
-					</td>
+					<td><input class="text_area required" style="width: 300px;" type="text" name="nome"  id="nome" size="32" maxlength="250" value="<?php echo $this->item->nome;?>" /></td>
+					<td><input class="text_area " style="width: 250px;" type="file" name="foto" id="foto"/></td>
+					<td><input class="text_area required" style="width: 300px;" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" value="<?php echo $this->item->meta_descricao;?>" /></td>
 				</tr>
 				<?php
 				if($this->item != null && $this->item->id != null){ 
