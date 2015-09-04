@@ -75,7 +75,10 @@ JFactory::getDocument()->addStyleDeclaration('
 			filter: alpha(opacity = 0);
 			position: absolute;
 			z-index: -1; } 
-		#imagem:hover {
+		#ifoto_inteira:hover {
+		    cursor: pointer;
+		}
+		#ifoto_perfil:hover {
 		    cursor: pointer;
 		}
 ');
