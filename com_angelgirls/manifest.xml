@@ -12,13 +12,13 @@
 
     <install>
         <sql>
-            <file charset="utf8" driver="mysql">install/installsql.mysql.utf8.php</file>
+            <file charset="utf8" driver="mysql">install/installsql.mysql.utf8.sql</file>
         </sql>
     </install>
 
     <uninstall>
         <sql>
-            <file charset="utf8" driver="mysql">install/uninstallsql.mysql.utf8.php</file>
+            <file charset="utf8" driver="mysql">install/uninstallsql.mysql.utf8.sql</file>
         </sql>
     </uninstall>
 
@@ -38,7 +38,7 @@
   </files>
 
     <administration>
-    <menu>AngelGirls</menu>
+    <menu>Angel Girls</menu>
 
     <submenu>
       <menu link='option=com_angelgirls&amp;view=fotos&amp;layout=list'>fotos</menu>
@@ -59,18 +59,18 @@
         </languages>
 
         <files folder="admin">
-      <file>config.xml</file>
-      <file>controller.php</file>
-      <file>angelgirls.php</file>
+		  <file>config.xml</file>
+		  <file>controller.php</file>
+		  <file>angelgirls.php</file>
 
-      <folder>assets</folder>
-      <folder>controllers</folder>
-      <folder>help</folder>
-      <folder>helpers</folder>
-      <folder>install</folder>
-      <folder>models</folder>
-      <folder>tables</folder>
-      <folder>views</folder>
+		  <folder>assets</folder>
+		  <folder>controllers</folder>
+		  <folder>help</folder>
+		  <folder>helpers</folder>
+		  <folder>install</folder>
+		  <folder>models</folder>
+		  <folder>tables</folder>
+		  <folder>views</folder>
         </files>
     </administration>
 </extension>

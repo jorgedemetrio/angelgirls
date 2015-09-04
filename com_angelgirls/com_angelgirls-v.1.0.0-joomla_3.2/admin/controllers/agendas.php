@@ -1,36 +1,36 @@
 <?php
-/**
- * Agendas Controller of the AngelGirls Component
- *
- * PHP versions 5
- *
- * @category  Controller
- * @package   AngelGirls
- * @author    Jorge Demetiro <jorge.demetrio@alldreams.com.br>
- * @copyright All rights reserved.
- * @license   GNU General Public License
- * @version   1.0.0
- * @link      http://www.alldreams.com.br
- */
+/*------------------------------------------------------------------------
+# agendas.php - Angel Girls Component
+# ------------------------------------------------------------------------
+# author    Jorge Demetrio
+# copyright Copyright (C) 2015. All Rights Reserved
+# license   GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+# website   www.angelgirls.com.br
+-------------------------------------------------------------------------*/
 
-// Check to ensure this file is included in Joomla!
+// No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.controller');
+// import Joomla controlleradmin library
+jimport('joomla.application.component.controlleradmin');
 
 /**
- * AngelGirls Component Agendas Controller
- *
- * @category Controller
- * @package  AngelGirls
- * @author   Jorge Demetiro <jorge.demetrio@alldreams.com.br>
- * @license  GNU General Public License
- * @link     http://www.alldreams.com.br
- * @since    1.0
+ * Agendas Controller
  */
-class AngelGirlsControllerAgendas extends AngelGirlsController
+class AngelgirlsControlleragendas extends JControllerAdmin
 {
-    /**
+	/**
+	 * Proxy for getModel.
+	 * @since	2.5
+	 */
+	public function getModel($name = 'agenda', $prefix = 'AngelgirlsModel')
+	{
+		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
+		
+		return $model;
+	}
+	
+	 /**
      * Constructor
      *
      * @return void
@@ -54,7 +54,6 @@ class AngelGirlsControllerAgendas extends AngelGirlsController
     public function edit()
     {
         JRequest::setVar('view', 'Agendas');
-		JRequest::setVar('layout', 'cadastrar');
         JRequest::setVar('hidemainmenu', 1);
         parent::display($cachable = false, $urlparams = array());
     }
@@ -126,5 +125,5 @@ class AngelGirlsControllerAgendas extends AngelGirlsController
         }
         $this->setRedirect('index.php?option=com_angelgirls&view=Agendas&layout=list');
     }
-
 }
+?>
