@@ -71,8 +71,8 @@ JFactory::getDocument()->addScriptDeclaration('
 					<td align="center" class="key" colspan="2"><label for="descricao_google"> <?php echo JText::_('Meta descri&ccedil&atilde;o'); ?>:</label></td>
 				</tr>
 				<tr>
-					<td colspan="2"><input class="text_area required" style="width: 300px;" type="text" name="titulo"  id="titulo" size="32" maxlength="250" value="<?php echo $this->item->titulo;?>" /></td>
-					<td colspan="2"><input class="text_area required" style="width: 250px;" type="text" name="descricao_google" id="descricao_google" size="32" maxlength="250" value="<?php echo $this->item->descricao_google;?>" /></td>
+					<td colspan="2"><input class="text_area required" style="width: 270px;" type="text" name="titulo"  id="titulo" size="32" maxlength="250" value="<?php echo $this->item->titulo;?>" /></td>
+					<td colspan="2"><input class="text_area required" style="width: 270px;" type="text" name="descricao_google" id="descricao_google" size="32" maxlength="250" value="<?php echo $this->item->descricao_google;?>" /></td>
 				</tr>
 				<tr>
 					<td  align="center" class="key"><label for="tipo"> <?php echo JText::_('Tipo'); ?>:</label></td>

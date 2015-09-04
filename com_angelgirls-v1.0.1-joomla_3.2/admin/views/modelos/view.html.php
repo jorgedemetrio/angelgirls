@@ -45,7 +45,23 @@ class AngelgirlsViewmodelos extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-		JToolBarHelper::title(JText::_('Angelgirls Manager'), 'angelgirls');
+		$layout = JRequest::getVar('layout');
+		
+		JToolBarHelper::title(JText::_('Gerenciador de Modelos'), 'angelgirls');
+		
+		
+		
+		
+		if($layout==null || $layout=='default'){
+			JToolBarHelper::deleteList('', 'deleteModelo');
+			JToolBarHelper::editList('editModelo');
+			JToolBarHelper::addNew('addModelo');
+		}
+		elseif($layout!=null && $layout=='cadastro'){
+			JToolBarHelper::apply('applayModelo');
+			JToolBarHelper::save('saveModelo');
+			JToolBarHelper::cancel('listModelo');
+		}
 	}
 
 	/**

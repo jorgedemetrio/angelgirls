@@ -41,7 +41,277 @@ class AngelgirlsController extends JControllerLegacy
 		AngelgirlsHelper::addSubmenu($view);
 	}
 	
+
 	
+	/******************** MODELO ******************************************/
+	
+	
+	public function deleteModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user) || !JSession::checkToken('post'))	die('Restricted access');
+	
+		$id = JRequest::getInt('id', 0);
+	
+		if($id!=0){
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+	
+			$query->update($db->quoteName('#__angelgirls_modelo'))
+			->set(array(
+					$db->quoteName('status_dado') . ' = \'REMOVED\'' ,
+					$db->quoteName('data_alterado') . ' = NOW() ' ,
+					$db->quoteName('id_usuario_alterador') . ' = ' . $user->id))
+					->where(array($db->quoteName('id') . ' = '.$id));
+	
+			$db->setQuery($query);
+	
+			$db->execute();
+		}
+	
+		$this->listModelo();
+	}
+	
+	public function editModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user))	die('Restricted access');
+		$id = JRequest::getInt('id', 0);
+	
+		//Carregar cidade e estado
+
+		
+		
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		
+	
+		$query->select($db->quoteName(array('a.id',	'a.id_usuario',	'a.nome_artistico',	'a.descricao', 'a.meta_descricao','a.foto_perfil',
+											'a.foto_inteira','a.altura',	'a.peso','a.busto',	'a.calsa','a.calsado','a.olhos','a.pele',
+											'a.etinia','a.cabelo','a.tamanho_cabelo','a.cor_cabelo','a.outra_cor_cabelo','a.profissao',
+											'a.nascionaldiade',	'a.id_cidade_nasceu','a.data_nascimento','a.site','a.sexo',	'a.cpf',
+											'a.banco','a.agencia','a.conta','a.custo_medio_diaria','a.status_modelo','a.qualificao_equipe',
+											'a.audiencia_gostou','a.audiencia_ngostou',	'a.audiencia_view',	'a.id_cidade','a.status_dado',
+											'a.id_usuario_criador','a.id_usuario_alterador','a.data_criado','a.data_alterado','b.name','c.name',
+											'd.name','d.username','d.email'),
+				array('id','id_usuario','nome_artistico','descricao','meta_descricao','foto_perfil','foto_inteira','altura',
+						'peso',	'busto','calsa','calsado','olhos','pele','etinia','cabelo','tamanho_cabelo','cor_cabelo','outra_cor_cabelo',
+						'profissao','nascionaldiade','id_cidade_nasceu','data_nascimento','site','sexo','cpf','banco','agencia',
+						'conta','custo_medio_diaria','status_modelo','qualificao_equipe','audiencia_gostou','audiencia_ngostou',
+						'audiencia_view','id_cidade','status_dado',	'id_usuario_criador','id_usuario_alterador','data_criado',
+						'data_alterado', 'criador','editor','nome','usuario','email')))
+						->from($db->quoteName('#__angelgirls_modelo','a'))
+						->join('INNER', $db->quoteName('#__users', 'b') . ' ON (' . $db->quoteName('a.id_usuario_criador') . ' = ' . $db->quoteName('b.id') . ')')
+						->join('INNER', $db->quoteName('#__users', 'c') . ' ON (' . $db->quoteName('a.id_usuario_alterador') . ' = ' . $db->quoteName('c.id') . ')')
+						->join('INNER', $db->quoteName('#__users', 'd') . ' ON (' . $db->quoteName('a.id_usuario') . ' = ' . $db->quoteName('c.id') . ')')
+						->where($db->quoteName('a.id') . ' = '. $id)
+						->where($db->quoteName('status_dado') . ' <> \'REMOVED\' ');
+	
+	
+	
+		$db->setQuery($query);
+	
+		$result = $db->loadObject();
+		JRequest::setVar('modelo', $result);
+	
+	
+	
+	
+	
+		$this->addModelo();
+	}
+	
+	/**
+	 * Só carrrega a tela de adição.
+	 */
+	public function addModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user))	die('Restricted access');
+	
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		
+		
+		$query->select($db->quoteName(array('a.id',	'a.nome','a.uf')))
+				->from($db->quoteName('#__cidade','a'))
+				->order('a.nome, a.uf');
+				
+		$db->setQuery($query);
+		
+		$result = $db->loadObjectList();
+		JRequest::setVar('cidades', $result);
+		
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('a.uf')))
+		->from($db->quoteName('#__cidade','a'))
+		->group($db->quoteName(array('a.uf')))
+		->order('a.uf');
+		$db->setQuery($query);
+		
+		$result = $db->loadObjectList();
+		JRequest::setVar('ufs', $result);
+	
+	
+	
+	
+		JRequest::setVar('view', 'modelos');
+		JRequest::setVar('layout', 'cadastro');
+		parent::display();
+	}
+	
+	public function applayModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user))	die('Restricted access');
+	
+		$this->saveModeloDB();
+		$this->editModelo();
+	}
+	
+	/**
+	 * Apenas salva no banco o dado.
+	 */
+	public function saveModeloDB(){
+		$user =& JFactory::getUser();
+		if(!isset($user) || !JSession::checkToken('post'))	die('Restricted access');
+		$uploadPath = JPATH_SITE.DS.'images'.DS.'modelos'.DS;
+		$erro = false;
+	
+		$id = JRequest::getInt('id', 0, 'POST');
+		$nome = JRequest::getString('nome', '', 'POST');
+		$descricao = JRequest::getString('descricao', '', 'POST');
+		$metaDescricao = JRequest::getString('meta_descricao', '', 'POST');
+	
+	
+		$foto = $_FILES['foto'];
+	
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+	
+	
+	
+		if($id!=null && $id!=0){//UPDATE
+	
+	
+			$query->update($db->quoteName('#__angelgirls_modelo'))
+			->set(array(
+					$db->quoteName('data_alterado') . ' = NOW() ' ,
+					$db->quoteName('id_usuario_alterador') . ' = ' . $user->id,
+					$db->quoteName('nome') . ' = ' . ($nome == null ? 'null' : $db->quote($nome)),
+					$db->quoteName('descricao') . ' = ' . ($descricao == null ? 'null' : $db->quote($descricao)),
+					$db->quoteName('meta_descricao') . ' = ' . ($metaDescricao == null ? 'null' : $db->quote($metaDescricao))))
+					->where(array($db->quoteName('id') . ' = '.$id));
+	
+			$db->setQuery($query);
+	
+			$db->execute();
+		}
+		else{
+			$query->insert($db->quoteName('#__angelgirls_modelo'))
+			->columns(array(
+					$db->quoteName('status_dado'),
+					$db->quoteName('data_criado'),
+					$db->quoteName('id_usuario_criador'),
+					$db->quoteName('data_alterado'),
+					$db->quoteName('id_usuario_alterador'),
+					$db->quoteName('nome'),
+					$db->quoteName('descricao'),
+					$db->quoteName('meta_descricao')))
+					->values(implode(',',array(
+							'\'NOVO\'',
+							'NOW()',
+							$user->id,
+							'NOW()',
+							$user->id,
+							($nome == null ? 'null' : $db->quote($nome)),
+							($descricao == null ? 'null' : $db->quote($descricao)),
+							($metaDescricao == null ? 'null' : $db->quote($metaDescricao)))));
+	
+					$db->setQuery($query);
+	
+					$db->execute();
+	
+					$id=$db->insertid();
+						
+					JRequest::setVar('id',$id);
+		}
+	
+	
+		if(isset($foto) && JFolder::exists($foto['tmp_name'])){
+			$fileName = $foto['name'];
+			$uploadedFileNameParts = explode('.',$fileName);
+			$uploadedFileExtension = array_pop($uploadedFileNameParts);
+				
+			$fileTemp = $foto['tmp_name'];
+			$newfile = $uploadPath . $id . '.' . $uploadedFileExtension;
+				
+			if(JFolder::exists($newfile)){
+				JFile::delete($newfile);
+			}
+				
+			if(!JFile::upload($fileTemp, $newfile)){
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			}
+			else{
+				$query->update($db->quoteName('#__angelgirls_modelo'))
+				->set(array($db->quoteName('nome_foto') . ' = ' . $db->quote($id.'.'.$uploadedFileExtension)))
+				->where(array($db->quoteName('id') . ' = '.$id));
+				$db->setQuery($query);
+				$db->execute();
+			}
+		}
+		if(!$erro){
+			JFactory::getApplication()->enqueueMessage('Modelo salvo com sucesso');
+		}
+	}
+	
+	
+	public function saveModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user))	die('Restricted access');
+	
+		$this->saveModeloDB();
+		$this->listModelo();
+	}
+	
+	
+	public function listModelo(){
+		$user =& JFactory::getUser();
+		if(!isset($user))	die('Restricted access');
+	
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+	
+		$query->select($db->quoteName(array('a.id',	'a.id_usuario',	'a.nome_artistico',	'a.descricao', 'a.meta_descricao','a.foto_perfil',
+											'a.foto_inteira','a.altura',	'a.peso','a.busto',	'a.calsa','a.calsado','a.olhos','a.pele',
+											'a.etinia','a.cabelo','a.tamanho_cabelo','a.cor_cabelo','a.outra_cor_cabelo','a.profissao',
+											'a.nascionaldiade',	'a.id_cidade_nasceu','a.data_nascimento','a.site','a.sexo',	'a.cpf',
+											'a.banco','a.agencia','a.conta','a.custo_medio_diaria','a.status_modelo','a.qualificao_equipe',
+											'a.audiencia_gostou','a.audiencia_ngostou',	'a.audiencia_view',	'a.id_cidade','a.status_dado',
+											'a.id_usuario_criador','a.id_usuario_alterador','a.data_criado','a.data_alterado','b.name','c.name',
+											'd.name','d.username','d.email'),
+				array('id','id_usuario','nome_artistico','descricao','meta_descricao','foto_perfil','foto_inteira','altura',
+						'peso',	'busto','calsa','calsado','olhos','pele','etinia','cabelo','tamanho_cabelo','cor_cabelo','outra_cor_cabelo',
+						'profissao','nascionaldiade','id_cidade_nasceu','data_nascimento','site','sexo','cpf','banco','agencia',
+						'conta','custo_medio_diaria','status_modelo','qualificao_equipe','audiencia_gostou','audiencia_ngostou',
+						'audiencia_view','id_cidade','status_dado',	'id_usuario_criador','id_usuario_alterador','data_criado',
+						'data_alterado', 'criador','editor','nome','usuario','email')))
+						->from($db->quoteName('#__angelgirls_modelo','a'))
+						->join('INNER', $db->quoteName('#__users', 'b') . ' ON (' . $db->quoteName('a.id_usuario_criador') . ' = ' . $db->quoteName('b.id') . ')')
+						->join('INNER', $db->quoteName('#__users', 'c') . ' ON (' . $db->quoteName('a.id_usuario_alterador') . ' = ' . $db->quoteName('c.id') . ')')
+						->join('INNER', $db->quoteName('#__users', 'd') . ' ON (' . $db->quoteName('a.id_usuario') . ' = ' . $db->quoteName('c.id') . ')')
+						->where($db->quoteName('status_dado') . ' <> \'REMOVED\' ')
+						->order('data_alterado ASC');
+	
+		$db->setQuery($query);
+	
+		$results = $db->loadObjectList();
+	
+	
+	
+		JRequest::setVar('lista', $results);
+		JRequest::setVar('view', 'modelos');
+		JRequest::setVar('layout', 'default');
+		parent::display();
+	}	
 	
 	
 	

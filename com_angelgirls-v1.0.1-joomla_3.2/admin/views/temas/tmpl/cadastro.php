@@ -70,11 +70,11 @@ JFactory::getDocument()->addScriptDeclaration('
 ?>
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
 	<?php echo JHtml::_('form.token'); ?>
+
     <div class="col100">
-        <fieldset class="adminAgenda"><legend><?php echo JText::_('Agenda'); ?></legend>
+        <fieldset class="adminAgenda"><legend><?php echo JText::_('Tema'); ?></legend>
 			<table class="admintable" align="center">
 				<tr>
-					<td colspan="2">&nbsp;</td>
 					<td colspan="2" rowspan="3" align="center" valign="middle">
 					<a href="JavaSCript: abrirUpload();"></a>
 					<img src="<?php echo($imagem);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="imagem" name="imagem" style="width: 150px; "/>
@@ -133,6 +133,9 @@ JFactory::getDocument()->addScriptDeclaration('
         </fieldset>
     </div>
 
+
+		
+		
     <div class="clr"></div>
 
     <input type="hidden" name="option" value="com_angelgirls" />
