@@ -82,99 +82,17 @@ class AngelgirlsController extends JControllerLegacy {
 		$query = $db->getQuery ( true );
 		
 		$query->select ( $db->quoteName ( array (
-				'a.id',
-				'a.id_usuario',
-				'a.nome_artistico',
-				'a.descricao',
-				'a.meta_descricao',
-				'a.foto_perfil',
-				'a.foto_inteira',
-				'a.altura',
-				'a.peso',
-				'a.busto',
-				'a.calsa',
-				'a.calsado',
-				'a.olhos',
-				'a.pele',
-				'a.etinia',
-				'a.cabelo',
-				'a.tamanho_cabelo',
-				'a.cor_cabelo',
-				'a.outra_cor_cabelo',
-				'a.profissao',
-				'a.nascionaldiade',
-				'a.id_cidade_nasceu',
-				'a.data_nascimento',
-				'a.site',
-				'a.sexo',
-				'a.cpf',
-				'a.banco',
-				'a.agencia',
-				'a.conta',
-				'a.custo_medio_diaria',
-				'a.status_modelo',
-				'a.qualificao_equipe',
-				'a.audiencia_gostou',
-				'a.audiencia_ngostou',
-				'a.audiencia_view',
-				'a.id_cidade',
-				'a.status_dado',
-				'a.id_usuario_criador',
-				'a.id_usuario_alterador',
-				'a.data_criado',
-				'a.data_alterado',
-				'b.name',
-				'c.name',
-				'd.name',
-				'd.username',
-				'd.email' 
+				'a.id','a.id_usuario','a.nome_artistico','a.descricao','a.meta_descricao','a.foto_perfil','a.foto_inteira','a.altura','a.peso','a.busto',
+				'a.calsa','a.calsado','a.olhos','a.pele','a.etinia','a.cabelo','a.tamanho_cabelo','a.cor_cabelo','a.outra_cor_cabelo','a.profissao',
+				'a.nascionaldiade','a.id_cidade_nasceu','a.data_nascimento','a.site','a.sexo','a.cpf','a.banco','a.agencia','a.conta','a.custo_medio_diaria',
+				'a.status_modelo','a.qualificao_equipe','a.audiencia_gostou','a.audiencia_ngostou','a.audiencia_view','a.id_cidade','a.status_dado',
+				'a.id_usuario_criador','a.id_usuario_alterador','a.data_criado','a.data_alterado','b.name','c.name','d.name','d.username','d.email' 
 		), array (
-				'id',
-				'id_usuario',
-				'nome_artistico',
-				'descricao',
-				'meta_descricao',
-				'foto_perfil',
-				'foto_inteira',
-				'altura',
-				'peso',
-				'busto',
-				'calsa',
-				'calsado',
-				'olhos',
-				'pele',
-				'etinia',
-				'cabelo',
-				'tamanho_cabelo',
-				'cor_cabelo',
-				'outra_cor_cabelo',
-				'profissao',
-				'nascionaldiade',
-				'id_cidade_nasceu',
-				'data_nascimento',
-				'site',
-				'sexo',
-				'cpf',
-				'banco',
-				'agencia',
-				'conta',
-				'custo_medio_diaria',
-				'status_modelo',
-				'qualificao_equipe',
-				'audiencia_gostou',
-				'audiencia_ngostou',
-				'audiencia_view',
-				'id_cidade',
-				'status_dado',
-				'id_usuario_criador',
-				'id_usuario_alterador',
-				'data_criado',
-				'data_alterado',
-				'criador',
-				'editor',
-				'name',
-				'username',
-				'email')))
+				'id','id_usuario','nome_artistico','descricao','meta_descricao','foto_perfil','foto_inteira','altura','peso','busto','calsa',
+				'calsado','olhos','pele','etinia','cabelo','tamanho_cabelo','cor_cabelo','outra_cor_cabelo','profissao','nascionaldiade','id_cidade_nasceu',
+				'data_nascimento','site','sexo','cpf','banco','agencia','conta','custo_medio_diaria','status_modelo','qualificao_equipe',
+				'audiencia_gostou','audiencia_ngostou','audiencia_view','id_cidade','status_dado','id_usuario_criador','id_usuario_alterador',
+				'data_criado','data_alterado','criador','editor','name','username','email')))
 			->from ( $db->quoteName ( '#__angelgirls_modelo', 'a' ) )
 			->join ( 'INNER', $db->quoteName ( '#__users', 'b' ) . ' ON (' . $db->quoteName ( 'a.id_usuario_criador' ) . ' = ' . $db->quoteName ( 'b.id' ) . ')' )
 			->join ( 'INNER', $db->quoteName ( '#__users', 'c' ) . ' ON (' . $db->quoteName ( 'a.id_usuario_alterador' ) . ' = ' . $db->quoteName ( 'c.id' ) . ')' )
@@ -279,7 +197,7 @@ class AngelgirlsController extends JControllerLegacy {
 			
 			// Redirect back to the registration form.
 			$message = JText::sprintf ( 'COM_USERS_REGISTRATION_SAVE_FAILED', $model->getError () );
-			$this->setRedirect ( 'index.php?option=com_users&view=registration', $message, 'error' );
+			//$this->setRedirect ( 'index.php?option=com_users&view=registration', $message, 'error' );
 			
 			return false;
 		}
@@ -327,6 +245,7 @@ class AngelgirlsController extends JControllerLegacy {
 		JRequest::setVar ( 'layout', 'cadastro' );
 		parent::display ();
 	}
+	
 	public function applayModelo() {
 		$user = & JFactory::getUser ();
 		if (! isset ( $user ))
@@ -620,121 +539,561 @@ class AngelgirlsController extends JControllerLegacy {
 	 */
 	
 	
+
+	
+	/**
+	 * JSON metodo.
+	 */
+	public function saveEmail(){
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id_usuario', 0, 'POST' );
+		$email = JRequest::getString ( 'email', null, 'POST' );
+		$principal = JRequest::getString ( 'principal', 'N', 'POST' );
+		
+		$db = JFactory::getDbo ();
+
+		// E-mail não pode estar cadastrado em outro usuário.
+		$query = $db->getQuery ( true );
+		$query->select ( $db->quoteName (array('a.id_usuario')))
+						->from ( $db->quoteName ( '#__angelgirls_email', 'a' ))
+						->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
+						->where ( $db->quoteName ( 'email' ) . ' <> ' .  $email);
+		$db->setQuery ( $query );
+		$results = $db->loadObject();
+		if(sizeof($results)>0){
+			$mensagens=$mensagens.'"E-mail já cadastrado em outra conta [ID USUARIO: ' . $results->id_usuario. '].",';
+		}
+		
+		$query = $db->getQuery ( true );
+		$query->select ( $db->quoteName (array('a.email')))
+		->from ( $db->quoteName ( '#__angelgirls_email', 'a' ))
+		->where ( $db->quoteName ( 'id_usuario' ) . ' = ' .  $idUsuario)
+		->where ( $db->quoteName ( 'id' ) . ' = ' .  $id);
+		
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList ();
+		if(sizeof($results)<=0){
+			$mensagens=$mensagens.'"Esse ID de e-mail não pertence ao usuário.",';
+		}
+		
+		if(strpos($email, "@") === false || strpos($email, ".", strpos($email, "@")) === false){
+			$mensagens=$mensagens.'"E-mail não é valido.",';
+		}
+		
+		if($mensagens == ''){
+			if($principal=='S'){
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_email' ) )->set ( array (
+						$db->quoteName ( 'principal' ) . ' = ' . ($db->quote ( 'N' )),
+				) )->where ( array (
+						$db->quoteName ( 'id_usuario' ) . ' = ' . $idUsuario
+				) );
+				$db->setQuery ( $query );
+				 $db->execute();
+			}
+			
+			if ($id != null && $id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_email' ) )
+						->set ( array (
+							$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+							$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+							$db->quoteName ( 'email' ) . ' = ' . ($nome == null ? 'null' : $db->quote ($email)),
+							$db->quoteName ( 'principal' ) . ' = ' . ($principal == null ? 'null' : $db->quote ( $principal ))
+						))
+						->where ( array (
+							$db->quoteName ( 'id' ) . ' = ' . $id
+						));
+					
+				$db->setQuery ( $query );
+					
+				$ok = $db->execute ();
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert ( $db->quoteName ( '#__angelgirls_email' ))
+					->columns(array(
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'email' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ordem' ) . ' = '))
+					->values ( implode ( ',', array (
+						'\'NOVO\'',
+						'NOW()',
+						$user->id,
+						'NOW()',
+						$user->id,
+						($email == null ? 'null' : $db->quote ( $email )),
+						($idUsuario == null ? 'null' : $db->quote ( $idUsuario )),
+						($principal == null ? 'null' : $db->quote ( $principal )),
+						'( SELECT MAX(ordem) + 1 FROM #__angelgirls_email WHERE id_usuario = '.$idUsuario.')'
+					)));
+					
+				$db->setQuery ( $query );
+				$ok = $db->execute ();
+				$id = $db->insertid ();
+				JRequest::setVar ( 'id', $id );
+			}
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();		
+	}
+	
 	public function saveRedeSocial(){
 		$user = & JFactory::getUser ();
 		if (! isset ( $user ))
 			die ( 'Restricted access' );
 		
-		
-	
-	}
-	
-	public function saveEmail(){
+		$ok=null;
+		$mensagens = '';
 		$id = JRequest::getInt ( 'id', 0, 'POST' );
 		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
-		$email = JRequest::getString ( 'email', '', 'POST' );
-		$principal = JRequest::getString ( 'principal', '', 'POST' );
-
+		$redeSocial = JRequest::getString ( 'rede_social', null, 'POST' );
+		$urlUsuario = JRequest::getString ( 'url_usuario', null, 'POST' );
+		$principal = JRequest::getString ( 'principal', 'N', 'POST' );
+		
 		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
 		
-		
-		if($principal=='S'){
-			$query->update ( $db->quoteName ( '#__angelgirls_email' ) )->set ( array (
-					$db->quoteName ( 'principal' ) . ' = ' . ($db->quote ( 'N' )),
-			) )->where ( array (
-					$db->quoteName ( 'id_usuario' ) . ' = ' . $idUsuario
-			) );
-			$db->setQuery ( $query );
-			$db->execute ();
-		}
-		
-		if ($id != null && $id != 0) { // UPDATE
+		if($mensagens == ''){
+			if($principal=='S'){
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_redesocial' ) )->set ( array (
+						$db->quoteName ( 'principal' ) . ' = ' . ($db->quote ( 'N' )),
+				) )->where ( array (
+						$db->quoteName ( 'id_usuario' ) . ' = ' . $idUsuario
+				) );
+				$db->setQuery ( $query );
+				$db->execute();
+			}
 				
-			$query->update ( $db->quoteName ( '#__angelgirls_email' ) )
-					->set ( array (
+			if ($id != null && $id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_redesocial' ) )
+				->set ( array (
 						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
 						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
-						$db->quoteName ( 'email' ) . ' = ' . ($nome == null ? 'null' : $db->quote ($email)),
+						$db->quoteName ( 'rede_social' ) . ' = ' . ($redeSocial == null ? 'null' : $db->quote ($redeSocial)),
+						$db->quoteName ( 'url_usuario' ) . ' = ' . ($urlUsuario == null ? 'null' : $db->quote ($urlUsuario)),
 						$db->quoteName ( 'principal' ) . ' = ' . ($principal == null ? 'null' : $db->quote ( $principal ))
-					))
-					->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $idUsuario
-					));
-				
-			$db->setQuery ( $query );
-				
-			$db->execute ();
-		} else {
-			$query->insert ( $db->quoteName ( '#__angelgirls_email' ))
+				))
+				->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				));
+					
+				$db->setQuery ( $query );
+					
+				$ok = $db->execute ();
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert ( $db->quoteName ( '#__angelgirls_redesocial' ))
 				->columns(array(
-					$db->quoteName ( 'status_dado' ),
-					$db->quoteName ( 'data_criado' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'data_alterado' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
-					$db->quoteName ( 'email' ),
-					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'principal' ),
-					$db->quoteName ( 'ordem' ) . ' = '))
-				->values ( implode ( ',', array (
-					'\'NOVO\'',
-					'NOW()',
-					$user->id,
-					'NOW()',
-					$user->id,
-					($email == null ? 'null' : $db->quote ( $email )),
-					($idUsuario == null ? 'null' : $db->quote ( $idUsuario )),
-					($principal == null ? 'null' : $db->quote ( $principal )),
-					'( SELECT MAX(ordem) + 1 FROM #__angelgirls_email WHERE id_usuario = '.$idUsuario.')'
-				)));
-				
-			$db->setQuery ( $query );
-			$db->execute ();
-			$id = $db->insertid ();
-			JRequest::setVar ( 'id', $id );
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'rede_social' ),
+						$db->quoteName ( 'url_usuario' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ordem' ) . ' = '))
+						->values ( implode ( ',', array (
+								'\'NOVO\'',
+								'NOW()',
+								$user->id,
+								'NOW()',
+								$user->id,
+								($redeSocial == null ? 'null' : $db->quote ( $redeSocial )),
+								($urlUsuario == null ? 'null' : $db->quote ( $urlUsuario )),
+								($idUsuario == null ? 'null' : $db->quote ( $idUsuario )),
+								($principal == null ? 'null' : $db->quote ( $principal )),
+								'( SELECT MAX(ordem) + 1 FROM #__angelgirls_email WHERE id_usuario = '.$idUsuario.')'
+						)));
+							
+						$db->setQuery ( $query );
+						$ok = $db->execute ();
+						$id = $db->insertid ();
+						JRequest::setVar ( 'id', $id );
+			}
 		}
 		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	public function saveEndereco(){
-	
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
+		$endereco = JRequest::getString ( 'endereco', null, 'POST' );
+		$numero = JRequest::getString ( 'numero', null, 'POST' );
+		$bairro = JRequest::getString ( 'bairro', null, 'POST' );
+		$complemento = JRequest::getString ( 'complemento', null, 'POST' );
+		$cep = JRequest::getString ( 'cep', null, 'POST' );
+		$idCidade = JRequest::getInt( 'id_cidade', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		
+		$principal = JRequest::getString ( 'principal', 'N', 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+		if($mensagens == ''){
+			if($principal=='S'){
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_endereco' ) )->set ( array (
+						$db->quoteName ( 'principal' ) . ' = ' . ($db->quote ( 'N' )),
+				) )->where ( array (
+						$db->quoteName ( 'id_usuario' ) . ' = ' . $idUsuario
+				) );
+				$db->setQuery ( $query );
+				$db->execute();
+			}
+		
+			if ($id != null && $id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_endereco' ) )
+				->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+						$db->quoteName ( 'tipo' ) . ' = ' . ($tipo == null ? 'null' : $db->quote ($tipo)),
+						$db->quoteName ( 'endereco' ) . ' = ' . ($endereco == null ? 'null' : $db->quote ($endereco)),
+						$db->quoteName ( 'numero' ) . ' = ' . ($numero == null ? 'null' : $db->quote ($numero)),
+						$db->quoteName ( 'bairro' ) . ' = ' . ($bairro == null ? 'null' : $db->quote ($bairro)),
+						$db->quoteName ( 'complemento' ) . ' = ' . ($complemento == null ? 'null' : $db->quote ($complemento)),
+						$db->quoteName ( 'cep' ) . ' = ' . ($cep == null ? 'null' : $db->quote ($cep)),
+						$db->quoteName ( 'idCidade' ) . ' = ' . ($idCidade == null ? 'null' : $idCidade),
+		
+						$db->quoteName ( 'principal' ) . ' = ' . ($principal == null ? 'null' : $db->quote ( $principal ))
+				))
+				->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				));
+					
+				$db->setQuery ( $query );
+					
+				$ok = $db->execute ();
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert ( $db->quoteName ( '#__angelgirls_endereco' ))
+				->columns(array(
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'tipo' ),
+						$db->quoteName ( 'endereco' ),
+						$db->quoteName ( 'numero' ),
+						$db->quoteName ( 'bairro' ),
+						$db->quoteName ( 'complemento' ),
+						$db->quoteName ( 'cep' ),
+						$db->quoteName ( 'idCidade' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ordem' ) . ' = '))
+					->values ( implode ( ',', array (
+							'\'NOVO\'',
+							'NOW()',
+							$user->id,
+							'NOW()',
+							$user->id,
+							($tipo == null ? 'null' : $db->quote ($tipo)),
+							($endereco == null ? 'null' : $db->quote ($endereco)),
+							($numero == null ? 'null' : $db->quote ($numero)),
+							($bairro == null ? 'null' : $db->quote ($bairro)),
+							($complemento == null ? 'null' : $db->quote ($complemento)),
+							($cep == null ? 'null' : $db->quote ($cep)),
+							($idCidade == null ? 'null' : $idCidade),
+							($idUsuario == null ? 'null' : $db->quote ( $idUsuario )),
+							($principal == null ? 'null' : $db->quote ( $principal )),
+							'( SELECT MAX(ordem) + 1 FROM #__angelgirls_email WHERE id_usuario = '.$idUsuario.')'
+					)));
+						
+				$db->setQuery ( $query );
+				$ok = $db->execute ();
+				$id = $db->insertid ();
+				JRequest::setVar ( 'id', $id );
+			}
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	public function saveTelefone(){
-	
-	}
-	
-	public function removeredeSocial(){
-	
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
+		$operadora = JRequest::getString ( 'operadora', null, 'POST' );
+		$ddi = JRequest::getString ( 'ddi', null, 'POST' );
+		$ddd = JRequest::getString ( 'ddd', null, 'POST' );
+		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		
+		$principal = JRequest::getString ( 'principal', 'N', 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+		if($mensagens == ''){
+			if($principal=='S'){
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_telefone' ) )->set ( array (
+						$db->quoteName ( 'principal' ) . ' = ' . ($db->quote ( 'N' )),
+				) )->where ( array (
+						$db->quoteName ( 'id_usuario' ) . ' = ' . $idUsuario
+				) );
+				$db->setQuery ( $query );
+				$db->execute();
+			}
+		
+			if ($id != null && $id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_telefone' ) )
+				->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+						$db->quoteName ( 'tipo' ) . ' = ' . ($tipo == null ? 'null' : $db->quote ($tipo)),
+						$db->quoteName ( 'operadora' ) . ' = ' . ($operadora == null ? 'null' : $db->quote ($operadora)),
+						//$db->quoteName ( 'ddi' ) . ' = ' . ($ddi == null ? 'null' : $db->quote ($ddi)),
+						$db->quoteName ( 'ddd' ) . ' = ' . ($ddd == null ? 'null' : $db->quote ($ddd)),
+						$db->quoteName ( 'telefone' ) . ' = ' . ($telefone == null ? 'null' : $db->quote ($telefone)),
+						
+						$db->quoteName ( 'principal' ) . ' = ' . ($principal == null ? 'null' : $db->quote ( $principal ))
+				))
+				->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				));
+					
+				$db->setQuery ( $query );
+					
+				$ok = $db->execute ();
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert ( $db->quoteName ( '#__angelgirls_telefone' ))
+				->columns(array(
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'tipo' ),
+						$db->quoteName ( 'operadora' ),
+						//$db->quoteName ( 'ddi' ),
+						$db->quoteName ( 'ddd' ),
+						$db->quoteName ( 'telefone' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ordem' ) . ' = '))
+						->values ( implode ( ',', array (
+								'\'NOVO\'',
+								'NOW()',
+								$user->id,
+								'NOW()',
+								$user->id,
+								($tipo == null ? 'null' : $db->quote ($tipo)),
+								($operadora == null ? 'null' : $db->quote ( $operadora )),
+						//		($ddi == null ? 'null' : $db->quote ( $ddi )),
+								($ddd == null ? 'null' : $db->quote ( $ddd )),
+								($telefone == null ? 'null' : $db->quote ( $telefone )),
+								($idUsuario == null ? 'null' : $db->quote ( $idUsuario )),
+								($principal == null ? 'null' : $db->quote ( $principal )),
+								'( SELECT MAX(ordem) + 1 FROM #__angelgirls_email WHERE id_usuario = '.$idUsuario.')'
+						)));
+					
+				$db->setQuery ( $query );
+				$ok = $db->execute ();
+				$id = $db->insertid ();
+				JRequest::setVar ( 'id', $id );
+			}
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	public function removeEmail(){
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+
+		if($id == 0){
+			$mensagens=$mensagens.'"Esse ID de e-mail não pertence ao usuário.",';
+		}
+		
+
+		
+		if($mensagens == ''){
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+				
+			$query->update ( $db->quoteName ( '#__angelgirls_email' ) )->set ( array (
+					$db->quoteName ( 'status_dado' ) . ' = \'REMOVED\'',
+					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+			->where (array ($db->quoteName ( 'id' ) . ' = ' . $id));
+				
+			$db->setQuery ( $query );
+				
+			$db->execute ();
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
+	}
 	
+	public function removeredeSocial(){
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+		
+		if($id == 0){
+			$mensagens=$mensagens.'"Esse ID de rede social não pertence ao usuário.",';
+		}
+		
+		
+		
+		if($mensagens == ''){
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+		
+			$query->update ( $db->quoteName ( '#__angelgirls_redesocial' ) )->set ( array (
+					$db->quoteName ( 'status_dado' ) . ' = \'REMOVED\'',
+					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+					->where (array ($db->quoteName ( 'id' ) . ' = ' . $id));
+		
+			$db->setQuery ( $query );
+		
+			$db->execute ();
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	public function removeEndereco(){
-	
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+		
+		if($id == 0){
+			$mensagens=$mensagens.'"Esse ID de Endereco não pertence ao usuário.",';
+		}
+		
+		
+		
+		if($mensagens == ''){
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+		
+			$query->update ( $db->quoteName ( '#__angelgirls_endereco' ) )->set ( array (
+					$db->quoteName ( 'status_dado' ) . ' = \'REMOVED\'',
+					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+					->where (array ($db->quoteName ( 'id' ) . ' = ' . $id));
+		
+			$db->setQuery ( $query );
+		
+			$db->execute ();
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	public function removeTelefone(){
-	
-	}
-	
-	public function editRedeSocial(){
-	
-	}
-	
-	public function editEmail(){
-	
-	}
-	
-	public function editEndereco(){
-	
-	}
-	
-	public function editTelefone(){
-	
+		$user = & JFactory::getUser ();
+		if (! isset ( $user ))
+			die ( 'Restricted access' );
+		
+		$ok=null;
+		$mensagens = '';
+		$id = JRequest::getInt ( 'id', 0, 'POST' );
+		
+		$db = JFactory::getDbo ();
+		
+		
+		if($id == 0){
+			$mensagens=$mensagens.'"Esse ID de telefone não pertence ao usuário.",';
+		}
+		
+		
+		
+		if($mensagens == ''){
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+		
+			$query->update ( $db->quoteName ( '#__angelgirls_telefone' ) )->set ( array (
+					$db->quoteName ( 'status_dado' ) . ' = \'REMOVED\'',
+					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+					->where (array ($db->quoteName ( 'id' ) . ' = ' . $id));
+		
+			$db->setQuery ( $query );
+		
+			$db->execute ();
+		}
+		
+		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+		echo "{'ok'='".$ok."','mensagens=[".$mensagens."]'}";
+		JFactory::getApplication()->close(); // or jexit();
 	}
 	
 	/**
