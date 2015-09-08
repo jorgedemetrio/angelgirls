@@ -129,9 +129,13 @@ JFactory::getDocument()->addScriptDeclaration(
 		});
 		
 	    document.formvalidator.setHandler("passverify", function (value) {
-	        return ($("senha").val() == value); 
+	        return ($("password").val() == value); 
 	    });
-		
+	    document.formvalidator.setHandler("emailverify", function (value) {
+	        return ($("email").val() == value); 
+	    });		
+			
+			
 			
 		jQuery(".estado").change(function(){
 			$objeto = jQuery(this);
@@ -178,15 +182,15 @@ JFactory::getDocument()->addScriptDeclaration(
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general','Dados B&aacute;sico'); ?>
 		<legend><?php echo JText::_('Modelo'); ?></legend>
 		<div class="row-fluid">
-			<div class="span9">
-			    <div class="col100">
+			<div class="row">
+			    
 					<table class="admintable" align="center">
 						<tr>
 							<th colspan="2" align="center" class="key"><label for="nome"> <?php echo JText::_('Nome Completo'); ?></label></th>
 							<th colspan="2" align="center" class="key"><label for="nome_artistico"> <?php echo JText::_('Apelido/Nome Artistico'); ?></label></th>
 						</tr>
 						<tr>
-							<td colspan="2" align="center"><input class="text_area required" style="width: 540px;" type="text" name="nome"  id="nome" size="32" maxlength="250" value="<?php echo $this->item->nome;?>" /></td>
+							<td colspan="2" align="center"><input class="text_area required" style="width: 540px;" type="text" name="nome"  id="nome" size="32" maxlength="250" value="<?php echo $this->item->name;?>" /></td>
 							<td colspan="2" align="center"><input class="text_area required" style="width: 540px;" type="text" name="nome_artistico"  id="nome_artistico" size="32" maxlength="150" value="<?php echo $this->item->nome_artistico;?>" /></td>
 						</tr>
 						<tr>
@@ -202,29 +206,39 @@ JFactory::getDocument()->addScriptDeclaration(
 						</tr>
 						<tr>
 							<th align="center" class="key"><label for="usuario"> <?php echo JText::_('Usu&aacute;rio'); ?></label></th>
-							<th align="center" class="key"><label for="senha"> <?php echo JText::_('Senha'); ?></label></th>
-							<th align="center" class="key"><label for="confsenha"> <?php echo JText::_('Confirmar Senha'); ?></label></th>
+							<th align="center" class="key"><label for="password"> <?php echo JText::_('Senha'); ?></label></th>
+							<th align="center" class="key"><label for="password1"> <?php echo JText::_('Confirmar Senha'); ?></label></th>
 							<th align="center" class="key"><label for="email"> <?php echo JText::_('E-mail Principal'); ?></label></th>
 						</tr>
 						<tr>
-							<td align="center"><input class="text_area required validate-username validate-usuariounico" style="width: 270px;" type="text" name="usuario"  id="usuario" size="32" maxlength="25" value="<?php echo $this->item->usuario;?>" /></td>
-							<td align="center"><input class="text_area required validate-password" style="width: 270px;" type="password" name="senha"  id="senha" size="32" maxlength="25" /></td>
-							<td align="center"><input class="text_area required validate-password validate-passverify" style="width: 270px;" type="password" name="confsenha"  id="confsenha" size="32" maxlength="25" /></td>
-							<td align="center"><input class="text_area required validate-email" style="width: 270px;" type="text" name="email"  id="email" size="32" maxlength="250" /></td>
+							<td align="center"><input class="text_area required validate-username validate-usuariounico" style="width: 270px;" type="text" name="usuario"  id="usuario" size="32" maxlength="25" value="<?php echo $this->item->username;?>" /></td>
+							<td align="center"><input class="text_area required validate-password" style="width: 270px;" type="password" name="password"  id="password" size="32" maxlength="25" /></td>
+							<td align="center"><input class="text_area required validate-password validate-passverify" style="width: 270px;" type="password" name="password1"  id="password1" size="32" maxlength="25" /></td>
+							<td align="center"><input class="text_area required validate-email" style="width: 270px;" type="text" name="email"  id="email" size="32" maxlength="250" value="<?php echo $this->item->email;?>"/></td>
 						</tr>
 						<tr>
 							<td colspan="2">&nbsp;</td>
 						</tr>
 						<tr>
+							<th align="center" class="key"><label for="email1"> <?php echo JText::_('Confirmacao e-mail'); ?></label></th>
 							<th align="center" class="key"><label for="data_nascimento"> <?php echo JText::_('Data de Nascimento'); ?></label></th>
 							<th align="center" class="key"><label for="nascionalidade"> <?php echo JText::_('Nascionalidade'); ?></label></th>
 							<th align="center" class="key"><label for="profissao"> <?php echo JText::_('Profiss&atilde;o'); ?></label></th>
-							<th align="center" class="key"><label for="sexo"> <?php echo JText::_('Sexo'); ?></label></th>
+
 						</tr>
 						<tr>
+							<td align="center"><input class="text_area required validate-email  validate-emailverify" style="width: 270px;" type="text" name="email1"  id="email1" size="32" maxlength="250" /></td>
 							<td align="center"><?php echo JHtml::calendar($this->item->data_nascimento, 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="required validate-data"');?></td>
 							<td align="center"><input class="text_area required" style="width: 270px;" type="text" name="nascionalidade"  id="nascionalidade" size="32" maxlength="25" value="<?php echo $this->item->nascionalidade;?>" /></td>
 							<td align="center"><input class="text_area " style="width: 270px;" type="text" name="profissao"  id="profissao" size="32" maxlength="150" value="<?php echo $this->item->profissao;?>" /></td>
+						</tr>
+						<tr>
+							<th align="center" class="key"><label for="sexo"> <?php echo JText::_('Sexo'); ?></label></th>
+							<th align="center" class="key"><label for="estado_nasceu"> <?php echo JText::_('Estado Que Nasceu'); ?></label></th>
+							<th align="center" class="key"><label for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label></th>
+							<th align="center" class="key"><label for="cpf"> <?php echo JText::_('CPF'); ?></label></th>
+						</tr>
+						<tr>
 							<td align="center">
 								<select name="sexo" id="sexo" class="required" style="width: 270px;">
 									<option></option>
@@ -232,13 +246,6 @@ JFactory::getDocument()->addScriptDeclaration(
 									<option value="F"<?php echo($this->item->sexo=="F"?" selected":"");?>>Feminino</option>
 								</select>
 							</td>
-						</tr>
-						<tr>
-							<th align="center" class="key"><label for="estado_nasceu"> <?php echo JText::_('Estado Que Nasceu'); ?></label></th>
-							<th align="center" class="key"><label for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label></th>
-							<th align="center" class="key"><label for="cpf"> <?php echo JText::_('CPF'); ?></label></th>
-						</tr>
-						<tr>
 							<td align="center">
 								<select name="estado_nasceu" id="estado_nasceu" class="required estado" data-carregar="id_cidade_nasceu" style="width: 270px;">
 									<option></option>
@@ -326,15 +333,13 @@ JFactory::getDocument()->addScriptDeclaration(
 				<div class="span3">
 					<?php 
 					//echo JLayoutHelper::render('joomla.edit.global', $this); ?>
-				</div>
-			</div>
+
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'fotos','Fotos'); ?>
 		<legend><?php echo JText::_('Fotos de perfil da Modelo'); ?></legend>
 		<div class="row-fluid">
-			<div class="span9">
-			    <div class="col100">
+
 					<table class="admintable" align="center">
 						<tr>
 							<th align="center" class="key"><label for="foto_perfil"> <?php echo JText::_('Foto rosto'); ?></label></th>
@@ -343,25 +348,21 @@ JFactory::getDocument()->addScriptDeclaration(
 						</tr>
 						<tr>
 							<td align="center" valign="middle">
-							<a href="JavaSCript: abrirUpload();"></a>
-							<img src="<?php echo($imagemRosto);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_perfil" name="ifoto_perfil" style="width: 150px; "/>
-							<input class="text_area" style="width: 250px;" type="file" name="foto_perfil" id="foto_perfil" accept="image/*"/></td>
+								<img src="<?php echo($imagemRosto);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_perfil" name="ifoto_perfil" style="width: 150px; "/>
+								<input class="text_area" style="width: 250px;" type="file" name="foto_perfil" id="foto_perfil" accept="image/*"/></td>
 							<td>&nbsp;</td>
 							<td align="center" valign="middle">
-							<a href="JavaSCript: abrirUpload();"></a>
-							<img src="<?php echo($imagemCorpo);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira" name="ifoto_inteira" style="width: 150px; "/>
-							<input class="text_area" style="width: 250px;" type="file" name="foto_inteira" id="foto_inteira" accept="image/*"/></td>
+								<img src="<?php echo($imagemCorpo);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira" name="ifoto_inteira" style="width: 150px; "/>
+								<input class="text_area" style="width: 250px;" type="file" name="foto_inteira" id="foto_inteira" accept="image/*"/></td>
 						</tr>
 					</table>
-			    </div>
-			</div>
+
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'caracteristicas','Caracteristicas F&iacute;sicas'); ?>
 		<legend><?php echo JText::_('Caracteristicas F&iacute;sicas da Modelo'); ?></legend>
 		<div class="row-fluid">
-			<div class="span9">
-			    <div class="col100">
+
 					<table class="admintable" align="center">
 						<tr>
 							<th align="center" class="key"><label for="altura"> <?php echo JText::_('Altura'); ?></label></th>
@@ -481,8 +482,7 @@ JFactory::getDocument()->addScriptDeclaration(
 				<div class="span3">
 					<?php 
 					//echo JLayoutHelper::render('joomla.edit.global', $this); ?>
-				</div>
-			</div>
+
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
 		<?php if( isset($this->item) && isset($this->item->id)){ ?>
