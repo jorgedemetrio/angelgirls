@@ -12,7 +12,7 @@ CREATE TABLE `#__angelgirls_agenda` (
 		`titulo` VARCHAR(100) NOT NULL, 
 		
 		`tipo` VARCHAR(20) DEFAULT 'SESSAO', 
-		
+		`nome_foto` varchar(100)  NULL,
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL ,
 
@@ -115,7 +115,9 @@ CREATE TABLE `#__angelgirls_locacao` (
 		`bairro` VARCHAR(100),
 		`complemento` VARCHAR(100),
 		`cep` VARCHAR(15),
-		`id_cidade` INT NOT NULL, 
+		`id_cidade` INT NOT NULL,
+		
+		`nome_foto` varchar(100)  NULL,
 		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
@@ -184,8 +186,10 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`id_usuario` INT NOT NULL , 
 		`nome_artistico` VARCHAR(150) NOT NULL, 
 		`descricao` TEXT NULL , 
-		`meta_descricao` VARCHAR(250) NOT NULL , 
-		`possui_foto_perfil` ENUM('S','N') NOT NULL , 
+		`meta_descricao` VARCHAR(250) NOT NULL ,
+		
+		`nome_foto` varchar(100)  NULL,
+		
 		`data_nascimento` DATE,
 		`sexo` ENUM('M','F') NOT NULL,
 		`nascionaldiade` VARCHAR(25),
@@ -303,7 +307,7 @@ CREATE TABLE `#__angelgirls_locacao` (
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
 		
-		`possui_foto` ENUM('S','N') NOT NULL , 
+		`nome_foto` varchar(100)  NULL, 
 		
 		`site` VARCHAR(250),
 		`ddd_telefone` VARCHAR(3),
@@ -330,7 +334,7 @@ CREATE TABLE `#__angelgirls_tema` (
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
 		
-		`nome_foto` varchar(100) NOT NULL,
+		`nome_foto` varchar(100)  NULL,
 		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
@@ -347,6 +351,8 @@ CREATE TABLE `#__angelgirls_tema` (
 CREATE TABLE `#__angelgirls_sessao` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`titulo` VARCHAR(250) NOT NULL UNIQUE, 
+		
+		`nome_foto` varchar(100)  NULL,
 		
 		`executada` DATE NOT NULL, 
 		`descricao` TEXT NULL , 
@@ -456,7 +462,8 @@ CREATE TABLE `#__angelgirls_promocao` (
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`titulo` VARCHAR(250) NOT NULL UNIQUE, 
 		
-
+		`nome_foto` varchar(100)  NULL,
+		
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
 		

@@ -1,0 +1,25 @@
+.itemCarroussel p{
+	text-overflow: clip ellipsis
+	text-overflow: "…" "…"
+	text-overflow: inherit
+	width: 100%; 
+	white-space: nowrap;
+	overflow: hidden;
+	direction: ltr;
+}
+
+.carousel-caption p{
+	text-overflow: clip ellipsis
+	text-overflow: "…" "…"
+	text-overflow: inherit
+	width: 100%; 
+	white-space: nowrap;
+	overflow: hidden;
+	direction: ltr;	
+}
+
+@media (max-width:730px){
+	#itensLateraisCarrossel{
+		display: none;
+	}
+}

@@ -104,15 +104,58 @@ class AngelgirlsController extends JControllerLegacy {
 		$objeto = $db->loadObject ();
 		JRequest::setVar ( 'modelo', $objeto );
 		
+		JRequest::setVar ('id_usuario', $objeto->id_usuario);
+		
+		$this->listaEmails();
+		
+		$this->listaEnderecos();
+		
+		$this->listaTelefones();
+		
+		$this->listaRedeSocial();
+		
+		
+		$this->addModelo();
+	}
+	
+	public function listaRedeSocialHTML(){
+		$this->listaRedeSocial();
+		require_once 'views/modelos/tmpl/tableRedeSociais.php';
+		exit();
+	}
+	
+	public function listaEnderecosHTML(){
+		$this->listaEnderecos();
+		require_once 'views/modelos/tmpl/tableEnderecos.php';
+		exit();
+	}
+	
+	public function listaTelefonesHTML(){
+		$this->listaTelefones();
+		require_once 'views/modelos/tmpl/tableTelefones.php';
+		exit();
+	}
+	
+	public function listaEmailsHTML(){
+		$this->listaEmails();
+		require_once 'views/modelos/tmpl/tableEmails.php';
+		exit();
+	}
+	
+	public function listaRedeSocial(){
+		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
-		$query->select ( $db->quoteName ( array ('id','principal','email','id_usuario','ordem')))
-			->from ('#__angelgirls_email')
-			->where ( $db->quoteName ( 'id_usuario' ) . ' = ' . $objeto->id_usuario )
-			->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' );
+		$query->select ( $db->quoteName ( array ('id','principal','rede_social','url_usuario','id_usuario','ordem')))
+		->from ('#__angelgirls_redesocial')
+		->where ( $db->quoteName ( 'id_usuario' ) . ' = ' . JRequest::getVar('id_usuario') )
+		->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' );
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
-		JRequest::setVar ( 'emails', $result );
-		
+		JRequest::setVar ( 'redesSociais', $result );
+	}
+	
+	public function listaEnderecos(){
+		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
 		$query->select ( $db->quoteName ( array ('id','principal','endereco','numero','bairro','complemento','cep','id_cidade','id_usuario','ordem')))
 		->from ('#__angelgirls_endereco')
@@ -121,7 +164,10 @@ class AngelgirlsController extends JControllerLegacy {
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'telefones', $result );
-		
+	}
+	
+	public function listaTelefones(){
+		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
 		$query->select ( $db->quoteName ( array ('id','principal','operadora','ddi','ddd','telefone','id_usuario','ordem')))
 		->from ('#__angelgirls_telefone')
@@ -130,18 +176,18 @@ class AngelgirlsController extends JControllerLegacy {
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'telefones', $result );
-		
+	}
+	
+	public function listaEmails(){
+		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
-		$query->select ( $db->quoteName ( array ('id','principal','rede_social','url_usuario','id_usuario','ordem')))
-		->from ('#__angelgirls_redesocial')
-		->where ( $db->quoteName ( 'id_usuario' ) . ' = ' . $objeto->id_usuario )
-		->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' );
+		$query->select ( $db->quoteName ( array ('id','principal','email','id_usuario','ordem')))
+			->from ('#__angelgirls_email')
+			->where ( $db->quoteName ( 'id_usuario' ) . ' = ' . $objeto->id_usuario )
+			->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' );
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
-		JRequest::setVar ( 'redesSociais', $result );
-		
-		
-		$this->addModelo ();
+		JRequest::setVar ( 'emails', $result );
 	}
 	
 	/**
@@ -660,7 +706,7 @@ class AngelgirlsController extends JControllerLegacy {
 		$ok=null;
 		$mensagens = '';
 		$id = JRequest::getInt ( 'id', 0, 'POST' );
-		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id_usuario', 0, 'POST' );
 		$redeSocial = JRequest::getString ( 'rede_social', null, 'POST' );
 		$urlUsuario = JRequest::getString ( 'url_usuario', null, 'POST' );
 		$principal = JRequest::getString ( 'principal', 'N', 'POST' );
@@ -744,7 +790,7 @@ class AngelgirlsController extends JControllerLegacy {
 		$ok=null;
 		$mensagens = '';
 		$id = JRequest::getInt ( 'id', 0, 'POST' );
-		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id_usuario', 0, 'POST' );
 		$endereco = JRequest::getString ( 'endereco', null, 'POST' );
 		$numero = JRequest::getString ( 'numero', null, 'POST' );
 		$bairro = JRequest::getString ( 'bairro', null, 'POST' );
@@ -850,7 +896,7 @@ class AngelgirlsController extends JControllerLegacy {
 		$ok=null;
 		$mensagens = '';
 		$id = JRequest::getInt ( 'id', 0, 'POST' );
-		$idUsuario = JRequest::getInt ( 'id', 0, 'POST' );
+		$idUsuario = JRequest::getInt ( 'id_usuario', 0, 'POST' );
 		$operadora = JRequest::getString ( 'operadora', null, 'POST' );
 		$ddi = JRequest::getString ( 'ddi', null, 'POST' );
 		$ddd = JRequest::getString ( 'ddd', null, 'POST' );
@@ -979,7 +1025,7 @@ class AngelgirlsController extends JControllerLegacy {
 		JFactory::getApplication()->close(); // or jexit();
 	}
 	
-	public function removeredeSocial(){
+	public function removeRedeSocial(){
 		$user = & JFactory::getUser ();
 		if (! isset ( $user ))
 			die ( 'Restricted access' );

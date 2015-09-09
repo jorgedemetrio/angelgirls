@@ -36,6 +36,7 @@ jimport('joomla.application.component.controller');
 $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css');
 $document->addScript('components/com_angelgirls/assets/js/angelgirls.js');
+$document->addScript('components/com_angelgirls/assets/js/jquery.mask.min.js');
 
 
 
