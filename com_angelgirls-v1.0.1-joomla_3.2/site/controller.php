@@ -80,7 +80,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select("`id` ,`title` as nome,`metadesc` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+		$query->select("`id` ,`title` as nome,`introtext` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
 				->from ('#__content')
 				->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
 				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
@@ -91,7 +91,7 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'conteudos', $result );
 		
 		$query = $db->getQuery ( true );
-		$query->select("`id` ,`title` as nome,`metadesc` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+		$query->select("`id` ,`title` as nome,`introtext` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
 		->from ('#__content')
 		->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
 		->where ( $db->quoteName ( 'state' ) . ' = 1  ' )

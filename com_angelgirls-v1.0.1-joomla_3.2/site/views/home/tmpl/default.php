@@ -44,28 +44,28 @@ $sessoes = JRequest::getVar('sessoes');
 			</ol>
 			<!-- Wrapper for slides -->
 			<div class="carousel-inner" role="listbox">
-				<div class="item item-carrossel active" data-id="1">
+				<div class="item item-carrossel active" data-id-ver="2">
 					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($modelo->foto);?>" alt="<?php echo($modelo->nome);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':'.$modelo->alias,false)); ?>"><?php echo($modelo->nome);?></a></h3>
 						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':'.$modelo->alias,false)); ?>"><?php echo($modelo->descricao);?></a></p>
 					</div>
 				</div>
-				<div class="item item-carrossel" data-id="2">
+				<div class="item item-carrossel" data-id-ver="3">
 					<img src="<?php echo(JURI::base( true ));?>/images/sessoes/<?php echo($sessao->foto);?>" alt="<?php echo($sessao->nome);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$sessao->id.':'.$sessao->alias,false)); ?>"><?php echo($sessao->nome);?></a></h3>
 						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$sessao->id.':'.$sessao->alias,false)); ?>"><?php echo($sessao->descricao);?></a></p>
 					</div>
 				</div>
-				<div class="item item-carrossel" data-id="3">
+				<div class="item item-carrossel" data-id-ver="4">
 					<img src="<?php echo(JURI::base( true ));?>/components/com_angelgirls/cadastrese.jpg" alt="Cadastre-se" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroModeloid=0:Cadastre-se e seja uma modelo da Angel',false)); ?>">Seja uma Angel </a></h3>
 						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroModeloid=0:Cadastre-se e seja uma modelo da Angel',false)); ?>">Cadastre-se e veja como ser uma modelo da Angel.</a></p>
 					</div>
 				</div>
-				<div class="item item-carrossel" data-id="4">
+				<div class="item item-carrossel" data-id-ver="1">
 					<img src="<?php echo(JURI::base( true ));?>/images/promocoes/<?php echo($promocao->foto);?>" alt="<?php echo($promocao->nome);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$promocao->id.':'.$promocao->alias,false)); ?>"><?php echo($promocao->nome);?></a></h3>
@@ -108,22 +108,23 @@ $sessoes = JRequest::getVar('sessoes');
 <!-- <span class="badge">42</span> -->
 <div class="row bloco-conteudo">
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+		<h2>Cadastre-se</h2>
 		<div class="thumbnail">
-			<h4 class="list-group-item-heading">Quer ter acesso a todo conte&uacute;do exclusivo?</h4>
+			<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroVisitante&id=:Cadastro de Visitante',false));?>">Quer ter acesso a todo conte&uacute;do exclusivo?</a></h4>
 			<p>Cadastre-se para como visitante, e veja todo o conte&uacute;do exclusivo de visitante.</p>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroVisitante&id=:Cadastro de Visitante',false));?>" class="btn btn-primary" role="button">Cadastre-se : Visitante
 			<span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span>
 			</a></p>
 		</div>
 		<div class="thumbnail">
-			<h4 class="list-group-item-heading">Quero ser um fotografo da Angel</h4>
+			<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroFotografo&id=:Cadastro de Fotografos',false));?>">Quero ser um fotografo da Angel</a></h4>
 			<p>Cadastre-se para se afiliar, e poder ser um fotografo, o cadatro depende de aprova&ccedil;&atilde;o.</p>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroFotografo&id=:Cadastro de Fotografos',false));?>" class="btn btn-primary" role="button">Cadastre-se : Fotografo
 			<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
 			</a></p>
 		</div>
 		<div class="thumbnail">
-			<h4 class="list-group-item-heading">Como fa&ccedil;o para ser modelo?</h4>
+			<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroModelo&id=:Cadastro de Fotografos',false));?>">Como fa&ccedil;o para ser modelo?</a></h4>
 			<p>Veja os beneficios de ser uma modelo <attr>Angel Girls</attr>.</p>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroModelo&id=:Cadastro de Fotografos',false));?>" class="btn btn-primary" role="button">Cadastre-se : Modelo
 			<span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
@@ -132,18 +133,19 @@ $sessoes = JRequest::getVar('sessoes');
 		</div>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+	<h2>Ultimas Sess&otilde;es</h2>
 	<?php
 	foreach($sessoes as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 				<div class="caption">
 				<h4 class="list-group-item-heading"><?php echo($conteudo->nome);?></h4>
 				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
+				<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
 	<?php
@@ -151,38 +153,40 @@ $sessoes = JRequest::getVar('sessoes');
 	?>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+	<h2>Ultimas N&oacute;ticias</h2>
 	<?php
 	foreach($conteudos as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
-				<div class="caption">
-				<h4 class="list-group-item-heading"><?php echo($conteudo->nome);?></h4>
+			<div class="caption">
+				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
 				<p><?php echo($conteudo->descricao);?>asdasd</p>
 				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
-				</div>
+			</div>
 		</div>
 	<?php
 	} 
 	?>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+	<h2>Making Ofs</h2>
 	<?php
 	foreach($makingofs as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
-				<div class="caption">
-				<h4 class="list-group-item-heading"><?php echo($conteudo->nome);?></h4>
+			<div class="caption">
+				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
 				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
-				</div>
+				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
+			</div>
 		</div>
 	<?php
 	} 
@@ -210,7 +214,7 @@ jQuery(document).ready(function(){
     	$todos.removeClass('alert-info');
     	$todos.addClass('alert-success');
 
-    	$objeto = jQuery('#itemCarrossel'+ jQuery('div.item.active').attr('data-id'));
+    	$objeto = jQuery('#itemCarrossel'+ jQuery('div.item.active').attr('data-id-ver'));
     	$objeto.removeClass('alert-success');
     	$objeto.addClass('alert-info');
     });
