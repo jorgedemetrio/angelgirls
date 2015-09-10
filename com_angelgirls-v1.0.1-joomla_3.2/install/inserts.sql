@@ -1,3 +1,15 @@
+INSERT INTO `#__cidade`
+(`nome`,`uf`)
+VALUES
+('São Paulo','SP'),
+('São Bernado do Campo','SP'),
+('Maua','SP'),
+('Campinas','SP'),
+('Santo Andre','SP'),
+('São Caetano','SP'),
+('Rio de Janeiro','RJ');
+
+
 
 INSERT INTO `#__angelgirls_modelo`
 (`id_usuario`,`nome_artistico`,`descricao`,`meta_descricao`,`foto_perfil`,`foto_inteira`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,

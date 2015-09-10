@@ -34,7 +34,68 @@ class AngelgirlsController extends JControllerLegacy{
 		// Set the submenu
 		AngelgirlsHelper::addSubmenu ( $view );
 	}
+
+	/**
+	 * 
+	 */
+	public function cadastroVisitante(){
+		$this->carregarCadastro();
+		
+		JRequest::setVar ( 'view', 'cadastro' );
+		JRequest::setVar ( 'layout', 'visitante' );
+		parent::display (true, false);
+	}
 	
+	/**
+	 * 
+	 */
+	public function cadastroFotografo(){
+		$this->carregarCadastro();
+		
+		JRequest::setVar ( 'view', 'cadastro' );
+		JRequest::setVar ( 'layout', 'fotografo' );
+		parent::display (true, false);
+	}
+	
+	/**
+	 * 
+	 */
+	public function cadastroModelo(){
+		$this->carregarCadastro();
+		
+		JRequest::setVar ( 'view', 'cadastro' );
+		JRequest::setVar ( 'layout', 'modelo' );
+		parent::display (true, false);
+	}
+	
+	
+	public function carregarCadastro(){
+		
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		
+		$query->select ( $db->quoteName ( array (
+				'a.id',
+				'a.nome',
+				'a.uf'
+		) ) )->from ( $db->quoteName ( '#__cidade', 'a' ) )->order ( 'a.nome, a.uf' );
+		
+		$db->setQuery ( $query );
+		
+		$result = $db->loadObjectList ();
+		JRequest::setVar ( 'cidades', $result );
+		
+		$query = $db->getQuery ( true );
+		$query->select ( $db->quoteName ( array (
+				'a.uf'
+		) ) )->from ( $db->quoteName ( '#__cidade', 'a' ) )->group ( $db->quoteName ( array (
+				'a.uf'
+		) ) )->order ( 'a.uf' );
+		$db->setQuery ( $query );
+		
+		$result = $db->loadObjectList ();
+		JRequest::setVar ( 'ufs', $result );
+	}
 
 	public function homepage(){
 		$user = JFactory::getUser();
@@ -60,6 +121,8 @@ class AngelgirlsController extends JControllerLegacy{
 				->from ('#__angelgirls_modelo')
 				->where ( $db->quoteName ( 'status_modelo' ) . ' = \'ATIVA\' ' )
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
+				->where ( $db->quoteName ( 'foto_perfil' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'foto_perfil' ) . " <> '' " )
 				->order('data_criado DESC ')
 				->setLimit(1);
 		$db->setQuery ( $query );
@@ -72,6 +135,8 @@ class AngelgirlsController extends JControllerLegacy{
 				array('id','nome','descricao','foto', 'alias')))
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
 				->order('data_criado DESC ')
 				->setLimit(1);
 		$db->setQuery ( $query );
@@ -85,8 +150,10 @@ class AngelgirlsController extends JControllerLegacy{
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
 				->where ( $db->quoteName ( 'id' ) . ' <> ' . $result->id )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
 				->order('data_criado DESC ')
-				->setLimit(3);
+				->setLimit(4);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'sessoes', $result );
@@ -123,7 +190,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
 		->where ( $db->quoteName ( 'catid' ) . ' = 8  ' )
 		->order('created DESC ')
-		->setLimit(3);
+		->setLimit(4);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'makingofs', $result );
@@ -134,6 +201,8 @@ class AngelgirlsController extends JControllerLegacy{
 				array('id','nome','descricao','foto', 'alias')))
 				->from ('#__angelgirls_promocao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' = \'ATIVO\' ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
 				->order('data_criado DESC ')
 				->setLimit(1);
 		$db->setQuery ( $query );
@@ -146,7 +215,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'view', 'home' );
 		JRequest::setVar ( 'layout', 'default' );
-		parent::display (true);
+		parent::display (true, false);
 	}
 }
 ?>

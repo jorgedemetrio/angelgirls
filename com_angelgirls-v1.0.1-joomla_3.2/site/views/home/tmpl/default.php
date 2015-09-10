@@ -42,7 +42,7 @@ $fotos = JRequest::getVar('fotos');
 	<div class="col col-xs-12 col-sm-12 col-md-8 col-lg-9" style="height: 450px; padding: 0px; margin: 0px;">
 		<div id="displayCarrossel" class="carousel slide" data-ride="carousel" style="height: 450px;">
 			<!-- Indicators -->
-			<ol class="carousel-indicators" style="width: 150px">
+			<ol class="carousel-indicators" style="width: 100px; height: 100px;">
 				<li data-target="#displayCarrossel" data-slide-to="0" class="active"></li>
 				<li data-target="#displayCarrossel" data-slide-to="1"></li>
 				<li data-target="#displayCarrossel" data-slide-to="2"></li>
@@ -115,10 +115,12 @@ $fotos = JRequest::getVar('fotos');
 <div class="row bloco-conteudo">
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
 		<div class="module">
+			<div class="well">
 		<?php 
 			$module = JModuleHelper::getModule( 'login' );
 			echo JModuleHelper::renderModule( $module );
 			?>
+			</div>
 		</div>
 	
 		<h2>Ultimas Fotos</h2>
@@ -132,16 +134,15 @@ $fotos = JRequest::getVar('fotos');
 					<?php 
 					}?>
 					<div class="caption">
-					<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
-					<p><?php echo($conteudo->descricao);?></p>
+					<h4 class="list-group-item-heading"> <a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
 					<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
 							data-colorscheme='dark'
 							data-width="100" 
 							data-layout="button" 
 							data-action="like" 
-							data-show-faces="false" 
-							data-share="false"></div>
-					<a href="<?php echo($url );?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
+							data-show-faces="false"  class="margin-right:10px"
+							data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+					<p><a href="<?php echo($url );?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
 					</div>
 			</div>
 		<?php
@@ -159,7 +160,7 @@ $fotos = JRequest::getVar('fotos');
 			<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroFotografo&id=:Cadastro de Fotografos',false));?>">Quero ser um fotografo da Angel</a></h4>
 			<p>Cadastre-se para se afiliar, e poder ser um fotografo, o cadatro depende de aprova&ccedil;&atilde;o.</p>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroFotografo&id=:Cadastro de Fotografos',false));?>" class="btn btn-primary" role="button">Cadastre-se : Fotografo
-			<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+			<span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
 			</a></p>
 		</div>
 		<div class="thumbnail">
@@ -185,14 +186,14 @@ $fotos = JRequest::getVar('fotos');
 				}?>
 				<div class="caption">
 				<h4 class="list-group-item-heading"><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
-				<p><?php echo($conteudo->descricao);?></p>
 				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
 					data-colorscheme='dark'
 					data-width="100" 
 					data-layout="button" 
 					data-action="like" 
-					data-show-faces="false" 
-					data-share="false"></div><a href="<?php echo($url);?>" class="btn btn-primary" role="button">Ver foto: <?php echo($conteudo->nome);?></a></p>
+					data-show-faces="false"  class="margin-right:10px"
+					data-share="false"></div>&nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><a href="<?php echo($url);?>" class="btn btn-primary" role="button">Ver foto: <?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
 	<?php
@@ -200,15 +201,9 @@ $fotos = JRequest::getVar('fotos');
 	?>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
-	<div class="thumbnail">
-		<!-- BANNER -->
-		<?php 
-$module = JModuleHelper::getModule('banner_home');
-echo JModuleHelper::renderModule($module);		
-		?>
-	</div>
 	<h2>Ultimas N&oacute;ticias</h2>
 	<?php
+	$couter =0;
 	foreach($conteudos as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
@@ -219,17 +214,26 @@ echo JModuleHelper::renderModule($module);
 				}?>
 			<div class="caption">
 				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><?php echo($conteudo->descricao);?></p>
-				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
+				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"  
 					data-colorscheme='dark'
 					data-width="100" 
 					data-layout="button" 
 					data-action="like" 
-					data-show-faces="false" 
-					data-share="false"></div><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
+					data-show-faces="false" class="margin-right:10px"
+					data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
 			</div>
 		</div>
 	<?php
+		//BANNER
+		if($couter++==1){
+			$module = JModuleHelper::getModule('banner_home_cubo');
+			if(isset($module)){
+				echo '<div class="thumbnail">'; 
+				echo JModuleHelper::renderModule($module);
+				echo '</div>';
+			}
+ 		}
 	} 
 	?>
 	</div>
@@ -246,14 +250,14 @@ echo JModuleHelper::renderModule($module);
 				}?>
 			<div class="caption">
 				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><?php echo($conteudo->descricao);?></p>
 				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"  
 					data-colorscheme='dark'
 					data-width="100" 
 					data-layout="button" 
 					data-action="like" 
-					data-show-faces="false" 
-					data-share="false"></div><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
+					data-show-faces="false" class="margin-right:10px"
+					data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
         			
         			
 			</div>

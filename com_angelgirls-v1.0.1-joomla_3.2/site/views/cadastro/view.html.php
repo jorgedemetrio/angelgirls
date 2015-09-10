@@ -15,26 +15,26 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 /**
- * Temas View
+ * Modelos View
  */
-class AngelgirlsViewhome extends JViewLegacy
+class AngelgirlsViewcadastro extends JViewLegacy
 {
 	/**
-	 * Temas view display method
+	 * Modelos view display method
 	 * @return void
 	 */
 	function display($tpl = null) 
 	{
 
+		// Set the toolbar
+		$this->addToolBar();
+		
+		// Show sidebar
+		$this->sidebar = JHtmlSidebar::render();
 
 		// Set the document
 		$this->setDocument();
 		
-		// Set the toolbar
-		$this->addToolBar();
-
-		
-
 		// Display the template
 		parent::display($tpl);
 	}
@@ -42,10 +42,19 @@ class AngelgirlsViewhome extends JViewLegacy
 	/**
 	 * Setting the toolbar
 	 */
-	protected function addToolBar() 
-	{
-			
+	protected function addToolBar() {
+		
+		$app = JFactory::getApplication();
+		$document = JFactory::getDocument();
+		$pathway = $app->getPathway();
 
+		$document->setMetadata('APPLICATION-NAME','Angel Girls');
+
+		$pathway->addItem("Cadastro de " . JRequest::getVar('layout'), '');
+		$document->setTitle("Angel Girls - Cadastro de " . JRequest::getVar('layout') . 's' );
+		$document->setDescription("Cadastro de " . JRequest::getVar('layout') . " para ter acessos exclusivo no site da Angel Girls." . 
+				" Angel Girls as modelos mais lindas do Brasil.");
+		$document->setMetadata('Keywords','register, cadastro, registrar, sessao de foto, sessao, photoset, photo set, photo shot,fotografia,'. JRequest::getVar('layout') );
 	}
 
 	/**
@@ -57,7 +66,7 @@ class AngelgirlsViewhome extends JViewLegacy
 	protected function setDocument() 
 	{
 		$document = JFactory::getDocument();
-	//	$document->setTitle(JText::_('Angelgirls Manager - Administrator'));
+		//$document->setTitle(JText::_('Angelgirls Manager - Administrator'));
 	}
 }
 ?>
