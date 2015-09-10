@@ -3,6 +3,10 @@
 // Check to ensure this file is included in Joomla!
 defined ( '_JEXEC' ) or die ( 'Restricted access' );
 
+include_once JPATH_BASE .DS.'components/com_content/models/article.php';
+require_once JPATH_BASE .DS.'components/com_content/helpers/route.php';
+require_once JPATH_BASE .DS.'components/com_content/helpers/query.php';
+
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=homepage&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
@@ -158,14 +162,15 @@ $sessoes = JRequest::getVar('sessoes');
 	foreach($conteudos as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
+				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $article->catid, $article->language));
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 			<div class="caption">
 				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
 				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
+				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
 			</div>
 		</div>
 	<?php
@@ -178,14 +183,15 @@ $sessoes = JRequest::getVar('sessoes');
 	foreach($makingofs as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
+				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $article->catid, $article->language));
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 			<div class="caption">
 				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
 				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
+				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
 			</div>
 		</div>
 	<?php
