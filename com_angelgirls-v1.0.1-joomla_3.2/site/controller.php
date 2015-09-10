@@ -37,18 +37,31 @@ class AngelgirlsController extends JControllerLegacy{
 	
 
 	public function homepage(){
+		$user = JFactory::getUser();
+		if (! isset ( $user ) || ! JSession::checkToken ( 'post' )){
+			$this->nologado();
+		}
+		else{
+			$this->logado();
+		}
+	}
+	
+	public function logado(){
 		
+	}
+	
+	public function nologado(){
 		//Nova modelo
 		$db = JFactory::getDbo ();
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'), 
-									  array('id','nome','descricao','foto', 'alias')))
-		->from ('#__angelgirls_modelo')
-		->where ( $db->quoteName ( 'status_modelo' ) . ' = \'ATIVA\' ' )
-		->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
-		->order('data_criado DESC ')
-		->setLimit(1);
+		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
+				array('id','nome','descricao','foto', 'alias')))
+				->from ('#__angelgirls_modelo')
+				->where ( $db->quoteName ( 'status_modelo' ) . ' = \'ATIVA\' ' )
+				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
+				->order('data_criado DESC ')
+				->setLimit(1);
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		JRequest::setVar ( 'modelo', $result );
@@ -56,7 +69,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
-									  array('id','nome','descricao','foto', 'alias')))
+				array('id','nome','descricao','foto', 'alias')))
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
 				->order('data_criado DESC ')
@@ -80,12 +93,25 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
+		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias ")
+		->from ('#__angelgirls_foto_sessao')
+		->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
+		->order('data_criado DESC ')
+		->setLimit(2);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'fotos', $result );
+		
+		
+		
+		
+		$query = $db->getQuery ( true );
 		$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias as slug, catid, language,  MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
-				->from ('#__content')
-				->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
-				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
-				->order('created DESC ')
-				->setLimit(3);
+		->from ('#__content')
+		->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
+		->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+		->order('created DESC ')
+		->setLimit(3);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'conteudos', $result );
@@ -105,7 +131,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
-									  array('id','nome','descricao','foto', 'alias')))
+				array('id','nome','descricao','foto', 'alias')))
 				->from ('#__angelgirls_promocao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' = \'ATIVO\' ' )
 				->order('data_criado DESC ')
@@ -113,10 +139,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		JRequest::setVar ( 'promocao', $result );
-
 		
 		
-
+		
+		
 		
 		JRequest::setVar ( 'view', 'home' );
 		JRequest::setVar ( 'layout', 'default' );

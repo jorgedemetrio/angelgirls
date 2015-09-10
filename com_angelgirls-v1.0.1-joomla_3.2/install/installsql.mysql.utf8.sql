@@ -55,7 +55,7 @@ CREATE TABLE `#__angelgirls_email` (
 CREATE TABLE `#__angelgirls_redesocial` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`principal` ENUM('S','N') NOT NULL, 
-		`publico` ENUM('S','N','A','E') NOT NULL, --SIM, NÃO, AMIGOS, SEGUIDORES
+		`publico` ENUM('S','N','A','E') NOT NULL,
 		`rede_social` VARCHAR(150) NOT NULL , 
 		`url_usuario` VARCHAR(150) NOT NULL , 
 		`id_usuario` INT NOT NULL ,

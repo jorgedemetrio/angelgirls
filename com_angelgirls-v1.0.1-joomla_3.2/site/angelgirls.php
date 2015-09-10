@@ -25,7 +25,7 @@ $document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.min.css
 JHtml::_('jquery.framework');
 $document->addScript('components/com_angelgirls/assets/js/jquery.mask.min.js');
 $document->addScript('components/com_angelgirls/assets/js/bootstrap.min.js');
-//$document->addScript('components/com_angelgirls/assets/js/npm.js');
+$document->addScript('components/com_angelgirls/assets/js/angelgirls.js');
 
 
 
@@ -41,6 +41,7 @@ $controller = JControllerLegacy::getInstance('Angelgirls');
 // Perform the request task
 $controller->execute(JRequest::getCmd('task'));
 
+echo('<div id="fb-root"></div>');
 
 // Redirect if set by the controller
 $controller->redirect();

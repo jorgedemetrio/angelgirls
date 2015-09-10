@@ -60,6 +60,13 @@ class AngelgirlsViewtemas extends JViewLegacy
 			$document->setTitle($document->getTitle()." - ".JText::_('Tema ') . $tema->nome);
 			$document->setDescription($tema->meta_descricao);
 			$document->setMetadata('Keywords','sessao de foto, sessao, foto, photo, photoset, photo set, photo shot,temas fotografia,'. $tema->nome.','.str_replace(' ',',',$tema->nome) );
+			
+// 			$document->setMetadata('al:ios:url','example://applinks');
+// 			$document->setMetadata('al:ios:app_store_id','12345');
+// 			$document->setMetadata('al:ios:app_name','Example App');
+// 			$document->setMetadata('og:title','example page title');
+// 			$document->setMetadata('og:type','website');
+			
 			$document->setMetadata('author', $tema->criador);
 			$document->setMetadata('reply-to','contato@angelgirls.com.br');
 			//$document->setMetadata('robots', 'index,follow');

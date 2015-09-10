@@ -31,13 +31,13 @@
     
 	<install>
         <sql>
-            <file charset="utf8" driver="mysql">admin/install/installsql.mysql.utf8.sql</file>
+            <file charset="utf8" driver="mysql">install/installsql.mysql.utf8.sql</file>
         </sql>
     </install>
 
     <uninstall>
         <sql>
-            <file charset="utf8" driver="mysql">admin/install/uninstallsql.mysql.utf8.sql</file>
+            <file charset="utf8" driver="mysql">install/uninstallsql.mysql.utf8.sql</file>
         </sql>
     </uninstall>
 	
@@ -45,7 +45,6 @@
 		<menu img="components/com_angelgirls/assets/images/icons/angelgirls-16x16.png">COM_ANGELGIRLS_MENU</menu>
 		<submenu>
 			<!-- Instead of link you can specify individual link attributes -->
-			<menu option="com_angelgirls" view="angelgirls" img="components/com_angelgirls/assets/images/icons/angelgirls-16x16.png">COM_ANGELGIRLS_MENU_ANGELGIRLS</menu>
 			<menu option="com_angelgirls" view="galerias">COM_ANGELGIRLS_MENU_GALERIAS</menu>
 			<menu option="com_angelgirls" view="fotos">COM_ANGELGIRLS_MENU_FOTOS</menu>
 			<menu option="com_angelgirls" view="agendas">COM_ANGELGIRLS_MENU_AGENDAS</menu>
@@ -54,9 +53,6 @@
 			<menu option="com_angelgirls" view="equipes">COM_ANGELGIRLS_MENU_EQUIPES</menu>
 			<menu option="com_angelgirls" view="locacoes">COM_ANGELGIRLS_MENU_LOCACOES</menu>
 			<menu option="com_angelgirls" view="produtos">COM_ANGELGIRLS_MENU_PRODUTOS</menu>
-			<menu option="com_angelgirls" view="enderecos">COM_ANGELGIRLS_MENU_ENDERECOS</menu>
-			<menu option="com_angelgirls" view="telefones">COM_ANGELGIRLS_MENU_TELEFONES</menu>
-			<menu option="com_angelgirls" view="emails">COM_ANGELGIRLS_MENU_EMAILS</menu>
 			<menu option="com_angelgirls" view="dadoscomplementares">COM_ANGELGIRLS_MENU_DADOSCOMPLEMENTARES</menu>
 			<menu option="com_angelgirls" view="temas">COM_ANGELGIRLS_MENU_TEMAS</menu>
 			<menu option="com_angelgirls" view="concursos">COM_ANGELGIRLS_MENU_CONCURSOS</menu>

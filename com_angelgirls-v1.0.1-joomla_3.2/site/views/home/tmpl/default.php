@@ -6,6 +6,7 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 include_once JPATH_BASE .DS.'components/com_content/models/article.php';
 require_once JPATH_BASE .DS.'components/com_content/helpers/route.php';
 require_once JPATH_BASE .DS.'components/com_content/helpers/query.php';
+jimport( 'joomla.application.module.helper' );
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
@@ -26,6 +27,7 @@ $promocao = JRequest::getVar('promocao');
 $conteudos = JRequest::getVar('conteudos');
 $makingofs = JRequest::getVar('makingofs');
 $sessoes = JRequest::getVar('sessoes');
+$fotos = JRequest::getVar('fotos');
 
 
 //print_r($conteudos);
@@ -112,6 +114,39 @@ $sessoes = JRequest::getVar('sessoes');
 <!-- <span class="badge">42</span> -->
 <div class="row bloco-conteudo">
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+		<div class="module">
+		<?php 
+			$module = JModuleHelper::getModule( 'login' );
+			echo JModuleHelper::renderModule( $module );
+			?>
+		</div>
+	
+		<h2>Ultimas Fotos</h2>
+		<?php
+		foreach($fotos as $conteudo){ ?>
+			<div class="thumbnail">
+				<?php 
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false);
+					if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
+						<a href="<?php echo($url );?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<?php 
+					}?>
+					<div class="caption">
+					<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
+					<p><?php echo($conteudo->descricao);?></p>
+					<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
+							data-colorscheme='dark'
+							data-width="100" 
+							data-layout="button" 
+							data-action="like" 
+							data-show-faces="false" 
+							data-share="false"></div>
+					<a href="<?php echo($url );?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
+					</div>
+			</div>
+		<?php
+		} 
+		?>
 		<h2>Cadastre-se</h2>
 		<div class="thumbnail">
 			<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=cadastroVisitante&id=:Cadastro de Visitante',false));?>">Quer ter acesso a todo conte&uacute;do exclusivo?</a></h4>
@@ -137,19 +172,27 @@ $sessoes = JRequest::getVar('sessoes');
 		</div>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+
 	<h2>Ultimas Sess&otilde;es</h2>
 	<?php
 	foreach($sessoes as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
+				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false);
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 				<div class="caption">
-				<h4 class="list-group-item-heading"><?php echo($conteudo->nome);?></h4>
-				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$conteudo->id.':'.$conteudo->alias,false));?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
+				<h4 class="list-group-item-heading"><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
+				<p><?php echo($conteudo->descricao);?></p>
+				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
+					data-colorscheme='dark'
+					data-width="100" 
+					data-layout="button" 
+					data-action="like" 
+					data-show-faces="false" 
+					data-share="false"></div><a href="<?php echo($url);?>" class="btn btn-primary" role="button">Ver foto: <?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
 	<?php
@@ -157,20 +200,33 @@ $sessoes = JRequest::getVar('sessoes');
 	?>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
+	<div class="thumbnail">
+		<!-- BANNER -->
+		<?php 
+$module = JModuleHelper::getModule('banner_home');
+echo JModuleHelper::renderModule($module);		
+		?>
+	</div>
 	<h2>Ultimas N&oacute;ticias</h2>
 	<?php
 	foreach($conteudos as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
-				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $article->catid, $article->language));
+				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $conteudo->catid, $conteudo->language));
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 					<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 			<div class="caption">
-				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
+				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
+				<p><?php echo($conteudo->descricao);?></p>
+				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
+					data-colorscheme='dark'
+					data-width="100" 
+					data-layout="button" 
+					data-action="like" 
+					data-show-faces="false" 
+					data-share="false"></div><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
 			</div>
 		</div>
 	<?php
@@ -183,15 +239,23 @@ $sessoes = JRequest::getVar('sessoes');
 	foreach($makingofs as $conteudo){ ?>
 		<div class="thumbnail">
 			<?php 
-				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $article->catid, $article->language));
+				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $conteudo->catid, $conteudo->language));
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 					<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 			<div class="caption">
-				<h4 class="list-group-item-heading"><a href="<?php echo(JRoute::_('index.php?option=com_content&view=article&id='.$conteudo->id.':'.$conteudo->alias,false));?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><?php echo($conteudo->descricao);?>asdasd</p>
-				<p><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
+				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
+				<p><?php echo($conteudo->descricao);?></p>
+				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"  
+					data-colorscheme='dark'
+					data-width="100" 
+					data-layout="button" 
+					data-action="like" 
+					data-show-faces="false" 
+					data-share="false"></div><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ver Making Of: <?php echo($conteudo->nome);?></a></p>
+        			
+        			
 			</div>
 		</div>
 	<?php
@@ -203,8 +267,6 @@ $sessoes = JRequest::getVar('sessoes');
 jQuery(document).ready(function(){
 	// Activate Carousel
     jQuery("#displayCarrossel").carousel();
-    
-
     
     // Enable Carousel Controls
     jQuery(".left").click(function(){
