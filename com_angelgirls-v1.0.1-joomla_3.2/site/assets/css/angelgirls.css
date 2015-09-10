@@ -18,8 +18,17 @@
 	direction: ltr;	
 }
 
-@media (max-width:730px){
+.item-carrossel{
+	overflow: hidden;
+	height: 450px; 
+}
+.itemCarroussel.ative{
+	
+}
+
+@media (max-width: @screen-sm-min){
 	#itensLateraisCarrossel{
 		display: none;
 	}
 }
+

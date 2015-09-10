@@ -28,6 +28,9 @@
 		<folder>models</folder>
 		<folder>views</folder>
 	</files>
+    
+
+	
 	<administration>
 		<menu img="components/com_angelgirls/assets/images/icons/angelgirls-16x16.png">COM_ANGELGIRLS_MENU</menu>
 		<submenu>
@@ -62,10 +65,7 @@
 			<folder>views</folder>
 		</files>
 
-		<languages folder="admin">
-			<language tag="en-GB">language/en-GB/en-GB.com_angelgirls.ini</language>
-			<language tag="en-GB">language/en-GB/en-GB.com_angelgirls.sys.ini</language>
-		</languages>
+
 
 	</administration>
 </extension>

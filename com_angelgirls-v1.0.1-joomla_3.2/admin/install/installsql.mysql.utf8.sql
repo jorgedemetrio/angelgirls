@@ -32,8 +32,8 @@ CREATE TABLE `#__angelgirls_agenda` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL 
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL 
 		
 ) ENGINE = InnoDB;
 
@@ -47,8 +47,8 @@ CREATE TABLE `#__angelgirls_email` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -64,8 +64,8 @@ CREATE TABLE `#__angelgirls_redesocial` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_telefone` ( 
@@ -82,8 +82,8 @@ CREATE TABLE `#__angelgirls_telefone` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_endereco` ( 
@@ -102,33 +102,11 @@ CREATE TABLE `#__angelgirls_endereco` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
-CREATE TABLE `#__angelgirls_locacao` ( 
-		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-		`nome` VARCHAR(250), 
-		`endereco` VARCHAR(250), 
-		`numero` VARCHAR(10),
-		`bairro` VARCHAR(100),
-		`complemento` VARCHAR(100),
-		`cep` VARCHAR(15),
-		`id_cidade` INT NOT NULL,
-		
-		`nome_foto` varchar(100)  NULL,
-		
-		`audiencia_gostou` INT DEFAULT 0,
-		`audiencia_ngostou` INT DEFAULT 0,
-		`audiencia_view` INT DEFAULT 0,
-		
-		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
-		`id_usuario_criador` INT NOT NULL , 
-		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
-) ENGINE = InnoDB;
 
 
 
@@ -176,8 +154,8 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -216,8 +194,8 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -253,8 +231,8 @@ CREATE TABLE `#__angelgirls_visitante` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -289,8 +267,8 @@ CREATE TABLE `#__angelgirls_equipe` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -323,8 +301,8 @@ CREATE TABLE `#__angelgirls_locacao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -343,8 +321,8 @@ CREATE TABLE `#__angelgirls_tema` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -364,17 +342,17 @@ CREATE TABLE `#__angelgirls_sessao` (
 		
 		
 		`id_agenda` INT,
-		`id_tema` INT NOT NULL,
+		`id_tema` INT NULL,
 		`id_modelo_principal` INT  NOT NULL,
 		`id_modelo_secubdaria` INT,
-		`id_locacao` INT  NOT NULL,
+		`id_locacao` INT NULL,
 		`id_fotografo_principal` INT  NOT NULL,
 		`id_fotografo_secubdario` INT,
 		
-		`id_producao_principal` INT  NOT NULL,
+		`id_producao_principal` INT  NULL,
 		`id_producao_secubdario` INT,
 
-		`id_figurino_principal` INT  NOT NULL,
+		`id_figurino_principal` INT NULL,
 		`id_figurino_secubdario` INT,
 		
 		`audiencia_gostou` INT DEFAULT 0,
@@ -385,8 +363,8 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -406,8 +384,8 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -429,8 +407,8 @@ CREATE TABLE `#__angelgirls_galeria` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -451,8 +429,8 @@ CREATE TABLE `#__angelgirls_foto_galeria` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 
@@ -475,14 +453,14 @@ CREATE TABLE `#__angelgirls_promocao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATE NOT NULL  , 
-		`data_alterado` DATE NOT NULL  
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_fotografo` ( 
 	`id_fotografo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_fotografo`,`id_usuario`)
 ) ENGINE = InnoDB;
 
@@ -490,41 +468,41 @@ CREATE TABLE `#__angelgirls_vt_fotografo` (
 CREATE TABLE `#__angelgirls_vt_sessao` ( 
 	`id_sessao` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_sessao`,`id_usuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_modelo` ( 
 	`id_modelo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_modelo`,`id_usuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_foto_sessao` ( 
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_foto`,`id_usuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_foto_galeria` ( 
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_foto`,`id_usuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_equipe` ( 
 	`id_equipe` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_equipe`,`id_usuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_vt_galeria` ( 
 	`id_galeria` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
-	`data_criado` DATE NOT NULL,
+	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_galeria`,`id_usuario`)
 ) ENGINE = InnoDB;

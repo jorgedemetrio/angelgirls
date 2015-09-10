@@ -42,50 +42,76 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil'), 
-									  array('id','nome','descricao','foto')))
+		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'), 
+									  array('id','nome','descricao','foto', 'alias')))
 		->from ('#__angelgirls_modelo')
 		->where ( $db->quoteName ( 'status_modelo' ) . ' = \'ATIVA\' ' )
 		->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
 		->order('data_criado DESC ')
 		->setLimit(1);
 		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
+		$result = $db->loadObject();
 		JRequest::setVar ( 'modelo', $result );
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto'),
-				array('id','nome','descricao','foto')))
+		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
+									  array('id','nome','descricao','foto', 'alias')))
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
 				->order('data_criado DESC ')
 				->setLimit(1);
 		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'sessao', $result );
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','title','meta_descricao','nome_foto'),
-				array('id','nome','descricao','foto')))
-				->from ('#__content')
-				->where ( $db->quoteName ( 'published' ) . ' = \'1\' ' )
-				->order('created DESC ')
-				->setLimit(1);
-		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
+		$result = $db->loadObject();
 		JRequest::setVar ( 'sessao', $result );
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto'),
-				array('id','nome','descricao','foto')))
-				->from ('#__angelgirls_promocao')
+		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
+				array('id','nome','descricao','foto', 'alias')))
+				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' <> \'REMOVED\' ' )
-				->order('created DESC ')
-				->setLimit(1);
+				->where ( $db->quoteName ( 'id' ) . ' <> ' . $result->id )
+				->order('data_criado DESC ')
+				->setLimit(3);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
+		JRequest::setVar ( 'sessoes', $result );
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select("`id` ,`title` as nome,`metadesc` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+				->from ('#__content')
+				->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
+				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+				->order('created DESC ')
+				->setLimit(3);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'conteudos', $result );
+		
+		$query = $db->getQuery ( true );
+		$query->select("`id` ,`title` as nome,`metadesc` as descricao, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+		->from ('#__content')
+		->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
+		->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+		->where ( $db->quoteName ( 'catid' ) . ' = 8  ' )
+		->order('created DESC ')
+		->setLimit(3);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'makingofs', $result );
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
+									  array('id','nome','descricao','foto', 'alias')))
+				->from ('#__angelgirls_promocao')
+				->where ( $db->quoteName ( 'status_dado' ) . ' = \'ATIVO\' ' )
+				->order('data_criado DESC ')
+				->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
 		JRequest::setVar ( 'promocao', $result );
 
 		
