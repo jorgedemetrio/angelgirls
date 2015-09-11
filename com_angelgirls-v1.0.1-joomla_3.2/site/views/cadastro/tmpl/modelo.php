@@ -161,7 +161,6 @@ JFactory::getDocument()->addScriptDeclaration(
 	<?php 
 	//echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 	
-
 	<div class="btn-group pull-right" role="group">
 		<div class="btn-group" role="group">
 			<button  class="btn btn-danger" type="button" onclick="JavaScript:window.history.back(-1);"><?php echo JText::_('Cancelar'); ?>
@@ -172,6 +171,14 @@ JFactory::getDocument()->addScriptDeclaration(
 			</button>
 		</div>
 	</div>
+	<h1><?php if( isset($this->item) && isset($this->item->id)) : ?>
+		<?php echo JText::_('Seus dados'); ?>
+	<?php else : ?>
+		<?php echo JText::_('Formul&aacute;rio de cadastro para novas modelos'); ?>
+	<?php endif ?></h1>
+			
+
+
 	<br/>
 	<br/>
     <div class="clr"></div>
@@ -209,8 +216,17 @@ JFactory::getDocument()->addScriptDeclaration(
 	</ul>
 	<div class="tab-content" style="overflow: auto;">
 		<div id="general" class="tab-pane fade in active">
-			<legend><?php echo JText::_('Modelo'); ?></legend>
+			<h2><?php echo JText::_('Dados da Modelo'); ?></h2>
 			<div>
+				<?php if( $this->item ==null || $this->item->id == null || $this->item->id == 0 || $this->item->id =='' ) :?>
+				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<label class="control-label"  for="termos"><?php echo JText::_('Declaro que li e concordo com todos os termos e condi&ccedil;&otilde;es para realizar o cadastro.'); ?><a href="#"><small>Clique aqui para ler os termos e condi&ccedil;&otilde;es.</small></a></label>
+					<input type="checkbox" value="S" name="termos" id="termos" class="form-control required"/>
+					<small>OBS: Ter o cadastro enviado n&atilde;o o torna modelo oficial da Angel Girls. <br/>
+					Para realizar o cadastro deve ser maior de idade. <br/>
+					A Angel Girls n&atilde;o autoriza a divulga&ccedil;&atilde;o como modelo oficial ou como represente da Angel Girls apenas tendo o cadastro aprovado, leia os termos para entender como funciona.</small>
+				</div>
+				 <?php endif?>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-6"">
 					<label class="control-label"  for="name"><?php echo JText::_('Nome Completo'); ?></label>
 					<input class="required form-control" style="width: 90%;" type="text" name="name"  id="name" size="32" maxlength="250" value="<?php echo $this->item->name;?>" placeholder="<?php echo JText::_('Nome Completo'); ?>"/>
@@ -330,9 +346,9 @@ JFactory::getDocument()->addScriptDeclaration(
 					<label class="control-label"  for="descricao"> <?php echo JText::_('Fale um pouco sobre voc&ecirc;'); ?></label>
 					<?php echo $editor->display('descricao', $this->item->descricao, '200', '200', '20', '20', false, $params); ?>
 				</div>
-			
+
 				<?php
-				if($this->item != null && $this->item->id != null){ 
+				if($this->item != null && $this->item->id != null) :
 				?>
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="label control-label" ><?php echo JText::_('Criado por'); ?></label></div>
@@ -357,11 +373,12 @@ JFactory::getDocument()->addScriptDeclaration(
 					<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-4"><?php echo($this->item->audiencia_view);?></div>
 				</div>
 				<?php 
-				}?>
+				 endif ?>
+
 			</div>
 		</div>
 		<div id="fotos" class="tab-pane fade">
-			<legend><?php echo JText::_('Fotos de perfil da Modelo'); ?></legend>
+			<h2><?php echo JText::_('Fotos de perfil da Modelo'); ?></h2>
 			<div class="row">
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center"><label class="control-label"  for="foto_perfil"> <?php echo JText::_('Foto rosto'); ?></label></div>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center"><label class="control-label"  for="foto_inteira"> <?php echo JText::_('Foto corpo'); ?></label></div>
@@ -382,7 +399,7 @@ JFactory::getDocument()->addScriptDeclaration(
 			</div>
 		</div>
 		<div id="caracteristicas" class="tab-pane fade">
-			<legend><?php echo JText::_('Caracteristicas F&iacute;sicas da Modelo'); ?></legend>
+			<h2><?php echo JText::_('Caracteristicas F&iacute;sicas da Modelo'); ?></h2>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="altura"><?php echo JText::_('Altura'); ?></label>
 				<input class="validate-numeric form-control required" style="width: 90%;" type="text" name="altura" id="altura" size="32" maxlength="6" value="<?php echo $this->item->altura;?>" placeholder="<?php echo JText::_('Sua altura em Metros com ","'); ?>"/>
@@ -489,7 +506,7 @@ JFactory::getDocument()->addScriptDeclaration(
 	    </div>
 		<?php if( isset($this->item) && isset($this->item->id)){ ?>
 		<div id="redesSociais" class="tab-pane fade">
-			<legend><?php echo JText::_('Contatos Sociais'); ?></legend>
+			<h2><?php echo JText::_('Contatos Sociais'); ?></h2>
 			<input type="hidden" name="id_rede_social" id="id_rede_social" value=""/>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 				<label class="control-label"  for="rede"> <?php echo JText::_('Rede'); ?></label>
@@ -520,10 +537,10 @@ JFactory::getDocument()->addScriptDeclaration(
 			</div>
 	    </div>
 	    <div id="enderecos" class="tab-pane fade">
-			<legend><?php echo JText::_('Endere&ccedil;os'); ?></legend>
+			<h2><?php echo JText::_('Endere&ccedil;os'); ?></h2>
 		</div>
 	    <div id="contatos" class="tab-pane fade">
-			<legend><?php echo JText::_('Contatos'); ?></legend>
+			<h2><?php echo JText::_('Contatos'); ?></h2>
 		</div>
 		<?php 
 		}?>

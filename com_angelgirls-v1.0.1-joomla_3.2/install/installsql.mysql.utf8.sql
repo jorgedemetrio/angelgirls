@@ -216,7 +216,7 @@ CREATE TABLE `#__angelgirls_visitante` (
 		
 		
 
-		`status_fotografo` VARCHAR(14),
+
 		`qualificao_equipe` INT DEFAULT 0,
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,

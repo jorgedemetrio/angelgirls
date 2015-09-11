@@ -130,7 +130,6 @@ JFactory::getDocument()->addScriptDeclaration(
 	<?php 
 	//echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 	
-
 	<div class="btn-group pull-right" role="group">
 		<div class="btn-group" role="group">
 			<button  class="btn btn-danger" type="button" onclick="JavaScript:window.history.back(-1);"><?php echo JText::_('Cancelar'); ?>
@@ -141,6 +140,13 @@ JFactory::getDocument()->addScriptDeclaration(
 			</button>
 		</div>
 	</div>
+	<h1><?php if( isset($this->item) && isset($this->item->id)) : ?>
+		<?php echo JText::_('Seus dados'); ?>
+	<?php else : ?>
+		<?php echo JText::_('Formul&aacute;rio de cadastro para fotografos'); ?>
+	<?php endif ?></h1>
+
+
 	<br/>
 	<br/>
     <div class="clr"></div>
@@ -168,7 +174,14 @@ JFactory::getDocument()->addScriptDeclaration(
 	</ul>
 	<div class="tab-content" style="overflow: auto;">
 		<div id="general" class="tab-pane fade in active">
-			<legend><?php echo JText::_('Fotografo'); ?></legend>
+			<h2><?php echo JText::_('Fotografo'); ?></h2>
+			<?php if( $this->item ==null || $this->item->id == null || $this->item->id == 0 || $this->item->id =='' ) :?>
+			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<label class="control-label"  for="termos"><?php echo JText::_('Declaro que li e concordo com todos os termos e condi&ccedil;&otilde;es para realizar o cadastro.'); ?><a href="#"><small>Clique aqui para ler os termos e condi&ccedil;&otilde;es.</small></a></label>
+				<input type="checkbox" value="S" name="termos" id="termos" class="form-control required"/>
+				<small>OBS: Ter o cadastro enviado n&atilde;o o torna fotografo oficial da Angel Girls. <br/>A Angel Girls n&atilde;o autoriza a divulga&ccedil;&atilde;o como um fotografo oficial ou como represente da Angel Girls apenas tendo o cadastro aprovado, leia os termos para entender como funciona.</small>
+			</div>
+			 <?php endif?>
 			<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-3 col-lg-2"><label class="control-label"  for="foto_perfil"> <?php echo JText::_('Foto perfil'); ?></label></div>
 			</div>
@@ -331,7 +344,7 @@ JFactory::getDocument()->addScriptDeclaration(
 		</div>
 		<?php if( isset($this->item) && isset($this->item->id)){ ?>
 		<div id="redesSociais" class="tab-pane fade">
-			<legend><?php echo JText::_('Contatos Sociais'); ?></legend>
+			<h2><?php echo JText::_('Contatos Sociais'); ?></h2>
 			<input type="hidden" name="id_rede_social" id="id_rede_social" value=""/>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 				<label class="control-label"  for="rede"> <?php echo JText::_('Rede'); ?></label>
@@ -362,10 +375,10 @@ JFactory::getDocument()->addScriptDeclaration(
 			</div>
 	    </div>
 	    <div id="enderecos" class="tab-pane fade">
-			<legend><?php echo JText::_('Endere&ccedil;os'); ?></legend>
+			<h2><?php echo JText::_('Endere&ccedil;os'); ?></h2>
 		</div>
 	    <div id="contatos" class="tab-pane fade">
-			<legend><?php echo JText::_('Contatos'); ?></legend>
+			<h2><?php echo JText::_('Contatos'); ?></h2>
 		</div>
 		<?php 
 		}?>

@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 /**
  * Temas View
  */
-class AngelgirlsViewtemas extends JViewLegacy
+class AngelgirlsViewsessoes extends JViewLegacy
 {
 	/**
 	 * Temas view display method
@@ -30,14 +30,16 @@ class AngelgirlsViewtemas extends JViewLegacy
 		// Set the document
 		$this->setDocument();
 		
+	
+
 		// Set the toolbar
 		$this->addToolBar();
-
-		$this->item = $tema;
 		
 
 		// Display the template
 		parent::display($tpl);
+
+		
 	}
 
 	/**
@@ -46,31 +48,26 @@ class AngelgirlsViewtemas extends JViewLegacy
 	protected function addToolBar() 
 	{
 			
-		$tema =& JRequest::getVar('tema');
+
+		$layout = JRequest::getVar('layout');
 		$app = JFactory::getApplication();
-		$document =& JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$pathway = $app->getPathway();
-		$pathway->addItem('Temas de fotografia', JRoute::_('index.php?option=com_angelgirls&task=listTema'));
+		$pathway->addItem('Sess&atilde;oes', JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais'));
 
 		//$document->setMetadata('content-language', 'pt-br');
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
-		if($tema !=null){
-			//JToolBarHelper::title(JText::_('Temas ').$tema->nome, 'angelgirls');
-			$pathway->addItem($tema->nome, '');
-			$document->setTitle($document->getTitle()." - ".JText::_('Tema ') . $tema->nome);
-			$document->setDescription($tema->meta_descricao);
-			$document->setMetadata('Keywords','sessao de foto, sessao, foto, photo, photoset, photo set, photo shot,temas fotografia,'. $tema->nome.','.str_replace(' ',',',$tema->nome) );
-			$document->setMetadata('author', $tema->criador);
-			$document->setMetadata('reply-to','contato@angelgirls.com.br');
-			//$document->setMetadata('robots', 'index,follow');
+		if($layout=='sessao'){
+			$sessao = JRequest::getVar('sessao');
+			$pathway->addItem($sessao->titulo,'');
+			$document->setTitle($sessao->titulo);
+			$document->setDescription($sessao->titulo);
+			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo));
 		}
 		else{
-			//JToolBarHelper::title(JText::_('Temas de fotografia'), 'angelgirls');
-			//$document->setMetadata('robots', 'noindex,follow');
-			$document->setTitle($document->getTitle()." - ".JText::_('Temas de fotografia'));
-			$document->setDescription('Temas de fotografias sensuais usadas em nosso SETs, como: boudoir, MIMP, pinup');
-			$document->setMetadata('Keywords', 
-					'sessao de foto, sessao, foto, photo, photoset, photo set, photo shot,temas fotografia, boudoir, mimp, pinup');
+			$document->setTitle(JText::_('Sessões / SETs de fotos sensuais com as modelos mais gatas, bonitas e gostosas - Musas AngelGirls'));
+			$document->setDescription('Encontre as sessões / SETs de fotos sensuais com as modelos mais gatas, bonitas e gostosas');
+			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva');			
 		}
 	}
 
@@ -83,7 +80,7 @@ class AngelgirlsViewtemas extends JViewLegacy
 	protected function setDocument() 
 	{
 		$document = JFactory::getDocument();
-		//$document->setTitle(JText::_('Angelgirls Manager - Administrator'));
+		$document->setTitle(JText::_('Angelgirls Manager - Administrator'));
 	}
 }
 ?>
