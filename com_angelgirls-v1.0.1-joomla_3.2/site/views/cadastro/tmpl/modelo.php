@@ -82,18 +82,20 @@ JFactory::getDocument()->addStyleDeclaration('
 JFactory::getDocument()->addScriptDeclaration(
 	$scriptCidades.'
 	jQuery(document).ready(function(){
-	   
-		document.formvalidator.setHandler("cep", function(value) {
-	      regex=/^\d{5}-\d{3}$/;
+			
+			
+				
+		document.formvalidator.setHandler("telefone", function(value) {
+	      regex=/^\(\d{2}\)\s\d{5}\-\d{3,4}$/;
+		  //RODAR AJAX PARA VER SE É UNICO
 	      return regex.test(value);
 		});
-			
-		jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
-		jQuery(".validate-inteiro").mask("9999999999999");
-		jQuery(".validate-cep").mask("99999-999");
-		jQuery(".validate-cpf").mask("999.999.999-99");
-			
-		jQuery(".validate-data").mask("99/99/9999", {placeholder: "__/__/____"});
+		
+		document.formvalidator.setHandler("cep", function(value) {
+		      regex=/^\d{5}-\d{3}$/;
+		      return regex.test(value);
+			});
+				
 		
 		document.formvalidator.setHandler("cpf", function(value) {
 	      regex=/^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
@@ -124,18 +126,6 @@ JFactory::getDocument()->addScriptDeclaration(
 	    });		
 			
 			
-			
-		jQuery(".estado").change(function(){
-			$objeto = jQuery(this);
-			$ObjetoCidade = jQuery("#"+$objeto.attr("data-carregar"));
-			$ObjetoCidade.empty();
-			$ObjetoCidade.append(new Option(  "", ""));
-			for(var i=0; i<cidades.length;i++){
-				if(cidades[i].uf==$objeto.val()){
-					$ObjetoCidade.append(new Option(  cidades[i].nome, cidades[i].id));
-				}
-			}
-		});	
 		
 		jQuery("#ifoto_inteira").click(function(){
 			jQuery("#foto_inteira").click();
@@ -143,7 +133,7 @@ JFactory::getDocument()->addScriptDeclaration(
 		jQuery("#foto_inteira").change(function(){
 			var valor = jQuery("#foto_inteira").val();
 			var valorAntigo = "'.$imagemCorpo.'"
-			jQuery("#ifoto_inteira").attr("src",valor!="" ? valor :valorAntigo );
+			//jQuery("#ifoto_inteira").attr("src",valor!="" ? valor :valorAntigo );
 		});
 					
 		jQuery("#ifoto_inteira_horizontal").click(function(){
@@ -152,7 +142,7 @@ JFactory::getDocument()->addScriptDeclaration(
 		jQuery("#foto_inteira_horizontal").change(function(){
 			var valor = jQuery("#foto_inteira_horizontal").val();
 			var valorAntigo = "'.$imagemCorpo_horizontal.'"
-			jQuery("#ifoto_inteira_horizontal").attr("src",valor!="" ? valor :valorAntigo );
+			//jQuery("#ifoto_inteira_horizontal").attr("src",valor!="" ? valor :valorAntigo );
 		});
 					
 		jQuery("#ifoto_perfil").click(function(){
@@ -161,7 +151,7 @@ JFactory::getDocument()->addScriptDeclaration(
 		jQuery("#foto_perfil").change(function(){
 			var valor = jQuery("#foto_perfil").val();
 			var valorAntigo = "'.$imagemRosto.'"
-			jQuery("#ifoto_perfil").attr("src",valor!="" ? valor :valorAntigo );
+			//jQuery("#ifoto_perfil").attr("src",valor!="" ? valor :valorAntigo );
 		});
 	});
 					
@@ -222,8 +212,8 @@ JFactory::getDocument()->addScriptDeclaration(
 			<legend><?php echo JText::_('Modelo'); ?></legend>
 			<div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-6"">
-					<label class="control-label"  for="nome"><?php echo JText::_('Nome Completo'); ?></label>
-					<input class="required form-control" style="width: 90%;" type="text" name="nome"  id="nome" size="32" maxlength="250" value="<?php echo $this->item->name;?>" placeholder="<?php echo JText::_('Nome Completo'); ?>"/>
+					<label class="control-label"  for="name"><?php echo JText::_('Nome Completo'); ?></label>
+					<input class="required form-control" style="width: 90%;" type="text" name="name"  id="name" size="32" maxlength="250" value="<?php echo $this->item->name;?>" placeholder="<?php echo JText::_('Nome Completo'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-6"">
 					<label class="control-label"  for="nome_artistico"><?php echo JText::_('Apelido/Nome Artistico'); ?></label>
@@ -233,10 +223,22 @@ JFactory::getDocument()->addScriptDeclaration(
 					<label class="control-label"  for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?></label>
 					<textarea class="required form-control" style="width: 90%;" rows="8" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"><?php echo $this->item->meta_descricao;?></textarea>
 				</div>
+				<?php if( $this->item ==null || $this->item->id == null || $this->item->id == 0 || $this->item->id =='' ) :?>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-					<label class="control-label"  for="usuario"><?php echo JText::_('Usu&aacute;rio'); ?></label>
-					<input class="form-control required validate-username validate-usuariounico" style="width: 90%;" type="text" name="usuario"  id="usuario" size="32" maxlength="25" value="<?php echo $this->item->username;?>" placeholder="<?php echo JText::_('Usu&aacute;rio'); ?>"/>
+					<label class="control-label"  for="telefone"><?php echo JText::_('Telefone'); ?></label>
+					<input class="form-control required validate-telefone" style="width: 90%;" type="text" name="telefone"  id="telefone" size="32" maxlength="25" placeholder="<?php echo JText::_('(11) 99000-0000'); ?>"/>
 				</div>
+				<?php endif ?>
+				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+					<label class="control-label"  for="username"><?php echo JText::_('Usu&aacute;rio'); ?></label>
+					<input class="form-control required validate-username validate-usuariounico" style="width: 90%;" type="text" name="username"  id="username" size="32" maxlength="25" value="<?php echo $this->item->username;?>" 
+					<?php if($this->item->id !=null && $this->item->id != 0 && $this->item->id !='' ) :?>
+					 	readonly="readonly"
+					<?php else : ?>
+						placeholder="<?php echo JText::_('Usu&aacute;rio'); ?>"
+					<?php endif ?>/>
+				</div>
+				<?php if( $this->item ==null || $this->item->id == null || $this->item->id == 0 || $this->item->id =='' ) :?>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="password"><?php echo JText::_('Senha'); ?></label>
 					<input class="form-control required validate-password" style="width: 90%;" type="password" name="password"  id="password" size="32" maxlength="25" placeholder="<?php echo JText::_('Senha'); ?>"/>
@@ -245,7 +247,6 @@ JFactory::getDocument()->addScriptDeclaration(
 					<label class="control-label"  for="password1"><?php echo JText::_('Confirmar Senha'); ?></label>
 					<input class="form-control required validate-password validate-passverify" style="width: 90%;" type="password" name="password1"  id="password1" size="32" maxlength="25" placeholder="<?php echo JText::_('Confirma&ccedil;&atilde;o de Senha'); ?>"/>
 				</div>
-
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="email"> <?php echo JText::_('E-mail Principal'); ?></label>
 					<input class="form-control required validate-email" style="width: 90%;" type="email" name="email"  id="email" size="32" maxlength="250" value="<?php echo $this->item->email;?>" placeholder="Email"/>
@@ -254,6 +255,7 @@ JFactory::getDocument()->addScriptDeclaration(
 					<label class="control-label"  for="email1"> <?php echo JText::_('Confirmacao e-mail'); ?></label>
 					<input class="form-control required validate-email  validate-emailverify" style="width: 90%;" type="email" name="email1"  id="email1" size="32" maxlength="250" placeholder="Email"/>
 				</div>
+				<?php endif ?>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="data_nascimento"><?php echo JText::_('Data de Nascimento'); ?></label>
 					<?php echo JHtml::calendar($this->item->data_nascimento, 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control required validate-data"');?>
@@ -263,15 +265,15 @@ JFactory::getDocument()->addScriptDeclaration(
 					<input class="form-control required" style="width: 90%;" type="text" name="nascionalidade"  id="nascionalidade" size="32" maxlength="25" value="<?php echo $this->item->nascionalidade;?>" placeholder="<?php echo JText::_('Nascionalidade'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-					<label class="control-label"  for="profissao"><?php echo JText::_('Profiss&atilde;o'); ?></label>
-					<input class="form-control" style="width: 90%;" type="text" name="profissao"  id="profissao" size="32" maxlength="150" value="<?php echo $this->item->profissao;?>" placeholder="<?php echo JText::_('Profiss&atilde;o'); ?>"/>
-				</div>
-				<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
 					<label class="control-label"  for="site"><?php echo JText::_('Site'); ?></label>
 					<div class="input-group">
       					<div class="input-group-addon">http://</div>
 						<input class="form-control" style="width: 90%;" type="text" name="site"  id="site" size="32" maxlength="250" value="<?php echo $this->item->site;?>" placeholder="<?php echo JText::_('www.meu-site-pessoa.com.br'); ?>"/>
 					</div>
+				</div>
+				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+					<label class="control-label"  for="profissao"><?php echo JText::_('Profiss&atilde;o'); ?></label>
+					<input class="form-control" style="width: 90%;" type="text" name="profissao"  id="profissao" size="32" maxlength="150" value="<?php echo $this->item->profissao;?>" placeholder="<?php echo JText::_('Profiss&atilde;o'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="sexo"><?php echo JText::_('Sexo'); ?></label>
@@ -368,7 +370,7 @@ JFactory::getDocument()->addScriptDeclaration(
 			<div class="row">
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemRosto);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_perfil" name="ifoto_perfil" class="img-thumbnail"/>
-					<input style="width: 250px;" type="file" name="foto_perfil" id="foto_perfil" accept="image/*"/></div>
+					<input style="width: 250px;" type="file" class="form-control required" name="foto_perfil" id="foto_perfil" accept="image/*"/></div>
 
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemCorpo);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira" name="ifoto_inteira" class="img-thumbnail"/>
@@ -387,7 +389,7 @@ JFactory::getDocument()->addScriptDeclaration(
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="peso"><?php echo JText::_('Peso'); ?></label>
-				<input class="validate-numeric form-control required" style="width: 90%;" type="text" name="peso" id="peso" size="32" maxlength="6" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
+				<input class="validate-inteiro form-control required" style="width: 90%;" type="text" name="peso" id="peso" size="32" maxlength="6" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="busto"><?php echo JText::_('Busto'); ?></label>
@@ -532,7 +534,7 @@ JFactory::getDocument()->addScriptDeclaration(
     <input type="hidden" name="option" value="com_angelgirls" />
     <input type="hidden" name="id" value="<?php echo $this->item->id; ?>" />
     <input type="hidden" name="id_usuario" value="<?php echo $this->item->id_usuario; ?>" />
-    <input type="hidden" name="task" value="saveAngenda" />
+    <input type="hidden" name="task" value="salvarModelo" />
 </form>
 <script>
 	jQuery(document).ready(function(){

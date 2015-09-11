@@ -112,15 +112,16 @@ CREATE TABLE `#__angelgirls_endereco` (
 
 CREATE TABLE `#__angelgirls_modelo` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-		`id_usuario` INT NOT NULL , 
+		`id_usuario` INT UNIQUE NOT NULL , 
 		`nome_artistico` VARCHAR(150) NOT NULL, 
 		`descricao` TEXT NULL, 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
 		`foto_perfil` VARCHAR(100), 
-		`foto_inteira`VARCHAR(100), 
+		`foto_inteira` VARCHAR(100),
+		`foto_inteira_horizontal` VARCHAR(100), 
 		`altura` NUMERIC(5,2) , 
-		`peso` NUMERIC(5,2) , 
-		`busto` NUMERIC(5,2) , 
+		`peso` NUMERIC(3) , 
+		`busto` NUMERIC(3) , 
 		`calsa` NUMERIC(3) , 
 		`calsado` NUMERIC(3) , 
 		`olhos` ENUM('NEGROS','AZUIS','VERDES','CASTANHOS','MEL','OUTRO') , 
@@ -161,7 +162,7 @@ CREATE TABLE `#__angelgirls_modelo` (
 
 CREATE TABLE `#__angelgirls_fotografo` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-		`id_usuario` INT NOT NULL , 
+		`id_usuario` INT UNIQUE NOT NULL , 
 		`nome_artistico` VARCHAR(150) NOT NULL, 
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL ,
@@ -201,7 +202,7 @@ CREATE TABLE `#__angelgirls_fotografo` (
 
 CREATE TABLE `#__angelgirls_visitante` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-		`id_usuario` INT NOT NULL , 
+		`id_usuario` INT UNIQUE NOT NULL, 
 		`sobre` TEXT NULL , 
 		
 		`possui_foto_perfil` ENUM('S','N') NOT NULL , 

@@ -46,3 +46,38 @@ window.___gcfg = {lang: 'pt-BR'};
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(gcse, s);
   })();
+
+
+
+
+
+
+
+jQuery(document).ready(function(){
+	   
+
+	jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
+	jQuery(".validate-inteiro").mask("9999999999999");
+	jQuery(".validate-cep").mask("99999-999");
+	jQuery(".validate-cpf").mask("999.999.999-99");
+
+	jQuery(".validate-data").mask("99/99/9999", {placeholder: "__/__/____"});
+		
+	jQuery(".validate-telefone").mask("(99) 99999-9999");
+
+		
+		
+		
+	jQuery(".estado").change(function(){
+		$objeto = jQuery(this);
+		$ObjetoCidade = jQuery("#"+$objeto.attr("data-carregar"));
+		$ObjetoCidade.empty();
+		$ObjetoCidade.append(new Option(  "", ""));
+		for(var i=0; i<cidades.length;i++){
+			if(cidades[i].uf==$objeto.val()){
+				$ObjetoCidade.append(new Option(  cidades[i].nome, cidades[i].id));
+			}
+		}
+	});	
+	
+});

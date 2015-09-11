@@ -47,14 +47,26 @@ class AngelgirlsViewcadastro extends JViewLegacy
 		$app = JFactory::getApplication();
 		$document = JFactory::getDocument();
 		$pathway = $app->getPathway();
+		
+		$template = JRequest::getVar('layout');
 
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
 
-		$pathway->addItem("Cadastro de " . JRequest::getVar('layout'), '');
-		$document->setTitle("Angel Girls - Cadastro de " . JRequest::getVar('layout') . 's' );
-		$document->setDescription("Cadastro de " . JRequest::getVar('layout') . " para ter acessos exclusivo no site da Angel Girls." . 
-				" Angel Girls as modelos mais lindas do Brasil.");
-		$document->setMetadata('Keywords','register, cadastro, registrar, sessao de foto, sessao, photoset, photo set, photo shot,fotografia,'. JRequest::getVar('layout') );
+		if($template!='sucesso'){
+			$document->setTitle("Angel Girls - Cadastro de " . $template . 's' );
+			$pathway->addItem("Cadastro de " . $template, '');
+			$document->setDescription("Cadastro de " . $template . " para ter acessos exclusivo no site da Angel Girls." .
+					" Angel Girls as modelos mais lindas do Brasil.");
+		}
+		else{
+			$document->setTitle("Angel Girls - Cadastro realizado com sucesso ");
+			$pathway->addItem("Cadastro realizado com sucesso " );
+			$document->setDescription("Cadastro realizado com sucesso." .
+					" Angel Girls as modelos mais lindas do Brasil.");			
+		}
+
+
+		$document->setMetadata('Keywords','register, cadastro, registrar, sessao de foto, sessao, photoset, photo set, photo shot,fotografia,'. $template );
 	}
 
 	/**

@@ -17,6 +17,7 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 jimport ( 'joomla.application.component.controller' );
 jimport ( 'joomla.filesystem.file' );
 jimport ( 'joomla.filesystem.folder' );
+jimport ('joomla.application.component.helper');
 
 /**
  * General Controller of Angelgirls component
@@ -345,6 +346,7 @@ class AngelgirlsController extends JControllerLegacy {
 		
 		$foto_perfil = $_FILES ['foto_perfil'];
 		$foto_inteira = $_FILES ['foto_inteira'];
+		$foto_inteira_horizontal = $_FILES ['foto_inteira_horizontal'];
 		
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
@@ -535,7 +537,7 @@ class AngelgirlsController extends JControllerLegacy {
 		}
 	}
 	public function saveModelo() {
-		$user = & JFactory::getUser ();
+		$user =  JFactory::getUser ();
 		if (! isset ( $user ))
 			die ( 'Restricted access' );
 		
