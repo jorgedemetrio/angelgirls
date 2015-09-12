@@ -102,15 +102,16 @@ if($dataFim!=''){
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
 		<div class="thumbnail">
 <?php  $url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias))); ?>
-						<h5 class="list-group-item-heading" style="width: 100%;
-    __position: relative;
-    top: 50px;
-    text-align: center;
-    background-color: grey;
-    color: white;
-    padding: 10px;
-    ___opacity: 0.4;
-    ___filter: alpha(opacity=40);"><a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a></h5>
+					<h5 class="list-group-item-heading" style="width: 100%; text-align: center; background-color: grey; color: white;  padding: 10px;"><a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a>
+    			<?php if($conteudo->eu=='SIM'):?>
+					<span class="badge" title="Gostou"><?php echo($conteudo->gostou);?> 
+					<span class="glyphicon glyphicon-star" aria-hidden="true" title="Gostou"></span>
+					</span>
+				<?php else : ?>
+					<span class="badge" title=""><?php echo($conteudo->gostou);?> 
+					<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
+					</span>
+				<?php endif?></h5>
 <?php 			if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 					<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
@@ -119,15 +120,7 @@ if($dataFim!=''){
 
 				<p class="text-center"><?php echo($conteudo->descricao);?></p>
 				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button"><?php echo($conteudo->nome);?>
-				<?php if($conteudo->eu=='SIM'):?>
-					<span class="badge" title="Gostou"><?php echo($conteudo->gostou);?> 
-					<span class="glyphicon glyphicon-star" aria-hidden="true" title="Gostou"></span>
-					</span>
-				<?php else : ?>
-					<span class="badge" title=""><?php echo($conteudo->gostou);?> 
-					<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-					</span>
-				<?php endif?>
+
 				</a></p>
 				</div>
 		</div>

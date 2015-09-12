@@ -10,3 +10,8 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
+
+$sessoes = JRequest::getVar('sessao');
+
+
+?>

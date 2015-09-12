@@ -1,4 +1,5 @@
 DROP TABLE `#__cidade`;
+DROP TABLE `#__uf`
 DROP TABLE `#__angelgirls_agenda` ;
 DROP TABLE `#__angelgirls_email`;
 DROP TABLE `#__angelgirls_redesocial` ;
@@ -9,7 +10,6 @@ DROP TABLE `#__angelgirls_modelo`;
 DROP TABLE `#__angelgirls_fotografo`;
 DROP TABLE `#__angelgirls_visitante`;
 DROP TABLE `#__angelgirls_equipe` ;
-DROP TABLE `#__angelgirls_locacao`;
 DROP TABLE `#__angelgirls_tema`;
 DROP TABLE `#__angelgirls_sessao`;
 DROP TABLE `#__angelgirls_foto_sessao`;

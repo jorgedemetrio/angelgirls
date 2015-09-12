@@ -1,10 +1,17 @@
 CREATE TABLE `#__cidade` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`nome` VARCHAR(150) NOT NULL , 
-		`uf` CHAR(2) NOT NULL, 
-		`sigla_pais` CHAR(2) DEFAULT 'BR'
+		`uf` CHAR(2) NOT NULL
 ) ENGINE = InnoDB;
 
+CREATE TABLE `#__uf` (
+  `ds_uf_sigla` char(2) NOT NULL,
+  `ds_uf_nome` varchar(255) NOT NULL,
+  PRIMARY KEY (`ds_uf_sigla`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `#__cidade` ADD INDEX `FK_CIDADE_UF_idx` (`uf` ASC);
+ALTER TABLE `#__cidade` ADD CONSTRAINT `FK_CIDADE_UF`  FOREIGN KEY (`uf`) REFERENCES `#__uf` (`ds_uf_sigla`);
 
 
 CREATE TABLE `#__angelgirls_agenda` ( 
@@ -350,11 +357,8 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_fotografo_principal` INT  NOT NULL,
 		`id_fotografo_secubdario` INT,
 		
-		`id_producao_principal` INT  NULL,
-		`id_producao_secubdario` INT,
-
-		`id_figurino_principal` INT NULL,
-		`id_figurino_secubdario` INT,
+		`id_figurino_principal` INT,
+		`id_figurino_secundario` INT,
 		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
@@ -368,6 +372,21 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB;
 
+CREATE TABLE `#__angelgirls_figurino` ( 
+	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+	`titulo` VARCHAR(250) NOT NULL,
+	`descricao` TEXT NULL , 
+	
+	`audiencia_gostou` INT DEFAULT 0,
+	`audiencia_ngostou` INT DEFAULT 0,
+	`audiencia_view` INT DEFAULT 0,
+	
+	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+	`id_usuario_criador` INT NOT NULL , 
+	`id_usuario_alterador` INT NOT NULL , 
+	`data_criado` DATETIME NOT NULL  , 
+	`data_alterado` DATETIME NOT NULL  
+) ENGINE = InnoDB;
 
 CREATE TABLE `#__angelgirls_foto_sessao` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
