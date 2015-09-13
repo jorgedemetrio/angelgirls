@@ -256,7 +256,6 @@ class AngelgirlsController extends JControllerLegacy{
 	 */
 	public function cadastroModelo(){
 		$this->carregarCadastro();
-		
 		JRequest::setVar ( 'view', 'cadastro' );
 		JRequest::setVar ( 'layout', 'modelo' );
 		parent::display (true, false);
@@ -327,7 +326,7 @@ class AngelgirlsController extends JControllerLegacy{
 			->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ') ' )
 			->where ( $db->quoteName ( 's.id_sessao' ) . " =  " . $id );
 		$db->setQuery ( $query );
-		$results = $db->loadObject();
+		$results = $db->loadObjectList();
 		JRequest::setVar ( 'fotos', $results );
 		
 		
@@ -558,7 +557,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		$sucesso=true;
 		
-		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'modelos' . DS;
+		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'visitante' . DS;
 		$erro = false;
 		
 		$id = JRequest::getInt ( 'id', 0, 'POST' );
@@ -782,7 +781,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		$sucesso=true;
 		
-		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'modelos' . DS;
+		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'fotografos' . DS;
 		$erro = false;
 		
 		$id = JRequest::getInt ( 'id', 0, 'POST' );

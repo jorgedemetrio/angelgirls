@@ -11,26 +11,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
-//http://osvaldas.info/image-lightbox-responsive-touch-friendly
-JFactory::getDocument()->addScript('components/com_angelgirls/assets/js/imagelightbox.min.js');
-JFactory::getDocument()->addScriptDeclaration('
- $( function()
-    {
-        $( \'a\' ).imageLightbox({allowedTypes:\'jpg|jpeg\'});
-    });');
 
-// selector:       'id="imagelightbox"',   // string;
-// allowedTypes:   'png|jpg|jpeg|gif',     // string;
-// animationSpeed: 250,                    // integer;
-// preloadNext:    true,                   // bool;            silently preload the next image
-// enableKeyboard: true,                   // bool;            enable keyboard shortcuts (arrows Left/Right and Esc)
-// quitOnEnd:      false,                  // bool;            quit after viewing the last image
-// quitOnImgClick: false,                  // bool;            quit when the viewed image is clicked
-// quitOnDocClick: true,                   // bool;            quit when anything but the viewed image is clicked
-// onStart:        false,                  // function/bool;   calls function when the lightbox starts
-// onEnd:          false,                  // function/bool;   calls function when the lightbox quits
-// onLoadStart:    false,                  // function/bool;   calls function when the image load begins
-// onLoadEnd:      false                   // function/bool;   calls function when the image finishes loading
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
 
@@ -89,4 +70,18 @@ $fotos = JRequest::getVar('fotos');
 	<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2">
     	<?php echo($conteudo->fotografo1)?>
 	</div>
+</div>
+
+
+<div class="row">
+	<?php
+	$count = 0;
+	foreach($fotos as $foto): 
+	$url = JRoute::_('index.php?com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':'.strtolower(str_replace(" ","-",$foto->titulo))); ?>
+		<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail">
+    		<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->id . '/' . $foto->id . '_thumbnail.jpg');?>" /></a>
+    	</div>
+		<?php
+	endforeach; 
+	?>
 </div>
