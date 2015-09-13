@@ -28,23 +28,12 @@ $params = array('smilies'=> '0', 'html' => '1', 'style'  => '1', 'layer'  => '0'
 
 $this->item = JRequest::getVar('modelo');
 
-$cidades = JRequest::getVar('cidades');
+
 $ufs = JRequest::getVar('ufs');
 
 
 
-
-$scriptCidades =' var cidades = new Array(); ';
-$indexId = 0;
-if(isset($cidades)){
-	foreach ($cidades as $cidade){
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'] = new Object();';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].nome = "'.$cidade->nome.'";';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].uf = "'.$cidade->uf.'";';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].id = "'.$cidade->id.'";';
-		$indexId++;
-	}
-}
+//JFactory::getDocument()->addScript(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=scriptCidadeEstado&id=script.js'));
 
 $imagemCorpo = ( isset($this->item->foto_inteira) && $this->item->foto_inteira!=null && $this->item->foto_inteira!=""  ? JURI::base( true ) . '/../images/modelos/'. $this->item->foto_inteira : JURI::base( true ).'/components/com_angelgirls/no_image.png');
 $imagemCorpo_horizontal = ( isset($this->item->foto_inteira_horizontal) && $this->item->foto_inteira_horizontal!=null && $this->item->foto_inteira_horizontal!=""  ? JURI::base( true ) . '/../images/modelos/'. $this->item->foto_inteira_horizontal : JURI::base( true ).'/components/com_angelgirls/no_image.png');
@@ -80,7 +69,7 @@ JFactory::getDocument()->addStyleDeclaration('
 ');
 
 JFactory::getDocument()->addScriptDeclaration(
-	$scriptCidades.'
+	'
 	jQuery(document).ready(function(){
 			
 			

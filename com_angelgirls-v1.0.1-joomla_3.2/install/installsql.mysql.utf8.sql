@@ -178,7 +178,7 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		
 		`data_nascimento` DATE,
 		`sexo` ENUM('M','F') NOT NULL,
-		`nascionaldiade` VARCHAR(25),
+		`nascionalidade` VARCHAR(25),
 		`id_cidade_nasceu` INT,
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
@@ -218,7 +218,7 @@ CREATE TABLE `#__angelgirls_visitante` (
 
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
-		`nascionaldiade` VARCHAR(25),
+		`nascionalidade` VARCHAR(25),
 		`id_cidade_nasceu` INT,
 		
 		

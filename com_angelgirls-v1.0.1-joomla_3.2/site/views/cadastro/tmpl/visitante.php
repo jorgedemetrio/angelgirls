@@ -34,17 +34,7 @@ $ufs = JRequest::getVar('ufs');
 
 
 
-$scriptCidades =' var cidades = new Array(); ';
-$indexId = 0;
-if(isset($cidades)){
-	foreach ($cidades as $cidade){
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'] = new Object();';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].nome = "'.$cidade->nome.'";';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].uf = "'.$cidade->uf.'";';
-		$scriptCidades = $scriptCidades . 'cidades['.($indexId).'].id = "'.$cidade->id.'";';
-		$indexId++;
-	}
-}
+//JFactory::getDocument()->addScript(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=scriptCidadeEstado&id=script.js'));
 
 $imagemRosto = ( isset($this->item->foto_perfil) && $this->item->foto_perfil!=null && $this->item->foto_perfil!=""  ? JURI::base( true ) . '/../images/perfils/'. $this->item->foto_perfil : JURI::base( true ).'/components/com_angelgirls/no_image.png');
 
@@ -73,7 +63,7 @@ JFactory::getDocument()->addStyleDeclaration('
 ');
 
 JFactory::getDocument()->addScriptDeclaration(
-	$scriptCidades.'
+	'
 	jQuery(document).ready(function(){
 	   
 		document.formvalidator.setHandler("telefone", function(value) {

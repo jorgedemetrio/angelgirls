@@ -89,7 +89,7 @@ $fotos = JRequest::getVar('fotos');
 			</a>
 		</div>
 	</div>
-	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3" style="padding: 5px;">
+	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-phone" style="padding: 5px;">
 		<div id="itemCarrossel1" class="itemCarroussel alert alert-info" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
@@ -132,13 +132,11 @@ $fotos = JRequest::getVar('fotos');
 					}?>
 					<div class="caption">
 					<h4 class="list-group-item-heading"> <a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
-					<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
-							data-colorscheme='dark'
-							data-width="100" 
-							data-layout="button" 
-							data-action="like" 
-							data-show-faces="false"  class="margin-right:10px"
-							data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+					<p><div class="fb-share-button" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>" data-layout="button_count"></div>
+					<div class="g-plus" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
+					<div class="vkShare" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
+					</p>
+					<p><?php echo($conteudo->descricao);?></p>
 					<p class="text-center"><a href="<?php echo($url );?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
 					</div>
 			</div>
@@ -183,13 +181,11 @@ $fotos = JRequest::getVar('fotos');
 				}?>
 				<div class="caption">
 				<h4 class="list-group-item-heading"><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a></h4>
-				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"
-					data-colorscheme='dark'
-					data-width="100" 
-					data-layout="button" 
-					data-action="like" 
-					data-show-faces="false"  class="margin-right:10px"
-					data-share="false"></div>&nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><div class="fb-share-button" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>" data-layout="button_count"></div>
+				<div class="g-plus" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
+				<div class="vkShare" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
+				</p>
+				<p><?php echo($conteudo->descricao);?></p>
 				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button">Abrir: <?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
@@ -218,13 +214,7 @@ $fotos = JRequest::getVar('fotos');
 				}?>
 			<div class="caption">
 				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"  
-					data-colorscheme='dark'
-					data-width="100" 
-					data-layout="button" 
-					data-action="like" 
-					data-show-faces="false" class="margin-right:10px"
-					data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><?php echo($conteudo->descricao);?></p>
 				<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Ler: <?php echo($conteudo->nome);?></a></p>
 			</div>
 		</div>
@@ -254,13 +244,7 @@ $fotos = JRequest::getVar('fotos');
 				}?>
 			<div class="caption">
 				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><div class="fb-like" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"  
-					data-colorscheme='dark'
-					data-width="100" 
-					data-layout="button" 
-					data-action="like" 
-					data-show-faces="false" class="margin-right:10px"
-					data-share="false"></div> &nbsp;<?php echo($conteudo->descricao);?></p>
+				<p><?php echo($conteudo->descricao);?></p>
 				<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Assistir: <?php echo($conteudo->nome);?></a></p>
         			
         			

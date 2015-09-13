@@ -48,14 +48,27 @@ window.___gcfg = {lang: 'pt-BR'};
   })();
 
 
-
-
-
+(function() {
+	  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	  po.src = 'http://vk.com/js/api/share.js?9';
+	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  jQuery(document).ready(function(){
+		setTimeout(function(){
+			jQuery('.vkShare').each(function(){
+				$this = jQuery(this);
+				$this.html(VK.Share.button($this.attr('data-href'), {type: 'link'}));
+			});
+		}, 1000);
+	  });
+})();
 
 
 jQuery(document).ready(function(){
-	   
 
+	
+
+
+	
 	jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
 	jQuery(".validate-inteiro").mask("9999999999999");
 	jQuery(".validate-cep").mask("99999-999");
@@ -73,11 +86,14 @@ jQuery(document).ready(function(){
 		$ObjetoCidade = jQuery("#"+$objeto.attr("data-carregar"));
 		$ObjetoCidade.empty();
 		$ObjetoCidade.append(new Option(  "", ""));
-		for(var i=0; i<cidades.length;i++){
-			if(cidades[i].uf==$objeto.val()){
-				$ObjetoCidade.append(new Option(  cidades[i].nome, cidades[i].id));
+		
+		
+		jQuery.post('index.php?option=com_angelgirls&task=cidadeJson',{
+			uf:$objeto.val()}, function(dado){
+			for(var i=0; i<dado.length;i++){
+				$ObjetoCidade.append(new Option(dado[i].nome, dado[i].id));
 			}
-		}
+		},'json');
 	});	
 	
 });
