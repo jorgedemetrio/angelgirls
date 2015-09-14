@@ -23,3 +23,4 @@ DROP TABLE `#__angelgirls_vt_foto_sessao`;
 DROP TABLE `#__angelgirls_vt_foto_galeria`;
 DROP TABLE `#__angelgirls_vt_equipe`;
 DROP TABLE `#__angelgirls_vt_galeria`;
+DROP TABLE `#__angelgirls_figurino`;

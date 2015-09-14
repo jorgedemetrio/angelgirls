@@ -45,4 +45,3 @@ echo('<div id="fb-root"></div>');
 
 // Redirect if set by the controller
 $controller->redirect();
-?>

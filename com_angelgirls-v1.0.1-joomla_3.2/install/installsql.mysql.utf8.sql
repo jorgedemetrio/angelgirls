@@ -355,7 +355,7 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_modelo_secubdaria` INT,
 		`id_locacao` INT NULL,
 		`id_fotografo_principal` INT  NOT NULL,
-		`id_fotografo_secubdario` INT,
+		`id_fotografo_secundario` INT,
 		
 		`id_figurino_principal` INT,
 		`id_figurino_secundario` INT,
@@ -396,6 +396,7 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`meta_descricao` VARCHAR(250) NOT NULL, 
 		
 		`id_sessao` INT NOT NULL,
+		`ordem` INT,
 		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,

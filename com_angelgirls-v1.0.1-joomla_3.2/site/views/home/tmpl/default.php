@@ -186,7 +186,7 @@ $fotos = JRequest::getVar('fotos');
 				<div class="vkShare" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
 				</p>
 				<p><?php echo($conteudo->descricao);?></p>
-				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button">Abrir: <?php echo($conteudo->nome);?></a></p>
+				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button" style="text-overflow: ellipsis;max-width: 270px;  overflow: hidden;  direction: ltr;"><?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
 	<?php
@@ -196,7 +196,7 @@ $fotos = JRequest::getVar('fotos');
 			<?php 
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
 				
-				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-info" role="button">Ver todos as sess&otilde;es</a></p>
+				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-info" role="button">Ver todas as sess&otilde;es</a></p>
 				
 		</div>
 	</div>

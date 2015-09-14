@@ -1,4 +1,5 @@
 <?php
+
 /*------------------------------------------------------------------------
 # router.php - Angel Girls Component
 # ------------------------------------------------------------------------
@@ -65,6 +66,13 @@ function AngelgirlsParseRoute($segments)
 	//Handle View and Identifier
 	switch($segments[0])
 	{
+		case 'fotosessao':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'fotosessao';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
 		case 'sessoes':
 			$id = explode(':', $segments[$count-1]);
 			$vars['id'] = (int) $id[0];
@@ -91,4 +99,3 @@ function AngelgirlsParseRoute($segments)
 
 	return $vars;
 }
-?>

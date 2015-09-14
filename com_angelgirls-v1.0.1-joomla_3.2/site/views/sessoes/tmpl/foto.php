@@ -32,5 +32,8 @@ JFactory::getDocument()->addScriptDeclaration('
 // onLoadStart:    false,                  // function/bool;   calls function when the image load begins
 // onLoadEnd:      false                   // function/bool;   calls function when the image finishes loading
 $foto = JRequest::getVar('foto');
+$fotos = JRequest::getVar('fotos');
+$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$foto->id_sessao.'thumbnail');
 
 
+?>

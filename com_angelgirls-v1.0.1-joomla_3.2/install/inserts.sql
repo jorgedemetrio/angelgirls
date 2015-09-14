@@ -1,15 +1,3 @@
-INSERT INTO `#__cidade`
-(`nome`,`uf`)
-VALUES
-('São Paulo','SP'),
-('São Bernado do Campo','SP'),
-('Maua','SP'),
-('Campinas','SP'),
-('Santo Andre','SP'),
-('São Caetano','SP'),
-('Rio de Janeiro','RJ');
-
-
 
 INSERT INTO `#__angelgirls_modelo`
 (`id_usuario`,`nome_artistico`,`descricao`,`meta_descricao`,`foto_perfil`,`foto_inteira`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,
@@ -19,7 +7,7 @@ INSERT INTO `#__angelgirls_modelo`
 VALUES
 ((SELECT id FROM `#__users` WHERE username = 'jessie' ),
 'Jessie','Modelo fotografica','Modelo fotografica',null,null,1.46,40,25,35,35,'CASTANHOS','CALCASIANA','OUTRO','LIZO','LONGO','RUIVA',null,
-'Modelo','Brasileira',1,'1995-12-14',null,'F','01234567890',null,null,null,0,'ATIVA',0,0,0,0,1,'NOVO',
+'Modelo','Brasileira',1,'1995-12-14',null,'F','01234567890',null,null,null,0,'ATIVO',0,0,0,0,1,'ATIVO',
 (SELECT id FROM `#__users` WHERE username = 'jessie' ),
 (SELECT id FROM `#__users` WHERE username = 'jessie' ),
 NOW(),NOW());
@@ -34,12 +22,10 @@ INSERT INTO `#__angelgirls_promocao`
 (`titulo`,`nome_foto`,`descricao`,`meta_descricao`,`inicio`,`fim`,`publicar`,
 `status_dado`,`id_usuario_criador`,`id_usuario_alterador`,`data_criado`,`data_alterado`)
 VALUES
-(
-'Mande a sua foto e concorra a um SET','1.jpg',
+('Mande a sua foto e concorra a um SET','1.jpg',
 'Promoção valida apenas para São Paulo.',
 'Mande a sua foto e concorra a um SET. <br/>Promoção valida apenas para São Paulo.',
-'2015-01-01','2015-12-01','2015-01-01',
-'ATIVO',
+'2015-01-01','2015-12-01','2015-01-01','ATIVO',
 (SELECT id FROM `#__users` WHERE username = 'jorge' ),
 (SELECT id FROM `#__users` WHERE username = 'jorge' ),
 NOW(),
@@ -48,14 +34,12 @@ NOW());
 
 
 INSERT INTO `#__angelgirls_sessao`
-(`titulo`,`nome_foto`,`executada`,`descricao`,`historia`,`comentario_fotografo`,`comentario_modelos`,`comentario_equipe`,`meta_descricao`,
-`id_agenda`,`id_tema`,`id_modelo_principal`,`id_modelo_secubdaria`,`id_locacao`,`id_fotografo_principal`,`id_fotografo_secubdario`,`id_producao_principal`,
-`id_producao_secubdario`,`id_figurino_principal`,`id_figurino_secubdario`,`audiencia_gostou`,`audiencia_ngostou`,`audiencia_view`,`publicar`,
-`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,`data_criado`,`data_alterado`)
-VALUES
-('Sessão Inicial Para o Site da Angel','1.jpg','2015-01-31','Sessao experimental','Sessao experimental','Sessao experimental','',
-'','Sessao experimental',null,1,1,null,1,1,null,null,null,null,null,0,0,0,'2015-01-01','NOVO',
-(SELECT id FROM `#__users` WHERE username = 'jorge' ),
-(SELECT id FROM `#__users` WHERE username = 'jorge' ),
-NOW(),
-NOW());
+(`titulo`,`nome_foto`,`executada`,`descricao`,`historia`,`comentario_fotografo`,`comentario_modelos`,`comentario_equipe`,
+`meta_descricao`,`id_agenda`,`id_tema`,`id_modelo_principal`,`id_modelo_secubdaria`,`id_locacao`,`id_fotografo_principal`,
+`id_fotografo_secundario`,`id_figurino_principal`,`id_figurino_secundario`,`audiencia_gostou`,`audiencia_ngostou`,
+`audiencia_view`,`publicar`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,`data_criado`,`data_alterado`)
+(SELECT CONCAT('SESSAO ', RAND(), ' ', NOW()) AS `titulo`,
+`nome_foto`,`executada`,`descricao`,`historia`,`comentario_fotografo`,`comentario_modelos`,`comentario_equipe`,`meta_descricao`,
+`id_agenda`,`id_tema`,`id_modelo_principal`,`id_modelo_secubdaria`,`id_locacao`,`id_fotografo_principal`,`id_fotografo_secundario`,
+`id_figurino_principal`,`id_figurino_secundario`,`audiencia_gostou`,`audiencia_ngostou`,`audiencia_view`,`publicar`,`status_dado`,
+`id_usuario_criador`,`id_usuario_alterador`,`data_criado`,`data_alterado` FROM `#__angelgirls_sessao`);

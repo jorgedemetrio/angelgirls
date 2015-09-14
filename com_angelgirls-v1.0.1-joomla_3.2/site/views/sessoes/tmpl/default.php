@@ -133,7 +133,7 @@ if($dataFim!=''){
 				<div class="caption">
 
 				<p class="text-center"><?php echo($conteudo->descricao);?></p>
-				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button" style="text-overflow: ellipsis;max-width: 170px;  overflow: hidden;  direction: ltr;"><?php echo($conteudo->nome);?>
+				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button" style="text-overflow: ellipsis;max-width: 150px;  overflow: hidden;  direction: ltr;"><?php echo($conteudo->nome);?>
 
 				</a></p>
 				</div>

@@ -53,14 +53,24 @@ class AngelgirlsViewsessoes extends JViewLegacy
 		$app = JFactory::getApplication();
 		$document = JFactory::getDocument();
 		$pathway = $app->getPathway();
-		$pathway->addItem('Sess&atilde;oes', JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais'));
+		$pathway->addItem('Sess&otilde;es', JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais'));
 
 		//$document->setMetadata('content-language', 'pt-br');
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
 		if($layout=='sessao'){
 			$sessao = JRequest::getVar('sessao');
+			$descricao = $sessao->meta_descrica . ' Data: ' . JFactory::getDate($sessao->publicar)->format('d/m/Y');
 			$pathway->addItem($sessao->titulo,'');
-			$document->setTitle($sessao->titulo);
+			$document->setTitle($sessao->titulo );
+			$document->setDescription($sessao->meta_descricao);
+			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo)
+					.$sessao->meta_descricao.','.str_replace(' ', ',',$sessao->meta_descricao));
+		}
+		if($layout=='foto'){
+			$sessao = JRequest::getVar('foto');
+			$descricao = $sessao->titulo;
+			$pathway->addItem('Foto: ' . $sessao->titulo,'');
+			$document->setTitle($sessao->titulo );
 			$document->setDescription($sessao->titulo);
 			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo));
 		}
