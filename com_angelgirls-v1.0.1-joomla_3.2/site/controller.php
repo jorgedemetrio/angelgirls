@@ -264,9 +264,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		
-		$id = JRequest::getString( 'id',0);
+		$id = JRequest::getInt( 'id',0);
 		
-		$query = $db->getQuery ( true );
+	
+		
 		$query = $db->getQuery ( true );
 		$query->select('`f`.`id`,`f`.`titulo`,`f`.`descricao`,`f`.`meta_descricao`,`f`.`id_sessao`,`f`.`audiencia_gostou`,
 						`s`.`id` AS `id_sessao`,`s`.`titulo` AS `titulo_sessao`,`s`.`nome_foto`,
@@ -306,7 +307,7 @@ class AngelgirlsController extends JControllerLegacy{
 				->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON ' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName('vt_mod2.id_modelo'))				
 				->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 				->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
-				->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
+				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 		
 		//ordem
 		
@@ -315,7 +316,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'foto', $result );
 		
-
+		
 		
 		JRequest::setVar ( 'fotos', $this->runFotoSessao($user, 0, $result->id_sessao, $this::LIMIT_DEFAULT) );
 		
