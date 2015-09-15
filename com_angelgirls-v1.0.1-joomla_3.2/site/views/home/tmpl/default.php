@@ -222,9 +222,7 @@ $fotos = JRequest::getVar('fotos');
 	<?php
 		//BANNER
 		if($couter++==1){
-			echo('ENTROU');
 			$module = JModuleHelper::getModule('banner_home_cubo');
-			print_r($module);
 			if(isset($module)){
 				echo '<div class="thumbnail">'; 
 				echo JModuleHelper::renderModule($module);
