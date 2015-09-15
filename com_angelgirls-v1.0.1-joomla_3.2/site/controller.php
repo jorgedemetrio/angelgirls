@@ -148,7 +148,9 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	function sitemapFotografos(){
+ 
+	
+	public function sitemapFotografos(){
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','nome_artistico','data_alterado'),
@@ -275,6 +277,103 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
+	public function gostarJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$id = JRequest::getInt('id',0);
+		$view = JRequest::getInt('view','');
+		$jsonRetorno='';
+		if(isset($user) && isset($user->id) && $user->id!=0){
+			$campoId=null;
+			$tabelaVotoId=null;
+			$tabelaRegistroId=null;
+			
+			if($view=='fotosessao'){
+				$campoId='id_foto';
+				$tabelaVotoId='#__angelgirls_vt_foto_sessao';
+				$tabelaRegistroId='#__angelgirls_foto_sessao';
+			}
+			elseif($view=='sessao'){
+				$campoId='id_sessao';
+				$tabelaVotoId='#__angelgirls_vt_sessao';
+				$tabelaRegistroId='#__angelgirls_sessao';
+			}
+			elseif($view=='fotografo'){
+				$campoId='id_fotografo';
+				$tabelaVotoId='#__angelgirls_vt_fotografo';
+				$tabelaRegistroId='#__angelgirls_fotografo';
+			}
+			elseif($view=='modelo'){
+				$campoId='id_modelo';
+				$tabelaVotoId='#__angelgirls_vt_modelo';
+				$tabelaRegistroId='#__angelgirls_modelo';
+			}
+			elseif($view=='fotogaleria'){
+				$campoId='id_foto';
+				$tabelaVotoId='#__angelgirls_vt_foto_galeria';
+				$tabelaRegistroId='#__angelgirls_foto_galeria';
+			}
+			elseif($view=='galeria'){
+				$campoId='id_galeria';
+				$tabelaVotoId='#__angelgirls_vt_galeria';
+				$tabelaRegistroId='#__angelgirls_galeria';
+			}
+			
+			if(isset($campoId) && 		isset($tabelaVotoId) &&	isset($tabelaRegistroId)){
+				$query = $db->getQuery ( true );
+				$query->select('`f`.`data_criado` as `data`')
+				->from ( $db->quoteName ( $tabelaVotoId, 'f' ) )
+				->where (' f.'.$campoId.' = ' . $id )
+				->where (' f.id_usuario = ' . $user->id );
+				$db->setQuery ( $query );
+				$modelo = $db->loadObject();
+					
+				$gostar = !(isset($modelo) && isset($modelo->data));
+				if($gostar){
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( $tabelaVotoId ) )
+					->columns (array (
+						$db->quoteName ( $campoId ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'data_criado' )))
+						->values(implode(',', array ($id, $user->id, 'NOW()')));
+					$db->setQuery( $query );
+					$db->execute();
+				}
+				else{
+					$query = $db->getQuery ( true );
+					$query->delete( $db->quoteName ($tabelaVotoId ) )
+					->where ($campoId.' = ' . $id )
+					->where (' id_usuario = ' . $user->id );
+					$db->setQuery( $query );
+					$db->execute();
+				}
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName($tabelaRegistroId));
+				if($gostar){
+					$query->set(array($db->quoteName ( 'audiencia_gosto' ) . '  =  ('.$db->quoteName ( 'audiencia_gosto' ).' + 1)'));
+					$jsonRetorno='{"status":"ok","mesage":"Adicionado"}';
+				}
+				else{
+					$query->set(array($db->quoteName ( 'audiencia_gosto' ) . '  =  ('.$db->quoteName ( 'audiencia_gosto' ).' - 1)'));
+					$jsonRetorno='{"status":"ok","mesage":"Removido"}';
+				}
+				$query->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
+			else{
+				$jsonRetorno='{"status":"nok","mesage":"Area n&aatilde;o reconhecida."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"status":"nok","mesage":"N&aatilde;o logado"}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
 	
 	public function existeUsuario($usuarioP){ 
 		$db = JFactory::getDbo ();
