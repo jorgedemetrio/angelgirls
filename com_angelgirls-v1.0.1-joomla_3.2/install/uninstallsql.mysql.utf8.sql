@@ -1,5 +1,5 @@
 DROP TABLE `#__cidade`;
-DROP TABLE `#__uf`
+DROP TABLE `#__uf`;
 DROP TABLE `#__angelgirls_agenda` ;
 DROP TABLE `#__angelgirls_email`;
 DROP TABLE `#__angelgirls_redesocial` ;

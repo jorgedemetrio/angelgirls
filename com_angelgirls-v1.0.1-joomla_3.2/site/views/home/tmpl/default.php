@@ -33,9 +33,9 @@ $fotos = JRequest::getVar('fotos');
 <div class="page-header">
 	<h1>Angel Girls</h1>
 </div>
-<div class="wells">Bem vindo ao site de com as modelos mais lindas e
+<div class="well">Bem vindo ao site de com as modelos mais lindas e
 	angelicais.</div>
-<div class="row" style="margin-bottom: 10px;">
+<div class="row  hidden-phone" style="margin-bottom: 10px;">
 	<div class="col col-xs-12 col-sm-12 col-md-8 col-lg-9" style="height: 450px; padding: 0px; margin: 0px;">
 		<div id="displayCarrossel" class="carousel slide" data-ride="carousel" style="height: 450px;">
 			<!-- Indicators -->
@@ -89,7 +89,7 @@ $fotos = JRequest::getVar('fotos');
 			</a>
 		</div>
 	</div>
-	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-phone" style="padding: 5px;">
+	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3" style="padding: 5px;">
 		<div id="itemCarrossel1" class="itemCarroussel alert alert-info" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
@@ -125,9 +125,10 @@ $fotos = JRequest::getVar('fotos');
 		foreach($fotos as $conteudo){ ?>
 			<div class="thumbnail">
 				<?php
-					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false); 
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
+					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->id.':'.$conteudo->id_sessao.'-thumbnail');
 					if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-						<a href="<?php echo($url );?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+						<a href="<?php echo($url );?>"><img src="<?php echo($urlFoto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="height: 150px;"/></a>
 					<?php 
 					}?>
 					<div class="caption">
@@ -137,7 +138,7 @@ $fotos = JRequest::getVar('fotos');
 					<div class="vkShare" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
 					</p>
 					<p><?php echo($conteudo->descricao);?></p>
-					<p class="text-center"><a href="<?php echo($url );?>" class="btn btn-primary" role="button">Ver sess&atilce;o: <?php echo($conteudo->nome);?></a></p>
+					<p class="text-center"><a href="<?php echo($url );?>" class="btn btn-primary" role="button">Mais fotos: <?php echo($conteudo->nome);?></a></p>
 					</div>
 			</div>
 		<?php
@@ -176,7 +177,7 @@ $fotos = JRequest::getVar('fotos');
 			<?php 
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)),false); 
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="height: 150px;"/></a>
 				<?php 
 				}?>
 				<div class="caption">
@@ -221,7 +222,9 @@ $fotos = JRequest::getVar('fotos');
 	<?php
 		//BANNER
 		if($couter++==1){
+			echo('ENTROU');
 			$module = JModuleHelper::getModule('banner_home_cubo');
+			print_r($module);
 			if(isset($module)){
 				echo '<div class="thumbnail">'; 
 				echo JModuleHelper::renderModule($module);

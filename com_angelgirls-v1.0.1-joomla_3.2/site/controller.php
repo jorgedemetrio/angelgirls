@@ -273,7 +273,7 @@ class AngelgirlsController extends JControllerLegacy{
 						`s`.`id` AS `id_sessao`,`s`.`titulo` AS `titulo_sessao`,`s`.`nome_foto`,
 						`s`.`executada`,`s`.`descricao` AS `descricao_sessao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
 						`s`.`comentario_equipe`,`s`.`meta_descricao` AS `meta_descricao_sessao`,`s`.`id_agenda`,
-						`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secubdaria`,
+						`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 						`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
 						`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
 						`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
@@ -290,12 +290,14 @@ class AngelgirlsController extends JControllerLegacy{
 						`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` ,
 						`fig1`.`titulo` AS `figurino1`,`fig1`.`audiencia_gostou` AS `gostou_fig1`,
 						`fig2`.`titulo` AS `figurino2`,`fig2`.`audiencia_gostou` AS `gostou_fig2`')
-				->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
-				->join ( 'INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON (' . $db->quoteName ( 'f.id_sessao' ) . ' = ' . $db->quoteName ( 's.id' ) . ')' )
+				->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
+				->join ( 'INNER', $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) . ' ON (' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'f.id_sessao' ) . ')' )
+// 				->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
+// 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON (' . $db->quoteName ( 'f.id_sessao' ) . ' = ' . $db->quoteName ( 's.id' ) . ')' )
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_modelo', 'mod1' ) . ' ON (' . $db->quoteName ( 'mod1.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_principal' ) . ')' )
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_fotografo', 'fot1' ) . ' ON (' . $db->quoteName ( 'fot1.id' ) . ' = ' . $db->quoteName ( 's.id_fotografo_principal' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_tema', 'tema' ) . ' ON (' . $db->quoteName ( 'tema.id' ) . ' = ' . $db->quoteName ( 's.id_tema' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_modelo', 'mod2' ) . ' ON (' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_secubdaria' ) . ')' )
+				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_modelo', 'mod2' ) . ' ON (' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_secundaria' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig1' ) . ' ON (' . $db->quoteName ( 'fig1.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_principal' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig2' ) . ' ON (' . $db->quoteName ( 'fig2.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_secundario' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_locacao', 'loc' ) . ' ON (' . $db->quoteName ( 'loc.id' ) . ' = ' . $db->quoteName ( 's.id_locacao' ) . ')' )
@@ -338,7 +340,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		$query = $db->getQuery ( true );
 		$query->select('`s`.`id`,`s`.`titulo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
-						`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secubdaria`,
+						`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 						`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
 						`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
 						`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
@@ -359,7 +361,7 @@ class AngelgirlsController extends JControllerLegacy{
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_modelo', 'mod1' ) . ' ON (' . $db->quoteName ( 'mod1.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_principal' ) . ')' )
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_fotografo', 'fot1' ) . ' ON (' . $db->quoteName ( 'fot1.id' ) . ' = ' . $db->quoteName ( 's.id_fotografo_principal' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_tema', 'tema' ) . ' ON (' . $db->quoteName ( 'tema.id' ) . ' = ' . $db->quoteName ( 's.id_tema' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_modelo', 'mod2' ) . ' ON (' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_secubdaria' ) . ')' )
+				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_modelo', 'mod2' ) . ' ON (' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_secundaria' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig1' ) . ' ON (' . $db->quoteName ( 'fig1.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_principal' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig2' ) . ' ON (' . $db->quoteName ( 'fig2.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_secundario' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_locacao', 'loc' ) . ' ON (' . $db->quoteName ( 'loc.id' ) . ' = ' . $db->quoteName ( 's.id_locacao' ) . ')' )
@@ -453,7 +455,12 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		if($view=='fotosessao'){
 			$detalhe = explode ( ' ', $tipo );
-			$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '_' . $detalhe[1] . '.jpg';
+			if ($detalhe[1]=='full'){
+				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '.jpg';
+			}
+			else{
+				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '_' . $detalhe[1] . '.jpg';
+			}
 		}
 		header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
@@ -522,7 +529,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->where (  " s.publicar <= " . $db->quote($dataFormatadaBanco));
 		}
 		if(isset($idModelo) && $idModelo != 0 ){
-			$query->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $idModelo . ' OR ' . $db->quoteName ('s.id_modelo_secubdaria') . ' = ' . $idModelo . ')');
+			$query->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $idModelo . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $idModelo . ')');
 		}
 		if(isset($idFotografo) && $idFotografo != 0 ){
 			$query->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $idFotografo . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $idFotografo . ')');
@@ -1630,6 +1637,7 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
 				->order('data_criado DESC ')
 				->setLimit(1);
+
 		$db->setQuery ( $query );
 		
 		
@@ -1656,9 +1664,9 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias ")
+		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao,`id_sessao`, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias ")
 			->from ('#__angelgirls_foto_sessao')
-			->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+			->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
 			->order('data_criado DESC ')
 			->setLimit(2);
 		$db->setQuery ( $query );

@@ -352,7 +352,7 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_agenda` INT,
 		`id_tema` INT NULL,
 		`id_modelo_principal` INT  NOT NULL,
-		`id_modelo_secubdaria` INT,
+		`id_modelo_secundaria` INT,
 		`id_locacao` INT NULL,
 		`id_fotografo_principal` INT  NOT NULL,
 		`id_fotografo_secundario` INT,

@@ -41,5 +41,40 @@ INSERT INTO `#__angelgirls_sessao`
 (SELECT CONCAT('SESSAO ', RAND(), ' ', NOW()) AS `titulo`,
 `nome_foto`,`executada`,`descricao`,`historia`,`comentario_fotografo`,`comentario_modelos`,`comentario_equipe`,`meta_descricao`,
 `id_agenda`,`id_tema`,`id_modelo_principal`,`id_modelo_secubdaria`,`id_locacao`,`id_fotografo_principal`,`id_fotografo_secundario`,
-`id_figurino_principal`,`id_figurino_secundario`,`audiencia_gostou`,`audiencia_ngostou`,`audiencia_view`,`publicar`,`status_dado`,
-`id_usuario_criador`,`id_usuario_alterador`,`data_criado`,`data_alterado` FROM `#__angelgirls_sessao`);
+`id_figurino_principal`,`id_figurino_secundario`,`audiencia_gostou`,`audiencia_ngostou`,`audiencia_view`,`publicar`,'PUBLICADO' AS `status_dado`,
+`id_usuario_criador`,`id_usuario_alterador`,NOW() AS `data_criado`,NOW() AS `data_alterado` FROM `#__angelgirls_sessao`);
+
+
+
+
+UPDATE #__angelgirls_sessao SET status_dado = 'PUBLICADO';
+
+INSERT INTO `#__angelgirls_foto_sessao`
+(
+`titulo`,
+`descricao`,
+`meta_descricao`,
+`id_sessao`,
+`audiencia_gostou`,
+`audiencia_ngostou`,
+`audiencia_view`,
+`status_dado`,
+`id_usuario_criador`,
+`id_usuario_alterador`,
+`data_criado`,
+`data_alterado`)
+VALUES
+(
+'FOTO 2',
+'Foto sessao 1',
+'Foto sessao 1',
+2,
+0,
+0,
+0,
+'NOVO',
+(SELECT id FROM `#__users` WHERE username = 'jorge' ),
+(SELECT id FROM `#__users` WHERE username = 'jorge' ),
+NOW(),
+NOW());
+UPDATE ag_angelgirls_foto_sessao SET titulo = concat('FOTO ' , id) WHERE ID > 0;
