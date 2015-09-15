@@ -32,9 +32,12 @@ $foto = JRequest::getVar('foto');
 $conteudo =$foto;
 $fotos = JRequest::getVar('fotos');
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$foto->id_sessao.'-full');
-
+$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
 
 ?>
+		    	<div class="pull-right">
+		    	<a class="btn" href="<?php echo($urlSessao );?>">Carregar Sess&atilde;o: <?php echo($conteudo->titulo_sessao); ?></a>
+		    	</div>
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?>
 	<small><?php echo($conteudo->nome_tema);?></small>
@@ -70,7 +73,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadI
 
 <div id="detalhesSessao" class="tab-content" style="overflow: auto;">
 	<div id="general" class="tab-pane fade in active" style="height: 170px;">
-		<h2>Detalhe sess&atilde;o</h2>
+		<h2>Detalhe foto/sess&atilde;o</h2>
 		<div class="row">
 			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-3">
 		    	Tema
@@ -78,9 +81,12 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadI
 			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-3">
 		    	Figurino
 			</div>
-			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-4">
+			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-3">
 		    	Local
 			</div>
+			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-1">
+		    	Acessos foto
+			</div>	
 			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-1">
 		    	Realizado
 			</div>		
@@ -93,10 +99,13 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadI
 		    	<?php echo($conteudo->nome_tema)?>
 			</div>
 			<div class="col col-xs-12 col-sm-3 col-md-2 col-lg-3 text-center">
-		    	<?php echo($conteudo->figurino1 . isset($conteudo->figurino2)?', '.$conteudo->figurino2:'' )?>
+		    	<?php echo($conteudo->figurino1 . (isset($conteudo->figurino2)?', '.$conteudo->figurino2 : '' ));?>
 			</div>
-			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-4 text-center">
+			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-3 text-center">
 		    	<?php echo($conteudo->nome_locacao )?>
+			</div>
+			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-1 text-center">
+		    	<?php echo($conteudo->audiencia_view )?>
 			</div>
 			<div class="col col-xs-12 col-sm-3 col-md-2 col-lg-1 text-center">
 		    	<?php echo(JFactory::getDate($conteudo->executada)->format('d/m/Y')); ?>
@@ -107,9 +116,12 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadI
 		</div>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 well">
-		    	<?php echo($conteudo->descricao )?>
+		    	<h4>Descri&ccedil;&atilde;o da foto</h4>
+		    	<?php echo($conteudo->descricao);?>
+				<h4>Descri&ccedil;&atilde;o da sess&atilde;o</h4>
+		    	<?php echo($conteudo->descricao_sessao);?>
 			</div>
-		</div>    
+		</div>  
 	</div>
 <?php $urlBusca = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
 	<div id="modelos" class="tab-pane fade in" style="height: 170px;">
@@ -410,14 +422,7 @@ function ComponenteNavegacao(id,maxItensPorTela){
 	
 	this.init = function (){
 		$objeto = jQuery('#'+id);
-
 		$objeto.find('div.controle').css('width','780px');
-// 		var itemContador=0;
-// 		$objeto.find('div.item').each(function(){
-// 		     var $item  = jQuery(this);
-// 		     $item.css('display',(itemContador++>=6? '':'none'));
-// 		});
-
 		itens = $objeto.find('div.item');
 		var ativoIndex = -1;
 		for(var index=0;index<itens.length;index++){
@@ -425,7 +430,6 @@ function ComponenteNavegacao(id,maxItensPorTela){
 				ativoIndex=index;
 			}
 		}
-
 // 		$objeto.find('div.setaEsquerda').click(this.left);
 // 		$objeto.find('div.setaDireita').click(this.right);
 		
@@ -436,12 +440,6 @@ function ComponenteNavegacao(id,maxItensPorTela){
 		this.position=inciar;
 
 		this.reload();
-
-		
-
-
-		
-
 		
 		$objeto.find('div.controle').css('display','');
 	}
@@ -450,7 +448,7 @@ function ComponenteNavegacao(id,maxItensPorTela){
 		for(var index=0;index<itens.length;index++){
 			jQuery( itens[index]).css('display','none');
 		}
-		for(var index=this.position; (index-this.position) < 6 && index < itens.length ;index++){
+		for(var index=this.position; (index-this.position) < 5 && index < itens.length ;index++){
 			jQuery( itens[index]).css('display','inline-block');
 		}
 	}

@@ -79,9 +79,12 @@ $id = JRequest::getInt('id');
 			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-3">
 		    	Figurino
 			</div>
-			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-4">
+			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-3">
 		    	Local
 			</div>
+			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-1">
+		    	Acessos
+			</div>		
 			<div class="label col col-xs-12 col-sm-2 col-md-2 col-lg-1">
 		    	Realizado
 			</div>		
@@ -96,8 +99,11 @@ $id = JRequest::getInt('id');
 			<div class="col col-xs-12 col-sm-3 col-md-2 col-lg-3 text-center">
 		    	<?php echo($conteudo->figurino1 . isset($conteudo->figurino2)?', '.$conteudo->figurino2:'' )?>
 			</div>
-			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-4 text-center">
+			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-3 text-center">
 		    	<?php echo($conteudo->nome_locacao )?>
+			</div>
+			<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-1 text-center">
+		    	<?php echo($conteudo->audiencia_view )?>
 			</div>
 			<div class="col col-xs-12 col-sm-3 col-md-2 col-lg-1 text-center">
 		    	<?php echo(JFactory::getDate($conteudo->executada)->format('d/m/Y')); ?>
@@ -108,6 +114,7 @@ $id = JRequest::getInt('id');
 		</div>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 well">
+				<h4>Descri&ccedil;&atilde;o da sess&atilde;o</h4>
 		    	<?php echo($conteudo->descricao )?>
 			</div>
 		</div>    

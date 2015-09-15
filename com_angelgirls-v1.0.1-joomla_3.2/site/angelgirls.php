@@ -21,13 +21,17 @@ $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css');
 $document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.min.css');
 $document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.min.css');
+$document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( true ) . '/components/com_angelgirls/";');
+// $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.min.css');
+// $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.structure.min.css');
+// $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.theme.min.css');
 
 JHtml::_('jquery.framework');
+//JHTML::_('behavior.tooltip');
 $document->addScript('components/com_angelgirls/assets/js/jquery.mask.min.js');
 $document->addScript('components/com_angelgirls/assets/js/bootstrap.min.js');
 $document->addScript('components/com_angelgirls/assets/js/angelgirls.js');
-
-
+// $document->addScript('components/com_angelgirls/assets/js/jquery-ui.min.js');
 
 // Require helper file
 JLoader::register('AngelgirlsHelper', dirname(__FILE__) . DS . 'helpers' . DS . 'angelgirls.php');

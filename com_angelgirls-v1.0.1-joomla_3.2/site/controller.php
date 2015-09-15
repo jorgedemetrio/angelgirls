@@ -260,6 +260,119 @@ class AngelgirlsController extends JControllerLegacy{
 		parent::display (true, false);
 	}
 	
+	public function validarUsuarioExisteJson(){
+		$db = JFactory::getDbo ();
+		$usuario = strtolower(trim(JRequest::getString('usuario', '','POST')));
+		
+		
+
+		
+		$json = '{"existe":"'. ($this->existeUsuario($usuario)?'SIM':'NAO') .'"}';
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		
+		exit();
+	}
+	
+	
+	public function existeUsuario($usuarioP){ 
+		$db = JFactory::getDbo ();
+		$usuario =$db->quote( strtolower(trim($usuarioP)));
+		
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__users', 'f' ) )
+		->where (' trim(lower('. $db->quoteName ( 'f.username' ) . ')) = ' . $usuario);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+		return (isset($result) && isset($result->id));
+	}
+	
+	
+	public function validarCPFJson(){
+		$db = JFactory::getDbo ();
+		
+		$cpf =  $db->quote(trim(strtolower(str_replace("-","",str_replace(".","",JRequest::getString('cpf', '','POST'))))));
+		
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf );
+		$db->setQuery ( $query );
+		$modelo = $db->loadObject();
+		
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
+		$db->setQuery ( $query );
+		$fotografo = $db->loadObject();
+		
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_visitante', 'f' ) )
+		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
+		$db->setQuery ( $query );
+		$visitante = $db->loadObject();
+		
+		$json = '{"modelo":"'.(isset($modelo) && isset($modelo->id)?'SIM':'NAO').'","fotografo":"'.(isset($fotografo) && isset($fotografo->id)?'SIM':'NAO').'","visitante":"'.(isset($visitante) && isset($visitante->id)?'SIM':'NAO').'"}';		
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+	
+		exit();
+	}
+	
+	function validaCPF($cpf = null) {
+	
+		// Verifica se um número foi informado
+		if(empty($cpf)) {
+			return false;
+		}
+	
+		// Elimina possivel mascara
+		$cpf = ereg_replace('[^0-9]', '', $cpf);
+		$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+		 
+		// Verifica se o numero de digitos informados &eacute; igual a 11
+		if (strlen($cpf) != 11) {
+			return false;
+		}
+		// Verifica se nenhuma das sequências invalidas abaixo
+		// foi digitada. Caso afirmativo, retorna falso
+		else if ($cpf == '00000000000' ||
+				$cpf == '11111111111' ||
+				$cpf == '22222222222' ||
+				$cpf == '33333333333' ||
+				$cpf == '44444444444' ||
+				$cpf == '55555555555' ||
+				$cpf == '66666666666' ||
+				$cpf == '77777777777' ||
+				$cpf == '88888888888' ||
+				$cpf == '99999999999') {
+			return false;
+			// Calcula os digitos verificadores para verificar se o
+			// CPF é válido
+		} else {
+			 
+			for ($t = 9; $t < 11; $t++) {
+				 
+				for ($d = 0, $c = 0; $c < $t; $c++) {
+					$d += $cpf{$c} * (($t + 1) - $c);
+				}
+				$d = ((10 * $d) % 11) % 10;
+				if ($cpf{$c} != $d) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
+	
 	public function carregarFoto(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
@@ -275,7 +388,7 @@ class AngelgirlsController extends JControllerLegacy{
 						`s`.`comentario_equipe`,`s`.`meta_descricao` AS `meta_descricao_sessao`,`s`.`id_agenda`,
 						`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 						`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
-						`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
+						`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`f`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
 						`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
 						`tema`.`nome` AS `nome_tema`,`tema`.`descricao` AS `descricao_tema`,`tema`.`nome_foto` AS `foto_tema`,`tema`.`audiencia_gostou` AS `gostou_tema`,
 						CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_sessa`,
@@ -290,10 +403,10 @@ class AngelgirlsController extends JControllerLegacy{
 						`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` ,
 						`fig1`.`titulo` AS `figurino1`,`fig1`.`audiencia_gostou` AS `gostou_fig1`,
 						`fig2`.`titulo` AS `figurino2`,`fig2`.`audiencia_gostou` AS `gostou_fig2`')
-				->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
-				->join ( 'INNER', $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) . ' ON (' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'f.id_sessao' ) . ')' )
-// 				->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
-// 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON (' . $db->quoteName ( 'f.id_sessao' ) . ' = ' . $db->quoteName ( 's.id' ) . ')' )
+//				->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
+//				->join ( 'INNER', $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) . ' ON (' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'f.id_sessao' ) . ')' )
+ 				->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
+ 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON (' . $db->quoteName ( 'f.id_sessao' ) . ' = ' . $db->quoteName ( 's.id' ) . ')' )
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_modelo', 'mod1' ) . ' ON (' . $db->quoteName ( 'mod1.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_principal' ) . ')' )
 				->join ( 'INNER', $db->quoteName ( '#__angelgirls_fotografo', 'fot1' ) . ' ON (' . $db->quoteName ( 'fot1.id' ) . ' = ' . $db->quoteName ( 's.id_fotografo_principal' ) . ')' )
 				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_tema', 'tema' ) . ' ON (' . $db->quoteName ( 'tema.id' ) . ' = ' . $db->quoteName ( 's.id_tema' ) . ')' )
@@ -380,6 +493,14 @@ class AngelgirlsController extends JControllerLegacy{
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_sessao' ))
+		->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
+		->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+		$db->setQuery ( $query );
+		$db->execute ();
+		
 		JRequest::setVar ( 'sessao', $result );
 
 
@@ -407,8 +528,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':'.strtolower(str_replace(" ","-",$foto->titulo))); 
 		$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$foto->sessao.'thumbnail');?>
 <div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail">
-	<a href="<?php echo($url);?>"><img
-		src="<?php echo($urlFoto);?>" /></a>
+	<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" /></a>
 </div>
 <?php
 		}
@@ -444,19 +564,20 @@ class AngelgirlsController extends JControllerLegacy{
 		$id = JRequest::getInt( 'id',0);
 		$tipo = JRequest::getString('descricao',0);
 		$view = JRequest::getString( 'view','');
-	
-		
-		
 		$arquivo = "";
 		$mime = 'image/jpeg';
-		
-		
 		$path = JPATH_BASE.DS.'images';
-		
 		if($view=='fotosessao'){
 			$detalhe = explode ( ' ', $tipo );
 			if ($detalhe[1]=='full'){
 				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '.jpg';
+				
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+						->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+				$db->setQuery ( $query );
+				$db->execute ();
 			}
 			else{
 				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '_' . $detalhe[1] . '.jpg';
@@ -465,7 +586,6 @@ class AngelgirlsController extends JControllerLegacy{
 		header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
 			$imageInfo = getimagesize($arquivo);
-			
 			switch ($imageInfo[2]) {
 				case IMAGETYPE_JPEG:
 					$mime="Content-Type: image/jpg";
@@ -651,7 +771,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'sessoes', $results );
 		
-		
+
 		
 		
 		$query = $db->getQuery ( true );
@@ -699,20 +819,20 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser(0);
 		$usersParams = JComponentHelper::getParams( 'com_users' );
 		$userdata = array();
-		$userdata['username'] = JRequest::getString( 'username', null, 'POST' );
-		$userdata['email'] = JRequest::getString( 'email', null, 'POST' );
+		$userdata['username'] = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+		$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
 		$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
 		$userdata['name'] = JRequest::getString( 'name', null, 'POST' );
-		$userdata['password'] = JRequest::getString( 'password', null, 'POST' );
+		$userdata['password'] = trim(JRequest::getString( 'password', '', 'POST' ));
 		$userdata['password2'] = JRequest::getString( 'password1', null, 'POST' );
 		$defaultUserGroup = $usersParams->get('new_usertype', 2);
 		$userdata['groups']=array($defaultUserGroup);
 		$userdata['block'] = 0;
 		if (!$user->bind($userdata)) {
-			echo(JText::_( $user->getError()));
+			JError::raiseWarning(100,JText::_( $user->getError()));
 		}
-		if (!$user->save()) { // now check if the new user is saved
-			echo(JText::_( $user->getError())); // something went wrong!!
+		elseif (!$user->save()) { // now check if the new user is saved
+			JError::raiseWarning(100, JText::_( $user->getError())); // something went wrong!!
 		}
 		return $user;
 	}
@@ -763,6 +883,90 @@ class AngelgirlsController extends JControllerLegacy{
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
 		}
+		
+		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_visitante', 'f' ) )
+		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
+		if ($id != null && $id != 0) {
+			$query->where (' id <> ' .$id );
+		}
+		$db->setQuery ( $query );
+		$objeto = $db->loadObject();
+		
+		if(isset($objeto) && isset($objeto->id)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
+		}
+		
+		if($this->existeUsuario($username)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
+		}
+		
+			if(!isset($id) || $id==0){
+			if(!isset($email)){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
+			}
+			
+			if(isset($email) && strpos($email, '@' )===false){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+			}
+			if(!isset($username) || strlen(trim($username))<5){
+				$erro =true;
+				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
+			}
+			if(!isset($password)  || strlen(trim($password))<8){
+				$erro =true;
+				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
+			}
+			if(!isset($telefone)  || strlen(trim($telefone))<14){
+				$erro =true;
+				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+			}
+		}
+
+		if(!isset($name)  || strlen(trim($name))<=0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+		}
+		
+		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
+		}
+		
+		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
+		}
+		
+		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
+		}
+		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
+			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
+			$dataHoje = intval(date('Ymd'));
+			if(($dataFormatadaBanco + 180000)>$dataHoje){
+				$erro =true;
+				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );
+			}
+		}
+		
+		if(!isset($idCidade) || $idCidade==0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
+		}
+
+		if($erro){
+			$this->cadastroVisitante();
+			return;
+		}
+		
 		
 		if ($id != null && $id != 0) { // UPDATE
 			$usuario = JFactory::getUser();
@@ -905,6 +1109,12 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				
 			}
+			else{
+				JError::raiseWarning( 100, 'Falha no cadastro.' );
+				$this->cadastroVisitante();
+				return;
+			}
+			
 		}
 		
 		if($id != 0){
@@ -920,7 +1130,7 @@ class AngelgirlsController extends JControllerLegacy{
 					JFile::delete ( $newfile );
 				}
 				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning ( 100, 'Falha ao salvar o arquivo.' );
+					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 					$erro = true;
 				} else {
 					$query = $db->getQuery ( true );
@@ -985,6 +1195,90 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+		}
+		
+		
+		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
+		if ($id != null && $id != 0) {
+			$query->where (' id <> ' .$id );
+		}
+		$db->setQuery ( $query );
+		$objeto = $db->loadObject();
+		
+		if(isset($objeto) && isset($objeto->id)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
+		}
+		
+		if($this->existeUsuario($username)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
+		}
+		
+			if(!isset($id) || $id==0){
+			if(!isset($email)){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
+			}
+			
+			if(isset($email) && strpos($email, '@' )===false){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+			}
+			if(!isset($username) || strlen(trim($username))<5){
+				$erro =true;
+				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
+			}
+			if(!isset($password)  || strlen(trim($password))<8){
+				$erro =true;
+				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
+			}
+			if(!isset($telefone)  || strlen(trim($telefone))<14){
+				$erro =true;
+				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+			}
+		}
+
+		if(!isset($name)  || strlen(trim($name))<=0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+		}
+		
+		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
+		}
+		
+		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
+		}
+		
+		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
+		}
+		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
+			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
+			$dataHoje = intval(date('Ymd'));
+			if(($dataFormatadaBanco + 180000)>$dataHoje){
+				$erro =true;
+				JError::raiseWarning( 100, 'Cadastro &eacute; n&ailte;o permitido para menores de idade.' );
+			}
+		}
+		
+		if(!isset($idCidade) || $idCidade==0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
+		}
+
+		if($erro){
+			$this->cadastroFotografo();
+			return;
 		}
 		
 		if ($id != null && $id != 0) { // UPDATE
@@ -1128,6 +1422,11 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				
 			}
+			else{
+				JError::raiseWarning( 100, 'Falha no cadastro.' );
+				$this->cadastroFotografo();
+				return;
+			}
 		}
 		
 		if($id != 0){
@@ -1143,7 +1442,7 @@ class AngelgirlsController extends JControllerLegacy{
 					JFile::delete ( $newfile );
 				}
 				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning ( 100, 'Falha ao salvar o arquivo.' );
+					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 					$erro = true;
 				} else {
 					$query = $db->getQuery ( true );
@@ -1228,6 +1527,150 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+		}
+		
+		//Validacao
+		
+		$erro =false;
+		
+
+		
+
+		
+		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
+		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
+		if ($id != null && $id != 0) {
+			$query->where (' id <> ' .$id );
+		}
+		$db->setQuery ( $query );
+		$objeto = $db->loadObject();
+		
+		if(isset($objeto) && isset($objeto->id)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
+		}
+		
+		if($this->existeUsuario($username)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
+		}
+		
+		if(!isset($id) || $id==0){
+			if(!isset($email)){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
+			}
+			
+			if(isset($email) && strpos($email, '@' )===false){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+			}
+			if(!isset($username) || strlen(trim($username))<5){
+				$erro =true;
+				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
+			}
+			if(!isset($password)  || strlen(trim($password))<8){
+				$erro =true;
+				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
+			}
+			if(!isset($telefone)  || strlen(trim($telefone))<14){
+				$erro =true;
+				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+			}
+		}
+
+		if(!isset($name)  || strlen(trim($name))<=0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+		}
+		
+		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
+		}
+		
+		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
+		}
+		
+		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
+		}
+		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
+			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
+			$dataHoje = intval(date('Ymd'));
+			if(($dataFormatadaBanco + 180000)>$dataHoje){
+				$erro =true;
+				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );				
+			}
+		}
+				
+		if(!isset($idCidade) || $idCidade==0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
+		}
+
+		if(!isset($altura)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Altura &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if(!isset($peso)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
+		}		
+		if(!isset($busto)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Busto &eacute; um campo obrigat&oacute;rio.' );
+		}	
+		if(!isset($busto)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if(!isset($calsa)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Calsa &eacute; um campo obrigat&oacute;rio.' );
+		}	
+		if(!isset($calsado)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Calsado &eacute; um campo obrigat&oacute;rio.' );
+		}	
+		if(!isset($olhos)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Olhos &eacute; um campo obrigat&oacute;rio.' );
+		}		
+		if(!isset($pele)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Tom de pele &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if(!isset($etinia)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Etinia &eacute; um campo obrigat&oacute;rio.' );
+		}		
+		if(!isset($cabelo)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Tipo de cabelo &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if(!isset($tamanhoCabelo)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Tamanho do cabelo &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if(!isset($corCabelo)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cor do cabelo &eacute; um campo obrigat&oacute;rio.' );
+		}		
+		if(!isset($idCidadeNasceu)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que nasceu &eacute; um campo obrigat&oacute;rio.' );
+		}
+
+		if($erro){
+			$this->cadastroModelo();
+			return;
 		}
 		
 		if ($id != null && $id != 0) { // UPDATE
@@ -1407,8 +1850,11 @@ class AngelgirlsController extends JControllerLegacy{
 						'0')));
 				$db->setQuery( $query );
 				$db->execute();
-				
-				
+			}
+			else{
+				JError::raiseWarning( 100, 'Falha no cadastro.' );
+				$this->cadastroModelo();
+				return;
 			}
 		}
 		
@@ -1425,7 +1871,7 @@ class AngelgirlsController extends JControllerLegacy{
 					JFile::delete ( $newfile );
 				}
 				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning ( 100, 'Falha ao salvar o arquivo.' );
+					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 					$erro = true;
 				} else {
 					$query = $db->getQuery ( true );
@@ -1455,7 +1901,7 @@ class AngelgirlsController extends JControllerLegacy{
 				}
 			
 				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning ( 100, 'Falha ao salvar o arquivo.' );
+					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 					$erro = true;
 				} else {
 					$query = $db->getQuery ( true );
@@ -1483,7 +1929,7 @@ class AngelgirlsController extends JControllerLegacy{
 				}
 					
 				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning ( 100, 'Falha ao salvar o arquivo.' );
+					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 					$erro = true;
 				} else {
 					$query = $db->getQuery ( true );
@@ -1534,7 +1980,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->order ( 'a.nome' );
 		$db->setQuery ( $query );
 		$cidades = $db->loadObjectList ();
-		header( 'application/json' );
+		header('Content-Type: application/json; charset=utf8');
 		echo json_encode($cidades);
 		exit();
 	}
