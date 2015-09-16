@@ -56,6 +56,7 @@ $controller = JControllerLegacy::getInstance('Angelgirls');
 $controller->execute(JRequest::getCmd('task'));
 
 $document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( true ) . '/components/com_angelgirls/";
+		document.PathBase="' . JURI::base( true ) . '/";
 		document.UrlLogin ="' . JRoute::_('index.php?option=com_users&view=login',false) . '";');
 
 echo('<div id="fb-root"></div>');

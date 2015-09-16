@@ -10,7 +10,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
-
+JFactory::getDocument()->addStyleSheet('components/com_angelgirls/assets/css/lightbox.css');
 
 $conteudo = JRequest::getVar('usuario');
 $ultimas = JRequest::getVar('ultimas');
@@ -37,7 +37,9 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 <h3>Dados d<?php echo($letraSexo);?> modelo</h3>
 <div class="row">
 	<div class="col col-xs-12 col-sm-12 col-md-2 col-lg-2">	
-		<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
+		<a class="example-image-link" href="<?php echo($urlFoto);?>" data-lightbox="example-set" data-title="<?php echo($conteudo->nome); ?>">
+			<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" class="img-responsive"/>
+		</a>
 	</div>
 	<div class="col col-xs-12 col-sm-12 col-md-10 col-lg-10">
 		<?php if(isset($conteudo->site)):?>
@@ -75,6 +77,41 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 						<th>
 							Nascionalidade
 						</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-transform: capitalize;">
+							<?php echo($conteudo->nome_completo);?>
+						</td>
+						<td style="text-transform: capitalize;">
+							<?php 
+							if(isset($conteudo->data_nascimento)){
+								echo(JFactory::getDate($conteudo->data_nascimento)->format('d/m/Y'));
+							}?>
+						</td>	
+						<td style="text-transform: capitalize;">
+							<?php
+							if(isset($conteudo->sexo)) : 
+								if($conteudo->sexo == 'M'): 
+									echo('masculino');
+								else :
+									echo('feminino');
+								endif;
+							endif;
+							?>
+						</td>
+						<td style="text-transform: capitalize;">
+							<?php echo($conteudo->nascionalidade);?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover" >
+				<thead>
+					<tr>
 						<th>
 							Origem
 						</th>	
@@ -97,57 +134,34 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 				</thead>
 				<tbody>
 					<tr>
-						<td>
-							<?php echo($conteudo->nome_completo);?>
-						</td>
-						<td>
-							<?php 
-							if(isset($conteudo->data_nascimento)){
-								echo(JFactory::getDate($conteudo->data_nascimento)->format('d/m/Y'));
-							}?>
-						</td>	
-						<td>
-							<?php
-							if(isset($conteudo->sexo)) : 
-								if($conteudo->sexo == 'M'): 
-									echo('Masculino');
-								else :
-									echo('Feminino');
-								endif;
-							endif;
-							?>
-						</td>
-						<td>
-							<?php echo($conteudo->nascionalidade);?>
-						</td>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php 
 							if(isset($conteudo->estado_nasceu) || isset($conteudo->cidade_nasceu)){
-							echo($conteudo->estado_nasceu .'/'. $conteudo->cidade_nasceu);
+							echo($conteudo->estado_nasceu .'/'. strtolower($conteudo->cidade_nasceu));
 							}?>
 						</td>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php 
 							if(isset($conteudo->estado_mora) || isset($conteudo->cidade_mora)){
-							echo($conteudo->estado_mora .'/'. $conteudo->cidade_mora);
+							echo($conteudo->estado_mora .'/'. strtolower( $conteudo->cidade_mora));
 							}?>
 						</td>
-						<td class="text-center"  title="Quantidade de trabalhos realizados aqui">
+						<td class="text-center"  title="Quantidade de trabalhos realizados aqui" style="text-transform: capitalize;">
 							<?php echo($total->total);?>
 						</td>
-						<td title="Fotografo que mais tem trabalhos">
+						<td title="Fotografo que mais tem trabalhos" style="text-transform: capitalize;">
 							<?php
 							foreach($preferidos as $preferido):
 								$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$preferido->id.'fotografo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
-								echo('<a href="'.$url.'">'.$preferido->nome.'</a><br/>');
+								echo('<a href="'.$url.'">'.strtolower($preferido->nome).'</a><br/>');
 							endforeach;
 							?>
 						</td>
-						<td title="Temas que mais usou em suas sess&otilde;es">
-							<?php echo($tema->nome);?>
+						<td title="Temas que mais usou em suas sess&otilde;es" style="text-transform: capitalize;">
+							<?php echo(strtolower($tema->nome));?>
 						</td>
-						<td title="Loca&ccedil&atilde;o preferida ">
-							<?php echo($locacao->nome);?>
+						<td title="Loca&ccedil&atilde;o preferida " style="text-transform: capitalize;">
+							<?php echo(strtolower($locacao->nome));?>
 						</td>
 					</tr>
 				</tbody>
@@ -185,30 +199,30 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 				<tbody>
 					<tr>
 						<?php if(isset($conteudo->data_nascimento)):?>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php 
 								echo( substr(intval(date(Ymd))-intval( JFactory::getDate($conteudo->data_nascimento)->format('Ymd')),0,2) );
 							?>
 						</td>	
 						<?php endif;?>
 						</td>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php echo($conteudo->altura);?>
 						</td>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php echo($conteudo->calsado);?>
 						</td>
-						<td>
+						<td style="text-transform: capitalize;">
 							<?php echo($conteudo->busto);?>
 						</td>
-						<td>
-							<?php echo($conteudo->olhos);?>
+						<td style="text-transform: capitalize;">
+							<?php echo(strtolower($conteudo->olhos));?>
 						</td>
-						<td>
-							<?php echo($conteudo->etinia);?>
+						<td style="text-transform: capitalize;">
+							<?php echo(strtolower($conteudo->etinia));?>
 						</td>	
-						<td>
-							<?php echo('<small>tamanho</small> '. $conteudo->tamanho_cabelo . ' <small>tipo</small> '.  $conteudo->cabelo . ' <small>cor</small> '.(!isset($conteudo->cor_cabelo) || $conteudo->cor_cabelo=='OUTRO'? $conteudo->outra_cor_cabelo:$conteudo->cor_cabelo));?>
+						<td style="text-transform: capitalize;">
+							<?php echo('<small>tamanho</small> '. strtolower($conteudo->tamanho_cabelo) . ' <small>tipo</small> '.  strtolower($conteudo->cabelo) . ' <small>cor</small> '.(!isset($conteudo->cor_cabelo) || $conteudo->cor_cabelo=='OUTRO'? strtolower($conteudo->outra_cor_cabelo):strtolower($conteudo->cor_cabelo)));?>
 						</td>	
 					</tr>
 				</tbody>
@@ -313,4 +327,4 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 <h3>Coment&aacute;rios</h3>
 <div class="fb-comments" data-href="http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" data-width="100%" style="margin: 0 auto;"></div>
 
-
+<script src="components/com_angelgirls/assets/js/lightbox.js" type="text/javascript" ></script>

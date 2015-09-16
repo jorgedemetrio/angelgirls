@@ -15,19 +15,6 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 // JFactory::getDocument()->addScript('components/com_angelgirls/assets/js/lightbox.js');
 JFactory::getDocument()->addStyleSheet('components/com_angelgirls/assets/css/lightbox.css');
 
-
-// selector:       'id="imagelightbox"',   // string;
-// allowedTypes:   'png|jpg|jpeg|gif',     // string;
-// animationSpeed: 250,                    // integer;
-// preloadNext:    true,                   // bool;            silently preload the next image
-// enableKeyboard: true,                   // bool;            enable keyboard shortcuts (arrows Left/Right and Esc)
-// quitOnEnd:      false,                  // bool;            quit after viewing the last image
-// quitOnImgClick: false,                  // bool;            quit when the viewed image is clicked
-// quitOnDocClick: true,                   // bool;            quit when anything but the viewed image is clicked
-// onStart:        false,                  // function/bool;   calls function when the lightbox starts
-// onEnd:          false,                  // function/bool;   calls function when the lightbox quits
-// onLoadStart:    false,                  // function/bool;   calls function when the image load begins
-// onLoadEnd:      false                   // function/bool;   calls function when the image finishes loading
 $foto = JRequest::getVar('foto');
 $conteudo =$foto;
 $fotos = JRequest::getVar('fotos');
@@ -35,13 +22,13 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadI
 $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
 
 ?>
-		    	<div class="pull-right">
-		    	<a class="btn" href="<?php echo($urlSessao );?>">Carregar Sess&atilde;o: <?php echo($conteudo->titulo_sessao); ?></a>
-		    	</div>
+		   <div class="pull-right">
+		    	<a class="btn btn-primary" href="<?php echo($urlSessao );?>">Voltar para sess&atilde;o: <?php echo($conteudo->titulo_sessao); ?></a>
+		   	</div>
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?>
 	<small><?php echo($conteudo->nome_tema);?></small>
-	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessa);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotosessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div></h1>
+	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_foto);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotosessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div></h1>
 
 </div>
 
@@ -137,13 +124,16 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		</div>  
 	</div>
 <?php $urlBusca = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
-	<div id="modelos" class="tab-pane fade in" style="height: 260px;">
+	<div id="modelos" class="tab-pane fade in" style="height: 210px;">
 		<h2>Modelo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
+			 ?>
 				<a href="<?php echo($url); ?>" href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($conteudo->foto_mod1);?>" title="Modelo <?php echo($conteudo->modelo1);?>" alt="Modelo <?php echo($conteudo->modelo1);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo1);?>" alt="Modelo <?php echo($conteudo->modelo1);?>" class="img-circle">
 				</a>
 			</div>
 			<?php if(isset($conteudo->modelo2)) : ?>
@@ -155,8 +145,8 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<h3><a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
 				    	<?php echo($conteudo->modelo1); ?> 
-						</a>			    	
-				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod1);?>' 
+						</a>
+						<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod1);?>' 
 							data-id='<?php echo($conteudo->id_modelo_principal);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->gostou_mo1);?>'></div></h3>
 					</div>
 				</div>
@@ -166,6 +156,11 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					</div>
 				</div>
 				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre a modelo</a>
+					</div>
+				</div>	
+				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_modelo=<?php echo($conteudo->id_modelo_principal);?>" class="btn">Mais sess&otilde;es desta modelo</a>
 					</div>
@@ -173,9 +168,12 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			</div>
 			<?php if(isset($conteudo->modelo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false); ?>
+			<?php 
+				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_secundaria.':ico');
+				?>
 				<a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($conteudo->foto_mod2);?>" title="Modelo <?php echo($conteudo->modelo2);?>" alt="Modelo <?php echo($conteudo->modelo2);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo2);?>" alt="Modelo <?php echo($conteudo->modelo2);?>" class="img-circle">
 				</a>
 			</div>
 			<div class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -184,13 +182,18 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 						<h3><a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
 				    	<?php echo($conteudo->modelo2); ?> 
 						</a>			    	
-				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod1);?>' 
+						<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod2);?>' 
 							data-id='<?php echo($conteudo->id_modelo_secundaria);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->gostou_mo2);?>'></div></h3>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 				    	<?php echo($conteudo->desc_mo2); ?> 
+					</div>
+				</div>	
+				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre a modelo</a>
 					</div>
 				</div>	
 				<div class="row">
@@ -207,13 +210,16 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			</div>	
 		</div>
     </div>
-    <div id="fotografos" class="tab-pane fade" style="height: 260px;">
+    <div id="fotografos" class="tab-pane fade in" style="height: 210px;">
 		<h2>Fotografo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
+			?>
 				<a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/fotografos/<?php echo($conteudo->foto_mod1);?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo1);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo1);?>" class="img-circle">
 				</a>
 			</div>
 			<?php if(isset($conteudo->fotografo2)) : ?>
@@ -225,9 +231,10 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<h3><a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
 				    	<?php echo($conteudo->fotografo1); ?> 
-						</a>		
-				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_fot1);?>' 
-							data-id='<?php echo($conteudo->id_fotografo_principal);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->gostou_fot1);?>'></div></h3>
+						</a>	
+						<div class="gostar" data-gostei='<?php echo($conteudo->gostei_fot1);?>' 
+							data-id='<?php echo($conteudo->id_fotografo_principal);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->gostou_fot1);?>'></div>
+						</h3>
 					</div>
 				</div>
 				<div class="row">
@@ -236,6 +243,11 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					</div>
 				</div>
 				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre o(a) fotografo(a)</a>
+					</div>
+				</div>	
+				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_fotografo=<?php echo($conteudo->id_fotografo_principal);?>" class="btn">Mais sess&otilde;es deste(a) fotorgafo(a)</a>
 					</div>
@@ -243,9 +255,12 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			</div>
 			<?php if(isset($conteudo->fotografo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_secundaria.':ico');
+			?>
 				<a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/fotografos/<?php echo($conteudo->foto_mod2);?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo2);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo2);?>" class="img-circle">
 				</a>
 			</div>
 			<div class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -253,7 +268,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<h3><a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">
 				    	<?php echo($conteudo->fotografo2); ?> 
-						</a>		
+						</a>			    	
 				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_fot2);?>' 
 							data-id='<?php echo($conteudo->id_fotografo_secundaria);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->gostou_fot2);?>'></div></h3>
 					</div>
@@ -263,6 +278,11 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 				    	<?php echo($conteudo->desc_mo2); ?> 
 					</div>
 				</div>
+				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre o(a) fotografo(a)</a>
+					</div>
+				</div>	
 				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_fotografo=<?php echo($conteudo->id_fotografo_secundaria);?>" class="btn">Mais sess&otilde;es deste(a) fotorgafo(a)</a>

@@ -114,21 +114,24 @@ jQuery(document).ready(function(){
 	
 
 	jQuery('.gostar').each(function(){
-		$objeto = jQuery(this);
+		$objetoRef = jQuery(this);
 
-		if($objeto.attr('data-gostei')=='SIM'){
-			$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+		if($objetoRef.attr('data-gostei')=='SIM'){
+			$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
 		}
 		else{
-			$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
+			$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
 		}
-		$objeto.click(function(){
-			jQuery.post("index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson", {id:$objeto.attr('data-id')},function(dado){
+		$objetoRef.click(function(){
+			$objeto = jQuery(this);
+			console.log($objeto);
+			jQuery.post(document.PathBase+"index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson&id="+$objeto.attr('data-id')+":voto", {},function(dado){
 				if(dado.status=="ok"){
 					if($objeto.attr('data-gostei')=='SIM'){
+						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))-1);
 						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
 						$objeto.attr('data-gostei','NAO');
-						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))-1);
+
 					}
 					else{
 						$objeto.attr('data-gostei','SIM');

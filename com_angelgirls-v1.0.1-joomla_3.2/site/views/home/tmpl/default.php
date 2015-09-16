@@ -50,14 +50,19 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 			<!-- Wrapper for slides -->
 			<div class="carousel-inner" role="listbox">
 				<div class="item item-carrossel active" data-id-ver="2">
-					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($modelo->foto);?>" alt="<?php echo($modelo->nome);?>" style="width:100%">
+				<?php
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$modelo->id.':medio');
+				?>
+					<img src="<?php echo($urlImg);?>" alt="<?php echo($modelo->nome);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h3>
 						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>
 					</div>
 				</div>
 				<div class="item item-carrossel" data-id-ver="3">
-					<img src="<?php echo(JURI::base( true ));?>/images/sessoes/<?php echo($sessao->foto);?>" alt="<?php echo($sessao->nome);?>" style="width:100%">
+				<?php 
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->id.':ico');
+				?>	<img src="<?php echo($urlImg);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->nome);?></a></h3>
 						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->descricao);?></a></p>
@@ -91,20 +96,20 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 			</a>
 		</div>
 	</div>
-	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-tablet" style="padding: 5px;">
-		<div id="itemCarrossel1" class="itemCarroussel alert alert-danger" style="padding: 10px;">
+	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-tablet" style="padding: 0; margin: 0;">
+		<div id="itemCarrossel1" class="itemCarroussel alert alert-danger" style="padding: 10px; margin: 0; border: 1px solid #000;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
 		</div>
-		<div id="itemCarrossel2" class="itemCarroussel alert alert-info" style="padding: 10px;">
+		<div id="itemCarrossel2" class="itemCarroussel alert alert-info" style="padding: 10px; margin: 0; border: 1px solid #000;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->descricao);?></a></p>			
 		</div>
-		<div id="itemCarrossel3" class="itemCarroussel alert alert-info" style="padding: 10px;">
+		<div id="itemCarrossel3" class="itemCarroussel alert alert-info" style="padding: 10px; margin: 0; border: 1px solid #000;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=cadastroModelo&id=cadastre-se-modelo-fotografica-sensual-angel-girls',false)); ?>">Seja uma Angel </a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=cadastroModelo&id=cadastre-se-modelo-fotografica-sensual-angel-girls',false)); ?>"><small>Cadastre-se e veja como ser uma modelo da Angel.</small></a></p>			
 		</div>
-		<div id="itemCarrossel4" class="itemCarroussel alert alert-info" style="padding: 10px;">
+		<div id="itemCarrossel4" class="itemCarroussel alert alert-info" style="padding: 10px; margin: 0; border: 1px solid #000;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPromocao&id='.$promocao->id.':promocao-'.strtolower(str_replace(" ","-",$promocao->alias)),false)); ?>"><?php echo($promocao->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPromocao&id='.$promocao->id.':promocao-'.strtolower(str_replace(" ","-",$promocao->alias)),false)); ?>"><?php echo($promocao->descricao);?></a></p>			
 		</div>
