@@ -21,6 +21,8 @@ $gostaram = JRequest::getVar('gostaram');
 $total = JRequest::getVar('total');
 $preferidos = JRequest::getVar('preferidos');
 $tema = JRequest::getVar('tema');
+$locacao = JRequest::getVar('locacao');
+
 
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':full');
 ?>
@@ -32,7 +34,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 				else{
 					echo('o');
 				}
-				?></small> <?php echo($conteudo->nome);?>
+				?></small> <?php echo($conteudo->nome);?> 
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>
 <h3>Dados do fotograf<?php 
@@ -86,6 +88,9 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 						<th title="Temas que mais usou em suas sessões">
 							Tema Fav.
 						</th>	
+						<th title="Loca&ccedil&atilde;o preferida ">
+							Loca&ccedil&atilde;o Fav.
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -138,6 +143,9 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 						</td>
 						<td title="Temas que mais usou em suas sessões">
 							<?php echo($tema->nome);?>
+						</td>
+						<td title="Loca&ccedil&atilde;o preferida ">
+							<?php echo($locacao->nome);?>
 						</td>
 					</tr>
 				</tbody>

@@ -330,12 +330,27 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
-		->order('total,`f`.`nome`')
+		->order('total DESC,`f`.`nome`')
 		->group(' `f`.`id`, `f`.`nome`')
 		->setLimit(1);
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		JRequest::setVar ( 'tema', $result );
+		
+		//Locacao preferido
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome` AS `nome`, count(1) as total')
+		->from ( $db->quoteName ( '#__angelgirls_locacao', 'f' ) )
+		->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_locacao = f.id ')
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('total DESC,`f`.`nome`')
+		->group(' `f`.`id`, `f`.`nome`')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'locacao', $result );
 		
 		//Quantos trabalhos
 		$query = $db->getQuery ( true );
@@ -359,7 +374,7 @@ class AngelgirlsController extends JControllerLegacy{
 						->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 						->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 						->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
-						->order('total,`f`.`nome_artistico`')
+						->order('total DESC,`f`.`nome_artistico`')
 						->group(' `f`.`id`, `f`.`nome_artistico`')
 						->setLimit(3);
 		$db->setQuery ( $query );
@@ -494,12 +509,27 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
-		->order('total,`f`.`nome`')
+		->order('total DESC,`f`.`nome`')
 		->group(' `f`.`id`, `f`.`nome`')
 		->setLimit(1);
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		JRequest::setVar ( 'tema', $result );
+		
+		//Locacao preferido
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome` AS `nome`, count(1) as total')
+		->from ( $db->quoteName ( '#__angelgirls_locacao', 'f' ) )
+		->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_locacao = f.id ')
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('total DESC,`f`.`nome`')
+		->group(' `f`.`id`, `f`.`nome`')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'locacao', $result );
 		
 		//Quantos trabalhos
 		$query = $db->getQuery ( true );
@@ -523,7 +553,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
-		->order('total,`f`.`nome_artistico`')
+		->order('total DESC,`f`.`nome_artistico`')
 		->group(' `f`.`id`, `f`.`nome_artistico`')
 		->setLimit(3);
 		$db->setQuery ( $query );

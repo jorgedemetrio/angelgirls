@@ -20,11 +20,12 @@ $gostaram = JRequest::getVar('gostaram');
 $total = JRequest::getVar('total');
 $preferidos = JRequest::getVar('preferidos');
 $tema = JRequest::getVar('tema');
+$locacao = JRequest::getVar('locacao');
 
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':full');
 ?>
 <div class="page-header">
-	<h1><small>Modelo</small> <?php echo($conteudo->nome);?>
+	<h1><small>Modelo</small> <?php echo($conteudo->nome);?> 
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>
 <h3>Dados da modelo</h3>
@@ -77,13 +78,15 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 						<th title="Quantidade de trabalhos realizados aqui">
 							Trabalhos
 						</th>
-						<th title="Modelo que mais tem trabalhos">
-							Modelo Fav.
+						<th title="Fotografo que mais tem trabalhos">
+							Fotografo Fav.
 						</th>
-						<th title="Temas que mais usou em suas sessões">
+						<th title="Temas que mais usou em suas sess&otilde;es">
 							Tema Fav.
 						</th>
-							
+						<th title="Loca&ccedil&atilde;o preferida ">
+							Loca&ccedil&atilde;o Fav.
+						</th>							
 					</tr>
 				</thead>
 				<tbody>
@@ -126,16 +129,19 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 						<td class="text-center"  title="Quantidade de trabalhos realizados aqui">
 							<?php echo($total->total);?>
 						</td>
-						<td title="Modelo que mais tem trabalhos">
+						<td title="Fotografo que mais tem trabalhos">
 							<?php
 							foreach($preferidos as $preferido):
-								$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$preferido->id.':modelo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
+								$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$preferido->id.'fotografo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
 								echo('<a href="'.$url.'">'.$preferido->nome.'</a><br/>');
 							endforeach;
 							?>
 						</td>
-						<td title="Temas que mais usou em suas sessões">
+						<td title="Temas que mais usou em suas sess&otilde;es">
 							<?php echo($tema->nome);?>
+						</td>
+						<td title="Loca&ccedil&atilde;o preferida ">
+							<?php echo($locacao->nome);?>
 						</td>
 					</tr>
 				</tbody>
