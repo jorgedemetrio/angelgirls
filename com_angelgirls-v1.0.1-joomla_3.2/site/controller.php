@@ -2579,7 +2579,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 	public function homepage(){
 		$user = JFactory::getUser();
-		if (! isset ( $user ) || ! JSession::checkToken ( 'post' )){
+		if (!isset ( $user ) || $user->id == 0 ){
 			$this->nologado();
 		}
 		else{
@@ -2588,7 +2588,18 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function logado(){
-		
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
+				->from ('#__timeline')
+				->setLimit(8);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'conteudos', $result );
+		JRequest::setVar ( 'view', 'home' );
+		JRequest::setVar ( 'layout', 'logado' );
+		parent::display ();
+		//$this->nologado();
 	}
 	
 	public function nologado(){
