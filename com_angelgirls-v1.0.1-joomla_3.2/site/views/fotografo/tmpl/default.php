@@ -71,6 +71,12 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 			</div>
 			<div class="col col-xs-12 col-sm-6 col-md-2 col-lg-2 text-center">
 				<?php 
+				if(isset($conteudo->data_nascimento)){
+					echo(JFactory::getDate($conteudo->data_nascimento)->format('d/m/Y'));
+				}?>
+			</div>	
+			<div class="col col-xs-12 col-sm-6 col-md-2 col-lg-2 text-center">
+				<?php 
 				if($conteudo->sexo=='M'){
 					echo('Masculino');
 				}
