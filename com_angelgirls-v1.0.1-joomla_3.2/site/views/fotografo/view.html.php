@@ -57,7 +57,7 @@ class AngelgirlsViewfotografo extends JViewLegacy
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
 		
 
-		$objeto = JRequest::getVar('fotografo');
+		$objeto = JRequest::getVar('usuario');
 		$descricao = 'Fotografo ' . $objeto->nome;
 		$pathway->addItem($descricao,'');
 		$document->setTitle($descricao );

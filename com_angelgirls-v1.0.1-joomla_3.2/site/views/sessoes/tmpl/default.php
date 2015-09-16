@@ -77,7 +77,7 @@ if($dataFim!=''){
 		<select name="id_modelo" id="id_modelo" class="form-control"/>
 			<option></option>
 			<?php foreach($modelos as $conteudo){ 
-			$img =  JURI::base( true ) . '/images/modelos/' . $conteudo->foto;
+			$img =  JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':ico');
 			?>
 			<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idModelo==$conteudo->id?" selected":"") ?>>
 			<?php echo($conteudo->nome);?></option>
@@ -90,7 +90,7 @@ if($dataFim!=''){
 		<select name="id_fotografo" id="id_fotografo" class="form-control"/>
 			<option></option>
 			<?php foreach($fotografos as $conteudo){
-				$img =  JURI::base( true ) . '/images/fotografos/' . $conteudo->foto;
+				$img =  JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':ico');
 			?>
 			<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idFotografo==$conteudo->id?" selected":"") ?>><?php echo($conteudo->nome);?></option>
 		    <?php 
@@ -115,7 +115,10 @@ if($dataFim!=''){
 	foreach($sessoes as $conteudo){ ?>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-2">
 		<div class="thumbnail">
-<?php  $url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias))); ?>
+<?php  
+$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)));
+$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->id.':ico'); 
+?>
 					<h5 class="list-group-item-heading" style="width: 100%; text-align: center; background-color: grey; color: white;  padding: 10px;"><a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a>
     			<?php if($conteudo->eu=='SIM'):?>
 					<span class="badge" title="Gostou"><?php echo($conteudo->gostou);?> 
@@ -127,7 +130,7 @@ if($dataFim!=''){
 					</span>
 				<?php endif?></h5>
 <?php 			if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo($url);?>"><img src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
 				<?php 
 				}?>
 				<div class="caption">

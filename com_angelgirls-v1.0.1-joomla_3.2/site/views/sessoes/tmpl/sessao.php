@@ -124,9 +124,12 @@ $id = JRequest::getInt('id');
 		<h2>Modelo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
+			 ?>
 				<a href="<?php echo($url); ?>" href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($conteudo->foto_mod1);?>" title="Modelo <?php echo($conteudo->modelo1);?>" alt="Modelo <?php echo($conteudo->modelo1);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo1);?>" alt="Modelo <?php echo($conteudo->modelo1);?>" class="img-circle">
 				</a>
 			</div>
 			<?php if(isset($conteudo->modelo2)) : ?>
@@ -149,6 +152,11 @@ $id = JRequest::getInt('id');
 					</div>
 				</div>
 				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre a modelo</a>
+					</div>
+				</div>	
+				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_modelo=<?php echo($conteudo->id_modelo_principal);?>" class="btn">Mais sess&otilde;es desta modelo</a>
 					</div>
@@ -156,9 +164,12 @@ $id = JRequest::getInt('id');
 			</div>
 			<?php if(isset($conteudo->modelo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false); ?>
+			<?php 
+				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_secundaria.':ico');
+				?>
 				<a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/modelos/<?php echo($conteudo->foto_mod2);?>" title="Modelo <?php echo($conteudo->modelo2);?>" alt="Modelo <?php echo($conteudo->modelo2);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo2);?>" alt="Modelo <?php echo($conteudo->modelo2);?>" class="img-circle">
 				</a>
 			</div>
 			<div class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -174,6 +185,11 @@ $id = JRequest::getInt('id');
 				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 				    	<?php echo($conteudo->desc_mo2); ?> 
+					</div>
+				</div>	
+				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre a modelo</a>
 					</div>
 				</div>	
 				<div class="row">
@@ -194,9 +210,12 @@ $id = JRequest::getInt('id');
 		<h2>Fotografo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
+			?>
 				<a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/fotografos/<?php echo($conteudo->foto_mod1);?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo1);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo1);?>" class="img-circle">
 				</a>
 			</div>
 			<?php if(isset($conteudo->fotografo2)) : ?>
@@ -220,6 +239,11 @@ $id = JRequest::getInt('id');
 					</div>
 				</div>
 				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre o(a) fotografo(a)</a>
+					</div>
+				</div>	
+				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_fotografo=<?php echo($conteudo->id_fotografo_principal);?>" class="btn">Mais sess&otilde;es deste(a) fotorgafo(a)</a>
 					</div>
@@ -227,9 +251,12 @@ $id = JRequest::getInt('id');
 			</div>
 			<?php if(isset($conteudo->fotografo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
-			<?php $url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); ?>
+			<?php 
+			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
+			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_secundaria.':ico');
+			?>
 				<a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">
-					<img src="<?php echo(JURI::base( true ));?>/images/fotografos/<?php echo($conteudo->foto_mod2);?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo2);?>" class="img-circle">
+					<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo2);?>" class="img-circle">
 				</a>
 			</div>
 			<div class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -247,6 +274,11 @@ $id = JRequest::getInt('id');
 				    	<?php echo($conteudo->desc_mo2); ?> 
 					</div>
 				</div>
+				<div class="row">
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-bottom: 10px">
+						<a href="<?php echo($url);?>" class="btn btn-info">Mais detalhes sobre o(a) fotografo(a)</a>
+					</div>
+				</div>	
 				<div class="row">
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<a href="<?php echo($urlBusca);?>?id_fotografo=<?php echo($conteudo->id_fotografo_secundaria);?>" class="btn">Mais sess&otilde;es deste(a) fotorgafo(a)</a>

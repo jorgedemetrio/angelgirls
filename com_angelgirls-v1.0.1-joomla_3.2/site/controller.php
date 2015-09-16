@@ -277,6 +277,14 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
+	public function RegistroNaoEncontado(){
+		header("HTTP/1.0 404 Not Found"); 
+		header("Status: 404 Not Found");
+		JRequest::setVar ( 'view', 'erro' );
+		JRequest::setVar ( 'layout', '404' );
+		parent::display (true, false);
+	}
+	
 	public function carregarFotografo(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
@@ -292,24 +300,73 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select('f.id, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`,`f`.`nome_foto` AS `foto`, `f`.`meta_descricao`, f.descricao, f.data_nascimento,
-						f.sexo, f.nascionalidade, f.site, f.profissao, f.id_cidade_nasceu, f.id_cidade, f.audiencia_view, u.name as nome_completo,
-						cnasceu.uf as estado_nasceu, cnasceu.nome as cidade_nasceu,
-						cvive.uf as estado_mora, cvive.nome as cidade_mora,
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`data_nascimento`,
+						`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`, `f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,
+						`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+						`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`,
 						CASE isnull(`vt_f`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei`')
 		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
 		->join ( 'LEFT', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
 		->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_f ON ' . $db->quoteName ( 'f.id' ) . ' = ' . $db->quoteName('vt_f.id_fotografo'))
 		->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
 		->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
-		->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+		->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
 		->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		
-		
-		
+		if(!isset($result)){
+			$this->RegistroNaoEncontado();
+			exit();
+		}
 		JRequest::setVar ( 'usuario', $result );
+		
+		
+		//Tema preferido
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome` AS `nome`, count(1) as total')
+		->from ( $db->quoteName ( '#__angelgirls_tema', 'f' ) )
+		->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_tema = f.id ')
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+		->order('total,`f`.`nome`')
+		->group(' `f`.`id`, `f`.`nome`')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'tema', $result );
+		
+		//Quantos trabalhos
+		$query = $db->getQuery ( true );
+		$query->select(' count(1) as total')
+		->from($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'total', $result );
+		
+		
+		//Modelo preferida
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`, count(1) as total')
+						->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
+						->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_modelo_principal = f.id OR s.id_modelo_secundaria = f.id')
+						->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+						->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+						->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+						->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+						->order('total,`f`.`nome_artistico`')
+						->group(' `f`.`id`, `f`.`nome_artistico`')
+						->setLimit(3);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'preferidos', $result );
+		
+		
 		
 		//Carregar 5 Sessoes que trabalhou mais gostadas
 		$query = $db->getQuery ( true );
@@ -327,8 +384,8 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
-		->order('`s`.`publicar` DESC ');
-		$query->setLimit(5);
+		->order('`s`.`publicar` DESC ')
+		->setLimit(6);
 		$db->setQuery ( $query );
 		$results = $db->loadObjectList();
 		JRequest::setVar ( 'ultimas', $results );
@@ -350,7 +407,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
 		->order('s.audiencia_gostou DESC,s.audiencia_view DESC, `s`.`publicar` DESC ');
-		$query->setLimit(5);
+		$query->setLimit(6);
 		$db->setQuery ( $query );
 		$results = $db->loadObjectList();
 		JRequest::setVar ( 'gostaram', $results );
@@ -373,7 +430,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
 		->order('s.audiencia_view DESC, s.audiencia_gostou DESC, `s`.`publicar` DESC ');
-		$query->setLimit(5);
+		$query->setLimit(6);
 		$db->setQuery ( $query );
 		$results = $db->loadObjectList();
 		JRequest::setVar ( 'vistas', $results );
@@ -388,7 +445,167 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function carregarModelo(){
-	
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		
+		$id = JRequest::getInt( 'id',0);
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_modelo' ))
+		->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
+		->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+		$db->setQuery ( $query );
+		$db->execute ();
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`data_nascimento`,
+						`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`, `f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,
+					   `f`.`altura`,  `f`.`peso`, 
+					   `f`.`busto`,  `f`.`calsa`,  `f`.`calsado`, `f`.`olhos`,  `f`.`pele`,  `f`.`etinia`,  `f`.`cabelo`,  `f`.`tamanho_cabelo`, `f`.`cor_cabelo`,  `f`.`outra_cor_cabelo`,
+								`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+								`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`,
+								CASE isnull(`vt_f`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei`')
+								->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
+								->join ( 'LEFT', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
+								->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_f ON ' . $db->quoteName ( 'f.id' ) . ' = ' . $db->quoteName('vt_f.id_modelo'))
+								->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+								->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
+								->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+								->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+		if(!isset($result)){
+			$this->RegistroNaoEncontado();
+			exit();
+		}
+		
+		
+		JRequest::setVar ( 'usuario', $result );
+		
+		
+		
+		//Tema preferido
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome` AS `nome`, count(1) as total')
+		->from ( $db->quoteName ( '#__angelgirls_tema', 'f' ) )
+		->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_tema = f.id ')
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('total,`f`.`nome`')
+		->group(' `f`.`id`, `f`.`nome`')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'tema', $result );
+		
+		//Quantos trabalhos
+		$query = $db->getQuery ( true );
+		$query->select(' count(1) as total')
+		->from($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'total', $result );
+		
+		
+		//Modelo preferida
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`, count(1) as total')
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+		->join ('INNER',$db->quoteName ('#__angelgirls_sessao', 's' ) . ' ON s.id_fotografo_principal = f.id OR s.id_fotografo_secundario = f.id')
+		->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('total,`f`.`nome_artistico`')
+		->group(' `f`.`id`, `f`.`nome_artistico`')
+		->setLimit(3);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar ( 'preferidos', $result );
+		
+		
+		
+		//Carregar 5 Sessoes que trabalhou mais gostadas
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('`s`.`publicar` DESC ');
+		$query->setLimit(6);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'ultimas', $results );
+		
+		//Carregar 3 Sessoes que trabalhou mais recentes
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('s.audiencia_gostou DESC,s.audiencia_view DESC, `s`.`publicar` DESC ');
+		$query->setLimit(6);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'gostaram', $results );
+		
+		
+		//Carregar 3 Sessoes que trabalhou mais recentes
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_modelo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_modelo_secundaria') . ' = ' . $id . ')')
+		->order('s.audiencia_view DESC, s.audiencia_gostou DESC, `s`.`publicar` DESC ');
+		$query->setLimit(6);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'vistas', $results );
+		
+		
+		
+		
+		
+		JRequest::setVar ( 'view', 'modelo' );
+		JRequest::setVar ( 'layout', 'default' );
+		parent::display (true, false);
 	}
 	
 	public function gostarJson(){
@@ -637,10 +854,13 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 		
-		//ordem
 		
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
+		if(!isset($result)){
+			$this->RegistroNaoEncontado();
+			exit();
+		}
 		
 		JRequest::setVar ( 'foto', $result );
 		
@@ -705,7 +925,10 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
-		
+		if(!isset($result)){
+			$this->RegistroNaoEncontado();
+			exit();
+		}
 		
 		$query = $db->getQuery ( true );
 		$query->update($db->quoteName('#__angelgirls_sessao' ))
@@ -780,7 +1003,8 @@ class AngelgirlsController extends JControllerLegacy{
 		$arquivo = "";
 		$mime = 'image/jpeg';
 		$path = JPATH_BASE.DS.'images';
-		
+
+
 
 		if($view=='fotosessao'){
 			$detalhe = explode ( ' ', $tipo );
@@ -797,6 +1021,36 @@ class AngelgirlsController extends JControllerLegacy{
 			else{
 				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '_' . $detalhe[1] . '.jpg';
 			}
+		}
+		else if($view=='sessoes'){
+			$query = $db->getQuery ( true );
+			$query->select('`f`.`nome_foto` AS `foto`')
+			->from ( $db->quoteName ( '#__angelgirls_sessao', 'f' ) )
+			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			$arquivo =  $path .  DS. 'sessoes' .DS . $result->foto;
+		}
+		else if($view=='modelo'){
+			$detalhe = explode ( ' ', $tipo );
+			$query = $db->getQuery ( true );
+			if ($detalhe[1]=='ico'){
+				$query->select('`f`.`foto_perfil` AS `foto`');
+			}
+			else if ($detalhe[1]=='medium'){
+				$query->select('`f`.`foto_inteira` AS `foto`');
+			}
+			else if ($detalhe[1]=='horizontal'){
+				$query->select('`f`.`foto_inteira_horizontal` AS `foto`');
+			}
+			else {
+				$query->select('`f`.`foto_perfil` AS `foto`');
+			}
+			$query->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
+			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			$arquivo =  $path .  DS. 'modelos' .DS . $result->foto;
 		}
 		else if($view=='fotografo'){
 			$query = $db->getQuery ( true );

@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 /**
  * Temas View
  */
-class AngelgirlsViewmodelo extends JViewLegacy
+class AngelgirlsViewerro extends JViewLegacy
 {
 	/**
 	 * Temas view display method
@@ -30,16 +30,12 @@ class AngelgirlsViewmodelo extends JViewLegacy
 		// Set the document
 		$this->setDocument();
 		
-	
-
 		// Set the toolbar
 		$this->addToolBar();
-		
+	
 
 		// Display the template
 		parent::display($tpl);
-
-
 	}
 
 	/**
@@ -47,23 +43,7 @@ class AngelgirlsViewmodelo extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-			
-
-		$layout = JRequest::getVar('layout');
-		$document = JFactory::getDocument();
-		$pathway = JFactory::getApplication()->getPathway();
-
-
-		$document->setMetadata('APPLICATION-NAME','Angel Girls');
-		
-
-		$objeto = JRequest::getVar('usuario');
-		$descricao = 'Modelo ' . $objeto->nome;
-		$pathway->addItem($descricao,'');
-		$document->setTitle($descricao );
-		$document->setDescription($objeto->meta_descricao);
-		$document->setMetadata('Keywords', 'modelo,'.$objeto->nome.','.str_replace(' ', ',',$sessao->nome));
-
+		JFactory::getDocument()->setMetadata('ROBOTS','NOINDEX, NOFOLLOW');
 	}
 
 	/**
@@ -75,7 +55,6 @@ class AngelgirlsViewmodelo extends JViewLegacy
 	protected function setDocument() 
 	{
 		$document = JFactory::getDocument();
-		//$document->setTitle(JText::_('Angelgirls Manager - Administrator'));
 	}
 }
 ?>
