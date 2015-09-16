@@ -23,28 +23,20 @@ $preferidos = JRequest::getVar('preferidos');
 $tema = JRequest::getVar('tema');
 $locacao = JRequest::getVar('locacao');
 
+$letraSexo = 'o';
+if(isset($conteudo->sexo)) :
+	if($conteudo->sexo == 'F'):
+		$letraSenhao='a';
+	endif;
+endif;
 
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':full');
 ?>
 <div class="page-header">
-	<h1><small>Fotograf<?php 
-				if($conteudo->sexo=='F'){
-					echo('a');
-				}
-				else{
-					echo('o');
-				}
-				?></small> <?php echo($conteudo->nome);?> 
+	<h1><small>Fotograf<?php echo($letraSexo);	?></small> <?php echo($conteudo->nome);?> 
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>
-<h3>Dados do fotograf<?php 
-				if($conteudo->sexo=='F'){
-					echo('a');
-				}
-				else{
-					echo('o');
-				}
-				?></h3>
+<h3>Dados do fotograf<?php echo($letraSexo);	?></h3>
 <div class="row">
 	<div class="col col-xs-12 col-sm-12 col-md-2 col-lg-2">	
 		<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
@@ -65,7 +57,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 							Nome
 						</th>
 						<th>
-							Nascimendo(a)
+							Nascimend<?php echo($letraSexo);	?>
 						</th>	
 						<th>
 							Sexo

@@ -2,7 +2,7 @@
  * Processando
  */
 document.processing = function () {
-    var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+    var pleaseWaitDiv = jQuery('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
     return {
         show: function() {
             pleaseWaitDiv.modal();
@@ -85,6 +85,29 @@ function TestaCPF(strCPF) {
 	return true; 
 }
 
+document.abrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
+	jQuery('#modalWindowtitle').html(titulo);
+	jQuery('#modalWindowbody').html(texto);
+	jQuery('#modalWindowok').attr('href',destino);
+	jQuery('#modalWindowok').html(legandaBotaoOk);
+	jQuery('#modalWindowok').css('display','');
+	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert-warning');
+}
+
+alert = function(msg){
+	jQuery('#modalWindowtitle').html(window.document.title);
+	jQuery('#modalWindowbody').html(msg);
+	jQuery('#modalWindowok').css('display','none');
+	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert-danger');
+} 
+
+
 
 jQuery(document).ready(function(){
 
@@ -101,7 +124,6 @@ jQuery(document).ready(function(){
 		}
 		$objeto.click(function(){
 			jQuery.post("index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson", {id:$objeto.attr('data-id')},function(dado){
-				console.log(dado);
 				if(dado.status=="ok"){
 					if($objeto.attr('data-gostei')=='SIM'){
 						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
@@ -115,9 +137,7 @@ jQuery(document).ready(function(){
 					}					
 				}
 				else if(dado.codigo=="401"){
-					if(confirm('Para realizar essa ação deve logar no site primeiro.\n Deseja logar agora?')){
-						window.location.href=document.UrlReload;
-					}
+					document.abrirModalAlerta('Não está logando', '<p>Voc&ecirc; n&otilde;o est&aacute; logado.<br/>Para executar essa a&ccedil;&atilde;o deve estar logado.<br/>Deseja Realizar login?<br/><br/></p>', 'Entrar/Login', document.UrlLogin);
 				}
 				else{
 					alert(dado.mesage);

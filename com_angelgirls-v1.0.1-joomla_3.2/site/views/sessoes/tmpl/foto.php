@@ -297,7 +297,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			<?php
 			$count = 0;
 			foreach($fotos as $conteudo): 
-				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$conteudo->id.':'.strtolower(str_replace(" ","-",$conteudo->titulo))); 
+				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->titulo))); 
 				$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->id.':'.$conteudo->sessao.'-ico'); ?>
 				<div class="item <?php echo($conteudo->id==$foto->id?' ativo':''); ?>">
 		    		<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" class="img-rounded"/>

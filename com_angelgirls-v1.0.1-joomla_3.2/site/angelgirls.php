@@ -24,8 +24,8 @@ if(!defined('VERSAO_ANGELGIRLS')){
 $document = JFactory::getDocument();
 
 $document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css?v='.VERSAO_ANGELGIRLS);
-$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.min.css?v='.VERSAO_ANGELGIRLS);
-$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.min.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.css?v='.VERSAO_ANGELGIRLS);
 
 
 // $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.min.css');
@@ -56,10 +56,26 @@ $controller = JControllerLegacy::getInstance('Angelgirls');
 $controller->execute(JRequest::getCmd('task'));
 
 $document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( true ) . '/components/com_angelgirls/";
-		document.UrlReload ="' . JRoute::_('index.php?option=com_users&view=login',false) . '";');
+		document.UrlLogin ="' . JRoute::_('index.php?option=com_users&view=login',false) . '";');
 
 echo('<div id="fb-root"></div>');
-
+echo('<div class="modalwindow fade" id="modalWindow">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalWindowtitle"></h4>
+      </div>
+      <div class="modal-body alert" id="modalWindowbody" style="padding-left:25px">
+        
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default" data-dismiss="modal">Close</a>
+        <a class="btn btn-primary" id="modalWindowok" href="'.JRoute::_('index.php?option=com_users&view=login',false).'"></a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->');
 
 // Redirect if set by the controller
 $controller->redirect();

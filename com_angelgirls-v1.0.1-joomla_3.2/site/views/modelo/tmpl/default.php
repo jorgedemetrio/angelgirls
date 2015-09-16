@@ -21,6 +21,12 @@ $total = JRequest::getVar('total');
 $preferidos = JRequest::getVar('preferidos');
 $tema = JRequest::getVar('tema');
 $locacao = JRequest::getVar('locacao');
+$letraSexo = 'a';
+if(isset($conteudo->sexo)) :
+	if($conteudo->sexo == 'M'):
+		$letraSenhao='o';
+	endif;
+endif;
 
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':full');
 ?>
@@ -28,7 +34,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 	<h1><small>Modelo</small> <?php echo($conteudo->nome);?> 
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>
-<h3>Dados da modelo</h3>
+<h3>Dados d<?php echo($letraSexo);?> modelo</h3>
 <div class="row">
 	<div class="col col-xs-12 col-sm-12 col-md-2 col-lg-2">	
 		<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/>
@@ -61,7 +67,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 							Nome
 						</th>
 						<th>
-							Nascimenda
+							Nascimend<?php echo($letraSexo);?>
 						</th>	
 						<th>
 							Sexo
@@ -151,9 +157,16 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 			<table class="table table-hover" >
 				<thead>
 					<tr>
-	
+						<?php if(isset($conteudo->data_nascimento)):?>
+						<th>
+							Idade
+						</th>	
+						<?php endif;?>
 						<th>
 							Altura
+						</th>
+						<th>
+							Cal&ccedil;a
 						</th>
 						<th>
 							Busto
@@ -171,8 +184,19 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 				</thead>
 				<tbody>
 					<tr>
+						<?php if(isset($conteudo->data_nascimento)):?>
+						<td>
+							<?php 
+								echo( substr(intval(date(Ymd))-intval( JFactory::getDate($conteudo->data_nascimento)->format('Ymd')),0,2) );
+							?>
+						</td>	
+						<?php endif;?>
+						</td>
 						<td>
 							<?php echo($conteudo->altura);?>
+						</td>
+						<td>
+							<?php echo($conteudo->calsado);?>
 						</td>
 						<td>
 							<?php echo($conteudo->busto);?>
@@ -184,7 +208,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 							<?php echo($conteudo->etinia);?>
 						</td>	
 						<td>
-							<?php echo('<small>tamanho</small> '. $conteudo->tamanho_cabelo . ' <small>tipo</small> '.  $conteudo->cabelo . ' <small>cor</small> '.(!isset($conteudo->cabelo) || $conteudo->cabelo=='OUTRO'? $conteudo->outra_cor_cabelo:$conteudo->cabelo));?>
+							<?php echo('<small>tamanho</small> '. $conteudo->tamanho_cabelo . ' <small>tipo</small> '.  $conteudo->cabelo . ' <small>cor</small> '.(!isset($conteudo->cor_cabelo) || $conteudo->cor_cabelo=='OUTRO'? $conteudo->outra_cor_cabelo:$conteudo->cor_cabelo));?>
 						</td>	
 					</tr>
 				</tbody>
