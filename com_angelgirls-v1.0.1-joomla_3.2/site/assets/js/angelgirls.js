@@ -56,7 +56,7 @@ window.___gcfg = {lang: 'pt-BR'};
 		setTimeout(function(){
 			jQuery('.vkShare').each(function(){
 				$this = jQuery(this);
-				$this.html(VK.Share.button($this.attr('data-href'), {type: 'link'}));
+				$this.html(VK.Share.button($this.attr('data-href') && $this.attr('data-href')!=''? $this.attr('data-href'):window.location, {type: 'link'}));
 			});
 		}, 1000);
 	  });
@@ -89,6 +89,42 @@ function TestaCPF(strCPF) {
 jQuery(document).ready(function(){
 
 	
+
+	jQuery('.gostar').each(function(){
+		$objeto = jQuery(this);
+
+		if($objeto.attr('data-gostei')=='SIM'){
+			$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+		}
+		else{
+			$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
+		}
+		$objeto.click(function(){
+			jQuery.post("index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson", {id:$objeto.attr('data-id')},function(dado){
+				console.log(dado);
+				if(dado.status=="ok"){
+					if($objeto.attr('data-gostei')=='SIM'){
+						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
+						$objeto.attr('data-gostei','NAO');
+						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))-1);
+					}
+					else{
+						$objeto.attr('data-gostei','SIM');
+						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))+1);
+						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+					}					
+				}
+				else if(dado.codigo=="401"){
+					if(confirm('Para realizar essa ação deve logar no site primeiro.\n Deseja logar agora?')){
+						window.location.href=document.UrlReload;
+					}
+				}
+				else{
+					alert(dado.mesage);
+				}
+			},"json");
+		});
+	});	
 
 
 	

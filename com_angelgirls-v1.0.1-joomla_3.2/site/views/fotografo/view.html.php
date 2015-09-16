@@ -13,62 +13,57 @@ defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
 jimport('joomla.application.component.view');
-JHTML::_('behavior.formvalidation');
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 /**
- * Modelos View
+ * Temas View
  */
-class AngelgirlsViewcadastro extends JViewLegacy
+class AngelgirlsViewfotografo extends JViewLegacy
 {
 	/**
-	 * Modelos view display method
+	 * Temas view display method
 	 * @return void
 	 */
 	function display($tpl = null) 
 	{
 
-		// Set the toolbar
-		$this->addToolBar();
-		
-		// Show sidebar
-		$this->sidebar = JHtmlSidebar::render();
 
 		// Set the document
 		$this->setDocument();
 		
+	
+
+		// Set the toolbar
+		$this->addToolBar();
+		
+
 		// Display the template
 		parent::display($tpl);
+
+
 	}
 
 	/**
 	 * Setting the toolbar
 	 */
-	protected function addToolBar() {
-		
-		$app = JFactory::getApplication();
+	protected function addToolBar() 
+	{
+			
+
+		$layout = JRequest::getVar('layout');
 		$document = JFactory::getDocument();
-		$pathway = $app->getPathway();
-		
-		$template = JRequest::getVar('layout');
+		$pathway = JFactory::getApplication()->getPathway();
+
 
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
+		
 
-		if($template!='sucesso'){
-			$document->setTitle("Angel Girls - Cadastro de " . $template . 's' );
-			$pathway->addItem("Cadastro de " . $template, '');
-			$document->setDescription("Cadastro de " . $template . " para ter acessos exclusivo no site da Angel Girls." .
-					" Angel Girls as modelos mais lindas do Brasil.");
-		}
-		else{
-			$document->setTitle("Angel Girls - Cadastro realizado com sucesso ");
-			$pathway->addItem("Cadastro realizado com sucesso " );
-			$document->setDescription("Cadastro realizado com sucesso." .
-					" Angel Girls as modelos mais lindas do Brasil.");			
-		}
+		$objeto = JRequest::getVar('fotografo');
+		$descricao = 'Fotografo ' . $objeto->nome;
+		$pathway->addItem($descricao,'');
+		$document->setTitle($descricao );
+		$document->setDescription($objeto->meta_descricao);
+		$document->setMetadata('Keywords', 'fotografo,'.$objeto->nome.','.str_replace(' ', ',',$sessao->nome));
 
-
-		$document->setMetadata('Keywords','register, cadastro, registrar, sessao de foto, sessao, photoset, photo set, photo shot,fotografia,'. $template );
 	}
 
 	/**

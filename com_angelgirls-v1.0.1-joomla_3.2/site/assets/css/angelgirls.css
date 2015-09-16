@@ -39,7 +39,20 @@
 {
     position: fixed;
     z-index: 9999;
- 
-    -ms-touch-action: none;
+     -ms-touch-action: none;
     touch-action: none;
+}
+
+.gostar{
+	 width: 20px;
+	 text-align: center;
+	 display: inline-block; 
+	 vertical-align: top;
+}
+.gostar:hover{
+	 cursor: pointer;
+}
+
+.dropdown-menu .divider {
+    border-bottom: 1px solid #C3C3C3;
 }

@@ -16,21 +16,31 @@ if(!defined('DS')){
 	define('DS',DIRECTORY_SEPARATOR);
 };
 
+if(!defined('VERSAO_ANGELGIRLS')){
+	define('VERSAO_ANGELGIRLS','1.0');
+}
+
 // Set the component css/js
 $document = JFactory::getDocument();
-$document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css');
-$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.min.css');
-$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.min.css');
-$document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( true ) . '/components/com_angelgirls/";');
+
+$document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.min.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.min.css?v='.VERSAO_ANGELGIRLS);
+
+
 // $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.min.css');
 // $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.structure.min.css');
 // $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.theme.min.css');
 
-JHtml::_('jquery.framework');
+
+
+
+JHtml::_('jquery.framework', false);
+JHtml::_('jquery.ui');
 //JHTML::_('behavior.tooltip');
-$document->addScript('components/com_angelgirls/assets/js/jquery.mask.min.js');
-$document->addScript('components/com_angelgirls/assets/js/bootstrap.min.js');
-$document->addScript('components/com_angelgirls/assets/js/angelgirls.js');
+$document->addScript('components/com_angelgirls/assets/js/jquery.mask.min.js?v='.VERSAO_ANGELGIRLS);
+//$document->addScript('components/com_angelgirls/assets/js/bootstrap.min.js');
+$document->addScript('components/com_angelgirls/assets/js/angelgirls.js?v='.VERSAO_ANGELGIRLS);
 // $document->addScript('components/com_angelgirls/assets/js/jquery-ui.min.js');
 
 // Require helper file
@@ -45,7 +55,21 @@ $controller = JControllerLegacy::getInstance('Angelgirls');
 // Perform the request task
 $controller->execute(JRequest::getCmd('task'));
 
+$document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( true ) . '/components/com_angelgirls/";
+		document.UrlReload ="' . JRoute::_('index.php?option=com_users&view=login',false) . '";');
+
 echo('<div id="fb-root"></div>');
+
 
 // Redirect if set by the controller
 $controller->redirect();
+///templates/protostar/css/template.css
+
+unset($document->_scripts[JURI::root(true) . '/media/system/js/mootools-more.js']);
+//unset($document->_scripts[JURI::root(true) . '/media/system/js/mootools-core.js']);
+// unset($document->_scripts[JURI::root(true) . '/media/system/js/core.js']);
+// unset($document->_scripts[JURI::root(true) . '/media/system/js/modal.js']);
+// unset($document->_scripts[JURI::root(true) . '/media/system/js/caption.js']);
+// unset($document->_scripts[JURI::root(true) . '/media/jui/js/jquery.min.js']);
+//unset($document->_scripts[JURI::root(true) . '/media/jui/js/jquery-noconflict.js']);
+// unset($document->_scripts[JURI::root(true) . '/media/jui/js/bootstrap.min.js']);

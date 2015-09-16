@@ -26,6 +26,8 @@ $makingofs = JRequest::getVar('makingofs');
 $sessoes = JRequest::getVar('sessoes');
 $fotos = JRequest::getVar('fotos');
 
+JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{position:relative;min-height:1px;padding-right:5px;padding-left:5px}');
+
 
 //print_r($conteudos);
 //exit();
@@ -33,7 +35,7 @@ $fotos = JRequest::getVar('fotos');
 <div class="page-header">
 	<h1>Angel Girls</h1>
 </div>
-<div class="well">Bem vindo ao site de com as modelos mais lindas e
+<div class="well hidden-phone hidden-tablet">Bem vindo ao site de com as modelos mais lindas e
 	angelicais.</div>
 <div class="row  hidden-phone" style="margin-bottom: 10px;">
 	<div class="col col-xs-12 col-sm-12 col-md-8 col-lg-9" style="height: 450px; padding: 0px; margin: 0px;">
@@ -89,20 +91,20 @@ $fotos = JRequest::getVar('fotos');
 			</a>
 		</div>
 	</div>
-	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3" style="padding: 5px;">
-		<div id="itemCarrossel1" class="itemCarroussel alert alert-info" style="padding: 10px;">
+	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-tablet" style="padding: 5px;">
+		<div id="itemCarrossel1" class="itemCarroussel alert alert-danger" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->id.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
 		</div>
-		<div id="itemCarrossel2" class="itemCarroussel alert alert-success" style="padding: 10px;">
+		<div id="itemCarrossel2" class="itemCarroussel alert alert-info" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->descricao);?></a></p>			
 		</div>
-		<div id="itemCarrossel3" class="itemCarroussel alert alert-success" style="padding: 10px;">
+		<div id="itemCarrossel3" class="itemCarroussel alert alert-info" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=cadastroModelo&id=cadastre-se-modelo-fotografica-sensual-angel-girls',false)); ?>">Seja uma Angel </a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=cadastro&task=cadastroModelo&id=cadastre-se-modelo-fotografica-sensual-angel-girls',false)); ?>"><small>Cadastre-se e veja como ser uma modelo da Angel.</small></a></p>			
 		</div>
-		<div id="itemCarrossel4" class="itemCarroussel alert alert-success" style="padding: 10px;">
+		<div id="itemCarrossel4" class="itemCarroussel alert alert-info" style="padding: 10px;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPromocao&id='.$promocao->id.':promocao-'.strtolower(str_replace(" ","-",$promocao->alias)),false)); ?>"><?php echo($promocao->nome);?></a></h5>
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPromocao&id='.$promocao->id.':promocao-'.strtolower(str_replace(" ","-",$promocao->alias)),false)); ?>"><?php echo($promocao->descricao);?></a></p>			
 		</div>
@@ -120,10 +122,17 @@ $fotos = JRequest::getVar('fotos');
 			</div>
 		</div>
 	
-		<h2>Ultimas Fotos</h2>
+		<div class="thumbnail hidden-phone fb-page" style="padding: 0px; margin: 5px" data-href="https://www.facebook.com/angelgirlsbr" data-height="500px" data-small-header="true" 
+			data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" data-show-posts="true">
+				<div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/angelgirlsbr"><a href="https://www.facebook.com/angelgirlsbr">Angel Girls</a></blockquote>
+				</div>
+		</div>
+		
+	
+		<h2 class="hidden-phone">Ultimas Fotos <span class="glyphicon glyphicon-picture"></span></h2>
 		<?php
 		foreach($fotos as $conteudo){ ?>
-			<div class="thumbnail">
+			<div class="thumbnail hidden-phone">
 				<?php
 					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
 					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->id.':'.$conteudo->id_sessao.'-thumbnail');
@@ -169,8 +178,9 @@ $fotos = JRequest::getVar('fotos');
 		</div>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
-
-	<h2>Ultimas Sess&otilde;es</h2>
+			<?php 
+				$urlTodas = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
+	<h2><a href="<?php echo($urlTodas);?>">Ultimas Sess&otilde;es <span class="glyphicon glyphicon-camera"></span></a></h2>
 	<?php
 	foreach($sessoes as $conteudo){ ?>
 		<div class="thumbnail">
@@ -187,17 +197,16 @@ $fotos = JRequest::getVar('fotos');
 				<div class="vkShare" data-action="share" data-href="<?php echo('http://'.$_SERVER['HTTP_HOST'] . $url);?>"></div>
 				</p>
 				<p><?php echo($conteudo->descricao);?></p>
-				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-primary" role="button" style="text-overflow: ellipsis;max-width: 270px;  overflow: hidden;  direction: ltr;"><?php echo($conteudo->nome);?></a></p>
+				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-info" role="button" style="text-overflow: ellipsis;max-width: 80%;  overflow: hidden;  direction: ltr;"><?php echo($conteudo->nome);?></a></p>
 				</div>
 		</div>
 	<?php
 	} 
 	?>
-		<div class="">
-			<?php 
-				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
+		<div>
+
 				
-				<p class="text-center"><a href="<?php echo($url);?>" class="btn btn-info" role="button">Ver todas as sess&otilde;es</a></p>
+				<p class="text-center"><a href="<?php echo($urlTodas);?>" class="btn btn-info" role="button">Ver todas as sess&otilde;es</a></p>
 				
 		</div>
 	</div>
@@ -221,8 +230,10 @@ $fotos = JRequest::getVar('fotos');
 		</div>
 	<?php
 		//BANNER
+
+	
 		if($couter++==1){
-			$module = JModuleHelper::getModule('banner_home_cubo');
+			$module = JModuleHelper::getModule('banners','BannerHomeCubo');
 			if(isset($module)){
 				echo '<div class="thumbnail">'; 
 				echo JModuleHelper::renderModule($module);
@@ -233,10 +244,10 @@ $fotos = JRequest::getVar('fotos');
 	?>
 	</div>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
-	<h2>Making Ofs</h2>
+	<h2 class="makingof">Making Ofs <span class="glyphicon glyphicon-facetime-video"></span></h2>
 	<?php
 	foreach($makingofs as $conteudo){ ?>
-		<div class="thumbnail">
+		<div class="makingof">
 			<?php 
 				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $conteudo->catid, $conteudo->language));
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
@@ -246,7 +257,7 @@ $fotos = JRequest::getVar('fotos');
 			<div class="caption">
 				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
 				<p><?php echo($conteudo->descricao);?></p>
-				<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-primary" role="button">Assistir: <?php echo($conteudo->nome);?></a></p>
+				<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-danger" role="button">Assistir: <?php echo($conteudo->nome);?></a></p>
         			
         			
 			</div>
@@ -271,13 +282,13 @@ jQuery(document).ready(function(){
 
     jQuery("#displayCarrossel").on('slide.bs.carousel', function () {
     	$todos = jQuery('.itemCarroussel');
-    	$todos.removeClass('alert-success');
     	$todos.removeClass('alert-info');
-    	$todos.addClass('alert-success');
+    	$todos.removeClass('alert-danger');
+    	$todos.addClass('alert-info');
 
     	$objeto = jQuery('#itemCarrossel'+ jQuery('div.item.active').attr('data-id-ver'));
-    	$objeto.removeClass('alert-success');
-    	$objeto.addClass('alert-info');
+    	$objeto.removeClass('alert-info');
+    	$objeto.addClass('alert-danger');
     });
 });
 </script>

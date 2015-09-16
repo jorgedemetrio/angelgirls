@@ -164,7 +164,7 @@ class AngelgirlsController extends JControllerLegacy{
 		/*'<?xml version="1.0" encoding="UTF-8"?>\n';*/
 		$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
 		foreach ( $results as $result){
-			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$result->id.':modelo-'.strtolower(str_replace(" ","-",$result->alias)),false);
+			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$result->id.':fotografo-'.strtolower(str_replace(" ","-",$result->alias)),false);
 			$xml = $xml . "\t<url>\n";
 			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
@@ -277,10 +277,124 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
+	public function carregarFotografo(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		
+		$id = JRequest::getInt( 'id',0);
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_fotografo' ))
+		->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
+		->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+		$db->setQuery ( $query );
+		$db->execute ();
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select('f.id, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`,`f`.`nome_foto` AS `foto`, `f`.`meta_descricao`, f.descricao, f.data_nascimento,
+						f.sexo, f.nascionalidade, f.site, f.profissao, f.id_cidade_nasceu, f.id_cidade, f.audiencia_view, u.name as nome_completo,
+						cnasceu.uf as estado_nasceu, cnasceu.nome as cidade_nasceu,
+						cvive.uf as estado_mora, cvive.nome as cidade_mora,
+						CASE isnull(`vt_f`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei`')
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+		->join ( 'LEFT', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
+		->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_f ON ' . $db->quoteName ( 'f.id' ) . ' = ' . $db->quoteName('vt_f.id_fotografo'))
+		->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+		->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
+		->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+		->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+		
+		
+		JRequest::setVar ( 'usuario', $result );
+		
+		//Carregar 5 Sessoes que trabalhou mais gostadas
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+		->order('`s`.`publicar` DESC ');
+		$query->setLimit(5);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'ultimas', $results );
+		
+		//Carregar 3 Sessoes que trabalhou mais recentes
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+		->order('s.audiencia_gostou DESC,s.audiencia_view DESC, `s`.`publicar` DESC ');
+		$query->setLimit(5);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'gostaram', $results );
+		
+		
+		//Carregar 3 Sessoes que trabalhou mais recentes
+		$query = $db->getQuery ( true );
+		$query->select("`s`.`id` AS `id`,
+					`s`.`titulo` AS `nome`,
+				    `s`.`titulo` AS `alias`,
+				    `s`.`data_alterado` AS `modified`,
+				    `s`.`nome_foto` AS `foto`,
+				    `s`.`executada` AS `realizada`,
+				    `s`.`audiencia_gostou` AS `gostou`,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
+		)
+		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
+		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+		->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $id . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $id . ')')
+		->order('s.audiencia_view DESC, s.audiencia_gostou DESC, `s`.`publicar` DESC ');
+		$query->setLimit(5);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		JRequest::setVar ( 'vistas', $results );
+		
+		
+		
+
+		
+		JRequest::setVar ( 'view', 'fotografo' );
+		JRequest::setVar ( 'layout', 'default' );
+		parent::display (true, false);
+	}
+	
+	public function carregarModelo(){
+	
+	}
+	
 	public function gostarJson(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
-		$id = JRequest::getInt('id',0);
+		$id = JRequest::getInt('id',0,'POST');
 		$view = JRequest::getInt('view','');
 		$jsonRetorno='';
 		if(isset($user) && isset($user->id) && $user->id!=0){
@@ -319,7 +433,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$tabelaRegistroId='#__angelgirls_galeria';
 			}
 			
-			if(isset($campoId) && 		isset($tabelaVotoId) &&	isset($tabelaRegistroId)){
+			if(isset($campoId) && isset($tabelaVotoId) &&	isset($tabelaRegistroId)){
 				$query = $db->getQuery ( true );
 				$query->select('`f`.`data_criado` as `data`')
 				->from ( $db->quoteName ( $tabelaVotoId, 'f' ) )
@@ -352,22 +466,22 @@ class AngelgirlsController extends JControllerLegacy{
 				$query->update($db->quoteName($tabelaRegistroId));
 				if($gostar){
 					$query->set(array($db->quoteName ( 'audiencia_gosto' ) . '  =  ('.$db->quoteName ( 'audiencia_gosto' ).' + 1)'));
-					$jsonRetorno='{"status":"ok","mesage":"Adicionado"}';
+					$jsonRetorno='{"status":"ok","mesage":"Adicionado","codigo":"200"}';
 				}
 				else{
 					$query->set(array($db->quoteName ( 'audiencia_gosto' ) . '  =  ('.$db->quoteName ( 'audiencia_gosto' ).' - 1)'));
-					$jsonRetorno='{"status":"ok","mesage":"Removido"}';
+					$jsonRetorno='{"status":"ok","mesage":"Removido","codigo":"200"}';
 				}
 				$query->where ($db->quoteName ( 'id' ) . ' = ' . $id);
 				$db->setQuery ( $query );
 				$db->execute ();
 			}
 			else{
-				$jsonRetorno='{"status":"nok","mesage":"Area n&aatilde;o reconhecida."}';
+				$jsonRetorno='{"status":"nok","mesage":"Area n&aatilde;o reconhecida.","codigo":"403"}';
 			}
 		}
 		else{
-			$jsonRetorno='{"status":"nok","mesage":"N&aatilde;o logado"}';
+			$jsonRetorno='{"status":"nok","mesage":"N&aatilde;o logado","codigo":"401"}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -536,7 +650,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'view', 'sessoes' );
 		JRequest::setVar ( 'layout', 'foto' );
-		parent::display (true, false);		
+		parent::display (true, false);
 	}
 	
 	
@@ -661,11 +775,13 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$id = JRequest::getInt( 'id',0);
-		$tipo = JRequest::getString('descricao',0);
+		$tipo = JRequest::getString('descricao','');
 		$view = JRequest::getString( 'view','');
 		$arquivo = "";
 		$mime = 'image/jpeg';
 		$path = JPATH_BASE.DS.'images';
+		
+
 		if($view=='fotosessao'){
 			$detalhe = explode ( ' ', $tipo );
 			if ($detalhe[1]=='full'){
@@ -681,6 +797,15 @@ class AngelgirlsController extends JControllerLegacy{
 			else{
 				$arquivo =  $path .  DS. 'sessoes' .DS . $detalhe[0] . DS . $id  . '_' . $detalhe[1] . '.jpg';
 			}
+		}
+		else if($view=='fotografo'){
+			$query = $db->getQuery ( true );
+			$query->select('`f`.`nome_foto` AS `foto`')
+				->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			$arquivo =  $path .  DS. 'fotografos' .DS . $result->foto;
 		}
 		header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
@@ -1012,7 +1137,7 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			if(isset($email) && strpos($email, '@' )===false){
 				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
 			}
 			if(!isset($username) || strlen(trim($username))<5){
 				$erro =true;
@@ -1326,7 +1451,7 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			if(isset($email) && strpos($email, '@' )===false){
 				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
 			}
 			if(!isset($username) || strlen(trim($username))<5){
 				$erro =true;
@@ -1665,7 +1790,7 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			if(isset($email) && strpos($email, '@' )===false){
 				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail válido.' );
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
 			}
 			if(!isset($username) || strlen(trim($username))<5){
 				$erro =true;

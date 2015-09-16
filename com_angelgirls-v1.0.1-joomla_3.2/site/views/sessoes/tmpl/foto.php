@@ -41,15 +41,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?>
 	<small><?php echo($conteudo->nome_tema);?></small>
-	<?php if($conteudo->gostei_sessa=='SIM'):?>
-		<span class="badge" title="Gostou"><?php echo($conteudo->audiencia_gostou);?> 
-		<span class="glyphicon glyphicon-star" aria-hidden="true" title="Gostou"></span>
-		</span>
-	<?php else : ?>
-		<span class="badge" title=""><?php echo($conteudo->audiencia_gostou);?> 
-		<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-		</span>
-	<?php endif?></h1>
+	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessa);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotosessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div></h1>
 
 </div>
 
@@ -69,10 +61,15 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		<span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
 		</a>
 	</li>
+	<li role="presentation">
+		<a href="#comentarios" data-toggle="tab" aria-controls="profile" role="tab">Coment&aacute;rios
+		<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+		</a>
+	</li>
 </ul>
 
 <div id="detalhesSessao" class="tab-content" style="overflow: auto;">
-	<div id="general" class="tab-pane fade in active" style="height: 170px;">
+	<div id="general" class="tab-pane fade in active" style="height: 260px;">
 		<h2>Detalhe foto/sess&atilde;o</h2>
 		<div class="row">
 			<div class="label col col-xs-12 col-sm-3 col-md-3 col-lg-3">
@@ -115,7 +112,23 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			</div>
 		</div>
 		<div class="row">
-			<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 well">
+			<div class="col col-xs-12 col-sm-4 col-md-2 col-lg-2 text-center" style="vertical-align: middle; height: 100%">
+				<div class="dropdown">
+				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    Compartilhar <span class="glyphicon glyphicon-share"></span>
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				    <li><div class="fb-share-button" data-layout="button_count"></div></a></li>
+				    <li role="separator" class="divider"></li>
+				    <li><div class="vkShare" data-action="share"></div></li>
+				    <li role="separator" class="divider"></li>
+				    <li><div class="g-plus" data-action="share"></div></a></li>
+
+				  </ul>
+				</div>
+			</div>
+			<div class="col col-xs-12 col-sm-8 col-md-10 col-lg-10 well">
 		    	<h4>Descri&ccedil;&atilde;o da foto</h4>
 		    	<?php echo($conteudo->descricao);?>
 				<h4>Descri&ccedil;&atilde;o da sess&atilde;o</h4>
@@ -124,7 +137,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		</div>  
 	</div>
 <?php $urlBusca = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
-	<div id="modelos" class="tab-pane fade in" style="height: 170px;">
+	<div id="modelos" class="tab-pane fade in" style="height: 260px;">
 		<h2>Modelo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
@@ -143,15 +156,8 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 						<h3><a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
 				    	<?php echo($conteudo->modelo1); ?> 
 						</a>			    	
-				    	<?php if($conteudo->gostei_mod1=='SIM'):?>
-							<span class="badge" title="Gostou"><?php echo($conteudo->gostou_mo1);?> 
-							<span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span>
-							</span>
-						<?php else : ?>
-							<span class="badge" title=""><?php echo($conteudo->gostou_mo1);?> 
-							<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-							</span>
-						<?php endif?></h3>
+				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod1);?>' 
+							data-id='<?php echo($conteudo->id_modelo_principal);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->gostou_mo1);?>'></div></h3>
 					</div>
 				</div>
 				<div class="row">
@@ -178,15 +184,8 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 						<h3><a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
 				    	<?php echo($conteudo->modelo2); ?> 
 						</a>			    	
-				    	<?php if($conteudo->gostei_mod1=='SIM'):?>
-							<span class="badge" title="Gostou"><?php echo($conteudo->gostou_mo2);?> 
-							<span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span>
-							</span>
-						<?php else : ?>
-							<span class="badge" title=""><?php echo($conteudo->gostou_mo2);?> 
-							<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-							</span>
-						<?php endif?></h3>
+				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_mod1);?>' 
+							data-id='<?php echo($conteudo->id_modelo_secundaria);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->gostou_mo2);?>'></div></h3>
 					</div>
 				</div>
 				<div class="row">
@@ -208,7 +207,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			</div>	
 		</div>
     </div>
-    <div id="fotografos" class="tab-pane fade in" style="height: 170px;">
+    <div id="fotografos" class="tab-pane fade" style="height: 260px;">
 		<h2>Fotografo(s)</h2>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
@@ -226,16 +225,9 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<h3><a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
 				    	<?php echo($conteudo->fotografo1); ?> 
-						</a>			    	
-				    	<?php if($conteudo->gostei_fot1=='SIM'):?>
-							<span class="badge" title="Gostou"><?php echo($conteudo->gostou_fot1);?> 
-							<span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span>
-							</span>
-						<?php else : ?>
-							<span class="badge" title=""><?php echo($conteudo->gostou_fot1);?> 
-							<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-							</span>
-						<?php endif?></h3>
+						</a>		
+				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_fot1);?>' 
+							data-id='<?php echo($conteudo->id_fotografo_principal);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->gostou_fot1);?>'></div></h3>
 					</div>
 				</div>
 				<div class="row">
@@ -261,16 +253,9 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
 						<h3><a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">
 				    	<?php echo($conteudo->fotografo2); ?> 
-						</a>			    	
-				    	<?php if($conteudo->gostei_fot1=='SIM'):?>
-							<span class="badge" title="Gostou"><?php echo($conteudo->gostou_fot2);?> 
-							<span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span>
-							</span>
-						<?php else : ?>
-							<span class="badge" title=""><?php echo($conteudo->gostou_fot2);?> 
-							<span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title=""></span>
-							</span>
-						<?php endif?></h3>
+						</a>		
+				    	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_fot2);?>' 
+							data-id='<?php echo($conteudo->id_fotografo_secundaria);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->gostou_fot2);?>'></div></h3>
 					</div>
 				</div>
 				<div class="row">
@@ -291,6 +276,9 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		    	<?php echo($conteudo->comentario_fotografo)?>
 			</div>	
 		</div>
+	</div>
+	<div id="comentarios" class="tab-pane fade" style="height: 260px;">
+		<div class="fb-comments" data-href="http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" data-width="100%" style="margin: 0 auto;"></div>
 	</div>
 </div>
 
@@ -323,6 +311,9 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 	<div class="col col-xs-1 col-sm-1 col-md-1 col-lg-1 text-center" style="vertical-align: middle;height: 225px;"><a href="JavaScript: componente.right();"  class="setaDireita setas right carousel-control" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span>
 	<span class="sr-only">Próximo</span></a></div>
 </div>
+
+
+
 <style>
 .setas{
     top: 110px;

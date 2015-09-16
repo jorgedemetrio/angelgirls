@@ -17,10 +17,8 @@
 defined('_JEXEC') or die('Restricted access');
 JHTML::_('behavior.calendar');
 JHtml::_('dropdown.init');
-//JHtml::_('formbehavior.chosen', 'select');
-JHTML::_('behavior.formvalidator');
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('behavior.keepalive');
+//JHtml::_('behavior.keepalive');
+
 
 
 $editor = JFactory::getEditor();
@@ -161,7 +159,7 @@ input[type=\'file\']{
 					<label class="control-label"  for="site"><?php echo JText::_('Site'); ?></label>
 					<div class="input-group">
       					<div class="input-group-addon">http://</div>
-						<input class="form-control" style="width: 90%;" type="text" name="site"  id="site" size="32" maxlength="250" value="<?php echo JRequest::getVar('site');?>" placeholder="<?php echo JText::_('www.meu-site-pessoa.com.br'); ?>"/>
+						<input class="form-control" style="width: 90%;" type="url" name="site"  id="site" size="32" maxlength="250" value="<?php echo JRequest::getVar('site');?>" placeholder="<?php echo JText::_('www.meu-site-pessoa.com.br'); ?>"/>
 					</div>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
