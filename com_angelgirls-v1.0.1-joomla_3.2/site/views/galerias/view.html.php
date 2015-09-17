@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 /**
  * Temas View
  */
-class AngelgirlsViewtemas extends JViewLegacy
+class AngelgirlsViewgalerias extends JViewLegacy
 {
 	/**
 	 * Temas view display method
@@ -46,32 +46,7 @@ class AngelgirlsViewtemas extends JViewLegacy
 	protected function addToolBar() 
 	{
 			
-		$tema =& JRequest::getVar('tema');
-		$app = JFactory::getApplication();
-		$document =& JFactory::getDocument();
-		$pathway = $app->getPathway();
-		$pathway->addItem('Temas de fotografia', JRoute::_('index.php?option=com_angelgirls&task=listTema'));
 
-		//$document->setMetadata('content-language', 'pt-br');
-		$document->setMetadata('APPLICATION-NAME','Angel Girls');
-		if($tema !=null){
-			//JToolBarHelper::title(JText::_('Temas ').$tema->nome, 'angelgirls');
-			$pathway->addItem($tema->nome, '');
-			$document->setTitle($document->getTitle()." - ".JText::_('Tema ') . $tema->nome);
-			$document->setDescription($tema->meta_descricao);
-			$document->setMetadata('Keywords','sessao de foto, sessao, foto, photo, photoset, photo set, photo shot,temas fotografia,'. $tema->nome.','.str_replace(' ',',',$tema->nome) );
-			$document->setMetadata('author', $tema->criador);
-			$document->setMetadata('reply-to','contato@angelgirls.com.br');
-			//$document->setMetadata('robots', 'index,follow');
-		}
-		else{
-			//JToolBarHelper::title(JText::_('Temas de fotografia'), 'angelgirls');
-			//$document->setMetadata('robots', 'noindex,follow');
-			$document->setTitle($document->getTitle()." - ".JText::_('Temas de fotografia'));
-			$document->setDescription('Temas de fotografias sensuais usadas em nosso SETs, como: boudoir, MIMP, pinup');
-			$document->setMetadata('Keywords', 
-					'sessao de foto, sessao, foto, photo, photoset, photo set, photo shot,temas fotografia, boudoir, mimp, pinup');
-		}
 	}
 
 	/**

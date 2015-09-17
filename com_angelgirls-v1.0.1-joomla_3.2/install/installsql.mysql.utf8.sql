@@ -2,13 +2,13 @@ CREATE TABLE `#__cidade` (
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`nome` VARCHAR(150) NOT NULL , 
 		`uf` CHAR(2) NOT NULL
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__uf` (
   `ds_uf_sigla` char(2) NOT NULL,
   `ds_uf_nome` varchar(255) NOT NULL,
   PRIMARY KEY (`ds_uf_sigla`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 ALTER TABLE `#__cidade` ADD INDEX `FK_CIDADE_UF_idx` (`uf` ASC);
 ALTER TABLE `#__cidade` ADD CONSTRAINT `FK_CIDADE_UF`  FOREIGN KEY (`uf`) REFERENCES `#__uf` (`ds_uf_sigla`);
@@ -42,7 +42,7 @@ CREATE TABLE `#__angelgirls_agenda` (
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL 
 		
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_email` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -56,7 +56,7 @@ CREATE TABLE `#__angelgirls_email` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_redesocial` ( 
@@ -73,7 +73,7 @@ CREATE TABLE `#__angelgirls_redesocial` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_telefone` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -91,7 +91,7 @@ CREATE TABLE `#__angelgirls_telefone` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_endereco` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -111,7 +111,7 @@ CREATE TABLE `#__angelgirls_endereco` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 
@@ -164,7 +164,7 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_fotografo` ( 
@@ -204,44 +204,38 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_visitante` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`id_usuario` INT UNIQUE NOT NULL, 
 		`sobre` TEXT NULL , 
-		
-		`possui_foto_perfil` ENUM('S','N') NOT NULL , 
+		`apelido` VARCHAR(150) NOT NULL, 
+		`meta_descricao` VARCHAR(250) NOT NULL ,
+		`nome_foto` varchar(100)  NULL, 
 		`data_nascimento` DATE NOT NULL,
 		`sexo` ENUM('M','F') NOT NULL,
-
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
 		`nascionalidade` VARCHAR(25),
 		`id_cidade_nasceu` INT,
-		
-		
-
-
+		`id_cidade` INT NOT NULL,
 		`qualificao_equipe` INT DEFAULT 0,
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
 		`audiencia_view` INT DEFAULT 0,
-		
 		`custo_medio_diaria` NUMERIC(12,2) DEFAULT 0,
-		
 		`cpf` VARCHAR(14) NOT NULL UNIQUE,
 		`banco` VARCHAR(14),
 		`agencia` VARCHAR(14),
 		`conta` VARCHAR(14),
-		
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_equipe` ( 
@@ -277,7 +271,7 @@ CREATE TABLE `#__angelgirls_equipe` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_locacao` ( 
@@ -311,7 +305,7 @@ CREATE TABLE `#__angelgirls_locacao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_tema` ( 
@@ -331,7 +325,7 @@ CREATE TABLE `#__angelgirls_tema` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_sessao` ( 
@@ -370,7 +364,7 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_figurino` ( 
 	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -386,7 +380,7 @@ CREATE TABLE `#__angelgirls_figurino` (
 	`id_usuario_alterador` INT NOT NULL , 
 	`data_criado` DATETIME NOT NULL  , 
 	`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_foto_sessao` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -407,7 +401,7 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_post` (
 	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -423,7 +417,7 @@ CREATE TABLE `#__angelgirls_post` (
 	`id_usuario_alterador` INT NOT NULL , 
 	`data_criado` DATETIME NOT NULL  , 
 	`data_alterado` DATETIME NOT NULL
-)ENGINE = InnoDB;
+)ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_comentario_post` (
 	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -440,7 +434,7 @@ CREATE TABLE `#__angelgirls_comentario_post` (
 	`id_usuario_alterador` INT NOT NULL , 
 	`data_criado` DATETIME NOT NULL  , 
 	`data_alterado` DATETIME NOT NULL
-)ENGINE = InnoDB;
+)ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_galeria` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -461,7 +455,7 @@ CREATE TABLE `#__angelgirls_galeria` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_foto_galeria` ( 
@@ -483,7 +477,7 @@ CREATE TABLE `#__angelgirls_foto_galeria` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 
@@ -507,14 +501,14 @@ CREATE TABLE `#__angelgirls_promocao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL  
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_fotografo` ( 
 	`id_fotografo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_fotografo`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_vt_sessao` ( 
@@ -522,53 +516,53 @@ CREATE TABLE `#__angelgirls_vt_sessao` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_sessao`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_modelo` ( 
 	`id_modelo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_modelo`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_foto_sessao` ( 
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_foto`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_foto_galeria` ( 
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_foto`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_equipe` ( 
 	`id_equipe` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_equipe`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_galeria` ( 
 	`id_galeria` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_galeria`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_post` ( 
 	`id_post` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_post`,`id_usuario`)
-) ENGINE = InnoDB;
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_vt_comentario_post` ( 
 	`id_comentario` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
-	PRIMARY KEY(`id_usuario`,`id_usuario`)
-) ENGINE = InnoDB;
+	PRIMARY KEY(`id_usuario`,`id_comentario`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;

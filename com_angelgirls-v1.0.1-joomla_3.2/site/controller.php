@@ -77,7 +77,7 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach ( $results as $result){
 			$url = $_SERVER['HTTP_HOST'] . JRoute::_(ContentHelperRoute::getArticleRoute($result->slug, $result->catid, $result->language));
 			$xml = $xml . "\t<url>\n";
-			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
+			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-d\TH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
 			$xml = $xml . "\t\t<priority>0.3</priority>\n";
 			$xml = $xml . "\t\t<loc>http://" .  $url . "</loc>\n";
@@ -93,8 +93,10 @@ class AngelgirlsController extends JControllerLegacy{
 	 * Sitemap dos menus
 	 */
 	function sitemapMenus(){
-		//TODO
-	
+		$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+		$xml = $xml . '</urlset>';
+		header('Content-type: application/xml');
+		echo($xml);
 		exit();
 	}
 
@@ -102,8 +104,10 @@ class AngelgirlsController extends JControllerLegacy{
 	 * Sitemap das JTags
 	 */
 	function sitemapTags(){
-		//TODO
-	
+		$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+		$xml = $xml . '</urlset>';
+		header('Content-type: application/xml');
+		echo($xml);
 		exit();
 	}
 	
@@ -128,7 +132,7 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach ( $results as $result){
 			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$result->id.':modelo-'.strtolower(str_replace(" ","-",$result->alias)),false);
 			$xml = $xml . "\t<url>\n";
-			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
+			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-d\TH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
 			$xml = $xml . "\t\t<priority>0.5</priority>\n";
 			$xml = $xml . "\t\t<loc>http://" .  $url . "</loc>\n";
@@ -166,7 +170,7 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach ( $results as $result){
 			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$result->id.':fotografo-'.strtolower(str_replace(" ","-",$result->alias)),false);
 			$xml = $xml . "\t<url>\n";
-			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
+			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-d\TH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
 			$xml = $xml . "\t\t<priority>0.2</priority>\n";
 			$xml = $xml . "\t\t<loc>http://" .  $url . "</loc>\n";
@@ -188,7 +192,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 
 	
-	function sitemapSessaos(){
+	function sitemapSessao(){
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','titulo','data_alterado'),
@@ -204,7 +208,7 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach ( $results as $result){
 			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$result->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$result->alias)),false);
 			$xml = $xml . "\t<url>\n";
-			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
+			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-d\TH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
 			$xml = $xml . "\t\t<priority>0.9</priority>\n";
 			$xml = $xml . "\t\t<loc>http://" .  $url . "</loc>\n";
@@ -234,7 +238,7 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach ( $results as $result){
 			$url = $_SERVER['HTTP_HOST'] . JRoute::_('index.php?option=com_angelgirls&task=carregarSessao&id='.$result->id.':foto-sensual-'.strtolower(str_replace(" ","-",$result->alias)),false);
 			$xml = $xml . "\t<url>\n";
-			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-dTH:i:sP')  . "</lastmod>\n";
+			$xml = $xml . "\t\t<lastmod>" . JFactory::getDate($result->modified)->format('Y-m-d\TH:i:sP')  . "</lastmod>\n";
 			$xml = $xml . "\t\t<changefreq>monthly</changefreq>\n";
 			$xml = $xml . "\t\t<priority>0.9</priority>\n";
 			$xml = $xml . "\t\t<loc>http://" .  $url . "</loc>\n";
@@ -247,8 +251,10 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	function sitemapCategorias(){
-		//TODO
-
+		$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+		$xml = $xml . '</urlset>';
+		header('Content-type: application/xml');
+		echo($xml);
 		exit();
 	}
 
@@ -1244,24 +1250,16 @@ class AngelgirlsController extends JControllerLegacy{
 		foreach($results as $conteudo){ ?>
 <div class="col col-xs-12 col-sm-4 col-md-3 col-lg-2">
 	<div class="thumbnail">
-	<?php  $url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias))); ?>
+	<?php  
+	$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias))); 
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->id.':ico');
+	?>
 						<h5 class="list-group-item-heading"
 			style="width: 100%; text-align: center; background-color: grey; color: white; padding: 10px;">
 			<a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a>
-	    			<?php if($conteudo->eu=='SIM'):?>
-						<span class="badge" title="Gostou"><?php echo($conteudo->gostou);?> 
-						<span class="glyphicon glyphicon-star" aria-hidden="true"
-				title="Gostou"></span> </span>
-					<?php else : ?>
-						<span class="badge" title=""><?php echo($conteudo->gostou);?> 
-						<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"
-				title=""></span> </span>
-					<?php endif?></h5>
+				<div class="gostar" data-gostei='<?php echo($conteudo->eu);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->gostou);?>'></div></h5>
 	<?php 			if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-						<a href="<?php echo($url);?>"><img
-			src="<?php echo(JURI::base( true ) . '/images/sessoes/' . $conteudo->foto);?>"
-			title="<?php echo($conteudo->nome);?>"
-			alt="<?php echo($conteudo->nome);?>" /></a>
+						<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" 	title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" /></a>
 					<?php 
 					}?>
 					<div class="caption">
@@ -2592,7 +2590,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$query = $db->getQuery ( true );
 		$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
 				->from ('#__timeline')
-				->setLimit(8);
+				->setLimit(15);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'conteudos', $result );
@@ -2600,6 +2598,44 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'layout', 'logado' );
 		parent::display ();
 		//$this->nologado();
+	}
+	
+	public function carregarPerfil(){
+		$user = JFactory::getUser();
+		$this->carregarCadastro();
+		
+		if(!isset($user) || $user->id==0){
+			JError::raiseWarning(100,JText::_('Usu&aacute;rio n&atilde;o est&aacute; logado.'));
+			$this->nologado();
+			return;
+		}
+		
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`id`,`tipo`,`usuario`,`nome_completo`,`email_principal`,`id_usuario`,`apelido`,`descricao`,`meta_descricao`,`foto_perfil`,
+					`foto_adicional1`,`foto_adicional2`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,`pele`,`etinia`,`cabelo`,
+					`tamanho_cabelo`,`cor_cabelo`,`outra_cor_cabelo`,`profissao`,`nascionalidade`,`id_cidade_nasceu`,`data_nascimento`,`site`,
+					`sexo`,`cpf`,`banco`,`agencia`,	`conta`,`custo_medio_diaria`,`outro_status`,`qualificao_equipe`,`audiencia_gostou`,
+					`audiencia_ngostou`,`audiencia_view`,`id_cidade`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,
+					`data_criado`,`data_alterado`')
+		->from ('#__angelgirls_perfil')
+		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		JRequest::setVar ( 'perfil', $result );
+		
+		//Reazliar consulta de
+		// Endereços
+		// Telefones
+		// Email
+		// Redes Sociais
+		// Endereçoss
+		
+
+		JRequest::setVar ( 'view', 'perfil' );
+		JRequest::setVar ( 'layout', 'default' );
+		parent::display (true, false);
 	}
 	
 	public function nologado(){

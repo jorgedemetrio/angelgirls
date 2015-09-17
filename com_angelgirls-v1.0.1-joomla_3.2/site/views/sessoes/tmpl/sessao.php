@@ -105,11 +105,11 @@ $id = JRequest::getInt('id');
 				    <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				    <li><div class="fb-share-button" data-layout="button_count"></div></a></li>
+				    <li><div class="fb-share-button" data-layout="button_count"></div></li>
 				    <li role="separator" class="divider"></li>
 				    <li><div class="vkShare" data-action="share"></div></li>
 				    <li role="separator" class="divider"></li>
-				    <li><div class="g-plus" data-action="share"></div></a></li>
+				    <li><div class="g-plus" data-action="share"></div></li>
 				  </ul>
 				</div>
 			</div>

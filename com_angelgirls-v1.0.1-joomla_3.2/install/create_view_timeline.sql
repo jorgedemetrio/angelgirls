@@ -2,10 +2,10 @@
 CREATE OR REPLACE VIEW #__timeline (id,  tipo,  titulo, descricao, prioridade, data_publicado, 
 	audiencia, acessos, rnd, opt1, opt2, opt3, opt4) AS
 (SELECT 
-	s.id, 
+	s.id as id, 
     'SESSOES' as tipo, 
-    s.titulo,
-    s.descricao, 
+    s.titulo as titulo,
+    s.descricao as descricao, 
     0.9 as prioridade, 
     s.publicar as data_publicado, 
 	s.audiencia_gostou as audiencia,
@@ -24,7 +24,7 @@ ORDER BY
 	s.publicar DESC)
 UNION 
 (SELECT 
-	s.id, 
+	s.id as id, 
     'CONTENT' as tipo, 
     s.title as titulo, 
     s.introtext as descricao,
@@ -85,7 +85,7 @@ UNION
     u.id AS opt1,
     u.name AS opt2,
     '' AS opt3,
-    MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) AS opt4
+    '' AS opt4
 FROM 
 	#__angelgirls_post as s INNER JOIN 
     #__users as u ON s.id_usuario = u.id
@@ -159,7 +159,7 @@ WHERE
 	s.state =  1 AND
     s.publish_up <= NOW()  AND 
     s.publish_down >= NOW() AND
-    s.catid = 5
+    s.catid = 2
 ORDER BY 
 	s.publish_up DESC, s.clicks)
 ORDER BY data_publicado DESC, prioridade DESC;

@@ -14,53 +14,53 @@ document.processing = function () {
 };
 
 
-//FACEBOOK API
-(function(d, s, id) {
-	  var js, fjs = d.getElementsByTagName(s)[0];
-	  if (d.getElementById(id)) return;
-	  js = d.createElement(s); js.id = id;
-	  js.src = "//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.4";
-	  fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));
+////FACEBOOK API
+//(function(d, s, id) {
+//	  var js, fjs = d.getElementsByTagName(s)[0];
+//	  if (d.getElementById(id)) return;
+//	  js = d.createElement(s); js.id = id;
+//	  js.src = "//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.4";
+//	  fjs.parentNode.insertBefore(js, fjs);
+//	}(document, 'script', 'facebook-jssdk'));
+//
+//
+//
+//
+////GOOGLE API
+//window.___gcfg = {lang: 'pt-BR'};
+//
+//(function() {
+//  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+//  po.src = 'https://apis.google.com/js/platform.js';
+//  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+//})();
+//
+//
+//(function() {
+//    var cx = '007002280365302771262:9-iwnl5ixt0';
+//    var gcse = document.createElement('script');
+//    gcse.type = 'text/javascript';
+//    gcse.async = true;
+//    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+//        '//cse.google.com/cse.js?cx=' + cx;
+//    var s = document.getElementsByTagName('script')[0];
+//    s.parentNode.insertBefore(gcse, s);
+//  })();
 
-
-
-
-//GOOGLE API
-window.___gcfg = {lang: 'pt-BR'};
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/platform.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-
-(function() {
-    var cx = '007002280365302771262:9-iwnl5ixt0';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//cse.google.com/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-
-
-(function() {
-	  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-	  po.src = 'http://vk.com/js/api/share.js?9';
-	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	  jQuery(document).ready(function(){
-		setTimeout(function(){
-			jQuery('.vkShare').each(function(){
-				$this = jQuery(this);
-				$this.html(VK.Share.button($this.attr('data-href') && $this.attr('data-href')!=''? $this.attr('data-href'):window.location, {type: 'link'}));
-			});
-		}, 1000);
-	  });
-})();
+//VK
+//(function() {
+//	  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+//	  po.src = 'http://vk.com/js/api/share.js?9';
+//	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+//	  jQuery(document).ready(function(){
+//		setTimeout(function(){
+//			jQuery('.vkShare').each(function(){
+//				$this = jQuery(this);
+//				$this.html(VK.Share.button($this.attr('data-href') && $this.attr('data-href')!=''? $this.attr('data-href'):window.location, {type: 'link'}));
+//			});
+//		}, 1000);
+//	  });
+//})();
 
 function TestaCPF(strCPF) {
 	var Soma; 
@@ -84,18 +84,7 @@ function TestaCPF(strCPF) {
 		return false;
 	return true; 
 }
-
-document.abrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
-	jQuery('#modalWindowtitle').html(titulo);
-	jQuery('#modalWindowbody').html(texto);
-	jQuery('#modalWindowok').attr('href',destino);
-	jQuery('#modalWindowok').html(legandaBotaoOk);
-	jQuery('#modalWindowok').css('display','');
-	jQuery('#modalWindow').modal('show');
-	jQuery('#modalWindowbody').removeClass('alert-warning');
-	jQuery('#modalWindowbody').removeClass('alert-danger');
-	jQuery('#modalWindowbody').addClass('alert-warning');
-}
+var AngelGirls = new Object();
 
 alert = function(msg){
 	jQuery('#modalWindowtitle').html(window.document.title);
@@ -108,46 +97,60 @@ alert = function(msg){
 } 
 
 
+AngelGirls.AbrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
+	jQuery('#modalWindowtitle').html(titulo);
+	jQuery('#modalWindowbody').html(texto);
+	jQuery('#modalWindowok').attr('href',destino);
+	jQuery('#modalWindowok').html(legandaBotaoOk);
+	jQuery('#modalWindowok').css('display','');
+	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert-warning');
+}
 
-jQuery(document).ready(function(){
-
-	
-
+AngelGirls.ResetConfig = function(){
 	jQuery('.gostar').each(function(){
 		$objetoRef = jQuery(this);
 
-		if($objetoRef.attr('data-gostei')=='SIM'){
-			$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
-		}
-		else{
-			$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
-		}
-		$objetoRef.click(function(){
-			$objeto = jQuery(this);
-			console.log($objeto);
-			jQuery.post(document.PathBase+"index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson&id="+$objeto.attr('data-id')+":voto", {},function(dado){
-				if(dado.status=="ok"){
-					if($objeto.attr('data-gostei')=='SIM'){
-						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))-1);
-						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
-						$objeto.attr('data-gostei','NAO');
-
+		if(!$objetoRef.attr('data-checado') && $objetoRef.attr('data-checado')!='SIM'){
+			if($objetoRef.attr('data-gostei')=='SIM'){
+				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+			}
+			else{
+				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
+			}
+			$objetoRef.attr('data-checado','SIM');
+			$objetoRef.click(function(){
+				$objeto = jQuery(this);
+				console.log($objeto);
+				jQuery.post(document.PathBase+"index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson&id="+$objeto.attr('data-id')+":voto", {},function(dado){
+					if(dado.status=="ok"){
+						if($objeto.attr('data-gostei')=='SIM'){
+							$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))-1);
+							$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
+							$objeto.attr('data-gostei','NAO');
+	
+						}
+						else{
+							$objeto.attr('data-gostei','SIM');
+							$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))+1);
+							$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+						}					
+					}
+					else if(dado.codigo=="401"){
+						AngelGirls.AbrirModalAlerta('Não está logando', '<p>Voc&ecirc; n&otilde;o est&aacute; logado.<br/>Para executar essa a&ccedil;&atilde;o deve estar logado.<br/>Deseja Realizar login?<br/><br/></p>', 'Entrar/Login', document.UrlLogin);
 					}
 					else{
-						$objeto.attr('data-gostei','SIM');
-						$objeto.attr('data-gostaram',parseInt($objeto.attr('data-gostaram'))+1);
-						$objeto.html('<span class="badge" title="Gostou">'+$objeto.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
-					}					
-				}
-				else if(dado.codigo=="401"){
-					document.abrirModalAlerta('Não está logando', '<p>Voc&ecirc; n&otilde;o est&aacute; logado.<br/>Para executar essa a&ccedil;&atilde;o deve estar logado.<br/>Deseja Realizar login?<br/><br/></p>', 'Entrar/Login', document.UrlLogin);
-				}
-				else{
-					alert(dado.mesage);
-				}
-			},"json");
-		});
+						alert(dado.mesage);
+					}
+				},"json");
+			});
+		}
 	});	
+}; 
+
+jQuery(document).ready(function(){
 
 
 	
@@ -178,4 +181,5 @@ jQuery(document).ready(function(){
 		},'json');
 	});	
 	
+	AngelGirls.ResetConfig();
 });
