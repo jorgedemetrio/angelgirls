@@ -97,7 +97,7 @@ ORDER BY
 UNION 
  (SELECT 
 	s.id, 
-    'GALERIA' as tipo, 
+    'ALBUM' as tipo, 
     s.titulo as titulo, 
     s.meta_descricao as descricao,
     0.7 as prioridade, 
@@ -110,7 +110,7 @@ UNION
     '' AS opt3,
     '' AS opt4
 FROM 
-	#__angelgirls_galeria as s 
+	#__angelgirls_album as s 
 WHERE
 	s.status_dado NOT IN  ('REMOVIDO','REPROVADO') 
 ORDER BY 

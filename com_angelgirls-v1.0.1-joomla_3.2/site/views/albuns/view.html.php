@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 /**
  * Temas View
  */
-class AngelgirlsViewsessoes extends JViewLegacy
+class AngelgirlsViewalbuns extends JViewLegacy
 {
 	/**
 	 * Temas view display method
@@ -30,16 +30,14 @@ class AngelgirlsViewsessoes extends JViewLegacy
 		// Set the document
 		$this->setDocument();
 		
-	
-
 		// Set the toolbar
 		$this->addToolBar();
+
+		$this->item = $tema;
 		
 
 		// Display the template
 		parent::display($tpl);
-
-
 	}
 
 	/**
@@ -47,19 +45,17 @@ class AngelgirlsViewsessoes extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-			
-		
 		$layout = JRequest::getVar('layout');
 		$document = JFactory::getDocument();
 		$pathway = JFactory::getApplication()->getPathway();
-		$pathway->addItem('Sess&otilde;es', JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais'));
-
+		$pathway->addItem('Albuns', JRoute::_('index.php?option=com_angelgirls&view=albuns&task=carregarAlbuns&id=albuns'));
+		
 		//$document->setMetadata('content-language', 'pt-br');
 		$document->setMetadata('APPLICATION-NAME','Angel Girls');
 		
 		
-		if($layout=='sessao'){
-			$sessao = JRequest::getVar('sessao');
+		if($layout=='album'){
+			$sessao = JRequest::getVar('album');
 			$descricao = $sessao->meta_descrica . ' Data: ' . JFactory::getDate($sessao->publicar)->format('d/m/Y');
 			$pathway->addItem($sessao->titulo,'');
 			$document->setTitle($sessao->titulo);
@@ -76,9 +72,9 @@ class AngelgirlsViewsessoes extends JViewLegacy
 			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo));
 		}
 		else{
-			$document->setTitle(JText::_('Sessões / SETs de fotos sensuais com as modelos mais gatas, bonitas e gostosas - Musas AngelGirls'));
-			$document->setDescription('Encontre as sessões / SETs de fotos sensuais com as modelos mais gatas, bonitas e gostosas');
-			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva');			
+			$document->setTitle(JText::_('Albuns de fotos - Musas AngelGirls'));
+			$document->setDescription('Encontre os Albuns de fotos');
+			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva');
 		}
 	}
 

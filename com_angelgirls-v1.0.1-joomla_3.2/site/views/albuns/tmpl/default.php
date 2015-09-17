@@ -7,13 +7,11 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
-	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
+	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarAlbuns&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
 
-$sessoes = JRequest::getVar('sessoes');
-$modelos = JRequest::getVar('modelos');
-$fotografos = JRequest::getVar('fotografos');
+$albuns = JRequest::getVar('albuns');
 
 $nome = JRequest::getString('nome','');
 $dataInicio = JRequest::getString('data_inicio','');
@@ -21,8 +19,6 @@ $dataFim = JRequest::getString('data_fim','');
 $idModelo = JRequest::getInt('id_modelo',0);
 $idFotografo = JRequest::getString('id_fotografo',0);
 $ordem = JRequest::getString('ordem',0);
-$perfil = JRequest::getVar('perfil');
-$somenteMinha = JRequest::getString('somente_minha');
 
 
 if($dataInicio!=''){
@@ -33,24 +29,16 @@ if($dataFim!=''){
 }
 ?>
 <div class="page-header">
-	<h1>Sess&otilde;es de fotos sensuais <small>com as modelos mais bonitas, gatas e gostosas</small></h1>
+	<h1>Albuns/Galerias de fotos <small>ache as fotos com as modelos mais bonitas da internet!</small></h1>
 </div>
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
 	<?php echo JHtml::_('form.token');?>
-	<input type="hidden" name="task" id="task" value="carregarSessoes"/>
+	<input type="hidden" name="task" id="task" value="carregarAlbuns"/>
 	<input type="hidden" name="option" id="option" value="com_angelgirls"/>
 	<input type="hidden" name="controller" id="controller" value="Angelgirls"/>
-	<input type="hidden" name="somente_minha" id="somente_minha" value="<?php echo($somenteMinha);?>"/>
-	<input type="hidden" name="Itemid" id="Itemid" value="<?php echo(JRequest::getVar ( 'Itemid' ));?>"/>
-	<div class="btn-toolbar pull-right" role="toolbar">
-		<?php if(isset($perfil)) : ?>
-		<div class="btn-group" role="group"  aria-label="Funções">
-			<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarNova&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
-				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-			</a>
-		</div>
-		<?php endif;?>
-		<div class="btn-group" role="group" aria-label="Busca">
+	
+	<div class="btn-group pull-right" role="group">
+		<div class="btn-group" role="group">
 			<button  class="btn btn-" type="button" id="limpar"><?php echo JText::_('Limpar Busca'); ?>
 				<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
 			</button>
@@ -63,7 +51,7 @@ if($dataFim!=''){
 <div>
 	<div class="form-group col-xs-12 col-sm-12 col-md-4 col-lg-3">
 		<label class="control-label"  for="nome"><?php echo JText::_('Titulo'); ?></label>
-		<input class="form-control" style="width: 90%;" type="text" name="nome"  id="nome" value="<?php echo($nome);?>" size="32" maxlength="150" placeholder="<?php echo JText::_('Buscar por titulo da sess&atilde;o'); ?>"/>
+		<input class="form-control" style="width: 90%;" type="text" name="nome"  id="nome" value="<?php echo($nome);?>" size="32" maxlength="150" placeholder="<?php echo JText::_('Buscar por titulo'); ?>"/>
 	</div>
 	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 		<label class="control-label"  for="data_inicio"><?php echo JText::_('Apartir da data'); ?></label>
@@ -74,70 +62,30 @@ if($dataFim!=''){
 		<?php echo JHtml::calendar($dataFim, 'data_fim', 'data_fim', '%d/%m/%Y', 'class="form-control validate-data validate-ate"');?>
 	</div>
 	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-		<label class="control-label"  for="ordem"><?php echo JText::_('Ordem'); ?></label>
+		<label class="control-label"  for="data_fim"><?php echo JText::_('Ordem'); ?></label>
 		<select name="ordem" id="ordem" class="form-control">
-			<option value="1"<?php echo($ordem==1?' SELECTED':'')?>>Ultimas->Primeiras sess&otilde;es</option>
-			<option value="2"<?php echo($ordem==2?' SELECTED':'')?>>Primeiras->Ultimas sess&otilde;es</option>
+			<option value="1"<?php echo($ordem==1?' SELECTED':'')?>>Data Ultimas->Primeiras</option>
+			<option value="2"<?php echo($ordem==2?' SELECTED':'')?>>Data Primeiras->Ultimas</option>
 			<option value="3"<?php echo($ordem==3?' SELECTED':'')?>>Titulos de A->Z</option>
 			<option value="4"<?php echo($ordem==4?' SELECTED':'')?>>Titulos de Z->A</option>
 		</select>
 	</div>
+	</div>
+</div>
 
-	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">
-		<label class="control-label"  for="id_modelo"><?php echo JText::_('Com a modelo'); ?></label>
-		<select name="id_modelo" id="id_modelo" class="form-control"/>
-			<option></option>
-			<?php foreach($modelos as $conteudo){ 
-			$img =  JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':ico');
-			?>
-			<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idModelo==$conteudo->id?" selected":"") ?>>
-			<?php echo($conteudo->nome);?></option>
-		    <?php 
-			}?>
-		</select>
-	</div>
-	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">
-		<label class="control-label"  for="id_modelo"><?php echo JText::_('Com a modelo'); ?></label>
-		<select name="id_fotografo" id="id_fotografo" class="form-control"/>
-			<option></option>
-			<?php foreach($fotografos as $conteudo){
-				$img =  JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':ico');
-			?>
-			<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idFotografo==$conteudo->id?" selected":"") ?>><?php echo($conteudo->nome);?></option>
-		    <?php 
-			}?>
-		</select>
-	</div>
-	<?php if(isset($perfil)) : ?>
-	<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align: right;">
-		<div style="text-align: right; margin-top: 0px;" title='Deve clicar em "Filtrar" para ter efeito.' class="checkbox-iten" data-hidden-value="SIM" data-hidden-label="<?php echo JText::_('Somente as Minhas'); ?>" data-hidden-id='somente_minha' id="somente_minha_bt"  name="somente_minha_bt"
-			onchange='if(jQuery("#somente_minha").val()!="<?php echo($somenteMinha);?>"){info("Deve clicar em \"Filtrar\" para ter efeito.");}'></div>
-	</div>
-	<?php endif;?>
-</div>
-<div class="row hidden-phone">
-	<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-6 thumbnail" id="fotoModelo" style="display:none;  text-align: center;">
-		<h4>Modelo selecionada</h4>
-		<img src="" id="fotoModeloImg" alt="" title="" style="width: 150px"/>
-	</div>
-	<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-6 thumbnail" id="fotoFotografo" style="display:none; text-align: center;" >
-		<h4>Fotografo selecionada</h4>
-		<img src="" id="fotoFotografoImg" alt="" title="" style="width: 150px"/>
-	</div>
-</div>
 </form>
-<h2>Sess&otilde;es</h2>
+<h2>Albuns</h2>
 <div class="row" id="linha">
 <?php
-	foreach($sessoes as $conteudo){ ?>
+	foreach($albuns as $conteudo){ ?>
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-2">
 		<div class="thumbnail">
 <?php  
-$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)).'&Itemid='.JRequest::getVar ( 'Itemid' ) );
-$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->id.':ico'); 
+$url = JRoute::_('index.php?option=com_angelgirls&view=albuns&task=carregarAlbum&id='.$conteudo->id.':album-'.strtolower(str_replace(" ","-",$conteudo->alias)));
+$urlImg = JRoute::_('index.php?option=com_angelgirls&view=albuns&task=loadImage&id='.$conteudo->id.':ico'); 
 ?>
 				<h5 class="list-group-item-heading" style="width: 100%; text-align: center; background-color: grey; color: white;  padding: 10px;overflow: hidden; text-overflow: ellipsis; "><a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a>
-				<div class="gostar" data-gostei='<?php echo($conteudo->eu);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->gostou);?>'></div>
+				<div class="gostar" data-gostei='<?php echo($conteudo->eu);?>' data-id='<?php echo($conteudo->id);?>' data-area='album' data-gostaram='<?php echo($conteudo->gostou);?>'></div>
 				</h5>
 <?php 			if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 					<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
@@ -162,7 +110,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage
 	</div>
 </div>
 <script>
-var lidos = <?php echo(sizeof($sessoes));?>;
+var lidos = <?php echo(sizeof($albuns));?>;
 var carregando = false;
 var temMais=false;
 jQuery(document).ready(function() {
@@ -201,22 +149,21 @@ jQuery(document).ready(function() {
 	}
 
 	jQuery('#limpar').click(function(){
-		window.location='<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais&Itemid='.JRequest::getVar ( 'Itemid' ),false));?>';
-	});
+		window.location='<?php echo( JRoute::_('index.php?option=com_angelgirls&view=albuns&task=carregarAlbuns&id=album',false));?>';
+		});
 	
 	
 	jQuery(document).scroll(function(){
 		 if( (jQuery(window).height()+jQuery(this).scrollTop()+200) >= jQuery(document).height() && !carregando && temMais) {
 			carregando = true;
-			jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoesContinuaJson',false)); ?>',{
+			jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=albuns&task=carregarAlbunsContinuaJson',false)); ?>',{
 				nome:'<?php echo($nome); ?>',
 				data_inicio:'<?php echo(JRequest::getString('data_inicio','')); ?>',
 				data_fim:'<?php echo(JRequest::getString('data_fim','')); ?>',
 				id_modelo:'<?php echo($idModelo); ?>',
 				id_fotografo:'<?php echo($idFotografo); ?>',
-				ordem:'<?php echo($ordem); ?>',
-				somente_minha:'<?php echo($somenteMinha); ?>',	
-				posicao: lidos}, function(dado){
+				ordem:'<?php echo($ordem); ?>',	posicao: lidos
+				}, function(dado){
 				jQuery('#linha').append(dado);		
 				carregando=false;
 				setTimeout(function(){ AngelGirls.ResetConfig();}, 500);

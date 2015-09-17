@@ -59,11 +59,12 @@ $document->addScriptDeclaration('document.PathBaseComponent="' . JURI::base( tru
 		document.PathBase="' . JURI::base( true ) . '/";
 		document.UrlLogin ="' . JRoute::_('index.php?option=com_users&view=login',false) . '";');
 
-echo('<div id="fb-root"></div>');
-echo('<div class="modalwindow fade" id="modalWindow">
+echo('
+<div id="fb-root"></div>
+  <div class="modalwindow fade" id="modalWindow">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="height: 35px;">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="modalWindowtitle"></h4>
       </div>
@@ -74,9 +75,10 @@ echo('<div class="modalwindow fade" id="modalWindow">
         <a class="btn btn-default" data-dismiss="modal">Close</a>
         <a class="btn btn-primary" id="modalWindowok" href="'.JRoute::_('index.php?option=com_users&view=login',false).'"></a>
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->');
+    </div>
+  </div>
+</div>
+<div class="modal fade " id="pleaseWaitDialog" class="display:none" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
 
 // Redirect if set by the controller
 $controller->redirect();

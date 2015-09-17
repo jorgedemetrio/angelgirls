@@ -1,18 +1,6 @@
 /**
  * Processando
  */
-document.processing = function () {
-    var pleaseWaitDiv = jQuery('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
-    return {
-        show: function() {
-            pleaseWaitDiv.modal();
-        },
-        hide: function () {
-            pleaseWaitDiv.modal('hide');
-        },
-    };
-};
-
 
 ////FACEBOOK API
 //(function(d, s, id) {
@@ -96,6 +84,17 @@ alert = function(msg){
 	jQuery('#modalWindowbody').addClass('alert-danger');
 } 
 
+info = function(msg){
+	jQuery('#modalWindowtitle').html(window.document.title);
+	jQuery('#modalWindowbody').html(msg);
+	jQuery('#modalWindowok').css('display','none');
+	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert-warning');
+} 
+
+
 
 AngelGirls.AbrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
 	jQuery('#modalWindowtitle').html(titulo);
@@ -108,6 +107,21 @@ AngelGirls.AbrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
 	jQuery('#modalWindowbody').removeClass('alert-danger');
 	jQuery('#modalWindowbody').addClass('alert-warning');
 }
+
+AngelGirls.Processando = function () {
+    return {
+        show: function() {
+        	jQuery('#pleaseWaitDialog').modal('show');
+        	jQuery('#pleaseWaitDialog').css('display','');
+        },
+        hide: function () {
+        	jQuery('#pleaseWaitDialog').modal('hide');
+        	jQuery('#pleaseWaitDialog').css('display','none');
+        },
+    };
+};
+
+
 
 AngelGirls.ResetConfig = function(){
 	jQuery('.gostar').each(function(){
@@ -148,6 +162,32 @@ AngelGirls.ResetConfig = function(){
 			});
 		}
 	});	
+	jQuery('.checkbox-iten').each(function(){
+		$objetoRef = jQuery(this);
+		$hiddenRef = jQuery('#'+$objetoRef.attr('data-hidden-id'))
+		if($hiddenRef.val()==$objetoRef.attr('data-hidden-value')){
+			$objetoRef.html($objetoRef.attr('data-hidden-label')+' <span class="glyphicon glyphicon-check"></span>');
+		}
+		else{
+			$objetoRef.html($objetoRef.attr('data-hidden-label')+' <span class="glyphicon glyphicon-unchecked"></span>');
+		}
+		$objetoRef.click(function(){
+			$objeto = jQuery(this);
+			$hidden = jQuery('#'+$objeto.attr('data-hidden-id'));
+			if($hidden.val()==$objeto.attr('data-hidden-value')){
+				$hidden.val('');
+				$objeto.html($objeto.attr('data-hidden-label')+' <span class="glyphicon glyphicon-unchecked"></span>');
+				
+			}
+			else{
+				$objeto.html($objeto.attr('data-hidden-label')+' <span class="glyphicon glyphicon-check"></span>');
+				$hidden.val($objeto.attr('data-hidden-value'));					
+			}
+			if($objeto.attr('onchange') && $objeto.attr('onchange')!=""){
+				eval($objeto.attr('onchange'));
+			}
+		});
+	});
 }; 
 
 jQuery(document).ready(function(){
@@ -160,7 +200,7 @@ jQuery(document).ready(function(){
 	jQuery(".validate-cpf").mask("999.999.999-99");
 
 	jQuery(".validate-data").mask("99/99/9999", {placeholder: "__/__/____"});
-		
+	jQuery("input[data-validation='date']").mask("99/99/9999", {placeholder: "__/__/____"});
 	jQuery(".validate-telefone").mask("(99) 99999-9999");
 
 		
@@ -176,10 +216,58 @@ jQuery(document).ready(function(){
 		jQuery.post('index.php?option=com_angelgirls&task=cidadeJson',{
 			uf:$objeto.val()}, function(dado){
 			for(var i=0; i<dado.length;i++){
-				$ObjetoCidade.append(new Option(dado[i].nome, dado[i].id));
+				var option = new Option(dado[i].nome, dado[i].id);
+				$ObjetoCidade.append(option);
+				if($ObjetoCidade.attr('data-value')==dado[i].id){
+					option.selected = 'selected';
+				}
 			}
 		},'json');
 	});	
 	
 	AngelGirls.ResetConfig();
 });
+
+
+
+var ptBRValidation = {
+        errorTitle: 'Falha ao enviar formulário!',
+        requiredFields: 'Você deve preencher todos os campos obrigatórios.',
+        badTime: 'Você deve colocar a hora correta.',
+        badEmail: 'Você não forneceu um e-mail válido',
+        badTelephone: 'Você não forneceu numero correto de telefone.',
+        badSecurityAnswer: 'Você não forneceu uma resposta correta de segurança.',
+        badDate: 'Você não forneceu uma data correta.',
+        lengthBadStart: 'O dado de entrada deve estar entre ',
+        lengthBadEnd: ' caracteres',
+        lengthTooLongStart: 'Essa valor é maior que ',
+        lengthTooShortStart: 'Essa valor é menor que ',
+        notConfirmed: 'A informação não pode ser confirmada.',
+        badDomain: 'Valor de dominio incorreto.',
+        badUrl: 'O valor não é um URL válida.',
+        badCustomVal: 'O valor não está correto.',
+        andSpaces: ' e espaços ',
+        badInt: 'O valor não é um número válido.',
+        badSecurityNumber: 'Your social security number was incorrect',
+        badUKVatAnswer: 'Incorrect UK VAT Number',
+        badStrength: 'A senha não é fornte o suficiente.',
+        badNumberOfSelectedOptionsStart: 'You have to choose at least ',
+        badNumberOfSelectedOptionsEnd: ' respostas ',
+        badAlphaNumeric: 'O campo só pode ter valores alfanumericos. ',
+        badAlphaNumericExtra: ' e ',
+        wrongFileSize: 'O arquivo qeu está tentando enviar é muito grande. (Máximo %s)',
+        wrongFileType: 'Somente arquivos do tipo %s são permitidos',
+        groupCheckedRangeStart: 'Por favor selecione entre ',
+        groupCheckedTooFewStart: 'Please choose at least ',
+        groupCheckedTooManyStart: 'Porfavor selecione o máximo de ',
+        groupCheckedEnd: ' item(ns)',
+        badCreditCard: 'The credit card number is not correct',
+        badCVV: 'The CVV number was not correct',
+        wrongFileDim : 'tamanho da imagem inválido,',
+        imageTooTall : 'a imagem não pode ser maior que',
+        imageTooWide : 'a imagem não pode ser menor que',
+        imageTooSmall : 'a imagem é muito pequena',
+        min : 'minimo',
+        max : 'máximo',
+        imageRatioNotAccepted : 'Imagem não aceita'
+};

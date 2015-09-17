@@ -43,6 +43,14 @@
     touch-action: none;
 }
 
+.checkbox-iten:HOVER{
+	cursor:pointer;	
+}
+.checkbox-iten{
+	min-width: 40px;
+	display:inline-block;
+	margin-top:20px; 
+}
 .gostar{
 	 width: 20px;
 	 text-align: center;

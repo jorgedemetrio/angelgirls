@@ -75,6 +75,27 @@ function AngelgirlsParseRoute($segments)
 			JRequest::setVar('id',$vars['id']);
 			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;
+		case 'sessoes':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'sessoes';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
+		case 'fotoalbum':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'fotoalbum';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
+		case 'albuns':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'albuns';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
 		case 'fotografo':
 			$id = explode(':', $segments[$count-1]);
 			$vars['id'] = (int) $id[0];
@@ -89,22 +110,12 @@ function AngelgirlsParseRoute($segments)
 			JRequest::setVar('id',$vars['id']);
 			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;
-		case 'sessoes':
-			$id = explode(':', $segments[$count-1]);
-			$vars['id'] = (int) $id[0];
-			$vars['view'] = 'sessoes';
-			JRequest::setVar('id',$vars['id']);
-			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
-			break;
 		case 'cadastro':
 			$id = explode(':', $segments[$count-1]);
 			$vars['id'] = (int) $id[0];
-			$vars['view'] = 'concurso';
-			break;
-		case 'modelo':
-			$id = explode(':', $segments[$count-1]);
-			$vars['id'] = (int) $id[0];
-			$vars['view'] = 'concurso';
+			$vars['view'] = 'cadastro';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;
 		default:
 			$id = explode(':', $segments[$count-1]);

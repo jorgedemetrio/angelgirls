@@ -27,6 +27,7 @@ CREATE OR REPLACE VIEW #__angelgirls_perfil (
 		`profissao`,
 		`nascionalidade`,
 		`id_cidade_nasceu`,
+        `uf_nasceu`,
 		`data_nascimento`,
 		`site`,
 		`sexo`,
@@ -41,6 +42,7 @@ CREATE OR REPLACE VIEW #__angelgirls_perfil (
 		`audiencia_ngostou`,
 		`audiencia_view`,
 		`id_cidade`,
+        `uf`,
 		`status_dado`,
 		`id_usuario_criador`, 
 		`id_usuario_alterador`, 
@@ -75,6 +77,7 @@ CREATE OR REPLACE VIEW #__angelgirls_perfil (
 		`p`.`profissao`,
 		`p`.`nascionalidade`,
 		`p`.`id_cidade_nasceu`,
+        `cnasceu`.`uf` as `uf_nasceu`,
 		`p`.`data_nascimento`,
 		`p`.`site`,
 		`p`.`sexo`,
@@ -89,6 +92,7 @@ CREATE OR REPLACE VIEW #__angelgirls_perfil (
 		`p`.`audiencia_ngostou`,
 		`p`.`audiencia_view`,
 		`p`.`id_cidade`,
+        `cvive`.`uf` as `uf`,
 		`p`.`status_dado`,
 		`p`.`id_usuario_criador`, 
 		`p`.`id_usuario_alterador`, 
@@ -96,7 +100,9 @@ CREATE OR REPLACE VIEW #__angelgirls_perfil (
 		`p`.`data_alterado`  
 FROM
 		`#__angelgirls_modelo` AS p INNER JOIN
-		`#__users` AS u ON p.id_usuario = u.id 
+		`#__users` AS u ON p.id_usuario = u.id LEFT JOIN
+        `#__cidade` AS cnasceu ON cnasceu.id = p.id_cidade_nasceu  LEFT JOIN
+        `#__cidade` AS cvive ON cvive.id = p.id_cidade
 WHERE 
 		`p`.`status_dado` <> 'REMOVIDO')
 UNION
@@ -128,6 +134,7 @@ UNION
 		`p`.`profissao`,
 		`p`.`nascionalidade`,
 		`p`.`id_cidade_nasceu`,
+        `cnasceu`.`uf` as `uf_nasceu`,
 		`p`.`data_nascimento`,
 		`p`.`site`,
 		`p`.`sexo`,
@@ -142,6 +149,7 @@ UNION
 		`p`.`audiencia_ngostou`,
 		`p`.`audiencia_view`,
 		`p`.`id_cidade`,
+        `cvive`.`uf` as `uf`,
 		`p`.`status_dado`,
 		`p`.`id_usuario_criador`, 
 		`p`.`id_usuario_alterador`, 
@@ -149,7 +157,9 @@ UNION
 		`p`.`data_alterado`  
 FROM
 		`#__angelgirls_fotografo` AS p INNER JOIN
-		`#__users` AS u ON p.id_usuario = u.id 
+		`#__users` AS u ON p.id_usuario = u.id LEFT JOIN
+        `#__cidade` AS cnasceu ON cnasceu.id = p.id_cidade_nasceu  LEFT JOIN
+        `#__cidade` AS cvive ON cvive.id = p.id_cidade
 WHERE 
 		`p`.`status_dado` <> 'REMOVIDO')
 UNION		
@@ -181,6 +191,7 @@ UNION
 		`p`.`profissao`,
 		`p`.`nascionalidade`,
 		`p`.`id_cidade_nasceu`,
+        `cnasceu`.`uf` as `uf_nasceu`,
 		`p`.`data_nascimento`,
 		`p`.`site`,
 		`p`.`sexo`,
@@ -195,6 +206,7 @@ UNION
 		`p`.`audiencia_ngostou`,
 		`p`.`audiencia_view`,
 		`p`.`id_cidade`,
+        `cvive`.`uf` as `uf`,
 		`p`.`status_dado`,
 		`p`.`id_usuario_criador`, 
 		`p`.`id_usuario_alterador`, 
@@ -202,6 +214,8 @@ UNION
 		`p`.`data_alterado`  
 FROM
 		`#__angelgirls_visitante` AS p INNER JOIN
-		`#__users` AS u ON p.id_usuario = u.id 
+		`#__users` AS u ON p.id_usuario = u.id  LEFT JOIN
+        `#__cidade` AS cnasceu ON cnasceu.id = p.id_cidade_nasceu  LEFT JOIN
+        `#__cidade` AS cvive ON cvive.id = p.id_cidade
 WHERE 
 		`p`.`status_dado` <> 'REMOVIDO')

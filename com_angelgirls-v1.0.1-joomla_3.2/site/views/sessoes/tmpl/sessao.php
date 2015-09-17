@@ -4,7 +4,6 @@
 defined ( '_JEXEC' ) or die ( 'Restricted access' );
 
 
-
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
@@ -12,16 +11,20 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 }
 
 
+
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
 $id = JRequest::getInt('id');
+
+$perfil = JRequest::getVar('perfil');
+
 
 
 ?>
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?>
 	<small><?php echo($conteudo->nome_tema);?></small>
-	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessa);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
+	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessao);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>
 
 </div>
