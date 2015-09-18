@@ -61,6 +61,23 @@
 	 cursor: pointer;
 }
 
+td.padrao:hover{
+	 cursor: not-allowed;
+}
+
+td.editavel:hover{
+	  cursor: pointer;
+	  color:blue;
+}
+
+td.editavel{
+	  text-transform: capitalize;
+}
+td.padrao{
+	  text-transform: capitalize;
+}
+
+
 .dropdown-menu .divider {
     border-bottom: 1px solid #C3C3C3;
 }

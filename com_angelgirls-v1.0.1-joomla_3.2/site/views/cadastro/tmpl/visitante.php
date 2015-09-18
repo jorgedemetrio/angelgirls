@@ -215,5 +215,6 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 		</div>
 	</div>
     <input type="hidden" name="option" value="com_angelgirls" />
-    <input type="hidden" name="task" value="salvarVisitante" />
+    <input type="hidden" name="task" value="salvarPerfil" />
+	<input type="hidden" name="tipo" value="VISITANTE" />
 </form>

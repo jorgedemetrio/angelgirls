@@ -213,5 +213,6 @@ input[type=\'file\']{
 		</div>
 	</div>
     <input type="hidden" name="option" value="com_angelgirls" />
-    <input type="hidden" name="task" value="salvarFotografo" />
+    <input type="hidden" name="task" value="salvarPerfil" />
+	<input type="hidden" name="tipo" value="FOTOGRAFO" />
 </form>

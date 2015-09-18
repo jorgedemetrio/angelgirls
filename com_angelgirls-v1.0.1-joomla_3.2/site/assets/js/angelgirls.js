@@ -137,7 +137,7 @@ AngelGirls.ResetConfig = function(){
 			$objetoRef.attr('data-checado','SIM');
 			$objetoRef.click(function(){
 				$objeto = jQuery(this);
-				console.log($objeto);
+
 				jQuery.post(document.PathBase+"index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson&id="+$objeto.attr('data-id')+":voto", {},function(dado){
 					if(dado.status=="ok"){
 						if($objeto.attr('data-gostei')=='SIM'){
@@ -202,6 +202,7 @@ jQuery(document).ready(function(){
 	jQuery(".validate-data").mask("99/99/9999", {placeholder: "__/__/____"});
 	jQuery("input[data-validation='date']").mask("99/99/9999", {placeholder: "__/__/____"});
 	jQuery(".validate-telefone").mask("(99) 99999-9999");
+	jQuery(".validate-telefone-simples").mask("99999-9999");
 
 		
 		
@@ -210,11 +211,9 @@ jQuery(document).ready(function(){
 		$objeto = jQuery(this);
 		$ObjetoCidade = jQuery("#"+$objeto.attr("data-carregar"));
 		$ObjetoCidade.empty();
-		$ObjetoCidade.append(new Option(  "", ""));
-		
-		
+		$ObjetoCidade.append(new Option("", ""));
 		jQuery.post('index.php?option=com_angelgirls&task=cidadeJson',{
-			uf:$objeto.val()}, function(dado){
+			uf: $objeto.val()}, function(dado){
 			for(var i=0; i<dado.length;i++){
 				var option = new Option(dado[i].nome, dado[i].id);
 				$ObjetoCidade.append(option);
@@ -228,6 +227,10 @@ jQuery(document).ready(function(){
 	AngelGirls.ResetConfig();
 });
 
+
+AngelGirls.URLNoCache= function (url){
+	return url+(url.indexOf('?')>0?'&':'?')+'date='+(new Date()).getTime();
+}
 
 
 var ptBRValidation = {

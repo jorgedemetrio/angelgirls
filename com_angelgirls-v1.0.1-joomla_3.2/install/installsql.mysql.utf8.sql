@@ -95,13 +95,13 @@ CREATE TABLE `#__angelgirls_telefone` (
 
 CREATE TABLE `#__angelgirls_endereco` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-		`tipo` ENUM('RESIDO','TRABALHO','OUTRO'), 
+		`tipo` ENUM('RESIDENCIAL','COMERCIAL','OUTRO'), 
 		`principal` ENUM('S','N') NOT NULL,
-		`endereco` VARCHAR(250), 
+		`endereco` VARCHAR(250) NOT NULL, 
 		`numero` VARCHAR(10),
 		`bairro` VARCHAR(100),
 		`complemento` VARCHAR(100),
-		`cep` VARCHAR(15),
+		`cep` VARCHAR(15) NOT NULL,
 		`id_cidade` INT NOT NULL, 
 		`id_usuario` INT NOT NULL ,
 		`ordem` int,

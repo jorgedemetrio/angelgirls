@@ -357,17 +357,14 @@ class AngelgirlsController extends JControllerLegacy{
 	public function validarUsuarioExisteJson(){
 		$db = JFactory::getDbo ();
 		$usuario = strtolower(trim(JRequest::getString('usuario', '','POST')));
-		
-		
-
-		
 		$json = '{"existe":"'. ($this->existeUsuario($usuario)?'SIM':'NAO') .'"}';
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($json));
 		echo $json;
-		
 		exit();
 	}
+	
+
 	
 	public function RegistroNaoEncontado(){
 		header("HTTP/1.0 404 Not Found"); 
@@ -857,7 +854,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
 		
-		return (isset($result) && isset($result->id));
+		return (isset($result) && isset($result->id) && $result->id!=0);
 	}
 	
 	
@@ -1818,24 +1815,34 @@ class AngelgirlsController extends JControllerLegacy{
 	 * 
 	 * @return usuario salvo
 	 */
-	public function salvarUsuario(){ 
-		$user = JFactory::getUser(0);
-		$usersParams = JComponentHelper::getParams( 'com_users' );
+	public function salvarUsuario($tipo){
+		$user = JFactory::getUser();
+		if(!isset($user) || !isset($user->id) || $user->id==0){
+			$user = JFactory::getUser(0);
+		}
+		$usersParams = JComponentHelper::getParams('com_users');
 		$userdata = array();
 		$userdata['username'] = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
-		$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
-		$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
-		$userdata['name'] = JRequest::getString( 'name', null, 'POST' );
-		$userdata['password'] = trim(JRequest::getString( 'password', '', 'POST' ));
-		$userdata['password2'] = JRequest::getString( 'password1', null, 'POST' );
-		$defaultUserGroup = $usersParams->get('new_usertype', 2);
-		$userdata['groups']=array($defaultUserGroup);
-		$userdata['block'] = 0;
+		if(!isset($user) || !isset($user->id) || $user->id==0){
+			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
+			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
+			$userdata['name'] = JRequest::getString( 'name', null, 'POST' );
+			$userdata['password'] = trim(JRequest::getString( 'password', '', 'POST' ));
+			$userdata['password2'] = JRequest::getString( 'password1', null, 'POST' );
+			$userdata['block'] = 0;
+			$defaultUserGroup = $usersParams->get('new_usertype', 2);
+			if(strtolower($tipo)!='visitante'){
+				$userdata['groups']=array($defaultUserGroup,strtolower($tipo));
+			}
+			else{
+				$userdata['groups']=array($defaultUserGroup);
+			}
+		}
 		if (!$user->bind($userdata)) {
 			JError::raiseWarning(100,JText::_( $user->getError()));
 		}
-		elseif (!$user->save()) { // now check if the new user is saved
-			JError::raiseWarning(100, JText::_( $user->getError())); // something went wrong!!
+		elseif (!$user->save()) {
+			JError::raiseWarning(100, JText::_( $user->getError())); 
 		}
 		return $user;
 	}
@@ -1845,8 +1852,8 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	
-	public function salvarVisitante(){
-		if(!JSession::checkToken('post')) die ('Restricted access');
+	private function salvarVisitante(){
+
 
 		$sucesso=true;
 		
@@ -1890,88 +1897,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
 		}
 		
-		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
-		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_visitante', 'f' ) )
-		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
-		if ($id != null && $id != 0) {
-			$query->where (' id <> ' .$id );
-		}
-		$db->setQuery ( $query );
-		$objeto = $db->loadObject();
-		
-		if(isset($objeto) && isset($objeto->id)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
-		}
-		
-		if($this->existeUsuario($username)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
-		}
-		
-			if(!isset($id) || $id==0){
-			if(!isset($email)){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
-			}
-			
-			if(isset($email) && strpos($email, '@' )===false){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
-			}
-			if(!isset($username) || strlen(trim($username))<5){
-				$erro =true;
-				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
-			}
-			if(!isset($password)  || strlen(trim($password))<8){
-				$erro =true;
-				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
-			}
-			if(!isset($telefone)  || strlen(trim($telefone))<14){
-				$erro =true;
-				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-			}
-		}
 
-		if(!isset($name)  || strlen(trim($name))<=0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-		}
-		
-		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
-		}
-		
-		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
-		}
-		
-		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
-		}
-		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
-			$dataHoje = intval(date('Ymd'));
-			if(($dataFormatadaBanco + 180000)>$dataHoje){
-				$erro =true;
-				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );
-			}
-		}
-		
-		if(!isset($idCidade) || $idCidade==0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
-		}
-
-		if($erro){
-			$this->cadastroVisitante();
-			return;
-		}
 		
 		
 		if ($id != null && $id != 0) { // UPDATE
@@ -2002,9 +1928,6 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery ( $query );
 			$db->execute ();
 		} else {
-			$usuario = $this->salvarUsuario();
-			$sucesso = ($usuario != null && $usuario->id != null && $usuario->id != 0);
-			if($sucesso){
 				$query = $db->getQuery ( true );
 				$query->insert( $db->quoteName ( '#__angelgirls_visitante' ) )->columns ( array (
 					$db->quoteName ( 'status_dado' ),
@@ -2112,15 +2035,6 @@ class AngelgirlsController extends JControllerLegacy{
 						'0')));
 				$db->setQuery( $query );
 				$db->execute();
-				
-				
-			}
-			else{
-				JError::raiseWarning( 100, 'Falha no cadastro.' );
-				$this->cadastroVisitante();
-				return;
-			}
-			
 		}
 		
 		if($id != 0){
@@ -2162,11 +2076,8 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
-	public function salvarFotografo(){
-		if(!JSession::checkToken('post')) die ('Restricted access');
-
+	private function salvarFotografo($usuario){
 		$sucesso=true;
-		
 		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'fotografos' . DS;
 		$erro = false;
 		
@@ -2206,92 +2117,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
 		}
 		
-		
-		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
-		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
-		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
-		if ($id != null && $id != 0) {
-			$query->where (' id <> ' .$id );
-		}
-		$db->setQuery ( $query );
-		$objeto = $db->loadObject();
-		
-		if(isset($objeto) && isset($objeto->id)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
-		}
-		
-		if($this->existeUsuario($username)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
-		}
-		
-			if(!isset($id) || $id==0){
-			if(!isset($email)){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
-			}
-			
-			if(isset($email) && strpos($email, '@' )===false){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
-			}
-			if(!isset($username) || strlen(trim($username))<5){
-				$erro =true;
-				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
-			}
-			if(!isset($password)  || strlen(trim($password))<8){
-				$erro =true;
-				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
-			}
-			if(!isset($telefone)  || strlen(trim($telefone))<14){
-				$erro =true;
-				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-			}
-		}
-
-		if(!isset($name)  || strlen(trim($name))<=0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-		}
-		
-		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
-		}
-		
-		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
-		}
-		
-		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
-		}
-		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
-			$dataHoje = intval(date('Ymd'));
-			if(($dataFormatadaBanco + 180000)>$dataHoje){
-				$erro =true;
-				JError::raiseWarning( 100, 'Cadastro &eacute; n&ailte;o permitido para menores de idade.' );
-			}
-		}
-		
-		if(!isset($idCidade) || $idCidade==0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
-		}
-
-		if($erro){
-			$this->cadastroFotografo();
-			return;
-		}
-		
 		if ($id != null && $id != 0) { // UPDATE
-			$usuario = JFactory::getUser();
 			$query = $db->getQuery ( true );
 			$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
 					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
@@ -2318,124 +2144,113 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery ( $query );
 			$db->execute ();
 		} else {
-			$usuario = $this->salvarUsuario();
-			$sucesso = ($usuario != null && $usuario->id != null && $usuario->id != 0);
-			if($sucesso){
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_fotografo' ) )->columns ( array (
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_fotografo' ) )->columns ( array (
+				$db->quoteName ( 'status_dado' ),
+				$db->quoteName ( 'data_criado' ),
+				$db->quoteName ( 'id_usuario_criador' ),
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'id_usuario_alterador' ),
+				$db->quoteName ( 'id_usuario' ),
+				$db->quoteName ( 'nome_artistico' ),
+				$db->quoteName ( 'descricao' ),
+				$db->quoteName ( 'meta_descricao' ),
+				$db->quoteName ( 'profissao' ),
+				$db->quoteName ( 'nascionalidade' ),
+				$db->quoteName ( 'id_cidade_nasceu' ),
+				$db->quoteName ( 'data_nascimento' ),
+				$db->quoteName ( 'site' ),
+				$db->quoteName ( 'sexo' ),
+				$db->quoteName ( 'cpf' ),
+				$db->quoteName ( 'banco' ),
+				$db->quoteName ( 'agencia' ),
+				$db->quoteName ( 'conta' ),
+				$db->quoteName ( 'custo_medio_diaria' ),
+				$db->quoteName ( 'qualificao_equipe' ),
+				$db->quoteName ( 'id_cidade' )))
+			->values ( implode ( ',', array (
+				'\'NOVO\'',
+				'NOW()',
+				$usuario->id,
+				'NOW()',
+				$usuario->id,
+				$usuario->id,
+				$db->quote($nomeArtistico),
+				$db->quote($descricao),
+				$db->quote($metaDescricao),
+				($profissao == null ? ' null ' : $db->quote($profissao)),
+				($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+				($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+				$dataFormatadaBanco,
+				($site == null ? ' null ' : $db->quote($site)),
+				($sexo == null ? ' null ' : $db->quote($sexo)),
+				($cpf == null ? ' null ' : $db->quote($cpf)),
+				($banco == null ? ' null ' : $db->quote($banco)),
+				($agencia == null ? ' null ' : $db->quote($agencia)),
+				($conta == null ? ' null ' : $db->quote($conta)),
+				($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+				($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+				($idCidade == null ? ' null ' : $db->quote($idCidade))
+			)));
+			$db->setQuery( $query );
+			$db->execute();
+			$id = $db->insertid();
+			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+				->columns ( array (
 					$db->quoteName ( 'status_dado' ),
 					$db->quoteName ( 'data_criado' ),
 					$db->quoteName ( 'id_usuario_criador' ),
 					$db->quoteName ( 'data_alterado' ),
 					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'nome_artistico' ),
-					$db->quoteName ( 'descricao' ),
-					$db->quoteName ( 'meta_descricao' ),
-					$db->quoteName ( 'profissao' ),
-					$db->quoteName ( 'nascionalidade' ),
-					$db->quoteName ( 'id_cidade_nasceu' ),
-					$db->quoteName ( 'data_nascimento' ),
-					$db->quoteName ( 'site' ),
-					$db->quoteName ( 'sexo' ),
-					$db->quoteName ( 'cpf' ),
-					$db->quoteName ( 'banco' ),
-					$db->quoteName ( 'agencia' ),
-					$db->quoteName ( 'conta' ),
-					$db->quoteName ( 'custo_medio_diaria' ),
-					$db->quoteName ( 'qualificao_equipe' ),
-					$db->quoteName ( 'id_cidade' )))
+					$db->quoteName ( 'principal' ),
+					$db->quoteName ( 'email' ),
+					$db->quoteName ( 'ordem' )))
 				->values ( implode ( ',', array (
-					'\'NOVO\'',
-					'NOW()',
-					$usuario->id,
-					'NOW()',
-					$usuario->id,
-					$usuario->id,
-					$db->quote($nomeArtistico),
-					$db->quote($descricao),
-					$db->quote($metaDescricao),
-					($profissao == null ? ' null ' : $db->quote($profissao)),
-					($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$dataFormatadaBanco,
-					($site == null ? ' null ' : $db->quote($site)),
-					($sexo == null ? ' null ' : $db->quote($sexo)),
-					($cpf == null ? ' null ' : $db->quote($cpf)),
-					($banco == null ? ' null ' : $db->quote($banco)),
-					($agencia == null ? ' null ' : $db->quote($agencia)),
-					($conta == null ? ' null ' : $db->quote($conta)),
-					($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					($idCidade == null ? ' null ' : $db->quote($idCidade))
-				)));
-				$db->setQuery( $query );
-				$db->execute();
-				$id = $db->insertid();
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
-					->columns ( array (
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'email' ),
-						$db->quoteName ( 'ordem' )))
-					->values ( implode ( ',', array (
+						'\'NOVO\'',
+						'NOW()',
+						$usuario->id,
+						'NOW()',
+						$usuario->id,
+						$usuario->id,
+						$db->quote('S'),
+						$db->quote($email),
+						'0')));
+			$db->setQuery( $query );
+			$db->execute();
+			
+			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+			->columns ( array (
+					$db->quoteName ( 'status_dado' ),
+					$db->quoteName ( 'data_criado' ),
+					$db->quoteName ( 'id_usuario_criador' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'id_usuario_alterador' ),
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'tipo' ),
+					$db->quoteName ( 'principal' ),
+					$db->quoteName ( 'ddd' ),
+					$db->quoteName ( 'telefone' ),
+					$db->quoteName ( 'ordem' )))
+			->values ( implode ( ',', array (
 							'\'NOVO\'',
 							'NOW()',
 							$usuario->id,
 							'NOW()',
 							$usuario->id,
 							$usuario->id,
+							$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
 							$db->quote('S'),
-							$db->quote($email),
-							'0')));
-				$db->setQuery( $query );
-				$db->execute();
-				
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
-				->columns ( array (
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'tipo' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'ddd' ),
-						$db->quoteName ( 'telefone' ),
-						$db->quoteName ( 'ordem' )))
-				->values ( implode ( ',', array (
-								'\'NOVO\'',
-								'NOW()',
-								$usuario->id,
-								'NOW()',
-								$usuario->id,
-								$usuario->id,
-								$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
-								$db->quote('S'),
-								$db->quote(substr($telefone,1,2)),
-								$db->quote(substr($telefone,5)),
-								
-						'0')));
-				$db->setQuery( $query );
-				$db->execute();
-				
-				
-			}
-			else{
-				JError::raiseWarning( 100, 'Falha no cadastro.' );
-				$this->cadastroFotografo();
-				return;
-			}
+							$db->quote(substr($telefone,1,2)),
+							$db->quote(substr($telefone,5)),
+							
+					'0')));
+			$db->setQuery( $query );
+			$db->execute();
 		}
 		
 		if($id != 0){
@@ -2471,8 +2286,249 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 	}
 	
-	public function salvarModelo(){
+	/**
+	 * Validar antes de salvar perfil.
+	 */
+	public function salvarPerfil(){
 		if(!JSession::checkToken('post')) die ('Restricted access');
+		$user = JFactory::getUser();
+		$sucesso=true;
+	
+		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'modelos' . DS;
+		$erro = false;
+	
+		$id = JRequest::getString('id',0);
+		if(!(strpos($id,':')===false)){
+			$id = explode(':',$id)[0];
+		}
+		
+		$email = JRequest::getString ( 'email', null, 'POST' );
+		$username = JRequest::getString ( 'username', null, 'POST' );
+		$password = JRequest::getString ( 'password', null, 'POST' );
+		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+		$name = JRequest::getString ( 'name', null, 'POST' );
+		$descricao = JRequest::getString ( 'descricao', null, 'POST' );
+		$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
+		$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
+		$altura = JRequest::getFloat ( 'altura', null, 'POST' );
+		$peso = JRequest::getFloat ( 'peso', null, 'POST' );
+		$busto = JRequest::getFloat ( 'busto', null, 'POST' );
+		$calsa = JRequest::getInt ( 'calsa', null, 'POST' );
+		$calsado = JRequest::getInt ( 'calsado', null, 'POST' );
+		$olhos = JRequest::getString ( 'olhos', null, 'POST' );
+		$pele = JRequest::getString ( 'pele', null, 'POST' );
+		$etinia = JRequest::getString ( 'etinia', null, 'POST' );
+		$cabelo = JRequest::getString ( 'cabelo', null, 'POST' );
+		$tamanhoCabelo = JRequest::getString ( 'tamanho_cabelo', null, 'POST' );
+		$corCabelo = JRequest::getString ( 'cor_cabelo', null, 'POST' );
+		$outraCorCabelo = JRequest::getString ( 'outra_cor_cabelo', null, 'POST' );
+		$profissao = JRequest::getString ( 'profissao', null, 'POST' );
+		$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
+		$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
+		$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
+		$site = JRequest::getString ( 'site', null, 'POST' );
+		$sexo = JRequest::getString ( 'sexo', null, 'POST' );
+		$cpf = JRequest::getString ( 'cpf', null, 'POST' );
+		$banco = JRequest::getString ( 'banco', null, 'POST' );
+		$agencia = JRequest::getString ( 'agencia', null, 'POST' );
+		$conta = JRequest::getString ( 'conta', null, 'POST' );
+		$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
+		$statusModelo = JRequest::getString ( 'status_modelo', null, 'POST' );
+		$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
+		$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
+		$tipo = JRequest::getString( 'tipo', 'VISITANTE', 'POST' );
+		$dataFormatadaBanco = 'null';
+	
+		$db = JFactory::getDbo ();
+		if($dataNascimento != null && strlen($dataNascimento) > 8){
+			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+		}
+		$erro =false;
+	
+	
+	
+		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`')
+		->from ( $db->quoteName ( '#__angelgirls_'.strtolower($tipo), 'f' ) );
+		if(isset($user) && $user->id!=0){
+			$query->where (' id_usuario <> ' . $user->id);
+		}
+		$query->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
+		if ($id != null && $id != 0) {
+			$query->where (' id <> ' .$id );
+		}
+		$db->setQuery ( $query );
+		$objeto = $db->loadObject();
+	
+		if(isset($objeto) && isset($objeto->id)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
+		}
+		
+	
+		if(!isset($user) || $user->id==0){
+			if(!isset($email)){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(isset($email) && strpos($email, '@' )===false){
+				$erro =true;
+				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
+			}
+			if(!isset($username) || strlen(trim($username))<5){
+				$erro =true;
+				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
+			}
+			if($this->existeUsuario($username)){
+				$erro =true;
+				JError::raiseWarning( 100, 'O usu&aacute;rio j&aacute; está cadastrado.' );
+			}
+			if(!isset($password)  || strlen(trim($password))<8){
+				$erro =true;
+				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
+			}
+			if(!isset($telefone)  || strlen(trim($telefone))<14){
+				$erro =true;
+				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+			}
+		}
+	
+		if(!isset($name)  || strlen(trim($name))<=0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
+		}
+	
+		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
+			$erro =true;
+			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
+		}
+	
+		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
+		}
+	
+		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
+			$erro =true;
+			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
+		}
+		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
+			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
+			$dataHoje = intval(date('Ymd'));
+			if(($dataFormatadaBanco + 180000)>$dataHoje){
+				$erro =true;
+				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );
+			}
+		}
+	
+		if(!isset($idCidade) || $idCidade==0){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
+		}
+		if($tipo=='MODELO'){
+			if(!isset($altura)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Altura &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($peso)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($busto)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Busto &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($busto)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($calsa)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Calsa &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($calsado)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Calsado &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($olhos)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Olhos &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($pele)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Tom de pele &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($etinia)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Etinia &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($cabelo)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Tipo de cabelo &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($tamanhoCabelo)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Tamanho do cabelo &eacute; um campo obrigat&oacute;rio.' );
+			}
+			if(!isset($corCabelo)){
+				$erro =true;
+				JError::raiseWarning( 100, 'Cor do cabelo &eacute; um campo obrigat&oacute;rio.' );
+			}
+		}
+		if(!isset($idCidadeNasceu)){
+			$erro =true;
+			JError::raiseWarning( 100, 'Cidade que nasceu &eacute; um campo obrigat&oacute;rio.' );
+		}
+		$usuario=null;
+		if($erro){
+			if(isset($id) && $id != 0){
+				$this->carregarPerfil();
+			}
+			else{
+				if($tipo=='MODELO'){
+					$this->cadastroModelo();
+				}
+				elseif($tipo=='FOTOGRAFO'){
+					$this->cadastroFotografo();
+				}
+				else{
+					$this->cadastroVisitante();
+				}
+			}
+			return;
+		}
+		else{
+			$usuario = $this->salvarUsuario($tipo);
+			$sucesso = (isset($usuario) && isset($usuario->id) && $usuario->id != 0);
+			if(!$sucesso){
+				JError::raiseWarning( 100, 'Falha no cadastro.' );
+				if($tipo=='MODELO'){
+					$this->cadastroModelo();
+				}
+				elseif($tipo=='FOTOGRAFO'){
+					$this->cadastroFotografo();
+				}
+				else{
+					$this->cadastroVisitante();
+				}
+				return;
+			}
+		}
+		if($tipo=='MODELO'){
+			$this->salvarModelo($usuario);
+		}
+		elseif($tipo=='FOTOGRAFO'){
+			$this->salvarFotografo($usuario);
+		}
+		else{
+			$this->salvarVisitante($usuario);
+		}
+	}
+	
+	
+	private function salvarModelo($usuario){
+		
 
 		$sucesso=true;
 		
@@ -2530,152 +2586,8 @@ class AngelgirlsController extends JControllerLegacy{
 			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
 		}
 		
-		//Validacao
-		
-		$erro =false;
-		
 
-		
-
-		
-		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
-		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
-		->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
-		if ($id != null && $id != 0) {
-			$query->where (' id <> ' .$id );
-		}
-		$db->setQuery ( $query );
-		$objeto = $db->loadObject();
-		
-		if(isset($objeto) && isset($objeto->id)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
-		}
-		
-		if($this->existeUsuario($username)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Campo usu&aacute;rio j&aacute; cadastrado.' );
-		}
-		
-		if(!isset($id) || $id==0){
-			if(!isset($email)){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );
-			}
-			
-			if(isset($email) && strpos($email, '@' )===false){
-				$erro =true;
-				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio. Insira um e-mail v&aacute;lido.' );
-			}
-			if(!isset($username) || strlen(trim($username))<5){
-				$erro =true;
-				JError::raiseWarning( 100, 'Usu&aacute;rio &eacute; um campo obrigat&oacute;rio. Deve conter no minimo 5 digitos.' );
-			}
-			if(!isset($password)  || strlen(trim($password))<8){
-				$erro =true;
-				JError::raiseWarning( 100, 'Senha &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 8 digitos.' );
-			}
-			if(!isset($telefone)  || strlen(trim($telefone))<14){
-				$erro =true;
-				JError::raiseWarning( 100, 'Telefone &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-			}
-		}
-
-		if(!isset($name)  || strlen(trim($name))<=0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
-		}
-		
-		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
-			$erro =true;
-			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
-		}
-		
-		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
-		}
-		
-		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
-			$erro =true;
-			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
-		}
-		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
-			$dataHoje = intval(date('Ymd'));
-			if(($dataFormatadaBanco + 180000)>$dataHoje){
-				$erro =true;
-				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );				
-			}
-		}
-				
-		if(!isset($idCidade) || $idCidade==0){
-			$erro =true;
-			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
-		}
-
-		if(!isset($altura)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Altura &eacute; um campo obrigat&oacute;rio.' );
-		}
-		if(!isset($peso)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
-		}		
-		if(!isset($busto)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Busto &eacute; um campo obrigat&oacute;rio.' );
-		}	
-		if(!isset($busto)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Peso &eacute; um campo obrigat&oacute;rio.' );
-		}
-		if(!isset($calsa)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Calsa &eacute; um campo obrigat&oacute;rio.' );
-		}	
-		if(!isset($calsado)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Calsado &eacute; um campo obrigat&oacute;rio.' );
-		}	
-		if(!isset($olhos)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Olhos &eacute; um campo obrigat&oacute;rio.' );
-		}		
-		if(!isset($pele)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Tom de pele &eacute; um campo obrigat&oacute;rio.' );
-		}
-		if(!isset($etinia)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Etinia &eacute; um campo obrigat&oacute;rio.' );
-		}		
-		if(!isset($cabelo)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Tipo de cabelo &eacute; um campo obrigat&oacute;rio.' );
-		}
-		if(!isset($tamanhoCabelo)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Tamanho do cabelo &eacute; um campo obrigat&oacute;rio.' );
-		}
-		if(!isset($corCabelo)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Cor do cabelo &eacute; um campo obrigat&oacute;rio.' );
-		}		
-		if(!isset($idCidadeNasceu)){
-			$erro =true;
-			JError::raiseWarning( 100, 'Cidade que nasceu &eacute; um campo obrigat&oacute;rio.' );
-		}
-
-		if($erro){
-			$this->cadastroModelo();
-			return;
-		}
-		
 		if ($id != null && $id != 0) { // UPDATE
-			$usuario = JFactory::getUser();
 			$query = $db->getQuery ( true );
 			$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
 					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
@@ -2715,148 +2627,139 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery ( $query );
 			$db->execute ();
 		} else {
-			$usuario = $this->salvarUsuario();
-			$sucesso = ($usuario != null && $usuario->id != null && $usuario->id != 0);
-			if($sucesso){
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_modelo' ) )->columns ( array (
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_modelo' ) )->columns ( array (
+				$db->quoteName ( 'status_dado' ),
+				$db->quoteName ( 'data_criado' ),
+				$db->quoteName ( 'id_usuario_criador' ),
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'id_usuario_alterador' ),
+				$db->quoteName ( 'id_usuario' ),
+				$db->quoteName ( 'nome_artistico' ),
+				$db->quoteName ( 'descricao' ),
+				$db->quoteName ( 'meta_descricao' ),
+				$db->quoteName ( 'altura' ),
+				$db->quoteName ( 'peso' ),
+				$db->quoteName ( 'busto' ),
+				$db->quoteName ( 'calsa' ),
+				$db->quoteName ( 'calsado' ),
+				$db->quoteName ( 'olhos' ),
+				$db->quoteName ( 'pele' ),
+				$db->quoteName ( 'etinia' ),
+				$db->quoteName ( 'cabelo' ),
+				$db->quoteName ( 'tamanho_cabelo' ),
+				$db->quoteName ( 'cor_cabelo' ),
+				$db->quoteName ( 'outra_cor_cabelo' ),
+				$db->quoteName ( 'profissao' ),
+				$db->quoteName ( 'nascionalidade' ),
+				$db->quoteName ( 'id_cidade_nasceu' ),
+				$db->quoteName ( 'data_nascimento' ),
+				$db->quoteName ( 'site' ),
+				$db->quoteName ( 'sexo' ),
+				$db->quoteName ( 'cpf' ),
+				$db->quoteName ( 'banco' ),
+				$db->quoteName ( 'agencia' ),
+				$db->quoteName ( 'conta' ),
+				$db->quoteName ( 'custo_medio_diaria' ),
+				$db->quoteName ( 'status_modelo' ),
+				$db->quoteName ( 'qualificao_equipe' ),
+				$db->quoteName ( 'id_cidade' )))
+			->values ( implode ( ',', array (
+				'\'NOVO\'',
+				'NOW()',
+				$usuario->id,
+				'NOW()',
+				$usuario->id,
+				$usuario->id,
+				$db->quote($nomeArtistico),
+				$db->quote($descricao),
+				$db->quote($metaDescricao),
+				($altura == null ? ' null ' : $db->quote($altura)),
+				($peso == null ? ' null ' : $db->quote($peso)),
+				($busto == null ? ' null ' : $db->quote($busto)),
+				($calsa == null ? ' null ' : $db->quote($calsa)),
+				($calsado == null ? ' null ' : $db->quote($calsado)),
+				($olhos == null ? ' null ' : $db->quote($olhos)),
+				($pele == null ? ' null ' : $db->quote($pele)),
+				($etinia == null ? ' null ' : $db->quote($etinia)),
+				($cabelo == null ? ' null ' : $db->quote($cabelo)),
+				($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
+				($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
+				($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
+				($profissao == null ? ' null ' : $db->quote($profissao)),
+				($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+				($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+				$dataFormatadaBanco,
+				($site == null ? ' null ' : $db->quote($site)),
+				($sexo == null ? ' null ' : $db->quote($sexo)),
+				($cpf == null ? ' null ' : $db->quote($cpf)),
+				($banco == null ? ' null ' : $db->quote($banco)),
+				($agencia == null ? ' null ' : $db->quote($agencia)),
+				($conta == null ? ' null ' : $db->quote($conta)),
+				($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+				($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
+				($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+				($idCidade == null ? ' null ' : $db->quote($idCidade))
+			)));
+			$db->setQuery( $query );
+			$db->execute();
+			$id = $db->insertid();
+			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+				->columns ( array (
 					$db->quoteName ( 'status_dado' ),
 					$db->quoteName ( 'data_criado' ),
 					$db->quoteName ( 'id_usuario_criador' ),
 					$db->quoteName ( 'data_alterado' ),
 					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'nome_artistico' ),
-					$db->quoteName ( 'descricao' ),
-					$db->quoteName ( 'meta_descricao' ),
-					$db->quoteName ( 'altura' ),
-					$db->quoteName ( 'peso' ),
-					$db->quoteName ( 'busto' ),
-					$db->quoteName ( 'calsa' ),
-					$db->quoteName ( 'calsado' ),
-					$db->quoteName ( 'olhos' ),
-					$db->quoteName ( 'pele' ),
-					$db->quoteName ( 'etinia' ),
-					$db->quoteName ( 'cabelo' ),
-					$db->quoteName ( 'tamanho_cabelo' ),
-					$db->quoteName ( 'cor_cabelo' ),
-					$db->quoteName ( 'outra_cor_cabelo' ),
-					$db->quoteName ( 'profissao' ),
-					$db->quoteName ( 'nascionalidade' ),
-					$db->quoteName ( 'id_cidade_nasceu' ),
-					$db->quoteName ( 'data_nascimento' ),
-					$db->quoteName ( 'site' ),
-					$db->quoteName ( 'sexo' ),
-					$db->quoteName ( 'cpf' ),
-					$db->quoteName ( 'banco' ),
-					$db->quoteName ( 'agencia' ),
-					$db->quoteName ( 'conta' ),
-					$db->quoteName ( 'custo_medio_diaria' ),
-					$db->quoteName ( 'status_modelo' ),
-					$db->quoteName ( 'qualificao_equipe' ),
-					$db->quoteName ( 'id_cidade' )))
+					$db->quoteName ( 'principal' ),
+					$db->quoteName ( 'email' ),
+					$db->quoteName ( 'ordem' )))
 				->values ( implode ( ',', array (
-					'\'NOVO\'',
-					'NOW()',
-					$usuario->id,
-					'NOW()',
-					$usuario->id,
-					$usuario->id,
-					$db->quote($nomeArtistico),
-					$db->quote($descricao),
-					$db->quote($metaDescricao),
-					($altura == null ? ' null ' : $db->quote($altura)),
-					($peso == null ? ' null ' : $db->quote($peso)),
-					($busto == null ? ' null ' : $db->quote($busto)),
-					($calsa == null ? ' null ' : $db->quote($calsa)),
-					($calsado == null ? ' null ' : $db->quote($calsado)),
-					($olhos == null ? ' null ' : $db->quote($olhos)),
-					($pele == null ? ' null ' : $db->quote($pele)),
-					($etinia == null ? ' null ' : $db->quote($etinia)),
-					($cabelo == null ? ' null ' : $db->quote($cabelo)),
-					($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
-					($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
-					($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
-					($profissao == null ? ' null ' : $db->quote($profissao)),
-					($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$dataFormatadaBanco,
-					($site == null ? ' null ' : $db->quote($site)),
-					($sexo == null ? ' null ' : $db->quote($sexo)),
-					($cpf == null ? ' null ' : $db->quote($cpf)),
-					($banco == null ? ' null ' : $db->quote($banco)),
-					($agencia == null ? ' null ' : $db->quote($agencia)),
-					($conta == null ? ' null ' : $db->quote($conta)),
-					($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
-					($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					($idCidade == null ? ' null ' : $db->quote($idCidade))
-				)));
-				$db->setQuery( $query );
-				$db->execute();
-				$id = $db->insertid();
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
-					->columns ( array (
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'email' ),
-						$db->quoteName ( 'ordem' )))
-					->values ( implode ( ',', array (
+						'\'NOVO\'',
+						'NOW()',
+						$usuario->id,
+						'NOW()',
+						$usuario->id,
+						$usuario->id,
+						$db->quote('S'),
+						$db->quote($email),
+						'0')));
+			$db->setQuery( $query );
+			$db->execute();
+			
+			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+			->columns ( array (
+					$db->quoteName ( 'status_dado' ),
+					$db->quoteName ( 'data_criado' ),
+					$db->quoteName ( 'id_usuario_criador' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'id_usuario_alterador' ),
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'tipo' ),
+					$db->quoteName ( 'principal' ),
+					$db->quoteName ( 'ddd' ),
+					$db->quoteName ( 'telefone' ),
+					$db->quoteName ( 'ordem' )))
+			->values ( implode ( ',', array (
 							'\'NOVO\'',
 							'NOW()',
 							$usuario->id,
 							'NOW()',
 							$usuario->id,
 							$usuario->id,
+							$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
 							$db->quote('S'),
-							$db->quote($email),
-							'0')));
-				$db->setQuery( $query );
-				$db->execute();
-				
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
-				->columns ( array (
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'tipo' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'ddd' ),
-						$db->quoteName ( 'telefone' ),
-						$db->quoteName ( 'ordem' )))
-				->values ( implode ( ',', array (
-								'\'NOVO\'',
-								'NOW()',
-								$usuario->id,
-								'NOW()',
-								$usuario->id,
-								$usuario->id,
-								$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
-								$db->quote('S'),
-								$db->quote(substr($telefone,1,2)),
-								$db->quote(substr($telefone,5)),
-								
-						'0')));
-				$db->setQuery( $query );
-				$db->execute();
-			}
-			else{
-				JError::raiseWarning( 100, 'Falha no cadastro.' );
-				$this->cadastroModelo();
-				return;
-			}
+							$db->quote(substr($telefone,1,2)),
+							$db->quote(substr($telefone,5)),
+							
+					'0')));
+			$db->setQuery( $query );
+			$db->execute();
 		}
 		
 		if($id != 0){
@@ -2952,11 +2855,118 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 	}
 	
+	/**
+	 * Padrão endereço
+	 */
+	public function padraoEnderecoJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_endereco' ))
+				->set(array (
+					$db->quoteName ( 'principal' ) . ' = ' . $db->quote('N'),
+					$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+				->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if(!$db->execute()){
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+				
+				if($jsonRetorno==""){
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_endereco' ))
+					->set(array (
+							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	/**
+	 * Remover Endereco
+	 */
+	public function removerEnderecoJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_endereco' ))
+				->set(array (
+						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if($db->execute()){
+					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+				}
+				else{
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	/**
+	 * Salvar o endereco via JSON
+	 */
 	public function salvarEnderecoJson(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery (true);
 		
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		$principal = '';
 		$cep = JRequest::getString ( 'cep', null, 'POST' );
 		$rua = JRequest::getString ( 'rua', null, 'POST' );
 		$numero = JRequest::getString ( 'numero', null, 'POST' );
@@ -2964,44 +2974,783 @@ class AngelgirlsController extends JControllerLegacy{
 		$bairro = JRequest::getString ( 'bairro', null, 'POST' );
 		$estado = JRequest::getString ( 'estado', null, 'POST' );
 		$cidade = JRequest::getInt( 'cidade', null, 'POST' );
+		$jsonRetorno="";
+
+		$mensagensErro = "";
 		
+		if(!isset($rua)){
+			$mensagensErro = $mensagensErro . "Rua &eacute; um campo obrigat&oacute;rio.<br/>"; 
+		}
+		if(!isset($cep) || strlen($cep)<8){
+			$mensagensErro = $mensagensErro . "CEP &eacute; um campo obrigat&oacute;rio e deve estar no formato: 09999-000.<br/>";
+		}
+		if(!isset($cidade)){
+			$mensagensErro = $mensagensErro . "Cidade &eacute; um campo obrigat&oacute;rio.<br/>";
+		}
+		if(!isset($estado)){
+			$mensagensErro = $mensagensErro . "Estado &eacute; um campo obrigat&oacute;rio.<br/>";
+		}
+		if($mensagensErro==""){
+			if(!isset($id) || $id==0){
+				try {
+					$principal='N';
+					$ordem = 0;
+					
+					$query = $db->getQuery ( true );
+					$query->select('max(end.`ordem`) AS total')
+									->from ('#__angelgirls_endereco AS end')
+									->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
+									->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
+					$db->setQuery ( $query );
+					$result = $db->loadObject();
+					
+
+					if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
+						$principal='S';
+					}else{
+						$ordem = $result->total+1;
+					}
+					
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_endereco' ) )
+					->columns (array (
+							$db->quoteName ( 'tipo' ),
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'endereco' ),
+							$db->quoteName ( 'numero' ),
+							$db->quoteName ( 'bairro' ),
+							$db->quoteName ( 'complemento' ),
+							$db->quoteName ( 'cep' ),
+							$db->quoteName ( 'id_cidade' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'ordem' )))
+						->values(implode(',', array(
+							$db->quote($tipo),
+							$db->quote($principal),
+							(isset($rua)?$db->quote($rua):'null'),
+							(isset($numero)?$db->quote($numero):'null'),
+							(isset($bairro)?$db->quote($bairro):'null'),
+							(isset($complemento)?$db->quote($complemento):'null'),
+							(isset($cep)?$db->quote($cep):'null'),
+							(isset($cidade)?$cidade:'null'),
+							$user->id,
+							$db->quote(StatusDado::NOVO),
+							$user->id, 
+							$user->id, 'NOW()', 'NOW()',
+								$ordem)));
 		
-		$query = $db->getQuery ( true );
-		$query->insert( $db->quoteName ( '#__angelgirls_endereco' ) )
-		->columns (array (
-				$db->quoteName ( $campoId ),
-				$db->quoteName ( 'id_usuario' ),
-				$db->quoteName ( 'data_criado' )))
-				->values(implode(',', array ($id, $user->id, 'NOW()')));
-		$db->setQuery( $query );
-		$db->execute();
-		
-// 		CREATE TABLE `#__angelgirls_endereco` (
-// 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-// 		`tipo` ENUM('RESIDO','TRABALHO','OUTRO'),
-// 		`principal` ENUM('S','N') NOT NULL,
-// 		`endereco` VARCHAR(250),
-// 		`numero` VARCHAR(10),
-// 		`bairro` VARCHAR(100),
-// 		`complemento` VARCHAR(100),
-// 		`cep` VARCHAR(15),
-// 		`id_cidade` INT NOT NULL,
-// 		`id_usuario` INT NOT NULL ,
-// 		`ordem` int,
-		
-// 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
-// 		`id_usuario_criador` INT NOT NULL ,
-// 		`id_usuario_alterador` INT NOT NULL ,
-// 		`data_criado` DATETIME NOT NULL  ,
-// 		`data_alterado` DATETIME NOT NULL
-// 		) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
-		
-		
+							$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+			else{
+				try {
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_endereco' ))
+						->set(array (
+							$db->quoteName ( 'tipo' ) . ' = ' . $db->quote($tipo),
+							$db->quoteName ( 'endereco' ) . ' = ' . (isset($rua)?$db->quote($rua):'null'),
+							$db->quoteName ( 'numero' ) . ' = ' . (isset($numero)?$db->quote($numero):'null'),
+							$db->quoteName ( 'bairro' ) . ' = ' . (isset($bairro)?$db->quote($bairro):'null'),
+							$db->quoteName ( 'complemento' ) . ' = ' . (isset($complemento)?$db->quote($complemento):'null'),
+							$db->quoteName ( 'cep' ) . ' = ' . (isset($cep)?$db->quote($cep):'null'),
+							$db->quoteName ( 'id_cidade' ) . ' = ' . (isset($cidade)?$cidade:'null'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+						$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
+		}
 		
 		
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
 		echo $jsonRetorno;
+		exit();
+	}
+	
+	public function carregarEndereco(){
+		JRequest::setVar ( 'enderecos', $this->getEnderecosPefil());
+		require_once 'views/perfil/tmpl/enderecos.php';
+		exit();
+	}
+	
+/************************************* TELEFONES **********************************/
+	
+	/**
+	 * Padrão endereço
+	 */
+	public function padraoTelefoneJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_telefone' ))
+				->set(array (
+						$db->quoteName ( 'principal' ) . ' = ' . $db->quote('N'),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if(!$db->execute()){
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+	
+				if($jsonRetorno==""){
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_telefone' ))
+					->set(array (
+							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	/**
+	 * Remover telefone
+	 */
+	public function removerTelefoneJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_telefone' ))
+				->set(array (
+						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if($db->execute()){
+					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+				}
+				else{
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	/**
+	 * Salvar o telefone via JSON
+	 */
+	public function salvarTelefoneJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		$principal = '';
+		$operadora = JRequest::getString ( 'operadora', null, 'POST' );
+		$ddd = JRequest::getString ( 'ddd', null, 'POST' );
+		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+
+
+
+		
+		
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(!isset($operadora)){
+			$mensagensErro = $mensagensErro . "Operadora &eacute; um campo obrigat&oacute;rio.<br/>";
+		}
+		if(!isset($ddd) || strlen($ddd)<2){
+			$mensagensErro = $mensagensErro . "DDD &eacute; um campo obrigat&oacute;rio e deve estar no formato: 11.<br/>";
+		}
+		if(!isset($telefone) || strlen($telefone)<8){
+			$mensagensErro = $mensagensErro . "Telefone &eacute; um campo obrigat&oacute;rio e deve estar no formato: 09999-000.<br/>";
+		}
+		if($mensagensErro==""){
+			if(!isset($id) || $id==0){
+				try {
+					$principal='N';
+					$ordem = 0;
+						
+					$query = $db->getQuery ( true );
+					$query->select('max(end.`ordem`) AS total')
+					->from ('#__angelgirls_telefone AS end')
+					->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
+					->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
+					$db->setQuery ( $query );
+					$result = $db->loadObject();
+						
+	
+					if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
+						$principal='S';
+					}else{
+						$ordem = $result->total+1;
+					}
+						
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+					->columns (array (
+							$db->quoteName ( 'tipo' ),
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'email' ),
+							$db->quoteName ( 'ddd' ),
+							$db->quoteName ( 'telefone' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'ordem' )))
+							->values(implode(',', array(
+									$db->quote($tipo),
+									$db->quote($principal),
+									(isset($operadora)?$db->quote($operadora):'null'),
+									(isset($ddd)?$db->quote($ddd):'null'),
+									(isset($telefone)?$db->quote($telefone):'null'),
+									$user->id,
+									$db->quote(StatusDado::NOVO),
+									$user->id,
+									$user->id, 'NOW()', 'NOW()',
+									$ordem)));
+	
+							$db->setQuery( $query );
+							if($db->execute()){
+								$jsonRetorno='{"ok":"ok", "menssagem":""}';
+							}
+							else{
+								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+							}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+			else{
+				try {
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_telefone' ))
+					->set(array (
+							$db->quoteName ( 'tipo' ) . ' = ' . $db->quote($tipo),
+							$db->quoteName ( 'operadora' ) . ' = ' . (isset($operadora)?$db->quote($operadora):'null'),
+							$db->quoteName ( 'ddd' ) . ' = ' . (isset($ddd)?$db->quote($ddd):'null'),
+							$db->quoteName ( 'telefone' ) . ' = ' . (isset($telefone)?$db->quote($telefone):'null'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
+		}
+	
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	public function carregarTelefone(){
+		JRequest::setVar ( 'telefones', $this->getTelefonesPefil());
+		require_once 'views/perfil/tmpl/telefones.php';
+		exit();
+	}
+	
+	
+/*************** EMAILS ********************************/
+	/**
+	 * Padrão endereço
+	 */
+	public function padraoEmailJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_email' ))
+				->set(array (
+						$db->quoteName ( 'principal' ) . ' = ' . $db->quote('N'),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if(!$db->execute()){
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+	
+				if($jsonRetorno==""){
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_email' ))
+					->set(array (
+							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	/**
+	 * Remover email
+	 */
+	public function removerEmailJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_email' ))
+				->set(array (
+						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if($db->execute()){
+					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+				}
+				else{
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	/**
+	 * Salvar o email via JSON
+	 */
+	public function salvarEmailJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		$principal = '';
+		$email = JRequest::getString ( 'email', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+
+		if(!isset($email) || strlen($email)<5){
+			$mensagensErro = $mensagensErro . "E-mail &eacute; um campo obrigat&oacute;rio e deve estar no formato: email@dominio.com.<br/>";
+		}
+		if($mensagensErro==""){
+			if(!isset($id) || $id==0){
+				try {
+					$principal='N';
+					$ordem = 0;
+						
+					$query = $db->getQuery ( true );
+					$query->select('max(end.`ordem`) AS total')
+					->from ('#__angelgirls_email AS end')
+					->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
+					->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
+					$db->setQuery ( $query );
+					$result = $db->loadObject();
+						
+	
+					if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
+						$principal='S';
+					}else{
+						$ordem = $result->total+1;
+					}
+						
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+					->columns (array (
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'email' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'ordem' )))
+							->values(implode(',', array(
+									$db->quote($principal),
+									(isset($email)?$db->quote($email):'null'),
+									$user->id,
+									$db->quote(StatusDado::NOVO),
+									$user->id,
+									$user->id, 'NOW()', 'NOW()',
+									$ordem)));
+	
+							$db->setQuery( $query );
+							if($db->execute()){
+								$jsonRetorno='{"ok":"ok", "menssagem":""}';
+							}
+							else{
+								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+							}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+			else{
+				try {
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_email' ))
+					->set(array (
+							$db->quoteName ( 'email' ) . ' = ' . (isset($email)?$db->quote($email):'null'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
+		}
+	
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	public function carregarEmail(){
+		JRequest::setVar ( 'emails', $this->getEmailsPefil());
+		require_once 'views/perfil/tmpl/emails.php';
+		exit();
+	}
+	
+/******************************** REDES SOCIAIS **************************************************/
+	/**
+	 * Padrão endereço
+	 */
+	public function padraoRedeSocialJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_redesocial' ))
+				->set(array (
+						$db->quoteName ( 'principal' ) . ' = ' . $db->quote('N'),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if(!$db->execute()){
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+	
+				if($jsonRetorno==""){
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_redesocial' ))
+					->set(array (
+							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					}
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	/**
+	 * Remover rede_social
+	 */
+	public function removerRedeSocialJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_redesocial' ))
+				->set(array (
+						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if($db->execute()){
+					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+				}
+				else{
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+				}
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	/**
+	 * Salvar o rede_social via JSON
+	 */
+	public function salvarRedeSocialJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+		$rede = JRequest::getString ( 'rede', null, 'POST' );
+		$contato = JRequest::getString ( 'contato', null, 'POST' );
+
+
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(!isset($rede)){
+			$mensagensErro = $mensagensErro . "Rede Social um campo obrigat&oacute;rio.<br/>";
+		}
+		if(!isset($contato) || strlen($contato)<1){
+			$mensagensErro = $mensagensErro . "Contato um campo obrigat&oacute;rio .<br/>";
+		}
+
+		if($mensagensErro==""){
+			if(!isset($id) || $id==0){
+				try {
+					$principal='N';
+					$ordem = 0;
+						
+					$query = $db->getQuery ( true );
+					$query->select('max(end.`ordem`) AS total')
+					->from ('#__angelgirls_redesocial AS end')
+					->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
+					->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
+					$db->setQuery ( $query );
+					$result = $db->loadObject();
+						
+
+					
+					if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
+						$principal='S';
+					}else{
+						$ordem = $result->total+1;
+					}
+;
+					
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_redesocial' ) )
+					->columns (array (
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'rede_social' ),
+							$db->quoteName ( 'url_usuario' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'ordem' )))
+							->values(implode(',', array(
+									$db->quote($principal),
+									(isset($rede)?$db->quote($rede):'null'),
+									(isset($contato)?$db->quote($contato):'null'),
+									$user->id,
+									$db->quote(StatusDado::NOVO),
+									$user->id,
+									$user->id, 'NOW()', 'NOW()',
+									$ordem)));
+	
+							$db->setQuery( $query );
+							if($db->execute()){
+								$jsonRetorno='{"ok":"ok", "menssagem":""}';
+							}
+							else{
+								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+							}
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				}
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
+		}
+	
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	public function carregarRedeSocial(){
+		JRequest::setVar ( 'redes', $this->getRedesSociaisPefil());
+		require_once 'views/perfil/tmpl/redesociais.php';
 		exit();
 	}
 	
@@ -3137,6 +3886,74 @@ class AngelgirlsController extends JControllerLegacy{
 		return $db->loadObject();
 	}
 	
+	private function getEnderecosPefil(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
+				end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
+				end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
+						->from ('#__angelgirls_endereco AS end')
+						->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
+						->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
+						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+						->order('ordem');
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	} 
+	
+	private function getTelefonesPefil(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+				`id_usuario_alterador`,`data_criado`,`data_alterado`')
+						->from ('#__angelgirls_telefone')
+						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+						->order('ordem');
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
+	
+	
+	private function getRedesSociaisPefil(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+				`id_usuario_alterador`,`data_criado`,`data_alterado`')
+						->from ('#__angelgirls_redesocial')
+						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+						->order('ordem');
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
+	
+	private function getEmailsPefil(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+				`id_usuario_alterador`,`data_criado`,`data_alterado`')
+						->from ('#__angelgirls_email')
+						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+						->order('ordem');
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+		return $results;
+	}	
+	
+	
+	
+
+	
 	public function carregarPerfil(){
 		$user = JFactory::getUser();
 		$this->carregarCadastro();
@@ -3152,83 +3969,11 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
 		
-		
-		
 		//Dados
-		$query = $db->getQuery ( true );
-		$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
-				end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
-				end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome,c.uf,uf.ds_uf_nome as estado')
-						->from ('#__angelgirls_endereco AS end')
-						->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
-						->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'enderecos', $results);
-		
-		
-
-		
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_email')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'emails', $results);
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_redesocial')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'redes', $results);
-		
-
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_telefone')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'telefones', $results);
-		
-
-		
-// 		CREATE TABLE `#__angelgirls_telefone` (
-// 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-// 		`tipo` ENUM('CELULAR','RESIDENCIAL','ESCRITORIO','RECADO','OUTRO'),
-// 		`principal` ENUM('S','N') NOT NULL,
-// 		`operadora` VARCHAR(15),
-// 				`ddi` VARCHAR(4) DEFAULT '+55',
-// 				`ddd` VARCHAR(3) NOT NULL ,
-// 				`telefone` VARCHAR(15) NOT NULL ,
-// 						`id_usuario` INT NOT NULL ,
-// 						`ordem` int,
-		
-// 						`status_dado` VARCHAR(25) DEFAULT 'NOVO',
-// 						`id_usuario_criador` INT NOT NULL ,
-// 						`id_usuario_alterador` INT NOT NULL ,
-// 						`data_criado` DATETIME NOT NULL  ,
-// 						`data_alterado` DATETIME NOT NULL
-// 						) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
-		
-
-		
+		JRequest::setVar ( 'enderecos', $this->getEnderecosPefil());
+		JRequest::setVar ( 'emails', $this->getEmailsPefil());
+		JRequest::setVar ( 'redes', $this->getRedesSociaisPefil());
+		JRequest::setVar ( 'telefones', $this->getTelefonesPefil());
 
 		JRequest::setVar ( 'view', 'perfil' );
 		JRequest::setVar ( 'layout', 'default' );
