@@ -33,6 +33,22 @@ class StatusDado {
 }
 
 
+class NivelAcesso {
+	const ACESSO_PUBLICO = 1;
+	const ACESSO_GUEST = 5;
+	const ACESSO_REGISTRED = 2;
+	const ACESSO_FOTOGRAFO = 7;
+	const ACESSO_MODELO = 8;
+}
+
+class GrupoAcesso {
+	const PUBLICO = 1;
+	const GUEST = 9;
+	const REGISTRED = 2;
+	const FOTOGRAFO = 10;
+	const FOTOGRAFO_MODELO = 12;
+	const MODELO = 11;
+}
 
 /**
  * Angelgirls Component Controller
@@ -40,6 +56,9 @@ class StatusDado {
 class AngelgirlsController extends JControllerLegacy{
 	
 	const LIMIT_DEFAULT = 24;
+	const CATEGORIA_MAKINGOF = 10;
+	
+
 	
 	
 	function display($cachable = false, $urlparams = false) {
@@ -860,27 +879,36 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	public function validarCPFJson(){
 		$db = JFactory::getDbo ();
-		
+		$user = JFactory::getUser();
 		$cpf =  $db->quote(trim(strtolower(str_replace("-","",str_replace(".","",JRequest::getString('cpf', '','POST'))))));
 		
 		$query = $db->getQuery ( true );
 		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
-		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf );
+		->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) );
+		if(isset($user) && $user->id != 0){
+			$query->where ( $db->quoteName ( 'f.id_usuario' ) . ' <> ' .  $user->id);
+		}
+		$query->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf );
 		$db->setQuery ( $query );
 		$modelo = $db->loadObject();
 		
 		$query = $db->getQuery ( true );
 		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
-		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
+		->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) );
+		if(isset($user) && $user->id != 0){
+			$query->where ( $db->quoteName ( 'f.id_usuario' ) . ' <> ' .  $user->id);
+		}
+		$query->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
 		$db->setQuery ( $query );
 		$fotografo = $db->loadObject();
 		
 		$query = $db->getQuery ( true );
 		$query->select('`f`.`id`')
-		->from ( $db->quoteName ( '#__angelgirls_visitante', 'f' ) )
-		->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
+		->from ( $db->quoteName ( '#__angelgirls_visitante', 'f' ) );
+		if(isset($user) && $user->id != 0){
+			$query->where ( $db->quoteName ( 'f.id_usuario' ) . ' <> ' .  $user->id);
+		}
+		$query->where (' trim(REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','')) = " . $cpf);
 		$db->setQuery ( $query );
 		$visitante = $db->loadObject();
 		
@@ -900,7 +928,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 	
 		// Elimina possivel mascara
-		$cpf = ereg_replace('[^0-9]', '', $cpf);
+		$cpf = preg_replace('[^0-9]', '', $cpf);
 		$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 		 
 		// Verifica se o numero de digitos informados &eacute; igual a 11
@@ -1308,7 +1336,6 @@ class AngelgirlsController extends JControllerLegacy{
 					SOUNDEX(upper(s.titulo)) like SOUNDEX(" . $db->quote(strtoupper(trim($nome)).'%') . "))");
 		}
 		if(isset($dataInicio) && trim($dataInicio) != ""){
-			//$dataFormatadaBanco = substr($dataInicio,6,10) . '-' . substr($dataInicio,4,5) . '-' . substr($dataInicio,0,2);
 			$dataFormatadaBanco = DateTime::createFromFormat('d/m/Y', $dataInicio)->format('Y-m-d');
 			$query->where (  " s.publicar >= " . $db->quote($dataFormatadaBanco));
 		}
@@ -1815,7 +1842,7 @@ class AngelgirlsController extends JControllerLegacy{
 	 * 
 	 * @return usuario salvo
 	 */
-	public function salvarUsuario($tipo){
+	private function salvarUsuario($tipo){
 		$user = JFactory::getUser();
 		if(!isset($user) || !isset($user->id) || $user->id==0){
 			$user = JFactory::getUser(0);
@@ -1823,6 +1850,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$usersParams = JComponentHelper::getParams('com_users');
 		$userdata = array();
 		$userdata['username'] = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+		$defaultUserGroup = $usersParams->get('new_usertype', 2);
 		if(!isset($user) || !isset($user->id) || $user->id==0){
 			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
 			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
@@ -1830,9 +1858,12 @@ class AngelgirlsController extends JControllerLegacy{
 			$userdata['password'] = trim(JRequest::getString( 'password', '', 'POST' ));
 			$userdata['password2'] = JRequest::getString( 'password1', null, 'POST' );
 			$userdata['block'] = 0;
-			$defaultUserGroup = $usersParams->get('new_usertype', 2);
-			if(strtolower($tipo)!='visitante'){
-				$userdata['groups']=array($defaultUserGroup,strtolower($tipo));
+			
+			if(strtolower($tipo)=='fotografo'){
+				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
+			}
+			elseif(strtolower($tipo)=='modelo'){
+				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
 			}
 			else{
 				$userdata['groups']=array($defaultUserGroup);
@@ -1852,7 +1883,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	
-	private function salvarVisitante(){
+	private function salvarVisitante( $usuario){
 
 
 		$sucesso=true;
@@ -1894,19 +1925,19 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$db = JFactory::getDbo ();
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
 		}
 		
 
 		
 		
-		if ($id != null && $id != 0) { // UPDATE
+		if (isset($usuario)  && $usuario->id != 0) {// UPDATE
 			$usuario = JFactory::getUser();
 			$query = $db->getQuery ( true );
 			$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
 					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
 					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
-					$db->quoteName ( 'nome_artistico' ) . ' = ' . $db->quote($nomeArtistico),
+					$db->quoteName ( 'apelido' ) . ' = ' . $db->quote($nomeArtistico),
 					$db->quoteName ( 'sobre' ) . ' = ' . $db->quote($descricao),
 					$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
 					$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
@@ -1923,7 +1954,6 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
 					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
 			))
-			->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
 			$db->setQuery ( $query );
 			$db->execute ();
@@ -1936,7 +1966,7 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'data_alterado' ),
 					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'nome_artistico' ),
+					$db->quoteName ( 'apelido' ),
 					$db->quoteName ( 'sobre' ),
 					$db->quoteName ( 'meta_descricao' ),
 					$db->quoteName ( 'profissao' ),
@@ -1962,19 +1992,19 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quote($nomeArtistico),
 					$db->quote($descricao),
 					$db->quote($metaDescricao),
-					($profissao == null ? ' null ' : $db->quote($profissao)),
-					($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+					(isset($profissao) == null ? ' null ' : $db->quote($profissao)),
+					(isset($nascionalidade) == null ? ' null ' : $db->quote($nascionalidade)),
+					(isset($idCidadeNasceu) == null ? ' null ' : $db->quote($idCidadeNasceu)),
 					$dataFormatadaBanco,
-					($site == null ? ' null ' : $db->quote($site)),
-					($sexo == null ? ' null ' : $db->quote($sexo)),
-					($cpf == null ? ' null ' : $db->quote($cpf)),
-					($banco == null ? ' null ' : $db->quote($banco)),
-					($agencia == null ? ' null ' : $db->quote($agencia)),
-					($conta == null ? ' null ' : $db->quote($conta)),
-					($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					($idCidade == null ? ' null ' : $db->quote($idCidade))
+					(isset($site) == null ? ' null ' : $db->quote($site)),
+					(isset($sexo) == null ? ' null ' : $db->quote($sexo)),
+					(isset($cpf) == null ? ' null ' : $db->quote($cpf)),
+					(isset($banco) == null ? ' null ' : $db->quote($banco)),
+					(isset($agencia) == null ? ' null ' : $db->quote($agencia)),
+					(isset($conta) == null ? ' null ' : $db->quote($conta)),
+					(isset($custoMedioDiaria) == null ? ' null ' : $db->quote($custoMedioDiaria)),
+					(isset($qualificaoEquipe) == null ? ' null ' : $db->quote($qualificaoEquipe)),
+					(isset($idCidade) == null ? ' null ' : $db->quote($idCidade))
 				)));
 				$db->setQuery( $query );
 				$db->execute();
@@ -2036,43 +2066,33 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->setQuery( $query );
 				$db->execute();
 		}
-		
-		if($id != 0){
-			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-				$fileName = $foto_perfil ['name'];
-				$uploadedFileNameParts = explode ( '.', $fileName );
-				$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-					
-				$fileTemp = $foto_perfil ['tmp_name'];
-				$newFileName = $id . '_perfil.' . $uploadedFileExtension;
-				$newfile = $uploadPath . $newFileName;
-				if (JFolder::exists ( $newfile )) {
-					JFile::delete ( $newfile );
-				}
-				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-					$erro = true;
-				} else {
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
-							$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
-					) )->where ( array (
-							$db->quoteName ( 'id' ) . ' = ' . $id
-					) );
-					$db->setQuery ( $query );
-					$db->execute ();
-				}
-			}
-			
 
-			
+		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+			$fileName = $foto_perfil ['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
 				
-			
-			JRequest::setVar ( 'id', $id );
-			JRequest::setVar ( 'view', 'cadastro' );
-			JRequest::setVar ( 'layout', 'sucesso' );
-			parent::display (true, false);
+			$fileTemp = $foto_perfil ['tmp_name'];
+			$newFileName = $id . '_perfil.' . $uploadedFileExtension;
+			$newfile = $uploadPath . $newFileName;
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
+			}
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			} else {
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
+						$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
 		}
+		return true;
 	}
 	
 	
@@ -2081,7 +2101,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'fotografos' . DS;
 		$erro = false;
 		
-		$id = JRequest::getString('id',0);
+		$id =  $usuario->id;
 		if(!(strpos($id,':')===false)){
 			$id = explode(':',$id)[0];
 		}
@@ -2114,10 +2134,10 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$db = JFactory::getDbo ();
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
 		}
 		
-		if ($id != null && $id != 0) { // UPDATE
+		if (isset($usuario) && $usuario->id != 0) { // UPDATE
 			$query = $db->getQuery ( true );
 			$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
 					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
@@ -2139,7 +2159,6 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
 					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
 			))
-			->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
 			$db->setQuery ( $query );
 			$db->execute ();
@@ -2253,37 +2272,34 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->execute();
 		}
 		
-		if($id != 0){
-			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-				$fileName = $foto_perfil ['name'];
-				$uploadedFileNameParts = explode ( '.', $fileName );
-				$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-					
-				$fileTemp = $foto_perfil ['tmp_name'];
-				$newFileName = $id . '_perfil.' . $uploadedFileExtension;
-				$newfile = $uploadPath . $newFileName;
-				if (JFolder::exists ( $newfile )) {
-					JFile::delete ( $newfile );
-				}
-				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-					$erro = true;
-				} else {
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
-							$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
-					) )->where ( array (
-							$db->quoteName ( 'id' ) . ' = ' . $id
-					) );
-					$db->setQuery ( $query );
-					$db->execute ();
-				}
+
+		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+			$fileName = $foto_perfil ['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+				
+			$fileTemp = $foto_perfil ['tmp_name'];
+			$newFileName = $id . '_perfil.' . $uploadedFileExtension;
+			$newfile = $uploadPath . $newFileName;
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
 			}
-			JRequest::setVar ( 'id', $id );
-			JRequest::setVar ( 'view', 'cadastro' );
-			JRequest::setVar ( 'layout', 'sucesso' );
-			parent::display (true, false);
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			} else {
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
+						$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
 		}
+
+		return true;
 	}
 	
 	/**
@@ -2340,21 +2356,27 @@ class AngelgirlsController extends JControllerLegacy{
 		$dataFormatadaBanco = 'null';
 	
 		$db = JFactory::getDbo ();
+		$dataObjetoNascimento =null;
+
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+			$dataObjetoNascimento = DateTime::createFromFormat('d/m/Y H:i:s', $dataNascimento.' 00:00:00');
+			JRequest::setVar('dataAniversarioConvertida', $dataObjetoNascimento);
+			$dataFormatadaBanco= $db->quote($dataObjetoNascimento->format('Y-m-d'));
 		}
 		$erro =false;
 	
+
 	
-	
-		$cpfValidar = strtolower(trim($db->quote(str_replace("-","",str_replace(".","",$cpf)))));
+		$cpfValidar = strtolower(trim(str_replace("-","",str_replace(".","",$cpf))));
+		
+		
 		$query = $db->getQuery ( true );
 		$query->select('`f`.`id`')
 		->from ( $db->quoteName ( '#__angelgirls_'.strtolower($tipo), 'f' ) );
 		if(isset($user) && $user->id!=0){
 			$query->where (' id_usuario <> ' . $user->id);
 		}
-		$query->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $cpfValidar );
+		$query->where (' REPLACE(REPLACE('. $db->quoteName ( 'f.cpf' ) . ",'.',''),'-','') = " . $db->quote($cpfValidar) );
 		if ($id != null && $id != 0) {
 			$query->where (' id <> ' .$id );
 		}
@@ -2399,9 +2421,10 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning( 100, 'Nome completo &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com o DDD.' );
 		}
 	
-		if(!isset($cpf)  || strlen(trim($cpf))<=14 || !$this->validaCPF($cpf)){
+		
+		if(!isset($cpf)  || strlen(trim($cpf)) < 14 || !$this->validaCPF($cpfValidar)){
 			$erro =true;
-			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos com a formata&ccedil;&atilde;o.' );
+			JError::raiseWarning( 100, 'CPF &eacute; um campo obrigat&oacute;rio. E deve conter no minimo 14 digitos ser v&aacute;lido e com a formata&ccedil;&atilde;o.' );
 		}
 	
 		if(!isset($sexo)  || strlen(trim($sexo))<=0 || ($sexo!='F' && $sexo!='M')){
@@ -2409,19 +2432,20 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio.' );
 		}
 	
-		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<=10){
+		
+		
+		if(!isset($dataNascimento)  || strlen(trim($dataNascimento))<10){
 			$erro =true;
 			JError::raiseWarning( 100, 'Sexo &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA (EX: 21/04/1983).' );
 		}
-		elseif($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco = intval(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Ymd'));
+		elseif(isset($dataObjetoNascimento)){
+			$dataFormatadaBanco = intval($dataObjetoNascimento->format('Ymd'));
 			$dataHoje = intval(date('Ymd'));
 			if(($dataFormatadaBanco + 180000)>$dataHoje){
 				$erro =true;
 				JError::raiseWarning( 100, 'Cadastro n&ailte;o permitido para menores de idade.' );
 			}
 		}
-	
 		if(!isset($idCidade) || $idCidade==0){
 			$erro =true;
 			JError::raiseWarning( 100, 'Cidade que mora &eacute; um campo obrigat&oacute;rio.' );
@@ -2477,12 +2501,13 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 		}
 		if(!isset($idCidadeNasceu)){
+
 			$erro =true;
 			JError::raiseWarning( 100, 'Cidade que nasceu &eacute; um campo obrigat&oacute;rio.' );
 		}
 		$usuario=null;
 		if($erro){
-			if(isset($id) && $id != 0){
+			if(isset($user) && $user->id != 0){
 				$this->carregarPerfil();
 			}
 			else{
@@ -2500,8 +2525,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		else{
 			$usuario = $this->salvarUsuario($tipo);
-			$sucesso = (isset($usuario) && isset($usuario->id) && $usuario->id != 0);
-			if(!$sucesso){
+			if(!(isset($usuario) && isset($usuario->id) && $usuario->id != 0)){
 				JError::raiseWarning( 100, 'Falha no cadastro.' );
 				if($tipo=='MODELO'){
 					$this->cadastroModelo();
@@ -2516,14 +2540,25 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 		}
 		if($tipo=='MODELO'){
-			$this->salvarModelo($usuario);
+			if(!$this->salvarModelo($usuario)){
+				$this->cadastroModelo();
+				return;
+			}
 		}
 		elseif($tipo=='FOTOGRAFO'){
-			$this->salvarFotografo($usuario);
+			if(!$this->salvarFotografo($usuario)){
+				$this->cadastroFotografo();
+				return;
+			}
 		}
 		else{
-			$this->salvarVisitante($usuario);
+			if(!$this->salvarVisitante($usuario)){
+				$this->cadastroVisitante();
+				return;
+			}
 		}
+		
+		$this->carregarPerfil();
 	}
 	
 	
@@ -2583,11 +2618,11 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$db = JFactory::getDbo ();
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(DateTime::createFromFormat('d/m/Y', $dataNascimento)->format('Y-m-d'));
+			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
 		}
 		
 
-		if ($id != null && $id != 0) { // UPDATE
+		if (isset($usuario) && $usuario->id != 0) { // UPDATE
 			$query = $db->getQuery ( true );
 			$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
 					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
@@ -2622,9 +2657,9 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
 					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
 			))
-			->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
 			$db->setQuery ( $query );
+
 			$db->execute ();
 		} else {
 			$query = $db->getQuery ( true );
@@ -2762,101 +2797,96 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->execute();
 		}
 		
-		if($id != 0){
-			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-				$fileName = $foto_perfil ['name'];
-				$uploadedFileNameParts = explode ( '.', $fileName );
-				$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-					
-				$fileTemp = $foto_perfil ['tmp_name'];
-				$newFileName = $id . '_perfil.' . $uploadedFileExtension;
-				$newfile = $uploadPath . $newFileName;
-				if (JFolder::exists ( $newfile )) {
-					JFile::delete ( $newfile );
-				}
-				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-					$erro = true;
-				} else {
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-							$db->quoteName ( 'foto_perfil' ) . ' = ' . $db->quote ( $newFileName )
-					) )->where ( array (
-							$db->quoteName ( 'id' ) . ' = ' . $id
-					) );
-					$db->setQuery ( $query );
-					$db->execute ();
-				}
-			}
-			
 
-			
-			if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
-				$fileName = $foto_inteira ['name'];
-				$uploadedFileNameParts = explode ( '.', $fileName );
-				$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-			
-				$fileTemp = $foto_inteira ['tmp_name'];
-				$newFileName = $id . '_inteira.' . $uploadedFileExtension;
-				$newfile = $uploadPath . $newFileName ;
-			
-				if (JFolder::exists ( $newfile )) {
-					JFile::delete ( $newfile );
-				}
-			
-				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-					$erro = true;
-				} else {
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-							$db->quoteName ( 'foto_inteira' ) . ' = ' . $db->quote ($newFileName )
-					) )->where ( array (
-							$db->quoteName ( 'id' ) . ' = ' . $id
-					) );
-					$db->setQuery ( $query );
-					$db->execute ();
-				}
+		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+			$fileName = $foto_perfil ['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+				
+			$fileTemp = $foto_perfil ['tmp_name'];
+			$newFileName = $id . '_perfil.' . $uploadedFileExtension;
+			$newfile = $uploadPath . $newFileName;
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
 			}
-			
-			if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
-				$fileName = $foto_inteira_horizontal['name'];
-				$uploadedFileNameParts = explode ( '.', $fileName );
-				$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-					
-				$fileTemp = $foto_inteira_horizontal['tmp_name'];
-				$newFileName = $id . '_inteira_h.' . $uploadedFileExtension;
-				$newfile = $uploadPath . $newFileName;
-					
-				if (JFolder::exists ( $newfile )) {
-					JFile::delete ( $newfile );
-				}
-					
-				if (! JFile::upload ( $fileTemp, $newfile )) {
-					JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-					$erro = true;
-				} else {
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-							$db->quoteName ( 'foto_inteira_horizontal' ) . ' = ' . $db->quote ( $newFileName )
-					) )->where ( array (
-							$db->quoteName ( 'id' ) . ' = ' . $id
-					) );
-					$db->setQuery ( $query );
-					$db->execute ();
-				}
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			} else {
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
+						$db->quoteName ( 'foto_perfil' ) . ' = ' . $db->quote ( $newFileName )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				$db->execute ();
 			}
-			
-			
-			JRequest::setVar ( 'id', $id );
-			JRequest::setVar ( 'view', 'cadastro' );
-			JRequest::setVar ( 'layout', 'sucesso' );
-			parent::display (true, false);
 		}
+		
+
+		
+		if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
+			$fileName = $foto_inteira ['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+		
+			$fileTemp = $foto_inteira ['tmp_name'];
+			$newFileName = $id . '_inteira.' . $uploadedFileExtension;
+			$newfile = $uploadPath . $newFileName ;
+		
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
+			}
+		
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			} else {
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
+						$db->quoteName ( 'foto_inteira' ) . ' = ' . $db->quote ($newFileName )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
+		}
+		
+		if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
+			$fileName = $foto_inteira_horizontal['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+				
+			$fileTemp = $foto_inteira_horizontal['tmp_name'];
+			$newFileName = $id . '_inteira_h.' . $uploadedFileExtension;
+			$newfile = $uploadPath . $newFileName;
+				
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
+			}
+				
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+			} else {
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
+						$db->quoteName ( 'foto_inteira_horizontal' ) . ' = ' . $db->quote ( $newFileName )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
+		}
+		
+		return true;
 	}
 	
 	/**
-	 * Padrão endereço
+	 * Padr&atilde;o endere&ccedil;o
 	 */
 	public function padraoEnderecoJson(){
 		$user = JFactory::getUser();
@@ -2879,7 +2909,7 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
 				if(!$db->execute()){
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 				
 				if($jsonRetorno==""){
@@ -2896,15 +2926,15 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -2940,14 +2970,14 @@ class AngelgirlsController extends JControllerLegacy{
 					$jsonRetorno='{"ok":"ok", "menssagem":""}';
 				}
 				else{
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3049,10 +3079,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 			else{
@@ -3076,10 +3106,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 		}
@@ -3103,7 +3133,7 @@ class AngelgirlsController extends JControllerLegacy{
 /************************************* TELEFONES **********************************/
 	
 	/**
-	 * Padrão endereço
+	 * Padr&atilde;o endere&ccedil;o
 	 */
 	public function padraoTelefoneJson(){
 		$user = JFactory::getUser();
@@ -3126,7 +3156,7 @@ class AngelgirlsController extends JControllerLegacy{
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
 				if(!$db->execute()){
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 	
 				if($jsonRetorno==""){
@@ -3143,15 +3173,15 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3187,14 +3217,14 @@ class AngelgirlsController extends JControllerLegacy{
 					$jsonRetorno='{"ok":"ok", "menssagem":""}';
 				}
 				else{
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3261,7 +3291,7 @@ class AngelgirlsController extends JControllerLegacy{
 					->columns (array (
 							$db->quoteName ( 'tipo' ),
 							$db->quoteName ( 'principal' ),
-							$db->quoteName ( 'email' ),
+							$db->quoteName ( 'operadora' ),
 							$db->quoteName ( 'ddd' ),
 							$db->quoteName ( 'telefone' ),
 							$db->quoteName ( 'id_usuario' ),
@@ -3288,10 +3318,10 @@ class AngelgirlsController extends JControllerLegacy{
 								$jsonRetorno='{"ok":"ok", "menssagem":""}';
 							}
 							else{
-								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 							}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 			else{
@@ -3312,10 +3342,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 		}
@@ -3339,7 +3369,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 /*************** EMAILS ********************************/
 	/**
-	 * Padrão endereço
+	 * Padr&atilde;o endere&ccedil;o
 	 */
 	public function padraoEmailJson(){
 		$user = JFactory::getUser();
@@ -3362,7 +3392,7 @@ class AngelgirlsController extends JControllerLegacy{
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
 				if(!$db->execute()){
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 	
 				if($jsonRetorno==""){
@@ -3379,15 +3409,25 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_email' ))
+					->set(array (
+							$db->quoteName ( 'email' ) . ' = ' . $db->quote('S'),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					$db->execute();
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3423,14 +3463,14 @@ class AngelgirlsController extends JControllerLegacy{
 					$jsonRetorno='{"ok":"ok", "menssagem":""}';
 				}
 				else{
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3506,10 +3546,10 @@ class AngelgirlsController extends JControllerLegacy{
 								$jsonRetorno='{"ok":"ok", "menssagem":""}';
 							}
 							else{
-								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 							}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 			else{
@@ -3527,10 +3567,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 		}
@@ -3553,7 +3593,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 /******************************** REDES SOCIAIS **************************************************/
 	/**
-	 * Padrão endereço
+	 * Padr&atilde;o endere&ccedil;o
 	 */
 	public function padraoRedeSocialJson(){
 		$user = JFactory::getUser();
@@ -3576,7 +3616,7 @@ class AngelgirlsController extends JControllerLegacy{
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
 				if(!$db->execute()){
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 	
 				if($jsonRetorno==""){
@@ -3593,15 +3633,15 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
 					}
 					else{
-						$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3617,11 +3657,11 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery (true);
 	
-		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$id  = JRequest::getString ( 'id' );
 		$jsonRetorno="";
 	
 		$mensagensErro = "";
-	
+
 
 		if(isset($id) && $id!=0){
 			try {
@@ -3638,14 +3678,14 @@ class AngelgirlsController extends JControllerLegacy{
 					$jsonRetorno='{"ok":"ok", "menssagem":""}';
 				}
 				else{
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
 			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel remover a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
 		}
 		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endereço não encontrado."}';
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
 		}
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
@@ -3730,10 +3770,10 @@ class AngelgirlsController extends JControllerLegacy{
 								$jsonRetorno='{"ok":"ok", "menssagem":""}';
 							}
 							else{
-								$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação."}';
+								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 							}
 				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"Não foi possivel salvar a informação ['.$e->getMessage().':'.$e->getCode().']."}';
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
 		}
@@ -3854,10 +3894,18 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function logado(){
-		$db = JFactory::getDbo ();
+		$db = JFactory::getDbo();
+		
+		$perfil = $this->getPerfilLogado();
+
+
+		
 		$query = $db->getQuery ( true );
 		$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
 				->from ('#__timeline')
+				->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
+						( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
+						. '))' )
 				->setLimit(15);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
@@ -3983,6 +4031,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public function nologado(){
 		//Nova modelo
 		$db = JFactory::getDbo ();
+
 		
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
@@ -4051,21 +4100,29 @@ class AngelgirlsController extends JControllerLegacy{
 			->from ('#__content')
 			->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
 			->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+			->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
 			->order('created DESC ')
 			->setLimit(3);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'conteudos', $result );
 		
+		 
+		
 		$query = $db->getQuery ( true );
 		$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias  as slug, catid, language, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
 		->from ('#__content')
 			->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
 			->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
-			->where ( $db->quoteName ( 'catid' ) . ' = 10  ' )
+			->where ( $db->quoteName ( 'catid' ) . ' = ' . $this::CATEGORIA_MAKINGOF )
+			->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
 			->order('created DESC ')
 			->setLimit(4);
 		$db->setQuery ( $query );
+		
+
+		
+		
 		$result = $db->loadObjectList();
 		JRequest::setVar ( 'makingofs', $result );
 		

@@ -40,8 +40,10 @@ function AngelgirlsBuildRoute(&$query)
 
 function AngelgirlsParseRoute($segments)
 {
-	
 
+//	print_r($segments);exit();
+	
+	
 	$vars = array();
 	// Count segments
 	$count = count($segments);
@@ -66,8 +68,20 @@ function AngelgirlsParseRoute($segments)
 	$count=sizeof($segments);
 
 	//Handle View and Identifier
+	
 	switch($segments[0])
 	{
+		
+
+		case 'perfil':
+			$id = explode(':', $segments[$count-1]);
+			$vars['view'] = 'perfil';
+			if(isset($id[0]) && $id[0]!='perfil'){
+				$vars['id'] = (int) $id[0];
+				JRequest::setVar('id',$vars['id']);
+				JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			}
+			break;
 		case 'fotosessao':
 			$id = explode(':', $segments[$count-1]);
 			$vars['id'] = (int) $id[0];
@@ -119,9 +133,12 @@ function AngelgirlsParseRoute($segments)
 			break;
 		default:
 			$id = explode(':', $segments[$count-1]);
-			$vars['id'] = (int) $id[0];
-			$vars['descricao'] = $id[1];
-			JRequest::setVar('id',(int) $id[0]);
+			if($count!=1 ){
+				$vars['id'] = (int) $id[0];
+				$vars['descricao'] = $id[1];
+				JRequest::setVar('id',(int) $id[0]);
+				JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			}
 	}
 
 	return $vars;

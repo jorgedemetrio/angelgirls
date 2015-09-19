@@ -10,7 +10,7 @@ CREATE TABLE `#__angelgirls_album` (
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`titulo` VARCHAR(250) NOT NULL UNIQUE, 
 		
-		`id_foto_capa` varchar(100)  NULL,
+		`id_foto_capa` INT  NULL,
 		
 		`executada` DATE NOT NULL, 
 		`descricao` TEXT NULL , 
