@@ -81,3 +81,7 @@ td.padrao{
 .dropdown-menu .divider {
     border-bottom: 1px solid #C3C3C3;
 }
+
+div > #jform_email1, div > #jform_email2, div > #jform_email1-lbl, div > #jform_email2-lbl{
+	display: none;
+}
