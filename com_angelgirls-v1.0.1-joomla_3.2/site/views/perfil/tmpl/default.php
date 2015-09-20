@@ -144,11 +144,11 @@ input[type="file"]{
 			<span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
 			</a>
 		</li>
-		<li <?php if($focoOn=='REDES'){?>class="active" <?php }?>role="presentation">
-			<a href="#senha" aria-controls="profile"  data-toggle="tab"><span class="hidden-tablet hidden-phone">Troca de </span>Senha
-			<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-			</a>
-		</li>
+<!-- 		<li role="presentation">-->
+<!-- 			<a href="#senha" aria-controls="profile"  data-toggle="tab"><span class="hidden-tablet hidden-phone">Troca de </span>Senha -->
+<!-- 			<span class="glyphicon glyphicon-lock" aria-hidden="true"></span> -->
+<!-- 			</a> -->
+<!-- 		</li> -->
 	</ul>
 	<div class="tab-content" style="overflow: auto;">
 		<div id="general" class="tab-pane fade in active">
@@ -584,23 +584,24 @@ input[type="file"]{
 	    	<form id="formSenha" name="formSenha">
 				<div class="btn-group pull-right" role="group">
 					<div class="btn-group" role="group">
-						<button class="btn btn-success fade in" type="button" id="btnAdicionarRedeSocial" name="btnAdicionarRedeSocial" title="Adicionar endere&ccedil;o novo"><span class="hidden-phone">Nova<span class="hidden-tablet"> Rede Social</span></span>
-							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						<button class="btn btn-success fade in" type="button" id="btnAdicionarRedeSocial" name="btnAdicionarRedeSocial" title="Trocar a senha"><span class="hidden-phone">Trocar a senha</span>
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 						</button>
 					</div>
 				</div>
 		    	<h3><?php echo JText::_('Gerenciar E-Mails'); ?></h32>
 				<div>
-					<div class="form-group col-xs-12 col-sm-3 col-md-2 col-lg-2">
-						<label class="control-label" for="rede"><?php echo JText::_('Senha'); ?></label>
+					<div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+						<label class="control-label" for="rede"><?php echo JText::_('Senha anterior'); ?></label>
+						<input class="form-control" style="width: 90%;" type="password" name="oldpassword"  id="oldpassword" maxlength="20"/>
+					</div>
+					<div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+						<label class="control-label" for="rede"><?php echo JText::_('Nova Senha'); ?></label>
 						<input class="form-control" style="width: 90%;" type="password" name="password"  id="password" maxlength="20"/>
 					</div>
-					<div class="form-group col-xs-12 col-sm-9 col-md-10 col-lg-10">
+					<div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
 						<label class="control-label" for="contato"><?php echo JText::_('Confirmar Senha'); ?></label>
 						<input class="form-control" style="width: 90%;" type="password" name="password1"  id="password1" maxlength="20"/>
-					</div>
-					<div id="tabelaRedesSociais" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 table-responsive">
-<?php require_once 'redesociais.php';?>
 					</div>
 				</div>
 			</form>

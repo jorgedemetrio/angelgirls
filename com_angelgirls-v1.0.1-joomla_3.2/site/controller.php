@@ -1844,19 +1844,25 @@ class AngelgirlsController extends JControllerLegacy{
 	 */
 	private function salvarUsuario($tipo){
 		$user = JFactory::getUser();
+		$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+		$senha = trim(JRequest::getString( 'password', '', 'POST' ));
+		$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));		
+		$nome = trim(JRequest::getString( 'name', null, 'POST' ));
+		
+		
 		if(!isset($user) || !isset($user->id) || $user->id==0){
 			$user = JFactory::getUser(0);
-		}
-		$usersParams = JComponentHelper::getParams('com_users');
-		$userdata = array();
-		$userdata['username'] = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
-		$defaultUserGroup = $usersParams->get('new_usertype', 2);
-		if(!isset($user) || !isset($user->id) || $user->id==0){
+
+			$usersParams = JComponentHelper::getParams('com_users');
+			$userdata = array();
+			$userdata['username'] = $usuario;
+			$defaultUserGroup = $usersParams->get('new_usertype', 2);
+
 			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
 			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
-			$userdata['name'] = JRequest::getString( 'name', null, 'POST' );
-			$userdata['password'] = trim(JRequest::getString( 'password', '', 'POST' ));
-			$userdata['password2'] = JRequest::getString( 'password1', null, 'POST' );
+			$userdata['name'] = $nome;
+			$userdata['password'] = $senha;
+			$userdata['password2'] = $senha2;
 			$userdata['block'] = 0;
 			
 			if(strtolower($tipo)=='fotografo'){
@@ -1868,11 +1874,16 @@ class AngelgirlsController extends JControllerLegacy{
 			else{
 				$userdata['groups']=array($defaultUserGroup);
 			}
+			if (!$user->bind($userdata)) {
+				JError::raiseWarning(100,JText::_( $user->getError()));
+				return null;
+			}
 		}
-		if (!$user->bind($userdata)) {
-			JError::raiseWarning(100,JText::_( $user->getError()));
+		else{
+			$user->name = $nome;
 		}
-		elseif (!$user->save()) {
+
+		if (!$user->save()) {
 			JError::raiseWarning(100, JText::_( $user->getError())); 
 		}
 		return $user;
@@ -3412,13 +3423,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
 					$query = $db->getQuery ( true );
-					$query->update($db->quoteName('#__angelgirls_email' ))
-					->set(array (
-							$db->quoteName ( 'email' ) . ' = ' . $db->quote('S'),
-							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
-							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
-							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$query->update($db->quoteName('#__users' ))
+						->set(array (
+							$db->quoteName ( 'email' ) . ' = (SELECT email FROM #__angelgirls_email WHERE id = '.$id.' )')) 
+						->where ($db->quoteName ( 'id' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
 					$db->execute();
 				}
@@ -4147,5 +4155,58 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'view', 'home' );
 		JRequest::setVar ( 'layout', 'default' );
 		parent::display (true, false);
+	}
+	
+	
+	public function trocarSenha(){
+		$db = JFactory::getDbo();
+		$user = JFactory::getUser();
+		
+		
+		
+		
+		$user = JFactory::getUser();
+		$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+		$senha = trim(JRequest::getString( 'password', '', 'POST' ));
+		$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));
+		$nome = trim(JRequest::getString( 'name', null, 'POST' ));
+		if(!isset($user) || !isset($user->id) || $user->id==0){
+			$user = JFactory::getUser(0);
+		
+			$usersParams = JComponentHelper::getParams('com_users');
+			$userdata = array();
+			$userdata['username'] = $usuario;
+			$defaultUserGroup = $usersParams->get('new_usertype', 2);
+		
+			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
+			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
+			$userdata['name'] = $nome;
+			$userdata['password'] = $senha;
+			$userdata['password2'] = $senha2;
+			$userdata['block'] = 0;
+				
+			if(strtolower($tipo)=='fotografo'){
+				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
+			}
+			elseif(strtolower($tipo)=='modelo'){
+				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
+			}
+			else{
+				$userdata['groups']=array($defaultUserGroup);
+			}
+			if (!$user->bind($userdata)) {
+				JError::raiseWarning(100,JText::_( $user->getError()));
+				return null;
+			}
+		}
+		else{
+			$user->name = $nome;
+		}
+		
+		if (!$user->save()) {
+			JError::raiseWarning(100, JText::_( $user->getError()));
+		}
+		return $user;
+		
 	}
 }
