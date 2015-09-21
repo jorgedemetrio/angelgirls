@@ -341,6 +341,8 @@ CREATE TABLE `#__angelgirls_figurino` (
 	`titulo` VARCHAR(250) NOT NULL,
 	`descricao` TEXT NULL , 
 	
+	`nome_foto` varchar(100)  NULL,
+	
 	`audiencia_gostou` INT DEFAULT 0,
 	`audiencia_ngostou` INT DEFAULT 0,
 	`audiencia_view` INT DEFAULT 0,
@@ -366,7 +368,7 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`comentario_modelos` TEXT NULL , 
 		`comentario_equipe` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
-		
+		`token` VARCHAR(120) NULL,
 		
 		`id_agenda` INT,
 		`id_tema` INT NULL,
@@ -389,9 +391,27 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL ,
-		FOREIGN KEY (`id_usuario_criador`) REFERENCES `test2_users` (`id`),
-		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `test2_users` (`id`)
+		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `#__angelgirls_mensagens` ( 
+		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+		`id_resposta` INT, 
+		`titulo` VARCHAR(250) NOT NULL, 
+		`id_usuario_destino` INT NOT NULL ,
+		`mensagem` TEXT  NOT NULL , 
+		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+		`id_usuario_remetente` INT NOT NULL , 
+ 		`data_criado` DATETIME NOT NULL,
+ 		FOREIGN KEY (`id_usuario_remetente`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_usuario_destino`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_resposta`) REFERENCES `#__angelgirls_mensagens` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
 
 CREATE TABLE `#__angelgirls_foto_sessao` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
@@ -399,6 +419,10 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL, 
+		`token` VARCHAR(120) NULL,
+		
+		`possui_nudes` CHAR(1) DEFAULT 'S',
+		`area_vip` CHAR(1) DEFAULT 'S',
 		
 		`id_sessao` INT NOT NULL,
 		`ordem` INT,
@@ -406,6 +430,9 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
 		`audiencia_view` INT DEFAULT 0,
+		
+		
+		
 		
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
@@ -421,9 +448,9 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		FOREIGN KEY (`id_fotografo_secundario`) REFERENCES `#__angelgirls_fotografo` (`id`),
 		FOREIGN KEY (`id_figurino_principal`) REFERENCES `#__angelgirls_figurino` (`id`),
 		FOREIGN KEY (`id_figurino_secundario`) REFERENCES `#__angelgirls_figurino` (`id`),
-		FOREIGN KEY (`id_usuario_criador`) REFERENCES `test2_users` (`id`),
-		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `test2_users` (`id`),
-		FOREIGN KEY (`id_sessao`) REFERENCES `test2_angelgirls_sessao` (`id`)
+		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_post` (
@@ -447,6 +474,9 @@ CREATE TABLE `#__angelgirls_comentario_post` (
 	`id_usuario` INT NOT NULL,
 	`id_post` INT NOT NULL,
 	`texto` TEXT NOT NULL , 
+	
+	`tipo` VARCHAR(20) NULL,
+	`codigo` VARCHAR(20) NULL,
 	
 	`audiencia_gostou` INT DEFAULT 0,
 	`audiencia_ngostou` INT DEFAULT 0,
@@ -481,9 +511,7 @@ CREATE TABLE `#__angelgirls_promocao` (
 		`data_alterado` DATETIME NOT NULL  
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
-DROP TABLE `#__angelgirls_galeria`;
-DROP TABLE `#__angelgirls_foto_galeria`;
-DROP TABLE `#__angelgirls_vt_foto_galeria`;
+
 
 
 
@@ -496,7 +524,7 @@ CREATE TABLE `#__angelgirls_album` (
 		`executada` DATE NOT NULL, 
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL , 
-		
+		`token` VARCHAR(120) NULL,
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
 		`audiencia_view` INT DEFAULT 0,
@@ -516,11 +544,14 @@ CREATE TABLE `#__angelgirls_album` (
 CREATE TABLE `#__angelgirls_foto_album` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`titulo` VARCHAR(250) NOT NULL, 
-		`token` VARCHAR(250) NOT NULL,
 		`nome_arquivo` VARCHAR(250) NOT NULL,
 		`descricao` TEXT NULL , 
-		`meta_descricao` VARCHAR(250) NOT NULL, 
+		`meta_descricao` VARCHAR(250) NOT NULL,
 		`id_album` INT NOT NULL,
+		`token` VARCHAR(120) NULL,
+		`possui_nudes` CHAR(1) DEFAULT 'S',
+		`area_vip` CHAR(1) DEFAULT 'S',
+		
 		`ordem` INT,
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,

@@ -13,7 +13,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 // Torne-se modelo, fotografo ou vistor
 // Promoções
 $conteudos = JRequest::getVar ( 'conteudos' );
-
+$perfil = JRequest::getVar ( 'perfil' );
 ?>
 <div class="row">
 	<div id="menulogado" class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -24,7 +24,36 @@ $conteudos = JRequest::getVar ( 'conteudos' );
 
 </div>
 <div class="row">
-	<div id="esquerdo" class="col col-xs-12 col-sm-3 col-md-3 col-lg-2"></div>
+	<div id="esquerdo" class="col col-xs-12 col-sm-3 col-md-3 col-lg-2">
+		<div>
+			<gcse:searchbox-only resultsUrl="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=busca',false));?>" newWindow="false"
+			enableHistory="true" autoCompleteMaxCompletions="5" autoCompleteMatchType='any'></gcse:searchbox-only>
+		</div>
+		<ul class="nav nav-pills  nav-stacked">
+		  <li role="presentation" class="active"> <a href="#"><span class="glyphicon glyphicon-home"></span><span class="hidden-phone"> Home <?php echo(strtolower( $perfil->tipo)); ?></span> </a></li>
+		  <li role="presentation"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPerfil'));?>"><span class="glyphicon glyphicon-user"></span><span class="hidden-phone"> Editar meu Perfil</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-inbox"></span><span class="hidden-phone"> Messages</span></a></li>
+		  
+<?php if($perfil->tipo=='MODELO' || $perfil->tipo=='FOTOGRAFO' ):?>		  
+		  <li role="presentation">
+		  	<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-camera"></span><span class="hidden-phone"> Sess&otilde;es</span></a>
+		    <ul class="dropdown-menu">
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarEditarSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Nova Sess&atilde;o</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessoes&somente_minha=SIM'));?>">Minhas Sess&otilde;es</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessoes'));?>">Todas</a></li>
+		    </ul>
+		  </li>
+<?php endif;?>
+		  <li role="presentation">
+		  	<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-picture"></span><span class="hidden-phone"> Albuns</span></a>
+		    <ul class="dropdown-menu">
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=novaSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Novo Album</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarAlbuns&somente_minha=SIM'));?>">Meus Albuns</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarAlbuns'));?>">Todos</a></li>
+		    </ul>
+		  </li>
+		</ul>
+	</div>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
 		<div class="thumbnail">
 			Mural

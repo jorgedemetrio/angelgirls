@@ -46,10 +46,9 @@ class AngelgirlsViewbusca extends JViewLegacy
 	protected function addToolBar() 
 	{
 			
-		$termo =& JRequest::getVar('q');
 		
 		$app = JFactory::getApplication();
-		$document =& JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$pathway = $app->getPathway();
 		$pathway->addItem('Busca por '.$termo, JRoute::_('index.php?option=com_angelgirls&view=busca&q='.$termo));
 

@@ -302,18 +302,7 @@ $perfil = JRequest::getVar('perfil');
 </div>
 <h2>Fotos</h2>
 <div class="row"  id="linha">
-	<?php
-	$count = 0;
-	foreach($fotos as $foto): 
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':foto-sensual-'.strtolower(str_replace(" ","-",$foto->titulo))); 
-		$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$conteudo->id.'-thumbnail'); ?>
-
-		<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail">
-    		<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" /></a>
-    	</div>
-	<?php
-	endforeach; 
-	?>
+<?php require_once 'fotos.php'; ?>
 </div>
 <div class="row" id="carregando" style="display: none">
 	<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">

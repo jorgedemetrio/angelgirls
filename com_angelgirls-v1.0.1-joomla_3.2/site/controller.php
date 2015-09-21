@@ -966,6 +966,44 @@ class AngelgirlsController extends JControllerLegacy{
 			return true;
 		}
 	}
+	
+	
+	/**
+	 * TODO
+	 */
+	public function TemMensagenNaoLidaJson(){
+		
+	}
+	
+	/**
+	 * TODO
+	 */
+	public function inbox(){
+		
+		JRequest::setVar( 'view', 'inbox');
+		JRequest::setVar( 'layout', 'default');
+		parent::display();
+	}
+	
+	/**
+	 * TODO
+	 */
+	public function carregarMensagem(){
+	
+		JRequest::setVar( 'view', 'inbox');
+		JRequest::setVar( 'layout', 'mensagem');
+		parent::display();
+	}
+	
+	/**
+	 * TODO
+	 */
+	public function enviarMensagem(){
+	
+		JRequest::setVar( 'view', 'inbox');
+		JRequest::setVar( 'layout', 'enviado');
+		parent::display();
+	}
 
 	
 	public function carregarFoto(){
@@ -1043,6 +1081,136 @@ class AngelgirlsController extends JControllerLegacy{
 	/**
 	 * 
 	 */
+	public function carregarEditarSessao(){
+		$id = JRequest::getString('id',0);
+		if(!(strpos($id,':')===false)){
+			$id = explode(':',$id)[0];
+		}
+		$user = JFactory::getUser();
+		
+		
+		$perfil = $this->getPerfilLogado();
+		
+		if(!isset($perfil)){
+			$this->nologado();
+			return;
+		}
+		
+		if($perfil->tipo != 'MODELO' && $perfil->tipo != 'FOTOGRAFO'){
+			JError::raiseWarning(100,JText::_('Área permitida apenas para modelos ou fotografos.'));
+			$this->logado();
+			return;
+		}
+		
+		JRequest::setVar ('modelos', $this->getAllModelos() );
+		
+		JRequest::setVar ('fotografos', $this->getAllFotografos() );
+		JRequest::setVar ('temas', $this->getAllTemas());
+		JRequest::setVar ('figurinos', $this->getAllFigurinos());
+		JRequest::setVar ('locacoes', $this->getAllLocacoes());
+		
+		JRequest::setVar ('perfil', $this->getPerfilLogado() );
+		
+		$sessao = $this->getSessaoById($id);
+		
+		if(isset($sessao) && $sessao->status_dado == StatusDado::PUBLICADO){
+			JError::raiseWarning(100,JText::_('A Sessão que tentou acessar já foi publicada por isso não pode ser editada.'));
+			$sessao == null;
+			$id = 0;
+		}
+		
+		JRequest::setVar ( 'sessao', $sessao);
+		
+		
+		
+		JRequest::setVar ( 'fotos', $this->runFotoSessao($user, 0, $id, $this::LIMIT_DEFAULT) );
+		
+		JRequest::setVar('view', 'sessoes');
+		JRequest::setVar('layout', 'editar');
+		parent::display();
+	}
+	
+	/**
+	 * 
+	 */
+	public function salvarSessao(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		
+
+
+	
+		JRequest::setVar('view', 'sessoes');
+		JRequest::setVar('layout', 'editar');
+		parent::display();
+	}
+
+	
+	/**
+	 *
+	 */
+	public function enviarFotosSessao(){
+	
+		JRequest::setVar('view', 'sessoes');
+		JRequest::setVar('layout', 'editar');
+		parent::display();
+	}
+	
+	
+	
+	private function getSessaoById($id ){
+		$db = JFactory::getDbo ();
+		$user = JFactory::getUser();
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
+			`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
+			`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
+			`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
+			`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
+			`tema`.`nome` AS `nome_tema`,`tema`.`descricao` AS `descricao_tema`,`tema`.`nome_foto` AS `foto_tema`,`tema`.`audiencia_gostou` AS `gostou_tema`,
+			CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_sessao`,
+			CASE isnull(`vt_fo1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot1`,
+			CASE isnull(`vt_fo2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot2`,
+			CASE isnull(`mod1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod1`,
+			CASE isnull(`mod2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod2`,
+			`fot1`.`nome_artistico` AS `fotografo1`,`fot1`.`audiencia_gostou` AS `gostou_fot1`,`fot1`.`nome_foto` AS `foto_fot1`, `fot1`.`meta_descricao` AS `desc_fot1` ,
+			`fot2`.`nome_artistico` AS `fotografo2`,`fot2`.`audiencia_gostou` AS `gostou_fot2`,`fot2`.`nome_foto` AS `foto_fot2`, `fot2`.`meta_descricao` AS `desc_fot1` ,
+			`loc`.`nome` AS `nome_locacao`,`loc`.`nome_foto` AS `foto_locacao`,`loc`.`audiencia_gostou` AS `gostou_locacao`,
+			`mod1`.`nome_artistico` AS `modelo1`,`mod1`.`foto_perfil` AS `foto_mod1`,`mod1`.`audiencia_gostou` AS `gostou_mo1`, `mod1`.`meta_descricao` AS `desc_mo1` ,
+			`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` ,
+			`fig1`.`titulo` AS `figurino1`,`fig1`.`audiencia_gostou` AS `gostou_fig1`,
+			`fig2`.`titulo` AS `figurino2`,`fig2`.`audiencia_gostou` AS `gostou_fig2`')
+			->from ('#__angelgirls_sessao AS s')
+			->join ( 'INNER', '#__angelgirls_modelo AS mod1 ON (mod1.id = s.id_modelo_principal)' )
+			->join ( 'INNER', '#__angelgirls_fotografo AS fot1 ON (fot1.id = s.id_fotografo_principal)' )
+			->join ( 'LEFT', '#__angelgirls_tema AS tema  ON (tema.id = s.id_tema)' )
+			->join ( 'LEFT', '#__angelgirls_modelo AS mod2 ON (mod2.id = s.id_modelo_secundaria)' )
+			->join ( 'LEFT', '#__angelgirls_figurino AS fig1 ON (fig1.id = s.id_figurino_principal)' )
+			->join ( 'LEFT', '#__angelgirls_figurino AS fig2 ON (fig2.id = s.id_figurino_secundario)' )
+			->join ( 'LEFT', '#__angelgirls_locacao AS loc ON (loc.id = s.id_locacao)' )
+			->join ( 'LEFT', '#__angelgirls_fotografo AS fot2 ON (fot2.id = s.id_fotografo_secundario)' )
+			->join ( 'LEFT', '(SELECT data_criado, id_sessao FROM #__angelgirls_vt_sessao WHERE id_usuario='.$user->id.') vt_sessao ON s.id = vt_sessao.id_sessao')
+			->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo1 ON fot1.id = vt_fo1.id_fotografo')
+			->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo2 ON fot2.id = vt_fo2.id_fotografo')
+			->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod1 ON mod1.id = vt_mod1.id_modelo')
+			->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON mod2.id = vt_mod2.id_modelo')
+			->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+			->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+			->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
+		
+		
+		
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		return $result; 
+	}
+	
+	
+	/**
+	 * 
+	 */
 	public function carregarSessao(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
@@ -1053,49 +1221,9 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 
 
-		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
-						`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
-						`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
-						`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
-						`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
-						`tema`.`nome` AS `nome_tema`,`tema`.`descricao` AS `descricao_tema`,`tema`.`nome_foto` AS `foto_tema`,`tema`.`audiencia_gostou` AS `gostou_tema`,
-						CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_sessao`,
-						CASE isnull(`vt_fo1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot1`,
-						CASE isnull(`vt_fo2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot2`,
-						CASE isnull(`mod1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod1`,
-						CASE isnull(`mod2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod2`,
-						`fot1`.`nome_artistico` AS `fotografo1`,`fot1`.`audiencia_gostou` AS `gostou_fot1`,`fot1`.`nome_foto` AS `foto_fot1`, `fot1`.`meta_descricao` AS `desc_fot1` ,
-						`fot2`.`nome_artistico` AS `fotografo2`,`fot2`.`audiencia_gostou` AS `gostou_fot2`,`fot2`.`nome_foto` AS `foto_fot2`, `fot2`.`meta_descricao` AS `desc_fot1` ,
-						`loc`.`nome` AS `nome_locacao`,`loc`.`nome_foto` AS `foto_locacao`,`loc`.`audiencia_gostou` AS `gostou_locacao`,
-						`mod1`.`nome_artistico` AS `modelo1`,`mod1`.`foto_perfil` AS `foto_mod1`,`mod1`.`audiencia_gostou` AS `gostou_mo1`, `mod1`.`meta_descricao` AS `desc_mo1` ,
-						`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` ,
-						`fig1`.`titulo` AS `figurino1`,`fig1`.`audiencia_gostou` AS `gostou_fig1`,
-						`fig2`.`titulo` AS `figurino2`,`fig2`.`audiencia_gostou` AS `gostou_fig2`')
-				->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
-				->join ( 'INNER', $db->quoteName ( '#__angelgirls_modelo', 'mod1' ) . ' ON (' . $db->quoteName ( 'mod1.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_principal' ) . ')' )
-				->join ( 'INNER', $db->quoteName ( '#__angelgirls_fotografo', 'fot1' ) . ' ON (' . $db->quoteName ( 'fot1.id' ) . ' = ' . $db->quoteName ( 's.id_fotografo_principal' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_tema', 'tema' ) . ' ON (' . $db->quoteName ( 'tema.id' ) . ' = ' . $db->quoteName ( 's.id_tema' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_modelo', 'mod2' ) . ' ON (' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName ( 's.id_modelo_secundaria' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig1' ) . ' ON (' . $db->quoteName ( 'fig1.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_principal' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_figurino', 'fig2' ) . ' ON (' . $db->quoteName ( 'fig2.id' ) . ' = ' . $db->quoteName ( 's.id_figurino_secundario' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_locacao', 'loc' ) . ' ON (' . $db->quoteName ( 'loc.id' ) . ' = ' . $db->quoteName ( 's.id_locacao' ) . ')' )
-				->join ( 'LEFT', $db->quoteName ( '#__angelgirls_fotografo', 'fot2' ) . ' ON (' . $db->quoteName ( 'fot2.id' ) . ' = ' . $db->quoteName ( 's.id_fotografo_secundario' ) . ')' )
-				->join ( 'LEFT', '(SELECT data_criado, id_sessao FROM #__angelgirls_vt_sessao WHERE id_usuario='.$user->id.') vt_sessao ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName('vt_sessao.id_sessao'))
-				->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo1 ON ' . $db->quoteName ( 'fot1.id' ) . ' = ' . $db->quoteName('vt_fo1.id_fotografo'))
-				->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo2 ON ' . $db->quoteName ( 'fot2.id' ) . ' = ' . $db->quoteName('vt_fo2.id_fotografo'))
-				->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod1 ON ' . $db->quoteName ( 'mod1.id' ) . ' = ' . $db->quoteName('vt_mod1.id_modelo'))
-				->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON ' . $db->quoteName ( 'mod2.id' ) . ' = ' . $db->quoteName('vt_mod2.id_modelo'))				
-				->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
-				->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
-				->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
+
 		
-		
-		
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		
-		
+		$result = $this->getSessaoById($id);
 
 		if(!isset($result)){
 			$this->RegistroNaoEncontado();
@@ -1136,20 +1264,13 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$results = $this->runFotoSessao($user, $posicao, $id,$this::LIMIT_DEFAULT );
 		
+		JRequest::setVar('fotos', $results);
 		
-		header('Content-Type: text/html; charset=utf8');
-		foreach($results as $foto){ 
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':'.strtolower(str_replace(" ","-",$foto->titulo))); 
-		$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$foto->sessao.'thumbnail');?>
-<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail">
-	<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" /></a>
-</div>
-<?php
-		}
- 		$contador = sizeof($results);
- 		if($contador>0):
- 			echo("<script>lidos+=$contador\n</script>");
- 		endif;
+		
+		
+		require_once 'views/sessoes/tmpl/fotos.php';		
+
+
 		exit();	
 	}
 	
@@ -1315,7 +1436,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	public function runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem ){
 		$db = JFactory::getDbo ();
-		
+		$user = JFactory::getUser();
 		$query = $db->getQuery ( true );
 		$query->select("`s`.`id` AS `id`,
 					`s`.`titulo` AS `nome`,
@@ -1328,7 +1449,7 @@ class AngelgirlsController extends JControllerLegacy{
 		)
 		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
 		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
-		->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+		->where ('(s.status_dado  IN (' . $db->quote(StatusDado::PUBLICADO) . ') OR (s.id_usuario_criador = '.$user->id.' AND  s.status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . '))')
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " );
 		
 		if(isset($nome) && trim($nome) != ""){
@@ -1395,50 +1516,96 @@ class AngelgirlsController extends JControllerLegacy{
 		
 
 		$results = $this->runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem );
-		header('Content-Type: text/html; charset=utf8');
-		
-
-
-		foreach($results as $conteudo){ ?>
-<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-2">
-	<div class="thumbnail">
-	<?php  
-	$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias))); 
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->id.':ico');
-	?>
-						<h5 class="list-group-item-heading"
-			style="width: 100%; text-align: center; background-color: grey; color: white; padding: 10px;">
-			<a href="<?php echo($url);?>" style="color: white;"><?php echo($conteudo->nome);?></a>
-				<div class="gostar" data-gostei='<?php echo($conteudo->eu);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->gostou);?>'></div></h5>
-	<?php 			if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-						<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" 	title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" /></a>
-					<?php 
-					}?>
-					<div class="caption">
-
-			<p class="text-center"><?php echo($conteudo->descricao);?></p>
-			<p class="text-center">
-				<a href="<?php echo($url);?>" class="btn btn-primary" role="button"
-					style="text-overflow: ellipsis; max-width: 150px; overflow: hidden; direction: ltr;"><?php echo($conteudo->nome);?>
-	
-					</a>
-			</p>
-		</div>
-	</div>
-</div>
-<?php
-		}
-		$contador = sizeof($results);
-		echo("<script>lidos+=$contador\n");
-		if($contador<$this::LIMIT_DEFAULT):
-			echo('jQuery("#carregando").css("display","none");temMais=false;');	
-		endif;
-		echo("</script>");
-		
+		JRequest::setVar ( 'sessoes', $results );
+		require_once 'views/sessoes/tmpl/sessoes_html.php';
 		exit();		
 	}
 	
 	
+	private function getAllModelos(){
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','nome_artistico','nome_artistico','foto_perfil'),
+				array('id','nome','alias','foto')))
+				->from ('#__angelgirls_modelo')
+				->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+				->where ( $db->quoteName ( 'status_dado' ) . '  IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+				->where ( $db->quoteName ( 'foto_perfil' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'foto_perfil' ) . " <> '' " )
+				->order('nome_artistico')
+				->setLimit(5000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results; 
+	}
+	
+	private function getAllTemas(){
+		$db = JFactory::getDbo ();
+		$user = JFactory::getUser();
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','nome','descricao','nome_foto'),
+				array('id','nome','descricao','foto')))
+			->from ('#__angelgirls_tema')
+				->where ('((status_dado IN (' . $db->quote(StatusDado::ATIVO) . ')) OR (id_usuario_criador = '.$user->id.' AND status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ')))' )
+			->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+			->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+			->order('nome')
+			->setLimit(5000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
+	
+	
+	private function getAllLocacoes(){
+		$db = JFactory::getDbo ();
+		$user = JFactory::getUser();
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','nome','descricao','nome_foto','endereco','numero','cep'),
+				array('id','nome','descricao','foto','endereco','numero','cep')))
+				->from ('#__angelgirls_locacao')
+				->where ('((status_dado IN (' . $db->quote(StatusDado::ATIVO) . ')) OR (id_usuario_criador = '.$user->id.' AND status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ')))' )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+				->order('nome')
+				->setLimit(5000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
+	
+	private function getAllFigurinos(){
+		$db = JFactory::getDbo ();
+		$user = JFactory::getUser();
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','titulo','descricao','nome_foto'),
+				array('id','nome','descricao','foto')))
+				->from ('#__angelgirls_figurino')
+				->where ('((status_dado IN (' . $db->quote(StatusDado::ATIVO) . ')) OR (id_usuario_criador = '.$user->id.' AND status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ')))' )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+				->order('titulo')
+				->setLimit(5000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
+	
+	private function getAllFotografos(){
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select($db->quoteName(array('id','nome_artistico','nome_artistico','nome_foto'),
+				array('id','nome','alias','foto')))
+				->from ('#__angelgirls_fotografo')
+				->where ( $db->quoteName ( 'status_dado' ) . '  IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+				->order('nome_artistico')
+				->setLimit(5000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+		return $results;
+	}
 	
 	public function carregarSessoes(){
 		$user = JFactory::getUser();
@@ -1453,41 +1620,11 @@ class AngelgirlsController extends JControllerLegacy{
 		$ordem = JRequest::getInt( 'ordem', null);
 		$db = JFactory::getDbo ();
 		
-		$results  = $this->runQueryFilterSessoes($user, $nome, 0, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem );
-		
-		
-		JRequest::setVar ( 'sessoes', $results );
-		
+		JRequest::setVar ( 'sessoes', $this->runQueryFilterSessoes($user, $nome, 0, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem ));
 
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','nome_artistico','nome_artistico','foto_perfil'),
-				array('id','nome','alias','foto')))
-				->from ('#__angelgirls_modelo')
-				->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
-				->where ( $db->quoteName ( 'status_dado' ) . '  IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
-				->where ( $db->quoteName ( 'foto_perfil' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'foto_perfil' ) . " <> '' " )
-				->order('nome_artistico')
-				->setLimit(5000);
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'modelos', $results );
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','nome_artistico','nome_artistico','nome_foto'),
-				array('id','nome','alias','foto')))
-				->from ('#__angelgirls_fotografo')
-				->where ( $db->quoteName ( 'status_dado' ) . '  IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
-				->order('nome_artistico')
-				->setLimit(5000);
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		JRequest::setVar ( 'fotografos', $results );
+		JRequest::setVar ( 'modelos', $this->getAllModelos() );
+
+		JRequest::setVar ( 'fotografos', $this->getAllFotografos() );
 		
 		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
 		
@@ -3905,15 +4042,21 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		
 		$perfil = $this->getPerfilLogado();
-
-
+		
+		if(!isset($perfil)){
+			$this->nologado();
+			return;
+		}
+			
+			
+		JRequest::setVar ( 'perfil', $perfil );
 		
 		$query = $db->getQuery ( true );
 		$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
 				->from ('#__timeline')
 				->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
 						( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
-						. '))' )
+						. ') OR (tipo<>\'CONTENT\'))' )
 				->setLimit(15);
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
@@ -3921,7 +4064,6 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'view', 'home' );
 		JRequest::setVar ( 'layout', 'logado' );
 		parent::display ();
-		//$this->nologado();
 	}
 	
 	
@@ -4207,6 +4349,9 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning(100, JText::_( $user->getError()));
 		}
 		return $user;
-		
 	}
+	
+	
+
+		
 }

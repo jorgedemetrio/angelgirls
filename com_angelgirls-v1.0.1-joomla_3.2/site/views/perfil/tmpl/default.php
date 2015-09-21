@@ -41,7 +41,7 @@ $focoOn = JRequest::getVar('focoOn');
 if(!isset($focoOn)){
 	$focoOn='BASICO';
 }
-$urlCarregar = JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ).'&focoOn=', false );
+$urlCarregar = JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ), false ).'&focoOn=';
 
 
 $imagemRosto = "";
@@ -68,7 +68,7 @@ JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angel
 JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css');
 
 
-JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/perfil.js');
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/perfil.js?v='.VERSAO_ANGELGIRLS);
 
 //Mais informações da API em http://formvalidator.net/
 JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js');
@@ -96,8 +96,7 @@ input[type="file"]{
 	
 	<div class="btn-group pull-right" role="group">
 		<div class="btn-group" role="group">
-			<button  class="btn btn-danger" type="button" onclick="JavaScript:window.history.back(-1);"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
-				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+			<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
 			</button>
 			<button  class="btn btn-success" type="submit"><span class="hidden-phone">Salvar<span class="hidden-tablet"> Cadastro</span></span>
 				<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
