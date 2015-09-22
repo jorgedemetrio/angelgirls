@@ -120,12 +120,10 @@ input[type=\'file\']{
 					<label class="control-label"  for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?></label>
 					<textarea class="required form-control" style="width: 90%;" rows="8" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"><?php echo JRequest::getVar('meta_descricao');?></textarea>
 				</div>
-
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="telefone"><?php echo JText::_('Telefone'); ?></label>
 					<input class="form-control required validate-telefone" style="width: 90%;" type="text" name="telefone"  id="telefone" size="32" maxlength="25" value="<?php echo JRequest::getVar('telefone');?>" title="<?php echo JText::_('(11) 99000-0000'); ?>" placeholder="<?php echo JText::_('(11) 99000-0000'); ?>"/>
 				</div>
-
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="username"><?php echo JText::_('Usu&aacute;rio'); ?></label>
 					<input class="form-control required validate-username" style="width: 90%;" type="text" name="username"  id="username" size="32" maxlength="25" value="<?php echo JRequest::getVar('username');?>" title="<?php echo JText::_('Usu&aacute;rio'); ?>" placeholder="<?php echo JText::_('Usu&aacute;rio'); ?>"/>

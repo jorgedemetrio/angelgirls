@@ -82,16 +82,16 @@ $this->item = $conteudo;
 			<h2>Detalhe sess&atilde;o</h2>
 	<?php if(!isset($this->item) || $this->item->id == 0) :?>
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<label class="control-label"  for="termos"><?php echo JText::_('Termos para publicar a sess&atilde;o'); ?></label>
-				<input class="form-control"   data-validation="required" type="checkbox" name="termos"  id="termos" title="Termos para publicar a sess&atilde;o, ao clicar nesse item indica que est&aacute; de acordo." style="text-align: left; width: 30px"/>
+				<label class="control-label" for="termos"><?php echo JText::_('Ao clicar aqui declaro que aceito todas as condi&ccedil;&otilde;es e termos de publica&ccedil;&atilde;o de uma sess&atilde;o neste site.'); ?></label>
+				<input class="form-control"  data-validation="required" type="checkbox" name="termos"  id="termos" title="Termos para publicar a sess&atilde;o, ao clicar nesse item indica que est&aacute; de acordo." style="text-align: left; width: 30px"/>
 			</div>
 	<?php endif;?>			
 			<div class="form-group col-xs-12 col-sm-8 col-md-8 col-lg-8">
-				<label class="control-label"  for="titulo"><?php echo JText::_('T&iacute;itulo'); ?></label>
-				<input class="form-control" data-validation="required alphanumeric length" data-validation-length="min14" style="width: 90%;" type="text" name="titulo"  id="titulo" maxlength="250" value="<?php echo $this->item->titulo;?>" title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"/>
+				<label class="control-label"  for="titulo"><?php echo JText::_('T&iacute;itulo'); ?> *</label>
+				<input class="form-control" data-validation="required alphanumeric" style="width: 90%;" type="text" name="titulo"  id="titulo" maxlength="250" value="<?php echo $this->item->titulo;?>" title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-				<label class="control-label"  for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?></label>
+				<label class="control-label"  for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
 				<?php echo JHtml::calendar($this->item->data_nascimento, 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
 			</div>
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -110,10 +110,10 @@ $this->item = $conteudo;
 				</select>			
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
-				<label class="control-label"  for="name"><?php echo JText::_('Loca&ccedil;&atilde;o'); ?></label>
-				<select class="form-control"  name="id_figurino_secundario" id="id_figurino_secundario" data-validation="required" style="width: 90%;" >
+				<label class="control-label"  for="locacao"><?php echo JText::_('Loca&ccedil;&atilde;o'); ?></label>
+				<select class="form-control"  name="locacao" id="locacao" data-validation="required" style="width: 90%;" >
 					<option value=""></option>
-					<option value="0">NOVO</option>
+					<option value="NOVO">NOVO</option>
 					<optgroup label="Itens existentes">Itens existentes</optgroup>
 <?php foreach ($locacoes as $locacao) : ?>
 					<option value="<?php echo($locacao->id);?>" data-descricao="<?php echo($locacao->descricao);?>"  data-ft="<?php echo($locacao->foto);?>" style="text-transform: capitalize;"><?php echo(strtolower( $locacao->nome))?></option>
@@ -122,9 +122,9 @@ $this->item = $conteudo;
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 				<label class="control-label"  for="id_figurino_principal"><?php echo JText::_('Figurino Principal'); ?></label>
-				<select class="form-control"  name="id_figurino_principal" id="id_figurino_principal" data-validation="required" style="width: 90%;" >
+				<select class="form-control figurino"  name="id_figurino_principal" id="id_figurino_principal" data-validation="required" style="width: 90%;" >
 					<option value=""></option>
-					<option value="0">NOVO</option>
+					<option value="NOVO">NOVO</option>
 					<optgroup label="Itens existentes">Itens existentes</optgroup>
 <?php foreach ($figurinos as $figurino) : ?>
 					<option value="<?php echo($figurino->id);?>" data-descricao="<?php echo($figurino->descricao);?>"  data-ft="<?php echo($figurino->foto);?>" style="text-transform: capitalize;"><?php echo(strtolower( $figurino->nome))?></option>
@@ -133,22 +133,61 @@ $this->item = $conteudo;
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 				<label class="control-label"  for="id_figurino_secundario"><?php echo JText::_('Figurino Secund&aacute;rios'); ?></label>
-				<select class="form-control"  name="id_figurino_secundario" id="id_figurino_secundario" data-validation="required" style="width: 90%;" >
+				<select class="form-control figurino"  name="id_figurino_secundario" id="id_figurino_secundario" style="width: 90%;" >
 					<option value=""></option>
-					<option value="0">NOVO</option>
+					<option value="NOVO">NOVO</option>
 					<optgroup label="Itens existentes">Itens existentes</optgroup>
 <?php foreach ($figurinos as $figurino) : ?>
 					<option value="<?php echo($figurino->id);?>" data-descricao="<?php echo($figurino->descricao);?>"  data-ft="<?php echo($figurino->foto);?>" style="text-transform: capitalize;"><?php echo(strtolower( $figurino->nome))?></option>
 <?php endforeach;?>
 				</select>
 			</div>
-
+			<div class="row">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+					<h5 calss="text-center">Modelo Principal</h5>				
+					<input type="hidden" name="id_modelo_principal" id="id_modelo_principal"  value="<?php echo $this->item->id_modelo_principal;?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Modelo</a>
+					<div id="dadosModeloPricipal" class="row">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"></div>
+					</div>
+				</div>
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+					<h5 calss="text-center">Segunda Modelo</h5>				
+					<input type="hidden" name="id_modelo_secundaria" id="id_modelo_secundaria"  value="<?php echo $this->item->id_modelo_secundaria;?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Modelo</a>
+					<div id="dadosModeloPricipal" class="row">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"></div>
+					</div>
+				</div>
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+					<h5 calss="text-center">Fotografo Principal</h5>				
+					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $this->item->id_fotografo_principal;?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo</a>
+					<div id="dadosFotografoPricipal" class="row">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"></div>
+					</div>
+				</div>
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+					<h5 calss="text-center">Segundo Fotografo/Assitente</h5>				
+					<input type="hidden" name="id_fotografo_secundaria" id="id_fotografo_secundaria"  value="<?php echo $this->item->id_fotografo_secundaria;?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo</a>
+					<div id="dadosFotografoPricipal" class="row">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoSecundaria"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoSecundaria"></div>
+					</div>
+				</div>
+				
+			</div>
+			<br/>
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<label class="control-label"  for="descricao"><strong>Descri&ccedil;&atilde;o da sess&atilde;o</strong></label>
 		    	<?php echo $editor->display('descricao', $this->item->descricao, '200', '200', '20', '20', false, $params); ?>
-			</div>    
+			</div>   
+			 
 		</div>
-	<?php $urlBusca = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais',false); ?>
 		<div id="publicarFotos" class="tab-pane fade in" style="height: 210px;">
 			<h2>Publicar fotos</h2>
 			
@@ -186,11 +225,34 @@ jQuery(document).ready(function() {
 	
 	jQuery('#tema').change(function(){
 		if(jQuery('#tema option:selected').val()=='NOVO'){
-			jQuery('#tema').val(0);
-			AngelGirls.FrameModal("Cadastrar Novo Temas", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema'));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormTema').submit();");
+			jQuery('#tema').val('');
+			AngelGirls.FrameModal("Cadastrar Novo Temas", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormTema').submit();",270);
 		}
 	});
-	
+
+	jQuery('#locacao').change(function(){
+		if(jQuery('#locacao option:selected').val()=='NOVO'){
+			jQuery('#locacao').val('');
+			AngelGirls.FrameModal("Cadastrar Nova Loca&ccedil;&atilde;o", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarLocacao',false));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormLocacao').submit();",350);
+		}
+	});
+
+	jQuery('#id_figurino_principal').change(function(){
+		if(jQuery('#id_figurino_principal option:selected').val()=='NOVO'){
+			jQuery('#id_figurino_principal').val('');
+			var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false));?>";
+			url = url +  (url.indexOf('?')>0?'&campo=id_figurino_principal':'?campo=id_figurino_principal');
+			AngelGirls.FrameModal("Cadastrar Novo Figurino", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
+		}
+	});
+	jQuery('#id_figurino_secundario').change(function(){
+		if(jQuery('#id_figurino_secundario option:selected').val()=='NOVO'){
+			jQuery('#id_figurino_secundario').val('');
+			var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false));?>";
+			url = url +  (url.indexOf('?')>0?'&campo=id_figurino_secundario':'?campo=id_figurino_secundario');
+			AngelGirls.FrameModal("Cadastrar Novo Figurino", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
+		}
+	});
 
 	
 	if(lidos>=24){

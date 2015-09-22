@@ -16,7 +16,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
 JHTML::_('behavior.calendar');
-JHtml::_('dropdown.init');
+//JHtml::_('dropdown.init');
 //JHtml::_('behavior.keepalive');
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {

@@ -36,57 +36,41 @@ jQuery(document).ready(function($) {Calendar.setup({
 			firstDay: 0
 			});});
 
-			function jInsertEditorText( text, editor )
-			{
-				tinyMCE.execCommand('mceInsertContent', false, text);
-			}
+
 		document.PathBaseComponent="<?php echo(JUri::root()); ?>/components/com_angelgirls/";
 		document.PathBase="<?php JUri::root() ?>/";
 		document.UrlLogin ="/angelgirls/index.php?option=com_users&view=login";
   </script>
-  <script type="text/javascript" src="http://localhost:8091/angelgirls/media/editors/tinymce/tinymce.min.js"></script>
-	<script type="text/javascript">
-		tinyMCE.init({
-			// General
-			directionality: "ltr",
-			language : "pt-BR",
-			mode : "specific_textareas",
-			autosave_restore_when_empty: false,
-			skin : "lightgray",
-			theme : "modern",
-			schema: "html5",
-			selector: "textarea.mce_editable",
-			// Cleanup/Output
-			inline_styles : true,
-			gecko_spellcheck : true,
-			entity_encoding : "raw",
-			valid_elements : "",
-			extended_valid_elements : "hr[id|title|alt|class|width|size|noshade]",
-			force_br_newlines : false, force_p_newlines : true, forced_root_block : 'p',
-			toolbar_items_size: "small",
-			invalid_elements : "applet",
-			// Plugins
-			plugins : "table link image code hr charmap autolink lists importcss",
-			// Toolbar
-			toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | formatselect | bullist numlist",
-			toolbar2: "outdent indent | undo redo | link unlink anchor image code | hr table | subscript superscript | charmap",
-			removed_menuitems: "newdocument",
-			// URL
-			relative_urls : true,
-			remove_script_host : false,
-			document_base_url : "http://localhost:8091/angelgirls/",
-			// Layout
-			content_css : "http://localhost:8091/angelgirls/templates/system/css/editor.css",
-			importcss_append: true,
-			// Advanced Options
-			resize: "both",
-			height : "550",
-			width : "",
-
-		});
+		<script>
+		jQuery(document).ready(function(){
+			jQuery('#descricao').restrictLength($('#maxlength'));
+			
+			jQuery.validate({
+			    modules : 'security, date, file, html5',
+			    language : ptBRValidation,
+			    decimalSeparator : ','
+			}); 
+		}); 		
 		</script>
-
 		<link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
 	</head>
 	<body>
 		<div class="container-fluid">
+<?php 
+		$mensagens = JRequest::setVar('mensagem'); 
+		if(isset($mensagens)) :?>
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
+<?php if(is_array($mensagens)) : ?>
+		<ul>
+<?php 		foreach ($mensagens as $mensagen):?>
+			<li><?php echo($mensagen.'<br/>');?></li>
+
+<?php 		endforeach;?>
+		</ul>
+<?php else:
+		echo($mensagens);
+endif;?>			
+</div>
+<?php endif;
+?>

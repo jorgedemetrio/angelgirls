@@ -79,9 +79,10 @@ alert = function(msg){
 	jQuery('#modalWindowbody').html(msg);
 	jQuery('#modalWindowok').css('display','none');
 	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert');
 	jQuery('#modalWindowbody').removeClass('alert-warning');
 	jQuery('#modalWindowbody').removeClass('alert-danger');
-	jQuery('#modalWindowbody').addClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert alert-danger');
 } 
 
 info = function(msg){
@@ -89,9 +90,10 @@ info = function(msg){
 	jQuery('#modalWindowbody').html(msg);
 	jQuery('#modalWindowok').css('display','none');
 	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert');
 	jQuery('#modalWindowbody').removeClass('alert-warning');
 	jQuery('#modalWindowbody').removeClass('alert-danger');
-	jQuery('#modalWindowbody').addClass('alert-warning');
+	jQuery('#modalWindowbody').addClass('alert alert-warning');
 } 
 
 
@@ -103,21 +105,22 @@ AngelGirls.AbrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
 	jQuery('#modalWindowok').html(legandaBotaoOk);
 	jQuery('#modalWindowok').css('display','');
 	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert');
 	jQuery('#modalWindowbody').removeClass('alert-warning');
 	jQuery('#modalWindowbody').removeClass('alert-danger');
-	jQuery('#modalWindowbody').addClass('alert-warning');
+	jQuery('#modalWindowbody').addClass('alert alert-warning');
 }
 
-AngelGirls.FrameModal = function(titulo, url, legandaBotaoOk, destino){
+AngelGirls.FrameModal = function(titulo, url, legandaBotaoOk, destino, tamanho){
 	jQuery('#modalWindowtitle').html(titulo);
-	jQuery('#modalWindowbody').html('<iframe src="'+url+'" style="width:100%; height: 400px" id="iFrameModal"></iframe>');
+	jQuery('#modalWindowbody').html('<iframe src="'+url+'" style="width:100%; max-height:350px;height: '+(tamanho>350?'100%':tamanho+'px')+'" id="iFrameModal"></iframe>');
 	jQuery('#modalWindowok').attr('href',destino);
 	jQuery('#modalWindowok').html(legandaBotaoOk);
 	jQuery('#modalWindowok').css('display','');
 	jQuery('#modalWindow').modal('show');
 	jQuery('#modalWindowbody').removeClass('alert-warning');
 	jQuery('#modalWindowbody').removeClass('alert-danger');
-	jQuery('#modalWindowbody').addClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert');
 }
 
 AngelGirls.FrameModalHide = function(){
