@@ -144,36 +144,76 @@ $this->item = $conteudo;
 			</div>
 			<div class="row">
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
-					<h5 calss="text-center">Modelo Principal</h5>				
-					<input type="hidden" name="id_modelo_principal" id="id_modelo_principal"  value="<?php echo $this->item->id_modelo_principal;?>"/>
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Modelo</a>
-					<div id="dadosModeloPricipal" class="row">
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"></div>
+					<h5 calss="text-center">Modelo Principal</h5>		
+<?php if((!isset($this->item->id_modelo_principal) || $this->item->id_modelo_principal==0) && $perfil->tipo=="MODELO"):
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$perfil->id.':ico');
+?>		
+					<input type="hidden" name="id_modelo_principal" id="id_modelo_principal"  value="<?php echo $perfil->id;?>"/>
+					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal">
+						<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($perfil->apelido);?>" alt="Modelo <?php echo($perfil->apelido);?>" class="img-circle" style="height: 100px"/>
+						</div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="nomeModeloPrincipal"><?php echo($perfil->apelido);?></div>
 					</div>
+<?php else:
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$this->item->id_modelo_principal.':ico');?>
+					<input type="hidden" name="id_modelo_principal" id="id_modelo_principal"  value="<?php echo $this->item->id_modelo_principal;?>"/>
+					<a href="JavaScript: BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');" class="btn">Selecionar Modelo
+					 <span class="glyphicon glyphicon-user"></span></a>
+					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+<?php if(isset($this->item->id_modelo_principal) && $this->item->id_modelo_principal!=0):?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"><img src="<?php echo($urlImg);?>" title="Modelo <?php echo($this->item->modelo1);?>" alt="Modelo <?php echo($this->item->modelo1);?>" class="img-circle" style="height: 100px"/></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"><?php echo($this->item->modelo1);?></div>
+<?php else:?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"></div>
+<?php endif;?>	
+					</div>
+<?php endif;
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$this->item->id_modelo_secundaria.':ico');?>
 				</div>
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<h5 calss="text-center">Segunda Modelo</h5>				
 					<input type="hidden" name="id_modelo_secundaria" id="id_modelo_secundaria"  value="<?php echo $this->item->id_modelo_secundaria;?>"/>
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Modelo</a>
-					<div id="dadosModeloPricipal" class="row">
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"></div>
+					<a href="JavaScript: BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');" class="btn">Selecionar Modelo
+					 <span class="glyphicon glyphicon-user"></span></a>
+					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+<?php if(isset($this->item->id_modelo_secundaria) && $this->item->id_modelo_secundaria!=0):?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"><img src="<?php echo($urlImg);?>" title="Modelo <?php echo($this->item->modelo2);?>" alt="Modelo <?php echo($this->item->modelo12);?>" class="img-circle" style="height: 100px"/></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"><?php echo($this->item->modelo2);?></div>
+<?php else:?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"></div>
+<?php endif;?>
 					</div>
 				</div>
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<h5 calss="text-center">Fotografo Principal</h5>				
+<?php if((!isset($this->item->id_fotografo_principal) || $this->item->id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$perfil->id.':ico');
+?>		
+					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $perfil->id;?>"/>
+					<div id="dadosFotografoPricipal" class="row" style="text-align: center">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal">
+						<img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($perfil->apelido);?>" alt="Fotografo <?php echo($perfil->apelido);?>" class="img-circle"  style="height: 100px"/>
+						</div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="nomeFotografoPrincipal"><?php echo($perfil->apelido);?></div>
+					</div>
+<?php else:?>
 					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $this->item->id_fotografo_principal;?>"/>
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo</a>
-					<div id="dadosFotografoPricipal" class="row">
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo
+					 <span class="glyphicon glyphicon-user"></span></a>
+					<div id="dadosFotografoPricipal" class="row" style="text-align: center">
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"></div>
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"></div>
 					</div>
+<?php endif;?>
 				</div>
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
-					<h5 calss="text-center">Segundo Fotografo/Assitente</h5>				
-					<input type="hidden" name="id_fotografo_secundaria" id="id_fotografo_secundaria"  value="<?php echo $this->item->id_fotografo_secundaria;?>"/>
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo</a>
+					<h5 calss="text-center">Segundo Fotografo/Assistente</h5>				
+					<input type="hidden" name="id_fotografo_secundario" id="id_fotografo_secundario"  value="<?php echo $this->item->id_fotografo_secundario;?>"/>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo/Assistente 
+					 <span class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosFotografoPricipal" class="row">
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoSecundaria"></div>
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoSecundaria"></div>
@@ -219,6 +259,15 @@ $this->item = $conteudo;
 var lidos = <?php echo(sizeof($fotos));?>;
 var carregando = false;
 var temMais=false;
+
+
+function BuscarModelo(idCampo, idDivNome, idDivImagem){
+	var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarModeloModal',false));?>";
+	url = url + (url.indexOf('?')>0?'&':'?') + 'campo='+idCampo+'&divNome='+idDivNome+'&divImagem='+idDivImagem;
+	AngelGirls.FrameModal("Selecionar modelo",url , "<?php echo JText::_('Buscar'); ?> <span class='glyphicon glyphicon-search' aria-hidden='true'></span>", 
+			"JavaScript: $('#iFrameModal').contents().find('#dadosFormBuscarModelo').submit();",350);
+}
+
 jQuery(document).ready(function() {
 
 
@@ -263,6 +312,11 @@ jQuery(document).ready(function() {
 		jQuery('#carregando').css('display','none');
 		temMais=false;
 	}
+
+
+	
+
+
 	
 	
 	jQuery(document).scroll(function(){

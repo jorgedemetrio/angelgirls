@@ -1405,7 +1405,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$db->execute();
 		$id = $db->insertid();
 		require_once 'views/sessoes/tmpl/adicionar_tema.php';
-		echo("<script>jQuery('#tema',parent.document).append(new Option('$nome',$id));jQuery('#tema',parent.document).val($id);jQuery('#tema',parent.document).removeClass('error');jQuery('#tema',parent.document).addClass('valid')jQuery('#tema',parent.document).focus();parent.document.AngelGirls.FrameModalHide();</script>");
+		echo("<script>jQuery('#tema',parent.document).append(new Option('$nome',$id));jQuery('#tema',parent.document).val($id);jQuery('#tema',parent.document).removeClass('error');jQuery('#tema',parent.document).addClass('valid');jQuery('#tema',parent.document).focus();parent.document.AngelGirls.FrameModalHide();</script>");
 		exit();
 	}
 	
@@ -1664,8 +1664,8 @@ class AngelgirlsController extends JControllerLegacy{
 			->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
 			->join ('INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON f.id_sessao = s.id')
 			->where ( $db->quoteName ( 'f.id' ) . ' = ' . $id )
-			->where (' f.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' )
-			->where (' s.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+			->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
+			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			
@@ -1690,7 +1690,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->select('`s`.`nome_foto` AS `foto`, `s`.`token`')
 			->from ( $db->quoteName ( '#__angelgirls_sessao', 'sf' ) )
 			->where ( $db->quoteName ( 's.id' ) . " =  " . $id )
-			->where (' s.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
@@ -1705,8 +1705,8 @@ class AngelgirlsController extends JControllerLegacy{
 				$query->update($db->quoteName('#__angelgirls_foto_album' ))
 					->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
 					->where ($db->quoteName ( 'id' ) . ' = ' . $id)
-					->where (' f.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' )
-					->where (' a.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+					->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
+					->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 				$db->setQuery ( $query );
 				$db->execute ();
 			}
@@ -1716,8 +1716,8 @@ class AngelgirlsController extends JControllerLegacy{
 			->from ( $db->quoteName ( '#__angelgirls_foto_album', 'f' ) )
 			->join('INNER', $db->quoteName ( '#__angelgirls_album', 'a' ) . ' ON f.id_album = a.id' )
 			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
-			->where (' f.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' )
-			->where (' a.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+			->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
+			->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
@@ -1729,7 +1729,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->select('`f`.`nome_arquivo` AS `foto`, `f`.`token`, `f`.`token` AS foto_token, a.token AS album_token' )
 			->from ( $db->quoteName ( '#__angelgirls_album', 'a' ) )
 			->join ( 'LEFT', '#__angelgirls_foto_album f ON ' . $db->quoteName ( 'a.id_foto_capa' ) . ' = ' . $db->quoteName ( 'f.id' )  )
-			->where (' a.status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' )
+			->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
 			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
@@ -1754,7 +1754,7 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			$query->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
 			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
-			->where (' status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+			->where (' status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
@@ -1766,7 +1766,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->select('`f`.`nome_foto` AS `foto`')
 				->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
 				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
-				->where (' status_dado NOT IN ( ' . StatusDado::REMOVIDO . ')' );
+				->where (' status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
@@ -3078,13 +3078,50 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
-	public function buscarModelo(){
+	public function buscarModeloModal(){
 		$nome = JRequest::getString('nome',null);
+		$idCidade  = JRequest::getInt('id_cidade',null);
+		$estado  = JRequest::getInt('estado',null);
 		
-		if(isset($nome) && strelen(trim($nome))>0 ){
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`data_nascimento`,
+			`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`, `f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,
+   			`f`.`altura`,  `f`.`peso`,
+   			`f`.`busto`,  `f`.`calsa`,  `f`.`calsado`, `f`.`olhos`,  `f`.`pele`,  `f`.`etinia`,  `f`.`cabelo`,  `f`.`tamanho_cabelo`, `f`.`cor_cabelo`,  `f`.`outra_cor_cabelo`,
+			`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+			`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
+			->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
+			->join ( 'INNER', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
+			->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+			->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
+		if(isset($nome) && strlen(trim($nome))>=3 ){
+			$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
+			if(isset($idCidade) && $idCidade!="" && $idCidade>0){
+				$query->where ( 'cvive.id =  ' . $idCidade);
+			}
+			if(isset($estado) && $estado!="" ){
+				$query->where ( 'cvive.uf =  ' . $db->quote(trim($estado)));
+			}
+			$query->where('(upper(trim(f.nome_artistico)) like ' .$nomeFormatado .' OR upper(trim(u.name)) like ' .$nomeFormatado .')');
+			
 		}
+		else{
+			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos ');
+		}
+		$query->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->where ( $db->quoteName ( 'f.status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->order('f.nome_artistico')
+		->limit(100);
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		JRequest::setVar('modelos',$result);
+		
+		JRequest::setVar('ufs',$this->getUFs());
+		
 
 		require_once 'views/modelo/tmpl/selecionar_modelo.php';
+		exit();
 	}
 	
 	private function salvarModelo($usuario){
