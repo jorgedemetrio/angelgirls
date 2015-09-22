@@ -143,7 +143,7 @@ $this->item = $conteudo;
 				</select>
 			</div>
 			<div class="row">
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Modelo Principal</h5>		
 <?php if((!isset($this->item->id_modelo_principal) || $this->item->id_modelo_principal==0) && $perfil->tipo=="MODELO"):
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$perfil->id.':ico');
@@ -172,7 +172,7 @@ $this->item = $conteudo;
 <?php endif;
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$this->item->id_modelo_secundaria.':ico');?>
 				</div>
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Segunda Modelo</h5>				
 					<input type="hidden" name="id_modelo_secundaria" id="id_modelo_secundaria"  value="<?php echo $this->item->id_modelo_secundaria;?>"/>
 					<a href="JavaScript: BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');" class="btn">Selecionar Modelo
@@ -187,7 +187,7 @@ $this->item = $conteudo;
 <?php endif;?>
 					</div>
 				</div>
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Fotografo Principal</h5>				
 <?php if((!isset($this->item->id_fotografo_principal) || $this->item->id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$perfil->id.':ico');
@@ -209,7 +209,7 @@ $this->item = $conteudo;
 					</div>
 <?php endif;?>
 				</div>
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Segundo Fotografo/Assistente</h5>				
 					<input type="hidden" name="id_fotografo_secundario" id="id_fotografo_secundario"  value="<?php echo $this->item->id_fotografo_secundario;?>"/>
 					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>" class="btn">Selecionar Fotografo/Assistente 
