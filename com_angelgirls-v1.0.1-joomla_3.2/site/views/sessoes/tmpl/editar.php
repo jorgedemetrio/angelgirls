@@ -32,7 +32,7 @@ $this->item = $conteudo;
 
 
 ?>
-<form>
+<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=salvarSessao')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 	<div class="btn-group pull-right" role="group">
 		<div class="btn-group" role="group">
 			<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);">
@@ -102,7 +102,7 @@ $this->item = $conteudo;
 				<label class="control-label"  for="tema"><?php echo JText::_('Tema'); ?></label>
 				<select class="form-control"  name="tema" id="tema" data-validation="required" style="width: 90%;" >
 					<option value=""></option>
-					<option value="0">NOVO</option>
+					<option value="NOVO">NOVO</option>
 					<optgroup label="Itens existentes">Itens existentes</optgroup>
 <?php foreach ($temas as $tema) : ?>
 					<option value="<?php echo($tema->id);?>" data-descricao="<?php echo($tema->descricao);?>"  data-ft="<?php echo($tema->foto);?>" style="text-transform: capitalize;"><?php echo(strtolower( $tema->nome))?></option>
@@ -182,6 +182,17 @@ var carregando = false;
 var temMais=false;
 jQuery(document).ready(function() {
 
+
+	
+	jQuery('#tema').change(function(){
+		if(jQuery('#tema option:selected').val()=='NOVO'){
+			jQuery('#tema').val(0);
+			AngelGirls.FrameModal("Cadastrar Novo Temas", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema'));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormTema').submit();");
+		}
+	});
+	
+
+	
 	if(lidos>=24){
 		jQuery('#carregando').css('display','');
 		temMais=true;

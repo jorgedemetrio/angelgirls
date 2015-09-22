@@ -1078,6 +1078,88 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
+	public function carregarCadastrarTema(){
+		
+		
+		
+		require_once 'views/sessoes/tmpl/adicionar_tema.php';
+		exit();
+	}
+	
+	
+	public function salvarTema(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		$nome = JRequest::getString('nome',null);
+		$descricao = JRequest::getString('descricao',null);
+		$uploadPath = JPATH_SITE . DS . 'images' . DS . 'temas' . DS;
+		$erro = false;
+		
+		$foto_perfil = $_FILES ['imagem'];
+		
+		if(!isset($nome) || strlen($nome)<14){
+			JRequest::setVar('mensagem','Nome do tema &eacute; um campo obrigat&oacute;rio e deve contar 14 caracteres no minimo.' );
+			$erro = true;
+		}
+		
+		if(!isset($descricao)){
+			JRequest::setVar('mensagem','Descri&ccedil;&atilde; do tema &eacute; um campo obrigat&oacute;rio e deve contar 14 caracteres no minimo.' );
+			$erro = true;
+		}
+		
+		if(!isset($foto_perfil) || !isset($foto_perfil ['tmp_name'])){
+			JRequest::setVar('mensagem','Imagem do tema &eacute; um campo obrigat&oacute;rio e deve contar 14 caracteres no minimo.' );
+			$erro = true;
+		}
+		
+		if($erro){
+			$this->carregarCadastrarTema();
+ 			return;
+		}
+		
+		$nomearquivo = "";
+		
+		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+			$fileName = $foto_perfil ['name'];
+			$uploadedFileNameParts = explode ( '.', $fileName );
+			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+			
+			
+			
+			$nomearquivo = hash('sha256', $fileName . date('YmdHis')).'-'.md5($fileName . date('YmdHis')) . $uploadedFileExtension;
+							
+			$fileTemp = $foto_perfil ['tmp_name'];
+			$newfile = $uploadPath . $nomearquivo;
+			if (JFolder::exists ( $newfile )) {
+				JFile::delete ( $newfile );
+			}
+			if (! JFile::upload ( $fileTemp, $newfile )) {
+				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+				$erro = true;
+				exit();
+			} 
+		}
+		
+		$query = $db->getQuery ( true );
+		$query->insert( '#__angelgirls_tema' )
+		->columns (array (
+				$db->quoteName ( 'nome' ),
+				$db->quoteName ( 'descricao' ),
+				$db->quoteName ( 'meta_descricao' ),
+				$db->quoteName ( 'nome_foto' ),
+				$db->quoteName ( 'id_usuario_criador' ),
+				$db->quoteName ( 'id_usuario_alterador' ),
+				$db->quoteName ( 'data_criado' ),
+				$db->quoteName ( 'data_alterado' )))
+				->values(implode(',', array ($db->quote($nome),$db->quote($descricao),$db->quote($descricao),$db->quote($nomearquivo), $user->id,$user->id, 'NOW()', 'NOW()')));
+		$db->setQuery( $query );
+		$db->execute();
+		$id = $db->insertid();
+		require_once 'views/sessoes/tmpl/adicionar_tema.php';
+		echo("<script>$('#tema',parent.document).append(new Option('$nome',$id));$('#tema',parent.document).val($id);parent.document.AngelGirls.FrameModalHide();</script>");
+		exit();
+	}
+	
 	/**
 	 * 
 	 */

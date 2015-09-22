@@ -108,6 +108,23 @@ AngelGirls.AbrirModalAlerta = function(titulo, texto, legandaBotaoOk, destino){
 	jQuery('#modalWindowbody').addClass('alert-warning');
 }
 
+AngelGirls.FrameModal = function(titulo, url, legandaBotaoOk, destino){
+	jQuery('#modalWindowtitle').html(titulo);
+	jQuery('#modalWindowbody').html('<iframe src="'+url+'" style="width:100%; height: 400px" id="iFrameModal"></iframe>');
+	jQuery('#modalWindowok').attr('href',destino);
+	jQuery('#modalWindowok').html(legandaBotaoOk);
+	jQuery('#modalWindowok').css('display','');
+	jQuery('#modalWindow').modal('show');
+	jQuery('#modalWindowbody').removeClass('alert-warning');
+	jQuery('#modalWindowbody').removeClass('alert-danger');
+	jQuery('#modalWindowbody').addClass('alert-warning');
+}
+
+AngelGirls.FrameModalHide = function(){
+	jQuery('#modalWindow').modal('hide');
+}
+
+
 AngelGirls.Processando = function () {
     return {
         show: function() {
@@ -120,6 +137,8 @@ AngelGirls.Processando = function () {
         },
     };
 };
+
+document.AngelGirls = AngelGirls;
 
 
 
