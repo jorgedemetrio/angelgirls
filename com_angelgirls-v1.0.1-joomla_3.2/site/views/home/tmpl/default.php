@@ -61,7 +61,7 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 				</div>
 				<div class="item item-carrossel" data-id-ver="3">
 				<?php 
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->id.':ico');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->token.':full');
 				?>	<img src="<?php echo($urlImg);?>" style="width:100%">
 					<div class="carousel-caption">
 						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->nome);?></a></h3>
@@ -140,7 +140,7 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 			<div class="thumbnail hidden-phone">
 				<?php
 					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
-					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->id.':'.$conteudo->id_sessao.'-thumbnail');
+					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->token.':'.$conteudo->id_sessao.'-thumbnail');
 					if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 						<a href="<?php echo($url );?>"><img src="<?php echo($urlFoto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="height: 150px;"/></a>
 					<?php 
@@ -191,9 +191,9 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 		<div class="thumbnail">
 			<?php 
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->id.':ico');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':cube');
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="height: 150px;"/></a>
+					<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="width: 100%;"/></a>
 				<?php 
 				}?>
 				<div class="caption">

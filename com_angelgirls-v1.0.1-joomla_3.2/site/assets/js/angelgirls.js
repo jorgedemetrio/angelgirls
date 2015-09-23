@@ -280,7 +280,7 @@ var ptBRValidation = {
         badNumberOfSelectedOptionsEnd: ' respostas ',
         badAlphaNumeric: 'O campo só pode ter valores alfanumericos. ',
         badAlphaNumericExtra: ' e ',
-        wrongFileSize: 'O arquivo qeu está tentando enviar é muito grande. (Máximo %s)',
+        wrongFileSize: 'O arquivo que está tentando enviar é muito grande. (Máximo %s)',
         wrongFileType: 'Somente arquivos do tipo %s são permitidos',
         groupCheckedRangeStart: 'Por favor selecione entre ',
         groupCheckedTooFewStart: 'Please choose at least ',

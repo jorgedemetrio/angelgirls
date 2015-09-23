@@ -83,6 +83,10 @@ if(!defined('PATH_IMAGEM_FIGURINOS')){
 	define('PATH_IMAGEM_FIGURINOS', JPATH_SITE . DS . 'images' . DS . 'figurinos' . DS);
 };
 
+if(!defined('COMPONENT_AG_PATH')){
+	define('COMPONENT_AG_PATH', JPATH_SITE . DS . 'components' . DS . 'com_angelgirls' . DS);
+}; 
+
 /**
  * Angelgirls Component Controller
  */
@@ -895,7 +899,7 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	public function existeUsuario($usuarioP){ 
+	private function existeUsuario($usuarioP){ 
 		$db = JFactory::getDbo ();
 		$usuario =$db->quote( strtolower(trim($usuarioP)));
 		
@@ -953,7 +957,7 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	function validaCPF($cpf = null) {
+	private function validaCPF($cpf = null) {
 	
 		// Verifica se um número foi informado
 		if(empty($cpf)) {
@@ -982,7 +986,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$cpf == '99999999999') {
 			return false;
 			// Calcula os digitos verificadores para verificar se o
-			// CPF é válido
+			// CPF &eacute; v&aacute;lido
 		} else {
 			 
 			for ($t = 9; $t < 11; $t++) {
@@ -1051,7 +1055,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		
 		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`,`f`.`titulo`,`f`.`descricao`,`f`.`meta_descricao`,`f`.`id_sessao`,`f`.`audiencia_gostou`,
+		$query->select('`f`.`id`,`f`.`titulo`,`f`.`descricao`,`f`.`meta_descricao`,`f`.`id_sessao`,`f`.`audiencia_gostou`,`f`.`token`,
 						`s`.`id` AS `id_sessao`,`s`.`titulo` AS `titulo_sessao`,`s`.`nome_foto`,
 						`s`.`executada`,`s`.`descricao` AS `descricao_sessao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
 						`s`.`comentario_equipe`,`s`.`meta_descricao` AS `meta_descricao_sessao`,`s`.`id_agenda`,
@@ -1090,7 +1094,9 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 				->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
-		
+				if( !isset($user) || !isset($user->id) || $user->id <= 0){
+					$query->where ( $db->quoteName ( 'f.possui_nudes' ) . " = 'N'");
+				}
 		
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
@@ -1417,9 +1423,9 @@ class AngelgirlsController extends JControllerLegacy{
 		return $nomearquivo;
 	}
 	
-	private function GerarToken($chave, $ComDataNoPrefixo = false, $large= false){
+	private function GerarToken($chave,$prefixo='', $ComDataNoPrefixo = false, $large= false){
 		$chaveValor =  (isset($chave) && strlen(trim($chave))> 0 ? $chave : date('YmdHis'));
-		return ($ComDataNoPrefixo?date('YmdHis'):'').($large?sha1($chaveValor):'').md5($chaveValor);
+		return ($ComDataNoPrefixo?date('YmdHis'):'').(isset($prefixo) && strlen(trim($prefixo)) > 0 ?$prefixo:'').($large?sha1($chaveValor):'').md5($chaveValor);
 	}
 
 	
@@ -1442,7 +1448,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		
 		if($perfil->tipo != 'MODELO' && $perfil->tipo != 'FOTOGRAFO'){
-			JError::raiseWarning(100,JText::_('Área permitida apenas para modelos ou fotografos.'));
+			JError::raiseWarning(100,JText::_('&aacute;rea permitida apenas para modelos ou fotografos.'));
 			$this->logado();
 			return;
 		}
@@ -1459,7 +1465,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$sessao = $this->getSessaoById($id);
 		
 		if(isset($sessao) && $sessao->status_dado == StatusDado::PUBLICADO){
-			JError::raiseWarning(100,JText::_('A Sessão que tentou acessar já foi publicada por isso não pode ser editada.'));
+			JError::raiseWarning(100,JText::_('A Sess&atilde;o que tentou acessar j&aacute; foi publicada por isso n&atilde;o pode ser editada.'));
 			$sessao == null;
 			$id = 0;
 		}
@@ -1479,48 +1485,116 @@ class AngelgirlsController extends JControllerLegacy{
 	 * 
 	 */
 	public function salvarSessao(){
+		if(!JSession::checkToken('post')) die ('Restricted access');
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
 		
-		$id  = JRequest::getInt('id',null);
-		$termos = JRequest::getString('termos',null);
-		$titulo = JRequest::getString('titulo',null);
-		$imagem = JRequest::getString('imagem',null);
-		$data_realizada = JRequest::getString('data_realizada',null);
-		$agenda  = JRequest::getInt('agenda',null);
-		$meta_descricao = JRequest::getString('meta_descricao',null);
-		$comentario = JRequest::getString('comentario',null);
-		$tema  = JRequest::getInt('tema',null);
-		$locacao  = JRequest::getInt('locacao',null);
-		$id_figurino_principal  = JRequest::getInt('id_figurino_principal',null);
-		$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',null);
-		$id_modelo_principal  = JRequest::getInt('id_modelo_principal',null);
-		$id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',null);
-		$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',null);
-		$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',null);
-		$descricao = JRequest::getString('descricao',null);
-		
+		$id  = JRequest::getInt('id',null,'POST');
+		$termos = JRequest::getString('termos',null,'POST');
+		$titulo = JRequest::getString('titulo',null,'POST');
+		$data_realizada = JRequest::getString('data_realizada',null,'POST');
+		$agenda  = JRequest::getInt('agenda',null,'POST');
+		$meta_descricao = JRequest::getString('meta_descricao',null,'POST');
+		$comentario = JRequest::getString('comentario',null,'POST');
+		$tema  = JRequest::getInt('tema',null,'POST');
+		$historia = JRequest::getInt('historia',null,'POST');
+		$locacao  = JRequest::getInt('locacao',null,'POST');
+		$id_figurino_principal  = JRequest::getInt('id_figurino_principal',null,'POST');
+		$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',null,'POST');
+		$id_modelo_principal  = JRequest::getInt('id_modelo_principal',null,'POST');
+		$id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',null,'POST');
+		$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',null,'POST');
+		$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',null,'POST');
+		$descricao = JRequest::getString('descricao',null,'POST');
+		$tipo = JRequest::getString('tipo',null,'POST');
 		$erros = false;
+		$dataRealizadoSessao =null;
+		$dataFormatadaBanco = null;
+		$imagem = $_FILES ['imagem'];
+		$perfil = $this->getPerfilLogado();
+		$token = $this->GerarToken($titulo,'',true,false);
+
+		if(!isset($perfil) || !isset($user) || $user->id == 0){
+			JError::raiseWarning(100,JText::_('Você n&atilde;o est&aacute; logado, por isso n&atilde;o pode executar essa a&ccedil;&atilde;o. Opera&ccedil;&atilde;o cancelada.'));
+			$this->nologado();
+			return;
+		}
+		elseif($perfil->tipo!='MODELO' && $perfil->tipo!='FOTOGRAFO'){
+			JError::raiseWarning(100,JText::_('Est&aacute; &aacute;rea &eacute; permitida apenas para perfil tipo modelo ou fotografo. Opera&ccedil;&atilde;o cancelada.'));
+			$this->logado();
+			return;
+		}
+
 		
-		//Validação
+		//Valida&ccedil;&atilde;o
 		if((!isset($id) || $id == 0 || strlen(trim($id)) <=0 ) &&
 				strlen(trim($termos)) <= 0){
-			JError::raiseWarning(100,JText::_('Cadastro de uma sessão nova é obrigatório que leia os termos e condições e confirme que está de acordo.'));
+			JError::raiseWarning(100,JText::_('Cadastro de uma sess&atilde;o nova &eacute; obrigat&oacute;rio que leia os termos e condi&ccedil;ões e confirme que est&aacute; de acordo.'));
 			$erros = true;
 		}
 		
+		if(isset($data_realizada) && strlen($data_realizada) >= 8){
+			$dataRealizadoSessao = DateTime::createFromFormat('d/m/Y H:i:s', $data_realizada.' 00:00:00');
+			
+			if(intval($dataRealizadoSessao->format('Ymd')) >= intval(date('Ymd'))){
+				JError::raiseWarning(100,JText::_('O campo "Data da realiza&ccedil;&atilde;o da sess&atilde;o" deve ser inferior a hoje. E deve estar no formato DD/MM/AAAA'));
+				$erros = true;
+			}
+			
+			$dataFormatadaBanco = $db->quote($dataRealizadoSessao->format('Y-m-d'));
+		}
+		else{
+			JError::raiseWarning(100,JText::_('O campo "Data da realiza&ccedil;&atilde;o da sess&atilde;o" &eacute; um campo obrigat&oacute;rio. E deve estar no formato DD/MM/AAAA'));
+			$erros = true;
+		}		
 		
-		if(!isset($titulo) || trlen(trim($titulo)) <=5 ){
-			JError::raiseWarning(100,JText::_('Titulo é um campo obrigatório. E deve contar no minimo 5 caracteres.'));
+		if(!isset($titulo) || strlen(trim($titulo)) <=5 ){
+			JError::raiseWarning(100,JText::_('O campo "Titulo" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
 			$erros = true;
 		}
 		
+		if(strlen(trim($titulo)) >250 ){
+			JError::raiseWarning(100,JText::_('O campo "Titulo" passou de 250 caracteres.'));
+			$erros = true;
+		}
+		
+		if(!isset($meta_descricao) || strlen(trim($meta_descricao)) <=5 ){
+			JError::raiseWarning(100,JText::_('O campo "Descri&ccedil;&atilde;o R&aacute;pida" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
+			$erros = true;
+		}
+		
+		if(strlen(trim($meta_descricao)) >250 ){
+			JError::raiseWarning(100,JText::_('O campo "Descri&ccedil;&atilde;o R&aacute;pida" passou de 250 caracteres.'));
+			$erros = true;
+		}
+		
+		if(strlen(trim($comentario)) >250 ){
+			JError::raiseWarning(100,JText::_('O campo "Coment&aacute;rio" passou de 250 caracteres.'));
+			$erros = true;
+		}
+
+		
+		if(!isset($id_modelo_principal) || strlen(trim($id_modelo_principal)) <=0 ){
+			JError::raiseWarning(100,JText::_('Deve selecionar uma modelo principal que participou da sess&atilde;o. Caso ela n&atilde;o esteja deve na lista deve solicitar que ela se cadastre ou entre em contato com contato@angelgirls.com.br.'));
+			$erros = true;
+		}
+		
+		if(!isset($id_fotografo_principal) || strlen(trim($id_fotografo_principal)) <=0 ){
+			JError::raiseWarning(100,JText::_('Deve selecionar uma fotografo principal que executou da sess&atilde;o. Caso ela n&atilde;o esteja deve na lista deve solicitar que ela se cadastre ou entre em contato com contato@angelgirls.com.br.'));
+			$erros = true;
+		}
+		
+
 		
 		
 		if($erros){
 			$this->carregarEditarSessao();
 			return;
 		}
+		
+		
+
+		
 		
 		
 		if(!isset($id) || $id==0 || strlen(trim($id)) <= 0 ){
@@ -1532,17 +1606,13 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_usuario_criador' ),
 				$db->quoteName ( 'data_alterado' ),
 				$db->quoteName ( 'id_usuario_alterador' ),
-					
 				$db->quoteName ( 'titulo' ),
-				$db->quoteName ( 'nome_foto' ),
 				$db->quoteName ( 'executada' ),
 				$db->quoteName ( 'descricao' ),
 				$db->quoteName ( 'historia' ),
 				$db->quoteName ( 'comentario_fotografo' ),
 				$db->quoteName ( 'comentario_modelos' ),
-				$db->quoteName ( 'comentario_equipe' ),
 				$db->quoteName ( 'meta_descricao' ),
-				$db->quoteName ( 'token' ),
 				$db->quoteName ( 'id_agenda' ),
 				$db->quoteName ( 'id_tema' ),
 				$db->quoteName ( 'id_modelo_principal' ),
@@ -1553,45 +1623,227 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_figurino_principal' ),
 				$db->quoteName ( 'id_figurino_secundario' ),
 				$db->quoteName ( 'status_modelo_principal' ),
-				$db->quoteName ( 'status_modelo_secundaria' ),
-				$db->quoteName ( 'status_fotografo_principal' ),
-				$db->quoteName ( 'status_fotografo_secundario' )))
+				$db->quoteName ( 'status_fotografo_principal' )))
 			->values ( implode ( ',', array (
 					'\'NOVO\'',
 					'NOW()',
-					$usuario->id,
+					$user->id,
 					'NOW()',
-					$usuario->id,
-					
-
-					(isset($titulo) == null ? ' null ' : $db->quote($profissao)),
-					(isset($nascionalidade) == null ? ' null ' : $db->quote($nascionalidade)),
-					(isset($idCidadeNasceu) == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$dataFormatadaBanco,
-					(isset($site) == null ? ' null ' : $db->quote($site)),
-					(isset($sexo) == null ? ' null ' : $db->quote($sexo)),
-					(isset($cpf) == null ? ' null ' : $db->quote($cpf)),
-					(isset($banco) == null ? ' null ' : $db->quote($banco)),
-					(isset($agencia) == null ? ' null ' : $db->quote($agencia)),
-					(isset($conta) == null ? ' null ' : $db->quote($conta)),
-					(isset($custoMedioDiaria) == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					(isset($qualificaoEquipe) == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					(isset($idCidade) == null ? ' null ' : $db->quote($idCidade))
+					$user->id,
+					(!isset($titulo) || strlen(trim($titulo))<=0 ? ' null ' : $db->quote(trim($titulo))),
+					(!isset($dataFormatadaBanco) || strlen(trim($dataFormatadaBanco))<=0 ? ' null ' : $dataFormatadaBanco),
+					(!isset($descricao) || strlen(trim($descricao))<=0 ? ' null ' : $db->quote(trim($descricao))),
+					(!isset($historia) || strlen(trim($historia))<=0 ? ' null ' : $db->quote(trim($historia))),
+					((!isset($comentario) || strlen(trim($comentario))<=0) || $perfil->tipo!='FOTOGRAFO'?  ' null ' : $db->quote(trim($comentario))),
+					((!isset($comentario) || strlen(trim($comentario))<=0) || $perfil->tipo!='MODELO'?  ' null ' : $db->quote(trim($comentario))),
+					(!isset($meta_descricao) || strlen(trim($meta_descricao))<=0 ? ' null ' : $db->quote(trim($meta_descricao))),
+					(!isset($agenda) || strlen(trim($agenda))<=0 || $agenda==0  ? ' null ' : $agenda),
+					(!isset($tema) || strlen(trim($tema))<=0 || $tema==0 ? ' null ' : $tema),
+					(!isset($id_modelo_principal) || strlen(trim($id_modelo_principal))<=0 || $id_modelo_principal==0 ? ' null ' : $id_modelo_principal),
+					(!isset($id_modelo_secundaria) || strlen(trim($id_modelo_secundaria))<=0 || $id_modelo_secundaria==0 ? ' null ' : $id_modelo_secundaria),
+					(!isset($locacao) || strlen(trim($locacao))<=0 || $locacao==0 ? ' null ' : $locacao),
+					(!isset($id_fotografo_principal) || strlen(trim($id_fotografo_principal))<=0 || $id_fotografo_principal==0 ? ' null ' : $id_fotografo_principal),
+					(!isset($id_fotografo_secundario) || strlen(trim($id_fotografo_secundario))<=0 || $id_fotografo_secundario==0 ? ' null ' : $id_fotografo_secundario),
+					(!isset($id_figurino_principal) || strlen(trim($id_figurino_principal))<=0 || $id_figurino_principal==0 ? ' null ' : $id_figurino_principal),
+					(!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
+					($perfil->tipo=='MODELO'?'1':'null'),
+					($perfil->tipo=='FOTOGRAFO'?'1':'null')
 			)));
 			$db->setQuery( $query );
 			$db->execute();
 			$id = $db->insertid();
 			JRequest::setVar('id',$id);
+			
+			
+			$token = $this->GerarToken($titulo,$id,true,false);
+			
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+					->set (array($db->quoteName ( 'token' ) . ' = ' . $db->quote($token)))
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			
+			if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
+					
+				$this->SalvarUploadArquivo($imagem,
+						PATH_IMAGEM_SESSOES . $token,
+						$this->GerarNovoNomeArquivo($imagem['name'], $id ),
+						'#__angelgirls_sessao','nome_foto',$id,true,true);
+			}
 		}
 		else{
-			//update
+			$query = $db->getQuery ( true );
+			$query->select('token, nome_foto')
+				->from ('#__angelgirls_sessao')
+				->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+				->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
+				->where ( $db->quoteName ( 'id' ) . " =  " . $id );
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			$NomeArquivoAntigo =  $result->nome_foto;
+			$token = $result->token;
+			
+
+			
+			if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($imagem,
+						PATH_IMAGEM_SESSOES . $token,
+						$this->GerarNovoNomeArquivo($imagem['name'], $id ),
+						'#__angelgirls_sessao','nome_foto',$id,true,true, $NomeArquivoAntigo);
+			}
+			
 		}
-		
-	
-	
 		$this->carregarEditarSessao();
 	}
+	
 
+	private function SalvarUploadArquivo($upload, $dest, $arquivo, $tabela=null, $campo=null, $id = 0, $gerarImagens=true, $ComLogo=true, $ArquivoAntigoApagavel=null){
+		$db = JFactory::getDbo();
+		//Tamanho de imagens
+		//    ICO   150x150 		ico		fixo
+		//    Thumb 300x300			thumb
+		//    Cube  300x300			cube	fixo
+		//    FULL  2000x2000
+		//    BACKUP				bk
+		
+		if(isset($ArquivoAntigoApagavel) && strlen(trim($ArquivoAntigoApagavel))>0 
+				&& JFile::exists (  $dest . $ArquivoAntigoApagavel )){		
+			if ((isset( $upload ) && JFile::exists ( $upload ['tmp_name'] ))){
+				$arquivoAntigo = $dest  . DS .  $ArquivoAntigoApagavel;
+				$arquivoAntigoBK = $dest  . DS . 'bk_' . $ArquivoAntigoApagavel;
+				$arquivoAntigoICO = $dest . DS . 'ico_' . $ArquivoAntigoApagavel;
+				$arquivoAntigoTHUMB = $dest  . DS . 'thumb_' . $ArquivoAntigoApagavel;
+				if (JFolder::exists ( $arquivoAntigo )) {
+					$trahspath = $dest . DS . 'LIXO'  ;
+					if(!JFolder::exists($trahspath)){
+						JFolder::create($trahspath);
+					}
+					JFile::move($arquivoAntigo,  $dest  . DS . 'LIXO' . DS);
+					JFile::move($arquivoAntigoBK,  $dest . DS . 'LIXO' . DS);
+					JFile::move($arquivoAntigoICO,  $dest . DS . 'LIXO' . DS);
+					JFile::move($arquivoAntigoTHUMB,  $dest . DS . 'LIXO' . DS);
+				}
+			}
+		}
+		
+		
+		$fileName = $upload ['name'];
+		$fileTemp = $upload ['tmp_name'];
+		$newfile = $dest . DS  . $arquivo;
+		if (JFolder::exists ( $newfile )) {
+			JFile::delete ( $newfile );
+		}
+		if (! JFile::upload( $fileTemp, $newfile )) {
+			JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
+			return false;
+		} else {
+			if(isset($tabela) && strlen(trim($tabela))>0 ){
+				$query = $db->getQuery ( true );
+				$query->update( $db->quoteName ( $tabela ) )->set ( array (
+						$db->quoteName ( $campo ) . ' = ' . $db->quote ( $arquivo )
+				) )->where ( array (
+						$db->quoteName ( 'id' ) . ' = ' . $id
+				) );
+				$db->setQuery ( $query );
+				if(!$db->execute()){
+					return false;
+				}
+			}
+		}
+		
+		if($gerarImagens){
+			//Cria backup
+			JFile::copy($newfile, $dest . DS  .'bk_'. $arquivo);
+			
+			$img = null;
+			// Obter dados do arquivo de imagem
+			$dados = getimagesize($newfile);
+			
+			// Determinar se o tipo de imagem e' suportado
+			$tipo = $dados[2];
+			if ($tipo & imagetypes()) {
+				switch ($tipo) {
+					case IMG_GIF:
+						$img = imagecreatefromgif($newfile);
+						break;
+					case IMG_JPEG:
+						$img = imagecreatefromjpeg($newfile);
+						break;
+					case IMG_PNG:
+						$img = imagecreatefrompng($newfile);
+						break;
+					case IMG_WBMP:
+						$img = imagecreatefromwbmp($newfile);
+						break;
+					case IMG_XPM:
+						$img = imagecreatefromxpm($newfile);
+						break;
+					default:
+						$conteudo = file_get_contents($newfile);
+						$img = imagecreatefromstring($conteudo);
+						break;
+				}
+			}
+			list($width, $height) = getimagesize($newfile);
+			$icowidth =  ($height < $width? $width / ($height/150): 150 );
+			$icoheight = ($width < $height? $height / ($width/150): 150 );
+			$thumbwidth = ($height > $width? $width / ($height/300): 300 );
+			$thumbheight = ($width > $height? $height / ($width/300): 300 );
+			
+			$cubewidth = ($height < $width? $width / ($height/300): 300 );
+			$cubeheight = ($width < $height? $height / ($width/300): 300 );
+			
+			$fullwidth = ($height > $width? $width / ($height/2000): 2000);
+			$fullheight	= ($width > $height? $height / ($width/2000): 2000);	
+
+			//ICONE É UM CUBO FIXO
+			$ico = imagecreatetruecolor(150,150);
+			$thumb = imagecreatetruecolor($thumbwidth, $thumbheight);
+			$cube = imagecreatetruecolor(300, 300);
+			$full = imagecreatetruecolor($fullwidth, $fullheight);
+			
+// 			imagecopyresized($ico, $img, 0, 0, 0, 0, $icowidth, $icoheight, $width, $height );
+// 			imagecopyresized($ico, $img, 0, 0, 0, 0, $icowidth, $icoheight, $width, $height );
+// 			imagecopyresized($ico, $img, 0, 0, 0, 0, $icowidth, $icoheight, $width, $height );
+			
+			$logo = imagecreatefrompng(COMPONENT_AG_PATH . 'angelgirls.png');
+			//$logo = imagecreatefromgif(COMPONENT_AG_PATH . 'angelgirls.gif');
+			
+			list($widthlogo, $heightlogo) = getimagesize(COMPONENT_AG_PATH . 'angelgirls.png');
+			
+			imagecopyresized($ico, $img, 0, 0, 0, 0, $icowidth, $icoheight, $width, $height );
+			imagecopyresized($thumb, $img, 0, 0, 0, 0, $thumbwidth, $thumbheight, $width, $height );
+			//CENTRALIZAVA
+			//imagecopyresized($cube, $img, ($cubewidth>300?(($cubewidth-300)/2)*-1 :0), ($cubeheight>300?(($cubeheight-300)/2)*-1:0), 0, 0, $cubewidth, $cubeheight, $width, $height );
+			imagecopyresized($cube, $img, 0, 0, 0, 0, $cubewidth, $cubeheight, $width, $height );
+			imagecopyresampled($full, $img, 0, 0, 0, 0, $fullwidth, $fullheight, $width, $height );
+			
+			if($ComLogo){
+				imagecopyresampled($ico, $logo, 80, 117, 0, 0, 65, 32, $widthlogo, $heightlogo );// FATOR 3,5076923076923076923076923076923
+				imagecopyresampled($thumb, $logo, $thumbwidth-130, $thumbheight-70, 0, 0, 120, 58, $widthlogo, $heightlogo );//FATOR 1,9
+				imagecopyresampled($cube, $logo, 175, 250, 0, 0, 120, 58, $widthlogo, $heightlogo );// FATO 1,9
+				imagecopyresampled($full, $logo, $fullwidth - 510, $fullheight - 300, 0, 0, 500, 243, $widthlogo, $heightlogo );// FATOR 0,456
+			}
+			//FOTOR DO LOGO é 228x111  
+
+			
+			
+			if(!imagejpeg($ico, $dest . DS . 'ico_' . $arquivo)){
+				return false;
+			}
+			if(!imagejpeg($thumb, $dest . DS . 'thumb_' . $arquivo)){
+				return false;
+			}
+			if(!imagejpeg($cube, $dest . DS . 'cube_' . $arquivo)){
+				return false;
+			}
+			if(!imagejpeg($full, $dest . DS . $arquivo)){
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 *
@@ -1723,17 +1975,20 @@ class AngelgirlsController extends JControllerLegacy{
 	
 
 	
-	public function runFotoSessao($user, $posicao, $iSessao, $limit = 0 ){
+	private function runFotoSessao($user, $posicao, $iSessao, $limit = 0 ){
 		$db = JFactory::getDbo ();
-	
+		
 		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`descricao`,`s`.`meta_descricao`, `s`.`audiencia_gostou`,
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`descricao`,`s`.`meta_descricao`, `s`.`audiencia_gostou`,s.token_imagem, s.token,
 			CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_tema`, `s`.`id_sessao` as `sessao`')
 			->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 's' ) )
 			->join ( 'LEFT', '(SELECT data_criado, id_foto FROM #__angelgirls_vt_foto_sessao WHERE id_usuario='.$user->id.') vt_sessao ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName('vt_sessao.id_foto'))
 			->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ') ' )
-			->where ( $db->quoteName ( 's.id_sessao' ) . " =  " . $iSessao)
-			->order('`s`.`ordem` ');
+			->where ( $db->quoteName ( 's.id_sessao' ) . " =  " . $iSessao);
+			if( !isset($user) || $user->id <= 0){
+				$query->where ( $db->quoteName ( ' s.possui_nudes ' ) . " = 'N'");
+			} 
+			$query->order('`s`.`ordem` ');
 		if($limit>0){
 			$query->setLimit($limit, $posicao);
 		}
@@ -1745,58 +2000,85 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function loadImage(){
-		$user = JFactory::getUser();
+		//Tamanho de imagens
+		//    ICO   150x150 		ico		fixo
+		//    Thumb 300x300			thumb
+		//    Cube  300x300			cube	fixo
+		//    FULL  2000x2000
+		//    BACKUP				bk		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
-		$id = JRequest::getString('id',0);
+		$id = JRequest::getString('id','');
+		$tipo = "";
+
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$arr = explode(':',$id);
+			$id = $arr[0];
+			$tipo=$arr[1];
 		}
-		$tipo = JRequest::getString('descricao','');
+		else{
+			$tipo = JRequest::getString('descricao','');
+		}
 		$view = JRequest::getString( 'view','');
 		$arquivo = "";
 		$mime = 'image/jpeg';
+		$ArquivoNaoEncontrato = COMPONENT_AG_PATH . 'no_image2.png';
+		$NaoLogado = COMPONENT_AG_PATH . 'no_logado.png';
+		$AreaVIP = COMPONENT_AG_PATH . 'no_logado.png';
+		
+		
+		
+		$logado = ( isset($user) && $user->id > 0); 
 
-
+		
 		if($view=='fotosessao'){
-			$detalhe = explode ( ' ', $tipo );
 			
 			$query = $db->getQuery ( true );
-			$query->select('`f`.`nome_foto` AS `foto`, `f`.`token` AS foto_token, s.token AS sessao_token')
+			$query->select('`f`.`token_imagem` AS foto_token, s.token AS sessao_token, f.area_vip, f.possui_nudes')
 			->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
 			->join ('INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON f.id_sessao = s.id')
-			->where ( $db->quoteName ( 'f.id' ) . ' = ' . $id )
+			->where ( $db->quoteName ( 'f.token' ) . ' = ' . $db->quote($id) )
 			->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
 			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
-			
 			if(isset($result)){
-				if ($detalhe[1]=='full'){
-					$arquivo =  PATH_IMAGEM_SESSOES .  $result->sessao_token . DS . $result->foto_token  . '.jpg';
-					
-					$query = $db->getQuery ( true );
-					$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
-							->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
-							->where ($db->quoteName ( 'id' ) . ' = ' . $id);
-					$db->setQuery ( $query );
-					$db->execute ();
+				if(!$logado && $result->possui_nudes=='S'){
+					$arquivo = $NaoLogado;
 				}
 				else{
-					$arquivo =  PATH_IMAGEM_SESSOES . $result->sessao_token . DS . $detalhe[1] . '_' . $result->foto_token  . '.jpg';
+					if ($tipo=='full'){
+						$query = $db->getQuery ( true );
+						$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+								->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
+								->where ($db->quoteName ( 'id' ) . ' = ' . $db->quote($id));
+						$db->setQuery ( $query );
+						$db->execute ();
+					}
+					$arquivo =  PATH_IMAGEM_SESSOES . $result->sessao_token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'')  . $result->foto_token  . '.jpg';
 				}
+				
+
+//				TODO CONTROLE IMAGEM DA &aacute;REA VIP
+// 				if($logado && $result->area_vip='S'){
+// 					$perfil = $this->getPerfilLogado();
+// 					if($perfil->vip!='S' || intval(DateTime::createFromFormat('Y-m-d H:i:s', $perfil->vencimento_vip)->format('Ymd')) < intval( date('Ymd'))){
+// 						$arquivo = $AreaVIP;
+// 					}
+// 				}
 			}
 		}
 		else if($view=='sessoes'){
 			$query = $db->getQuery ( true );
 			$query->select('`s`.`nome_foto` AS `foto`, `s`.`token`')
-			->from ( $db->quoteName ( '#__angelgirls_sessao', 'sf' ) )
-			->where ( $db->quoteName ( 's.id' ) . " =  " . $id )
+			->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
+			->where ( $db->quoteName ( 's.token' ) . " =  " . $db->quote($id) )
 			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
-				$arquivo =  PATH_IMAGEM_SESSOES . $result->token . DS  . $result->foto;
+				$arquivo =  PATH_IMAGEM_SESSOES . $result->token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'') . $result->foto;
 			}
+			//echo($arquivo );exit();
 		}
 		else if($view=='fotoalbum'){
 			$detalhe = explode ( ' ', $tipo );
@@ -1805,7 +2087,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$query = $db->getQuery ( true );
 				$query->update($db->quoteName('#__angelgirls_foto_album' ))
 					->set(array($db->quoteName ( 'audiencia_view' ) . ' = (' . $db->quoteName ( 'audiencia_view' ) .' + 1) '))
-					->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+					->where ($db->quoteName ( 'id' ) . ' = ' . $db->quote($id))
 					->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
 					->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 				$db->setQuery ( $query );
@@ -1816,7 +2098,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->select('`f`.`nome_arquivo` AS `foto`, `f`.`id_album`, `f`.`token`, `f`.`token` AS foto_token, a.token AS album_token')
 			->from ( $db->quoteName ( '#__angelgirls_foto_album', 'f' ) )
 			->join('INNER', $db->quoteName ( '#__angelgirls_album', 'a' ) . ' ON f.id_album = a.id' )
-			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
+			->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) )
 			->where (' f.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
 			->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
@@ -1831,7 +2113,7 @@ class AngelgirlsController extends JControllerLegacy{
 			->from ( $db->quoteName ( '#__angelgirls_album', 'a' ) )
 			->join ( 'LEFT', '#__angelgirls_foto_album f ON ' . $db->quoteName ( 'a.id_foto_capa' ) . ' = ' . $db->quoteName ( 'f.id' )  )
 			->where (' a.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' )
-			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+			->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
@@ -1854,7 +2136,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$query->select('`f`.`foto_perfil` AS `foto`');
 			}
 			$query->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
-			->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
+			->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) )
 			->where (' status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
@@ -1866,7 +2148,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query = $db->getQuery ( true );
 			$query->select('`f`.`nome_foto` AS `foto`')
 				->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
-				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id )
+				->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) )
 				->where (' status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
@@ -1874,7 +2156,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$arquivo =  PATH_IMAGEM_FOTOGRAFOS . $result->foto;
 			}
 		}
-		header("Cache-Control: public ");
+		//header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
 			$imageInfo = getimagesize($arquivo);
 			switch ($imageInfo[2]) {
@@ -1892,17 +2174,12 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			header ($mime);
 			header("Content-Length: " . filesize($arquivo));
-			//$fp = fopen($arquivo, 'rb');
-			//echo file_get_contents($fp);
 			readfile($arquivo );
 		}
 		else{
-			$arquivo = JPATH_BASE.DS.'components'.DS.'com_angelgirls'.DS. 'no_image2.png';
 			header ('Content-Type: image/png');
-			header("Content-Length: " . filesize($arquivo));
-			//$fp = fopen($arquivo, 'rb');
-			//echo file_get_contents($fp);
-			readfile($arquivo);			
+			header("Content-Length: " . filesize($ArquivoNaoEncontrato));
+			readfile($ArquivoNaoEncontrato);			
 		}
 		exit();
 	}
@@ -2613,22 +2890,22 @@ class AngelgirlsController extends JControllerLegacy{
 					'NOW()',
 					$usuario->id,
 					$usuario->id,
-					$db->quote($nomeArtistico),
-					$db->quote($descricao),
-					$db->quote($metaDescricao),
-					(isset($profissao) == null ? ' null ' : $db->quote($profissao)),
-					(isset($nascionalidade) == null ? ' null ' : $db->quote($nascionalidade)),
-					(isset($idCidadeNasceu) == null ? ' null ' : $db->quote($idCidadeNasceu)),
+					$db->quote(trim($nomeArtistico)),
+					$db->quote(trim($descricao),
+					$db->quote(trim($metaDescricao)),
+					(!isset($profissao)? ' null ' : $db->quote(trim($profissao))),
+					(!isset($nascionalidade)? ' null ' : $db->quote(trim($nascionalidade))),
+					(!isset($idCidadeNasceu)? ' null ' : $db->quote($idCidadeNasceu)),
 					$dataFormatadaBanco,
-					(isset($site) == null ? ' null ' : $db->quote($site)),
-					(isset($sexo) == null ? ' null ' : $db->quote($sexo)),
-					(isset($cpf) == null ? ' null ' : $db->quote($cpf)),
-					(isset($banco) == null ? ' null ' : $db->quote($banco)),
-					(isset($agencia) == null ? ' null ' : $db->quote($agencia)),
-					(isset($conta) == null ? ' null ' : $db->quote($conta)),
-					(isset($custoMedioDiaria) == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					(isset($qualificaoEquipe) == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					(isset($idCidade) == null ? ' null ' : $db->quote($idCidade))
+					(!isset($site)? ' null ' : $db->quote(trim($site))),
+					(!isset($sexo)? ' null ' : $db->quote($sexo))),
+					(!isset($cpf)? ' null ' : $db->quote(trim($cpf))),
+					(!isset($banco)? ' null ' : $db->quote(trim($banco))),
+					(!isset($agencia)? ' null ' : $db->quote(trim($agencia))),
+					(!isset($conta)? ' null ' : $db->quote(trim($conta))),
+					(!isset($custoMedioDiaria)? ' null ' : $db->quote(trim($custoMedioDiaria))),
+					(!isset($qualificaoEquipe)? ' null ' : $db->quote(trim($qualificaoEquipe))),
+					(!isset($idCidade)? ' null ' : $db->quote($idCidade))
 				)));
 				$db->setQuery( $query );
 				$db->execute();
@@ -2690,29 +2967,24 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->setQuery( $query );
 				$db->execute();
 		}
-
+		
+		$query = $db->getQuery ( true );
+		$query->select('nome_foto ')
+		->from ('#__angelgirls_visitante')
+		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+		->where ( $db->quoteName ('id').' = ' . $id);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+			
 		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$fileName = $foto_perfil ['name'];
-			$fileTemp = $foto_perfil ['tmp_name'];
-			$newFileName = $this->GerarNovoNomeArquivo($fileName, $id . '_prfl');
-			$newfile = PATH_IMAGEM_VISITANTES . $newFileName;
-			if (JFolder::exists ( $newfile )) {
-				JFile::delete ( $newfile );
-			}
-			if (! JFile::upload ( $fileTemp, $newfile )) {
-				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-				$erro = true;
-			} else {
-				$query = $db->getQuery ( true );
-				$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
-						$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
-				$db->setQuery ( $query );
-				$db->execute ();
-			}
+			$this->SalvarUploadArquivo($foto_perfil,
+					PATH_IMAGEM_VISITANTES,
+					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+					'#__angelgirls_visitante','nome_foto',$id,true,false, $result->nome_foto);
 		}
+
+
 		return true;
 	}
 	
@@ -2937,30 +3209,24 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->execute();
 		}
 		
-
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select('nome_foto ')
+		->from ('#__angelgirls_fotografo')
+		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+		->where ( $db->quoteName ('id').' = ' . $id);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+			
 		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$fileName = $foto_perfil ['name'];
-				
-			$fileTemp = $foto_perfil ['tmp_name'];
-			$newFileName = $this->GerarNovoNomeArquivo($fileName, $id . '_prfl');
-			$newfile = PATH_IMAGEM_FOTOGRAFOS . $newFileName;
-			if (JFolder::exists ( $newfile )) {
-				JFile::delete ( $newfile );
-			}
-			if (! JFile::upload ( $fileTemp, $newfile )) {
-				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-				$erro = true;
-			} else {
-				$query = $db->getQuery ( true );
-				$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
-						$db->quoteName ( 'nome_foto' ) . ' = ' . $db->quote ( $newFileName )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
-				$db->setQuery ( $query );
-				$db->execute ();
-			}
+			$this->SalvarUploadArquivo($foto_perfil,
+					PATH_IMAGEM_FOTOGRAFOS,
+					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+					'#__angelgirls_fotografo','nome_foto',$id,true,false, $result->nome_foto);
 		}
+
 
 		return true;
 	}
@@ -3065,7 +3331,7 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			if($this->existeUsuario($username)){
 				$erro =true;
-				JError::raiseWarning( 100, 'O usu&aacute;rio j&aacute; está cadastrado.' );
+				JError::raiseWarning( 100, 'O usu&aacute;rio j&aacute; est&aacute; cadastrado.' );
 			}
 			if(!isset($password)  || strlen(trim($password))<8){
 				$erro =true;
@@ -3505,90 +3771,37 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		
 
+		
+		$query = $db->getQuery ( true );
+		$query->select('foto_perfil, foto_inteira, foto_inteira_horizontal ')
+		->from ('#__angelgirls_modelo')
+		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+		->where ( $db->quoteName ('id').' = ' . $id);
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+			
 		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$fileName = $foto_perfil ['name'];
-			$uploadedFileNameParts = explode ( '.', $fileName );
-			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-				
-			$fileTemp = $foto_perfil ['tmp_name'];
-			$newFileName = $id . '_perfil.' . $uploadedFileExtension;
-			$newfile = PATH_IMAGEM_MODELOS . $newFileName;
-			if (JFolder::exists ( $newfile )) {
-				JFile::delete ( $newfile );
-			}
-			if (! JFile::upload ( $fileTemp, $newfile )) {
-				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-				$erro = true;
-			} else {
-				$query = $db->getQuery ( true );
-				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-						$db->quoteName ( 'foto_perfil' ) . ' = ' . $db->quote ( $newFileName )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
-				$db->setQuery ( $query );
-				$db->execute ();
-			}
+			$this->SalvarUploadArquivo($foto_perfil,
+					PATH_IMAGEM_MODELOS,
+					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+					'#__angelgirls_modelo','foto_perfil',$id,true,true, $result->foto_perfil);
 		}
+		if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
+			$this->SalvarUploadArquivo($foto_inteira,
+					PATH_IMAGEM_MODELOS,
+					$this->GerarNovoNomeArquivo($foto_inteira['name'], $id ),
+					'#__angelgirls_modelo','foto_inteira',$id,true,true, $result->foto_inteira);
+		}
+		if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
+			$this->SalvarUploadArquivo($foto_inteira_horizontal,
+					PATH_IMAGEM_MODELOS,
+					$this->GerarNovoNomeArquivo($foto_inteira_horizontal['name'], $id ),
+					'#__angelgirls_modelo','foto_inteira_horizontal',$id,true,true, $result->foto_inteira_horizontal);
+		}
+		
 		
 
-		
-		if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
-			$fileName = $foto_inteira ['name'];
-			$uploadedFileNameParts = explode ( '.', $fileName );
-			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-		
-			$fileTemp = $foto_inteira ['tmp_name'];
-			$newFileName = $id . '_inteira.' . $uploadedFileExtension;
-			$newfile = PATH_IMAGEM_MODELOS . $newFileName ;
-		
-			if (JFolder::exists ( $newfile )) {
-				JFile::delete ( $newfile );
-			}
-		
-			if (! JFile::upload ( $fileTemp, $newfile )) {
-				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-				$erro = true;
-			} else {
-				$query = $db->getQuery ( true );
-				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-						$db->quoteName ( 'foto_inteira' ) . ' = ' . $db->quote ($newFileName )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
-				$db->setQuery ( $query );
-				$db->execute ();
-			}
-		}
-		
-		if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
-			$fileName = $foto_inteira_horizontal['name'];
-			$uploadedFileNameParts = explode ( '.', $fileName );
-			$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
-				
-			$fileTemp = $foto_inteira_horizontal['tmp_name'];
-			$newFileName = $id . '_inteira_h.' . $uploadedFileExtension;
-			$newfile = PATH_IMAGEM_MODELOS . $newFileName;
-				
-			if (JFolder::exists ( $newfile )) {
-				JFile::delete ( $newfile );
-			}
-				
-			if (! JFile::upload ( $fileTemp, $newfile )) {
-				JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
-				$erro = true;
-			} else {
-				$query = $db->getQuery ( true );
-				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-						$db->quoteName ( 'foto_inteira_horizontal' ) . ' = ' . $db->quote ( $newFileName )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
-				$db->setQuery ( $query );
-				$db->execute ();
-			}
-		}
-		
 		return true;
 	}
 	
@@ -4676,7 +4889,7 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'emails', $this->getEmailsPefil());
 		JRequest::setVar ( 'redes', $this->getRedesSociaisPefil());
 		JRequest::setVar ( 'telefones', $this->getTelefonesPefil());
-		//Carregar Cadstro já busca Ufs
+		//Carregar Cadastro j&aacute; busca Ufs
 		//JRequest::setVar ( 'ufs', $this->getUFs());
 		
 		JRequest::setVar ( 'view', 'perfil' );
@@ -4687,7 +4900,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public function nologado(){
 		//Nova modelo
 		$db = JFactory::getDbo ();
-
+		
 		
 		$query = $db->getQuery ( true );
 		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
@@ -4705,8 +4918,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
-				array('id','nome','descricao','foto', 'alias')))
+		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
+				array('id','nome','descricao','foto', 'alias','token')))
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 				->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' )
@@ -4720,8 +4933,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
-				array('id','nome','descricao','foto', 'alias')))
+		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
+				array('id','nome','descricao','foto', 'alias','token')))
 				->from ('#__angelgirls_sessao')
 				->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
 				->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' );
@@ -4738,10 +4951,11 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao,`id_sessao`, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias ")
+		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao,`id_sessao`, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias,token")
 			->from ('#__angelgirls_foto_sessao')
 			->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
 			->where ( $db->quoteName ( 'id_sessao' ) . ' IN (select id FROM #__angelgirls_sessao WHERE status_dado IN (' . $db->quote(StatusDado::PUBLICADO) . ' ) AND  publicar<= NOW()) ')
+			->where ( $db->quoteName ( 'possui_nudes' ) . " = 'N'")
 			->order('data_criado DESC ')
 			->setLimit(2);
 		$db->setQuery ( $query );
@@ -4809,8 +5023,6 @@ class AngelgirlsController extends JControllerLegacy{
 	public function trocarSenha(){
 		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
-		
-		
 		
 		
 		$user = JFactory::getUser();

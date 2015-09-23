@@ -428,7 +428,8 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL, 
-		`token` VARCHAR(120) NULL,
+		`token` VARCHAR(120) NOT NULL,
+		`token_imagem` VARCHAR(120) NULL,
 		
 		`possui_nudes` CHAR(1) DEFAULT 'S',
 		`area_vip` CHAR(1) DEFAULT 'S',
@@ -557,7 +558,9 @@ CREATE TABLE `#__angelgirls_foto_album` (
 		`descricao` TEXT NULL , 
 		`meta_descricao` VARCHAR(250) NOT NULL,
 		`id_album` INT NOT NULL,
-		`token` VARCHAR(120) NULL,
+		`token` VARCHAR(120) NOT NULL,
+		`token_imagem` VARCHAR(120) NULL,
+		
 		`possui_nudes` CHAR(1) DEFAULT 'S',
 		`area_vip` CHAR(1) DEFAULT 'S',
 		

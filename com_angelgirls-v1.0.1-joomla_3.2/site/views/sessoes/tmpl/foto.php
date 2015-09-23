@@ -18,7 +18,7 @@ JFactory::getDocument()->addStyleSheet('components/com_angelgirls/assets/css/lig
 $foto = JRequest::getVar('foto');
 $conteudo =$foto;
 $fotos = JRequest::getVar('fotos');
-$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$foto->id_sessao.'-full');
+$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->token.':full');
 $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
 
 ?>
@@ -304,7 +304,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 
 <div class="labelTitulo">
 	<a class="example-image-link" href="<?php echo($urlFoto);?>" data-lightbox="example-set" data-title="<?php echo($foto->titulo); ?>">
-		<img src="<?php echo($urlFoto);?>" class="img-responsive"/>
+		<img src="<?php echo($urlFoto);?>" class="img-responsive zoominImagem"/>
 	</a>
 	<h2><?php echo($foto->titulo); ?></h2>
 </div>
@@ -318,7 +318,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 			$count = 0;
 			foreach($fotos as $conteudo): 
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->titulo))); 
-				$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->id.':'.$conteudo->sessao.'-ico'); ?>
+				$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->token.':ico'); ?>
 				<div class="item <?php echo($conteudo->id==$foto->id?' ativo':''); ?>">
 		    		<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" class="img-rounded"/>
 		    		<div class="label"><?php echo($conteudo->titulo);?></div></a>

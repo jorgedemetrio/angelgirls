@@ -11,7 +11,7 @@ CREATE OR REPLACE VIEW #__timeline (id,  tipo,  titulo, descricao, prioridade, d
 	s.audiencia_gostou as audiencia,
     s.audiencia_view as acessos,
     RAND() as rnd,
-    '' AS opt1,
+    token AS opt1,
     '' AS opt2,
     '' AS opt3,
     '' AS opt4

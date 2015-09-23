@@ -35,10 +35,20 @@ $id  = JRequest::getInt('id',$conteudo->id);
 $termos = JRequest::getString('termos','');
 $titulo = JRequest::getString('titulo',$conteudo->titulo);
 $imagem = JRequest::getString('imagem',null);
-$data_realizada = JRequest::getString('data_realizada',$conteudo->data_realizada);
+$data_realizada = JRequest::getString('data_realizada',null);
+
+if(isset($data_realizada) && strlen(trim($data_realizada))>8){
+	$dataRealizadoSessao = DateTime::createFromFormat('d/m/Y H:i:s', $data_realizada.' 00:00:00');
+	$data_realizada = $dataRealizadoSessao->format('Y-m-d');
+}
+else{
+	$data_realizada = $conteudo->data_realizada;
+}
+
 $agenda  = JRequest::getInt('agenda',$conteudo->id_agenda);
 $meta_descricao = JRequest::getString('meta_descricao',$conteudo->meta_descricao);
 $comentario = JRequest::getString('comentario',($perfil->tipo=='MODELO'? $conteudo->comentario_modelos:$conteudo->comentario_fotografo));
+$historia = JRequest::getInt('historia',$conteudo->historia);
 $tema  = JRequest::getInt('tema',$conteudo->id_tema);
 $locacao  = JRequest::getInt('locacao',$conteudo->id_locacao);
 $id_figurino_principal  = JRequest::getInt('id_figurino_principal',$conteudo->id_figurino_principal);
@@ -56,9 +66,19 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 ?>
 <form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=salvarSessao')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 	<input type="hidden" name="id" value="<?php echo JRequest::getInt('id'); ?>"/>
+	<input type="hidden" name="tipo" value="<?php echo $perfil->tipo; ?>"/>
+	
 	<?php echo JHtml::_('form.token'); ?>
 	
-	<div class="btn-group pull-right" role="group">
+	<div class="btn-toolbar pull-right"  pull-right" role="toolbar" >
+		<div class="btn-group" role="group">
+			<button  class="btn btn-default ajuda"  type="button">
+				Dicas e Sujest&otilde;es <span class="glyphicon glyphicon-question-sign"></span>
+			</button>
+			<button  class="btn btn-default"  type="button">
+				Termos e condi&ccedil;&otilde;es <span class="glyphicon glyphicon-paperclip"></span>
+			</button>
+		</div>
 		<div class="btn-group" role="group">
 			<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);">
 				<span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
@@ -77,6 +97,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 <?php endif; ?>
 			</button>
+
 		</div>
 	</div>
 	<div class="page-header">
@@ -119,7 +140,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 	
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
 					<label class="control-label"  for="imagem"><?php echo JText::_('Imagem de Capa'); ?> *</label>
-					<input class="form-control" data-validation="required size mime dimension" type="file" name="imagem"  id="imagem" title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>" accept="image/*" data-validation-dimension="min300x500"  data-validation="size" data-validation-max-size="3M" data-validation-allowing="jpg, png, gif, JPG, PNG, GIF" />
+					<input class="form-control" data-validation="required size mime dimension" type="file" name="imagem"  id="imagem" title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>" accept="image/*" data-validation-dimension="min300x500"  data-validation="size" data-validation-max-size="5M" data-validation-allowing="jpg, png, gif, JPG, PNG, GIF" />
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
 					<label class="control-label"  for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
@@ -131,12 +152,9 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label"  for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?> <small>(restam <span id="maxlength">250</span> cadacteres)</small></label>
-					<textarea class="form-control" data-validation="required" style="width: 95%;" rows="5" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre a sess&atilde;o fotos. Evite caractes especiais e colocar contatos como telefone, e-mail ou outros, com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre a sess&atilde;o fotos. Evite caractes especiais e colocar contatos como telefone, e-mail ou outros, com at&eacute; 250 caracteres.'); ?>"><?php echo $meta_descricao;?></textarea>
+					<textarea class="form-control" data-validation="required" style="width: 95%;" rows="5" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre a sess&atilde;o fotos. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre a sess&atilde;o fotos. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"><?php echo $meta_descricao;?></textarea>
 				</div>
-				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<label class="control-label"  for="comentario">Coment&aacute;rio do(a) <?php echo(strtolower( $perfil->tipo));?> <small>(restam <span id="maxlengthComentario">250</span> cadacteres)</small></label>
-					<textarea class="form-control" data-validation="required" style="width: 95%;" rows="3" type="text" name="comentario"  id="comentario" size="32" maxlength="250" placeholder="<?php echo JText::_('Coment&aacute;rio com seu ponto de vista sobre a sess&atilde;o. Evite caractes especiais e colocar contatos como telefone, e-mail ou outros, com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Coment&aacute;rio com seu ponto de vista sobre a sess&atilde;o. Evite caractes especiais e colocar contatos como telefone, e-mail ou outros, com at&eacute; 250 caracteres.'); ?>"><?php echo $comentario; ?></textarea>
-				</div>			
+
 	
 				<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<label class="control-label"  for="tema"><?php echo JText::_('Tema'); ?></label>
@@ -183,8 +201,14 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					</select>
 				</div>
 			</div>
-			
-			
+			<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+				<label class="control-label"  for="comentario">Coment&aacute;rio do(a) <?php echo(strtolower( $perfil->tipo));?> <small>(restam <span id="maxlengthComentario">250</span> cadacteres)</small></label>
+				<textarea class="form-control" data-validation="required" style="width: 95%;" rows="3" type="text" name="comentario"  id="comentario" maxlength="250" placeholder="<?php echo JText::_('Coment&aacute;rio com seu ponto de vista sobre a sess&atilde;o. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Coment&aacute;rio com seu ponto de vista sobre a sess&atilde;o. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"><?php echo $comentario; ?></textarea>
+			</div>
+			<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+				<label class="control-label"  for="historia">Hist&oacute;ria do SET/Sess&atilde;o</label>
+				<textarea class="form-control" style="width: 95%;" rows="3" type="text" name="historia"  id="historia" placeholder="<?php echo JText::_('Hist&oacute;ria do SET, dos personagens, o que tenta contar com o sess&atilde;o ou como chegou at&eacute; a ideia, pode citar nomes de personagens. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros.'); ?>"  title="<?php echo JText::_('Hist&oacute;ria do SET, o que tenta contar com o sess&atilde;o ou como chegou at&eacute; a ideia, pode citar nomes de personagens. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"><?php echo $historia; ?></textarea>
+			</div>				
 			
 			
 			
@@ -208,7 +232,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<input type="hidden" name="id_modelo_principal" id="id_modelo_principal"  value="<?php echo $id_modelo_principal;?>"/>
 					<a href="JavaScript: BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');" class="btn">Selecionar Modelo
 					 <span class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php if(isset($id_modelo_principal) && $id_modelo_principal!=0):?>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"><img src="<?php echo($urlImg);?>" title="Modelo <?php echo($this->item->modelo1);?>" alt="Modelo <?php echo($this->item->modelo1);?>" class="img-circle" style="height: 100px"/></div>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"><?php echo($this->item->modelo1);?></div>
@@ -225,7 +249,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<input type="hidden" name="id_modelo_secundaria" id="id_modelo_secundaria"  value="<?php echo $id_modelo_secundaria;?>"/>
 					<a href="JavaScript: BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');" class="btn">Selecionar Modelo
 					 <span class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php if(isset($id_modelo_secundaria) && $id_modelo_secundaria!=0):?>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"><img src="<?php echo($urlImg);?>" title="Modelo <?php echo($this->item->modelo2);?>" alt="Modelo <?php echo($this->item->modelo12);?>" class="img-circle" style="height: 100px"/></div>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"><?php echo($this->item->modelo2);?></div>
@@ -245,7 +269,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 <?php if((!isset($id_fotografo_principal) || $id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$perfil->id.':ico'); ?>		
 					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $perfil->id;?>"/>
-					<div id="dadosFotografoPricipal" class="row" style="text-align: center">
+					<div id="dadosFotografoPricipal" class="row" style="text-align: center; margin-top: 50px;">
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"><img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($perfil->apelido);?>" alt="Fotografo <?php echo($perfil->apelido);?>" class="img-circle"  style="height: 100px"/></div>
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="nomeFotografoPrincipal"><?php echo($perfil->apelido);?></div>
 					</div>
@@ -254,7 +278,7 @@ else:
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$id_fotografo_principal.':ico');?>
 					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $id_fotografo_principal;?>"/>
 					<a href="JavaScript: BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');" class="btn">Selecionar Fotografo <span class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row" style="text-align: center">
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php 
 	if(isset($id_fotografo_principal) && $id_fotografo_principal!=0) :?>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"><img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($this->item->fotografo1);?>" alt="Fotografo <?php echo($this->item->fotografo1);?>" class="img-circle" style="height: 100px"/></div>
@@ -277,12 +301,12 @@ endif;?>
 				
 <?php 
 $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_secundario.':ico');?>
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center;">
 					<h5 calss="text-center">Segundo Fotografo/Assistente</h5>				
 					<input type="hidden" name="id_fotografo_secundario" id="id_fotografo_secundario"  value="<?php echo $id_fotografo_secundario;?>"/>
 					<a href="JavaScript: BuscarFotografo('id_fotografo_secundario','nomeFotografoSecundaria','fotoFotografoSecundaria');" class="btn">Selecionar Fotografo/Assistente 
 					 <span class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosFotografoPricipal" class="row">
+					<div id="dadosFotografoPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php if(isset($id_fotografo_secundario) && $id_fotografo_secundario!=0):?>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"><img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($this->item->fotografo1);?>" alt="Fotografo <?php echo($this->item->fotografo2);?>" class="img-circle" style="height: 100px"/></div>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"><?php echo($this->item->fotografo2);?></div>

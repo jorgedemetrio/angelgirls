@@ -77,6 +77,20 @@ td.padrao{
 	  text-transform: capitalize;
 }
 
+.ajuda:hover{
+	cursor: help;
+}
+
+.zoominImagem:hover{
+	cursor:zoom-in;
+}
+
+.carregando:hover, #carregandoInicial:hover, #pleaseWaitDialog:hover{
+	NO___cur_sor:progress;
+	cursor:wait;
+}
+
+
 
 .dropdown-menu .divider {
     border-bottom: 1px solid #C3C3C3;

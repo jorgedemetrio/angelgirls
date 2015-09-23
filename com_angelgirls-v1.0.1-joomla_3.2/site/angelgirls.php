@@ -78,7 +78,7 @@ echo('
     </div>
   </div>
 </div>
-<div class="modal fade " id="pleaseWaitDialog" class="display:none" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+<div class="modal fade carregando" id="pleaseWaitDialog" class="display:none" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processando...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
 
 // Redirect if set by the controller
 $controller->redirect();

@@ -94,7 +94,16 @@ input[type="file"]{
 	<input type="hidden" name="tipo" id="tipo" value="<?php echo($this->item->tipo);?>" />
 	<?php //echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 	
-	<div class="btn-group pull-right" role="group">
+	<div class="btn-toolbar pull-right" role="group">
+		<div class="btn-group" role="group">
+			<button  class="btn btn-default ajuda"  type="button">
+				Dicas e Sujest&otilde;es <span class="glyphicon glyphicon-question-sign"></span>
+			</button>
+			<button  class="btn btn-default"  type="button">
+				Termos e Condi&ccedil;&otilde;es <span class="glyphicon glyphicon-paperclip"></span>
+			</button>
+		</div>
+	
 		<div class="btn-group" role="group">
 			<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
 			</button>
