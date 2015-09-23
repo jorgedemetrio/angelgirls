@@ -1161,7 +1161,6 @@ class AngelgirlsController extends JControllerLegacy{
 		if(!isset($idCidade) || strlen(trim($idCidade))<=0){
 			$mensagens[] = 'Cidade/Estado s&atilde;o campos obrigat&oacute;rios.' ;
 		}
-
 		if(!isset($foto_perfil) || !JFile::exists ( $foto_perfil ['tmp_name'] )){
 			$mensagens[] = 'Imagem &eacute; um campo obrigat&oacute;rio.';
 		}
@@ -1483,12 +1482,114 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
 		
+		$id  = JRequest::getInt('id',null);
+		$termos = JRequest::getString('termos',null);
+		$titulo = JRequest::getString('titulo',null);
+		$imagem = JRequest::getString('imagem',null);
+		$data_realizada = JRequest::getString('data_realizada',null);
+		$agenda  = JRequest::getInt('agenda',null);
+		$meta_descricao = JRequest::getString('meta_descricao',null);
+		$comentario = JRequest::getString('comentario',null);
+		$tema  = JRequest::getInt('tema',null);
+		$locacao  = JRequest::getInt('locacao',null);
+		$id_figurino_principal  = JRequest::getInt('id_figurino_principal',null);
+		$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',null);
+		$id_modelo_principal  = JRequest::getInt('id_modelo_principal',null);
+		$id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',null);
+		$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',null);
+		$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',null);
+		$descricao = JRequest::getString('descricao',null);
+		
+		$erros = false;
+		
+		//Validação
+		if((!isset($id) || $id == 0 || strlen(trim($id)) <=0 ) &&
+				strlen(trim($termos)) <= 0){
+			JError::raiseWarning(100,JText::_('Cadastro de uma sessão nova é obrigatório que leia os termos e condições e confirme que está de acordo.'));
+			$erros = true;
+		}
+		
+		
+		if(!isset($titulo) || trlen(trim($titulo)) <=5 ){
+			JError::raiseWarning(100,JText::_('Titulo é um campo obrigatório. E deve contar no minimo 5 caracteres.'));
+			$erros = true;
+		}
+		
+		
+		
+		if($erros){
+			$this->carregarEditarSessao();
+			return;
+		}
+		
+		
+		if(!isset($id) || $id==0 || strlen(trim($id)) <= 0 ){
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_sessao' ))
+			->columns ( array (
+				$db->quoteName ( 'status_dado' ),
+				$db->quoteName ( 'data_criado' ),
+				$db->quoteName ( 'id_usuario_criador' ),
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'id_usuario_alterador' ),
+					
+				$db->quoteName ( 'titulo' ),
+				$db->quoteName ( 'nome_foto' ),
+				$db->quoteName ( 'executada' ),
+				$db->quoteName ( 'descricao' ),
+				$db->quoteName ( 'historia' ),
+				$db->quoteName ( 'comentario_fotografo' ),
+				$db->quoteName ( 'comentario_modelos' ),
+				$db->quoteName ( 'comentario_equipe' ),
+				$db->quoteName ( 'meta_descricao' ),
+				$db->quoteName ( 'token' ),
+				$db->quoteName ( 'id_agenda' ),
+				$db->quoteName ( 'id_tema' ),
+				$db->quoteName ( 'id_modelo_principal' ),
+				$db->quoteName ( 'id_modelo_secundaria' ),
+				$db->quoteName ( 'id_locacao' ),
+				$db->quoteName ( 'id_fotografo_principal' ),
+				$db->quoteName ( 'id_fotografo_secundario' ),
+				$db->quoteName ( 'id_figurino_principal' ),
+				$db->quoteName ( 'id_figurino_secundario' ),
+				$db->quoteName ( 'status_modelo_principal' ),
+				$db->quoteName ( 'status_modelo_secundaria' ),
+				$db->quoteName ( 'status_fotografo_principal' ),
+				$db->quoteName ( 'status_fotografo_secundario' )))
+			->values ( implode ( ',', array (
+					'\'NOVO\'',
+					'NOW()',
+					$usuario->id,
+					'NOW()',
+					$usuario->id,
+					
 
-
+					(isset($titulo) == null ? ' null ' : $db->quote($profissao)),
+					(isset($nascionalidade) == null ? ' null ' : $db->quote($nascionalidade)),
+					(isset($idCidadeNasceu) == null ? ' null ' : $db->quote($idCidadeNasceu)),
+					$dataFormatadaBanco,
+					(isset($site) == null ? ' null ' : $db->quote($site)),
+					(isset($sexo) == null ? ' null ' : $db->quote($sexo)),
+					(isset($cpf) == null ? ' null ' : $db->quote($cpf)),
+					(isset($banco) == null ? ' null ' : $db->quote($banco)),
+					(isset($agencia) == null ? ' null ' : $db->quote($agencia)),
+					(isset($conta) == null ? ' null ' : $db->quote($conta)),
+					(isset($custoMedioDiaria) == null ? ' null ' : $db->quote($custoMedioDiaria)),
+					(isset($qualificaoEquipe) == null ? ' null ' : $db->quote($qualificaoEquipe)),
+					(isset($idCidade) == null ? ' null ' : $db->quote($idCidade))
+			)));
+			$db->setQuery( $query );
+			$db->execute();
+			$id = $db->insertid();
+			JRequest::setVar('id',$id);
+		}
+		else{
+			//update
+		}
+		
 	
-		JRequest::setVar('view', 'sessoes');
-		JRequest::setVar('layout', 'editar');
-		parent::display();
+	
+		$this->carregarEditarSessao();
 	}
 
 	
@@ -2615,6 +2716,50 @@ class AngelgirlsController extends JControllerLegacy{
 		return true;
 	}
 	
+	
+	
+	public function buscarFotografoModal(){
+		$nome = JRequest::getString('nome',null);
+		$idCidade  = JRequest::getInt('id_cidade',null);
+		$estado  = JRequest::getInt('estado',null);
+	
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`data_nascimento`,
+			`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`, `f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,
+			`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+			`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
+				->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
+				->join ( 'INNER', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
+				->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+				->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
+		if(isset($nome) && strlen(trim($nome))>=3 ){
+			$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
+			if(isset($idCidade) && $idCidade!="" && $idCidade>0){
+				$query->where ( 'cvive.id =  ' . $idCidade);
+			}
+			if(isset($estado) && $estado!="" ){
+				$query->where ( 'cvive.uf =  ' . $db->quote(trim($estado)));
+			}
+			$query->where('(upper(trim(f.nome_artistico)) like ' .$nomeFormatado .' OR upper(trim(u.name)) like ' .$nomeFormatado .')');
+				
+		}
+		else{
+			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos ');
+		}
+		$query->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->order('f.nome_artistico')
+		->limit(100);
+		$db->setQuery ( $query );
+
+		$result = $db->loadObjectList();
+		JRequest::setVar('fotografos',$result);
+		JRequest::setVar('ufs',$this->getUFs());
+	
+	
+		require_once 'views/fotografo/tmpl/selecionar_fotografo.php';
+		exit();
+	}
 	
 	private function salvarFotografo($usuario){
 		$sucesso=true;

@@ -383,6 +383,13 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`id_figurino_principal` INT,
 		`id_figurino_secundario` INT,
 		
+		`status_modelo_principal` INT DEFAULT 0,
+		`status_modelo_secundaria` INT DEFAULT 0,
+		`status_fotografo_principal` INT DEFAULT 0,
+		`status_fotografo_secundario` INT DEFAULT 0,
+		
+
+		
 		`audiencia_gostou` INT DEFAULT 0,
 		`audiencia_ngostou` INT DEFAULT 0,
 		`audiencia_view` INT DEFAULT 0,
