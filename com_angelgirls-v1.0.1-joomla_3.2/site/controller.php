@@ -1505,7 +1505,7 @@ class AngelgirlsController extends JControllerLegacy{
 			exit();
 		}
 		if(!isset($sessao)){
-			JError::raiseWarning(404,JText::_('Página não encontrada.'));
+			JError::raiseWarning(404,JText::_('Página n&atilde;o encontrada.'));
 			$this->loadImage();
 			exit();
 		}
@@ -1948,10 +1948,111 @@ class AngelgirlsController extends JControllerLegacy{
 	 *
 	 */
 	public function enviarFotosSessao(){
+		$db = JFactory::getDbo();
+		
+		$user = JFactory::getUser();
+		$id =  JRequest::getVar('id',null,'POST');
+		
+		$imagem = $foto_perfil = $_FILES ['imagem']; 
+		
+		$jsonRetorno = "";
+		
+		if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
+			$query = $db->getQuery ( true );
+			$query->select('token, nome_foto')
+			->from ('#__angelgirls_sessao')
+			->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+			->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
+			->where ( $db->quoteName ( 'id' ) . " =  " . $id );
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			
+			if(isset($result) && isset($result->token) && strlen(trim($result))>=1){
+				
+				$token = "";
+				$contador=0;
+				do{
+					$token = $this->GerarToken($imagem['name'] , ($contador.$id.intval(date('su')) ), true, false);
+					
+					$query = $db->getQuery ( true );
+					$query->select('id')
+								->from (  '#__angelgirls_foto_sessao')
+								->where ('token  =  ' . $db->quote($token));
+					$db->setQuery ( $query );
+					$results = $db->loadObjectList();
+					++$contador;
+				}while(isset($results) || isset($results->id) || $results->id > 0 );
+
+				
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_foto_sessao' ) )
+					->columns(array(
+					$db->quoteName ( 'status_dado' ),
+					$db->quoteName ( 'data_criado' ),
+					$db->quoteName ( 'id_usuario_criador' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'id_usuario_alterador' ),
+					$db->quoteName ( 'titulo' ),
+					$db->quoteName ( 'meta_descricao' ),
+					$db->quoteName ( 'token' ),
+					$db->quoteName ( 'token_imagem' ),
+					$db->quoteName ( 'id_sessao' ),
+					$db->quoteName ( 'ordem' ),
+					$db->quoteName ( 'id_usuario_criador' ),
+					$db->quoteName ( 'id_usuario_alterador' ),
+					$db->quoteName ( 'host_ip_criador' ),
+					$db->quoteName ( 'host_ip_alterador' )))
+					->values ( implode ( ',', array (
+							'\'NOVO\'',
+							'NOW()',
+							$usuario->id,
+							'NOW()',
+							$usuario->id,
+							$db->quote($imagem['name']),
+							$db->quote($imagem['name']),
+							$db->quote($token),
+							$id,
+							'(SELECT CASE isnull(max(ordem)) WHEN 0 THEN max(ordem)+1 ELSE 1 END FROM #__angelgirls_foto_sessao WHERE id_sessao = '.$id.')',
+							$db->quote($this->getRemoteHostIp()),
+							$db->quote($this->getRemoteHostIp())
+					)));
+					$db->setQuery( $query );
+					$db->execute();
+					$idFoto = $db->insertid();
+					$this->LogQuery($query);
+					
+					
+				  $arquivo = $this->GerarNovoNomeArquivo($imagem['name'], $idFoto );
+
+				  $query = $db->getQuery ( true );
+				  $query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+				  ->set(array($db->quoteName ( 'token_imagem' ) . ' = ' . $db->quote($arquivo) .'  '))
+				  ->where ($db->quoteName ( 'id' ) . ' = ' . $idFoto)
+				  ->where ($db->quoteName ( 'id_sessao' ) . ' = ' . $id);
+				  $db->setQuery ( $query );
+				  $db->execute ();
+				  
 	
-		JRequest::setVar('view', 'sessoes');
-		JRequest::setVar('layout', 'editar');
-		parent::display();
+							
+				$this->SalvarUploadArquivo($imagem,
+						PATH_IMAGEM_SESSOES . $result->token,
+						$arquivo,
+						null,null,$id,true,true);
+				
+				
+				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$imagem['name'].'","meta_descricao":"'.$imagem['name'].'","descricao":""}';
+			}
+			else{
+				$jsonRetorno= '{"ok":"nok","mensagem":"Sess&atilde;o n&atilde;o localizada, ou n&atilde;o tem permiss&atilde;o para isso."}';
+			}
+		}
+		else{
+			$jsonRetorno= '{"ok":"nok","mensagem":"Falha ao enviar o arquivo."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
 	}
 	
 	

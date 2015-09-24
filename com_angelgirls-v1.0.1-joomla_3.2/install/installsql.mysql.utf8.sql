@@ -468,8 +468,18 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`data_alterado` DATETIME NOT NULL,
 		`host_ip_criador` varchar(20) NOT NULL,
 		`host_ip_alterador` varchar(20) NULL,
+		FOREIGN KEY (`id_agenda`) REFERENCES `#__angelgirls_agenda` (`id`),
+		FOREIGN KEY (`id_tema`) REFERENCES `#__angelgirls_tema` (`id`),
+		FOREIGN KEY (`id_modelo_principal`) REFERENCES `#__angelgirls_modelo` (`id`),
+		FOREIGN KEY (`id_modelo_secundaria`) REFERENCES `#__angelgirls_modelo` (`id`),
+		FOREIGN KEY (`id_locacao`) REFERENCES `#__angelgirls_locacao` (`id`),
+		FOREIGN KEY (`id_fotografo_principal`) REFERENCES `#__angelgirls_fotografo` (`id`),
+		FOREIGN KEY (`id_fotografo_secundario`) REFERENCES `#__angelgirls_fotografo` (`id`),
+		FOREIGN KEY (`id_figurino_principal`) REFERENCES `#__angelgirls_figurino` (`id`),
+		FOREIGN KEY (`id_figurino_secundario`) REFERENCES `#__angelgirls_figurino` (`id`),
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
-		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
+		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
+		FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -538,18 +548,10 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`data_alterado` DATETIME NOT NULL,
 		`host_ip_criador` varchar(20) NOT NULL,
 		`host_ip_alterador` varchar(20) NULL,
-		FOREIGN KEY (`id_agenda`) REFERENCES `#__angelgirls_agenda` (`id`),
-		FOREIGN KEY (`id_tema`) REFERENCES `#__angelgirls_tema` (`id`),
-		FOREIGN KEY (`id_modelo_principal`) REFERENCES `#__angelgirls_modelo` (`id`),
-		FOREIGN KEY (`id_modelo_secundaria`) REFERENCES `#__angelgirls_modelo` (`id`),
-		FOREIGN KEY (`id_locacao`) REFERENCES `#__angelgirls_locacao` (`id`),
-		FOREIGN KEY (`id_fotografo_principal`) REFERENCES `#__angelgirls_fotografo` (`id`),
-		FOREIGN KEY (`id_fotografo_secundario`) REFERENCES `#__angelgirls_fotografo` (`id`),
-		FOREIGN KEY (`id_figurino_principal`) REFERENCES `#__angelgirls_figurino` (`id`),
-		FOREIGN KEY (`id_figurino_secundario`) REFERENCES `#__angelgirls_figurino` (`id`),
+		
+		FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`),
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
-		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
-		FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`)
+		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_post` (
