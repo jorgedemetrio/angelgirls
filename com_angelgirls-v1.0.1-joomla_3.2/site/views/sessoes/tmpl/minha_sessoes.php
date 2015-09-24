@@ -7,7 +7,7 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
-	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
+	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarMinhasSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
 
@@ -22,7 +22,6 @@ $idModelo = JRequest::getInt('id_modelo',0);
 $idFotografo = JRequest::getString('id_fotografo',0);
 $ordem = JRequest::getString('ordem',0);
 $perfil = JRequest::getVar('perfil');
-$somenteMinha = JRequest::getString('somente_minha');
 
 
 if($dataInicio!=''){
@@ -37,10 +36,10 @@ if($dataFim!=''){
 </div>
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
 	<?php echo JHtml::_('form.token');?>
-	<input type="hidden" name="task" id="task" value="carregarSessoes"/>
-	<input type="hidden" name="option" id="option" value="com_angelgirls"/>
+	<input type="hidden" name="task" id="task" value="carregarMinhasSessoes"/>
 	<input type="hidden" name="view" id="option" value="sessoes"/>
-	<input type="hidden" name="somente_minha" id="somente_minha" value="<?php echo($somenteMinha);?>"/>
+	<input type="hidden" name="option" id="option" value="com_angelgirls"/>
+
 	<input type="hidden" name="Itemid" id="Itemid" value="<?php echo(JRequest::getVar ( 'Itemid' ));?>"/>
 	<div class="btn-toolbar pull-right" role="toolbar">
 		<?php if(isset($perfil)) : ?>
@@ -108,12 +107,6 @@ if($dataFim!=''){
 			}?>
 		</select>
 	</div>
-	<?php if(isset($perfil)) : ?>
-	<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align: right;">
-		<div style="text-align: right; margin-top: 0px;" title='Deve clicar em "Filtrar" para ter efeito.' class="checkbox-iten" data-hidden-value="SIM" data-hidden-label="<?php echo JText::_('Somente as Minhas'); ?>" data-hidden-id='somente_minha' id="somente_minha_bt"  name="somente_minha_bt"
-			onchange='if(jQuery("#somente_minha").val()!="<?php echo($somenteMinha);?>"){info("Deve clicar em \"Filtrar\" para ter efeito.");}'></div>
-	</div>
-	<?php endif;?>
 </div>
 <div class="row hidden-phone">
 	<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-6 thumbnail" id="fotoModelo" style="display:none;  text-align: center;">
@@ -127,20 +120,10 @@ if($dataFim!=''){
 </div>
 </form>
 <h2>Sess&otilde;es</h2>
-<div class="row" id="linha">
 <?php
-require_once 'sessoes_html.php';
+require_once 'minhas_sessoes_html.php';
 ?>
-</div>
-<div class="row" id="carregando" style="display: none">
-	<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
-		<img src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/loading_img.gif" alt="carregando" title="Carregando" style="width: 450px"/>
-	</div>
-</div>
 <script>
-var lidos = <?php echo(sizeof($sessoes));?>;
-var carregando = false;
-var temMais=false;
 jQuery(document).ready(function() {
 
 
@@ -166,39 +149,7 @@ jQuery(document).ready(function() {
 		}
 	});
 	
-	
-	if(lidos>=AngelgirlsController::LIMIT_DEFAULT){
-		jQuery('#carregando').css('display','');
-		temMais=true;
-	}
-	else{
-		jQuery('#carregando').css('display','none');
-		temMais=false;
-	}
 
-	jQuery('#limpar').click(function(){
-		window.location='<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes&id=sessoes-fotos-sensuais&Itemid='.JRequest::getVar ( 'Itemid' ),false));?>';
-	});
-	
-	
-	jQuery(document).scroll(function(){
-		 if( (jQuery(window).height()+jQuery(this).scrollTop()+200) >= jQuery(document).height() && !carregando && temMais) {
-			carregando = true;
-			jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoesContinuaJson',false)); ?>',{
-				nome:'<?php echo($nome); ?>',
-				data_inicio:'<?php echo(JRequest::getString('data_inicio','')); ?>',
-				data_fim:'<?php echo(JRequest::getString('data_fim','')); ?>',
-				id_modelo:'<?php echo($idModelo); ?>',
-				id_fotografo:'<?php echo($idFotografo); ?>',
-				ordem:'<?php echo($ordem); ?>',
-				somente_minha:'<?php echo($somenteMinha); ?>',	
-				posicao: lidos}, function(dado){
-				jQuery('#linha').append(dado);		
-				carregando=false;
-				setTimeout(function(){ AngelGirls.ResetConfig();}, 500);
-			},'html');
-		 }
-	});
 
 	jQuery('#id_modelo').change();
 	jQuery('#id_fotografo').change();

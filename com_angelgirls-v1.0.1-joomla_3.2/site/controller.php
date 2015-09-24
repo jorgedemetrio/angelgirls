@@ -21,6 +21,7 @@ include_once JPATH_BASE .DS.'components/com_content/models/article.php';
 require_once JPATH_BASE .DS.'components/com_content/helpers/route.php';
 require_once JPATH_BASE .DS.'components/com_content/helpers/query.php';
 jimport( 'joomla.application.module.helper' );
+jimport( 'joomla.mail.mail' );
 
 jimport('joomla.log.log');
 
@@ -30,6 +31,17 @@ class StatusDado {
 	const REMOVIDO = 'REMOVIDO';
 	const REPROVADO = 'REPROVADO';
 	const NOVO = 'NOVO';
+	const ANALIZE = 'ANALIZE';
+}
+
+class QuantidadePontos {
+	const SESSAO_PONTOS_CADASTRO = 100;
+	const SESSAO_OUTRA_CADASTRO = 5;
+	const SESSAO_APROVAR = 10;
+	const RELEASE_ENVIO = 10;
+	const RELEASE_PUBLICADA = 50;
+	const CONVITE_PUBLICADO = 50;
+	const CONVITE_ACEITO = 150;
 }
 
 
@@ -977,7 +989,7 @@ class AngelgirlsController extends JControllerLegacy{
 		if (strlen($cpf) != 11) {
 			return false;
 		}
-		// Verifica se nenhuma das sequências invalidas abaixo
+		// Verifica se nenhuma das sequ&ecirc;ncias invalidas abaixo
 		// foi digitada. Caso afirmativo, retorna falso
 		else if ($cpf == '00000000000' ||
 				$cpf == '11111111111' ||
@@ -1037,15 +1049,7 @@ class AngelgirlsController extends JControllerLegacy{
 		parent::display();
 	}
 	
-	/**
-	 * TODO
-	 */
-	public function enviarMensagem(){
-	
-		JRequest::setVar( 'view', 'inbox');
-		JRequest::setVar( 'layout', 'enviado');
-		parent::display();
-	}
+
 
 	
 	public function carregarFoto(){
@@ -1454,6 +1458,9 @@ class AngelgirlsController extends JControllerLegacy{
 		return ($ComDataNoPrefixo?date('YmdHis'):'').(isset($prefixo) && strlen(trim($prefixo)) > 0 ?$prefixo:'').($large?sha1($chaveValor):'').md5($chaveValor);
 	}
 
+	public function carregarAprovarSessao(){
+		
+	}
 	
 	/**
 	 * 
@@ -1541,7 +1548,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$token = $this->GerarToken($titulo,'',true,false);
 
 		if(!isset($perfil) || !isset($user) || $user->id == 0){
-			JError::raiseWarning(100,JText::_('Você n&atilde;o est&aacute; logado, por isso n&atilde;o pode executar essa a&ccedil;&atilde;o. Opera&ccedil;&atilde;o cancelada.'));
+			JError::raiseWarning(100,JText::_('Voc&ecirc; n&atilde;o est&aacute; logado, por isso n&atilde;o pode executar essa a&ccedil;&atilde;o. Opera&ccedil;&atilde;o cancelada.'));
 			$this->nologado();
 			return;
 		}
@@ -1578,6 +1585,12 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning(100,JText::_('O campo "Titulo" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
 			$erros = true;
 		}
+
+		if(!isset($tipo) || strlen(trim($tipo)) <=0 ){
+			JError::raiseWarning(100,JText::_('O campo "Tipo" &eacute; um campo obrigat&oacute;rio.'));
+			$erros = true;
+		}
+		
 		
 		if(strlen(trim($titulo)) >250 ){
 			JError::raiseWarning(100,JText::_('O campo "Titulo" passou de 250 caracteres.'));
@@ -1650,6 +1663,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_figurino_secundario' ),
 				$db->quoteName ( 'status_modelo_principal' ),
 				$db->quoteName ( 'status_fotografo_principal' ),
+				$db->quoteName ( 'tipo' ),
 			$db->quoteName ( 'host_ip_criador' ),
 			$db->quoteName ( 'host_ip_alterador' )))
 			->values ( implode ( ',', array (
@@ -1676,6 +1690,7 @@ class AngelgirlsController extends JControllerLegacy{
 					(!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
 					($perfil->tipo=='MODELO'?'1':'null'),
 					($perfil->tipo=='FOTOGRAFO'?'1':'null'),
+					(!isset($tipo) || strlen(trim($tipo))<=0 || $tipo==0 ? ' null ' : $tipo),
 					$db->quote($this->getRemoteHostIp()),
 					$db->quote($this->getRemoteHostIp())
 			)));
@@ -1744,6 +1759,7 @@ class AngelgirlsController extends JControllerLegacy{
 					  		$db->quoteName ( 'id_fotografo_secundario' ) . ' = ' . (!isset($id_fotografo_secundario) || strlen(trim($id_fotografo_secundario))<=0 || $id_fotografo_secundario==0 ? ' null ' : $id_fotografo_secundario),
 					  		$db->quoteName ( 'id_figurino_principal' ) . ' = ' . (!isset($id_figurino_principal) || strlen(trim($id_figurino_principal))<=0 || $id_figurino_principal==0 ? ' null ' : $id_figurino_principal),
 					  		$db->quoteName ( 'id_figurino_secundario' ) . ' = ' . (!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
+					  		$db->quoteName ( 'tipo' ) . ' = ' . (!isset($tipo) || strlen(trim($tipo))<=0 || $tipo==0 ? ' null ' : $tipo),
 							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
 					  ))
 					->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
@@ -1939,7 +1955,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`tipo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
 			`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 			`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
 			`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
@@ -2263,23 +2279,40 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	
-	public function runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem ){
+	public function runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem, $minha = 'N',$ComLimite =true ){
 		$db = JFactory::getDbo ();
 		$user = JFactory::getUser();
 		$query = $db->getQuery ( true );
 		$query->select("`s`.`id` AS `id`,
 					`s`.`titulo` AS `nome`,
+					`s`.`token`,
 				    `s`.`titulo` AS `alias`,
 				    `s`.`data_alterado` AS `modified`,
 				    `s`.`nome_foto` AS `foto`,
 				    `s`.`executada` AS `realizada`,
-				    `s`.`audiencia_gostou` AS `gostou`,
-				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` "
-		)
+				    `s`.`audiencia_gostou` AS `gostou`
+					,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
+					`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`, s.status_dado,
+				    CASE isnull(`v`.`data_criado` ) WHEN 1 THEN 'NAO' ELSE 'SIM' END AS `eu` ,
+					`mod1`.`nome_artistico` AS `modelo1`,`mod1`.`foto_perfil` AS `foto_mod1`,`mod1`.`audiencia_gostou` AS `gostou_mo1`, `mod1`.`meta_descricao` AS `desc_mo1` ,
+					`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` ,
+					`fot1`.`nome_artistico` AS `fotografo1`,`fot1`.`audiencia_gostou` AS `gostou_fot1`,`fot1`.`nome_foto` AS `foto_fot1`, `fot1`.`meta_descricao` AS `desc_fot1` ,
+					`fot2`.`nome_artistico` AS `fotografo2`,`fot2`.`audiencia_gostou` AS `gostou_fot2`,`fot2`.`nome_foto` AS `foto_fot2`, `fot2`.`meta_descricao` AS `desc_fot1`")
 		->from ($db->quoteName ('#__angelgirls_sessao', 's' ))
+		->join ( 'INNER', '#__angelgirls_modelo AS mod1 ON (mod1.id = s.id_modelo_principal)' )
+		->join ( 'INNER', '#__angelgirls_fotografo AS fot1 ON (fot1.id = s.id_fotografo_principal)' )
+		->join ( 'LEFT', '#__angelgirls_modelo AS mod2 ON (mod2.id = s.id_modelo_secundaria)' )
+		->join ( 'LEFT', '#__angelgirls_fotografo AS fot2 ON (fot2.id = s.id_fotografo_secundario)' )
 		->join ( 'LEFT', '(SELECT `data_criado`, `id_sessao` FROM `#__angelgirls_vt_sessao` WHERE `id_usuario`='.$user->id.') v ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName ( 'v.id_sessao' )  )
-		->where ('(s.status_dado  IN (' . $db->quote(StatusDado::PUBLICADO) . ') OR (s.id_usuario_criador = '.$user->id.' AND  s.status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . '))')
+		->where ('(s.status_dado  IN (' . $db->quote(StatusDado::PUBLICADO) . ') OR (s.id_usuario_criador = '.$user->id.' AND  s.status_dado NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ')))')
 		->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " );
+		
+		
+		
+		
+
+
+
 		
 		if(isset($nome) && trim($nome) != ""){
 			$query->where (  " ( upper(s.titulo) like " . $db->quote(strtoupper(trim($nome)).'%') . " OR
@@ -2300,6 +2333,9 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->where (  ' ( ' . $db->quoteName ('s.id_fotografo_principal') . ' = ' . $idFotografo . ' OR ' . $db->quoteName ('s.id_fotografo_secundario') . ' = ' . $idFotografo . ')');
 		}
 		
+		if(isset($minha) && $minha == 'S' ){
+			$query->where ( $db->quoteName ('s.id_usuario_criador') . ' = ' . $user->id);
+		}
 		
 		if(isset($ordem) && $ordem != 0 ){
 			if($ordem == 1){
@@ -2321,7 +2357,9 @@ class AngelgirlsController extends JControllerLegacy{
 		else{
 			$query->order('`s`.`publicar` DESC ');
 		}
-		$query->setLimit($this::LIMIT_DEFAULT, $posicao);
+		if($ComLimite){
+			$query->setLimit($this::LIMIT_DEFAULT, $posicao);
+		}
 		$db->setQuery ( $query );
 		$results = $db->loadObjectList();
 
@@ -2342,9 +2380,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$dataInicio = JRequest::getString( 'data_inicio', null);
 		$dataFim = JRequest::getString( 'data_fim', null);
 		$ordem = JRequest::getInt( 'ordem', null);
+		$minha = JRequest::getInt( 'somente_minha', null);
 		
 
-		$results = $this->runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem );
+		$results = $this->runQueryFilterSessoes($user, $nome, $posicao, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem, $minha );
 		JRequest::setVar ( 'sessoes', $results );
 		require_once 'views/sessoes/tmpl/sessoes_html.php';
 		exit();		
@@ -2447,9 +2486,11 @@ class AngelgirlsController extends JControllerLegacy{
 		$dataInicio = JRequest::getString( 'data_inicio', null);
 		$dataFim = JRequest::getString( 'data_fim', null);
 		$ordem = JRequest::getInt( 'ordem', null);
+		$minha = JRequest::getInt( 'somente_minha', null);
+		
 		$db = JFactory::getDbo ();
 		
-		JRequest::setVar ( 'sessoes', $this->runQueryFilterSessoes($user, $nome, 0, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem ));
+		JRequest::setVar ( 'sessoes', $this->runQueryFilterSessoes($user, $nome, 0, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem, $minha ));
 
 		JRequest::setVar ( 'modelos', $this->getAllModelos() );
 
@@ -2460,6 +2501,34 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ( 'view', 'sessoes' );
 		JRequest::setVar ( 'layout', 'default' );
+		parent::display ();
+	}
+	
+	
+	public function carregarMinhasSessoes(){
+		$user = JFactory::getUser();
+		$nome = JRequest::getString( 'nome', null);
+	
+		$posicao = JRequest::getInt( 'posicao', null);
+	
+		$idModelo = JRequest::getInt( 'id_modelo', null);
+		$idFotografo = JRequest::getInt( 'id_fotografo', null);
+		$dataInicio = JRequest::getString( 'data_inicio', null);
+		$dataFim = JRequest::getString( 'data_fim', null);
+		$ordem = JRequest::getInt( 'ordem', 3);
+		$db = JFactory::getDbo ();
+	
+		JRequest::setVar ( 'sessoes', $this->runQueryFilterSessoes($user, $nome, 0, $idModelo, $idFotografo, $dataInicio, $dataFim, $ordem,'S',false ));
+	
+		JRequest::setVar ( 'modelos', $this->getAllModelos() );
+	
+		JRequest::setVar ( 'fotografos', $this->getAllFotografos() );
+	
+		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+	
+	
+		JRequest::setVar ( 'view', 'sessoes' );
+		JRequest::setVar ( 'layout', 'minha_sessoes' );
 		parent::display ();
 	}
 	
@@ -3973,7 +4042,7 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
 							$db->quoteName ( 'data_alterado' ) . '=  NOW()  ',
-							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()) )))
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()) ))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -5374,5 +5443,149 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning(100, $e->getMessage());
 		}
 		return $ip; 
+	}
+	
+	
+	public function enviarParaAprovacaoJson(){
+ 		$user = JFactory::getUser();
+		$id = JRequest::getInt('id',0,'POST');
+		$perfil = $this->getPerfilLogado();
+		$db = JFactory::getDbo ();
+
+		$sessao = $this->getSessaoById($id);
+		
+		if(!isset($user) || !isset($user->id) || $user->id<=0){
+			JError::raiseWarning( 100, 'Usu&aacute;rio n&atilde;o est&aacute; logado.');
+			$this->nologado();
+			return false;
+		}
+		if(!isset($sessao) || !isset($sessao->id) | $sessao->id <= 0){
+			JError::raiseWarning( 100, 'A Sess&atilde;o n&aatilde;o foi localizada');
+			$this->logado();
+			return;
+		}
+		if($user->id != $sessao->id_usuario_criador){
+			JError::raiseWarning( 100, 'A Sess&atilde;o n&aatilde;o foi localizada.');
+			return;
+		}			
+
+		
+		$query = $db->getQuery ( true );
+		$query->select("id, name, email")
+		->from ('#__content')
+		->where ('(' . $db->quoteName ( 'publish_up' ) . '  <= NOW()  OR '
+				. $db->quoteName ( 'publish_up' ) . ' IS NULL OR '
+				. $db->quoteName ( 'publish_up' ) . " = '0000-00-00 00:00:00' )" )
+				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+				->order('created DESC')
+				->setLimit(50000);
+		$db->setQuery ( $query );
+		$results = $db->loadObjectList();
+
+		
+		$base = JUri::root(true) ;
+		$url = $base . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarAprovarSessao&id='.$sessao->id);
+		
+		
+		$texto = "<img src='$base/images/angelgirls.png'/><br/>Ola %NOME%, <br/>Foi cadastrado uma sess&atilde;o de fotos no site Angel Girls onde voc&ecirc;s marcado(a) como %TIPO%.<br/>Para aprovar ou repovar acesse o link <a href='$url'>$url</a> ."  ;
+		if($perfil->tipo != 'MODELO'){
+			if(isset($sessao->id_fotografo_principal) && $sessao->id_fotografo_principal>0){
+				$this->EnviarMensagem($texto, $nome, 1, $titulo, $texto);
+			}
+		}
+		if($perfil->tipo != 'FOTOGRAFO'){
+			if(isset($sessao->id_modelo_principal) && $sessao->id_modelo_principal>0){
+				$this->EnviarMensagem($texto, $nome, 1, $titulo, $texto);
+			}
+		}
+
+		if(isset($sessao->id_modelo_secundaria) && $sessao->id_modelo_secundaria>0){
+			$this->EnviarMensagem($texto, $nome, 1, $titulo, $texto);
+		}
+		if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
+			$this->EnviarMensagem($texto, $nome, 1, $titulo, $texto);
+		}
+		
+		if($sessao->tipo=='PONTOS'){
+			SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_PONTOS_CADASTRO);
+		}
+		else{
+			SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_OUTRA_CADASTRO);
+		}
+	}
+	
+	/**
+	 * Programa de pontos.
+	 * 
+	 * @param unknown $descricao
+	 * @param unknown $KEY
+	 * @param unknown $quantidade
+	 */
+	private function SomarPontos($descricao, $KEY, $quantidade){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->insert( $db->quoteName ( '#__angelgirls_extrato_pontos' ) )
+		->columns (array (
+				$db->quoteName ( 'pontos' ),
+				$db->quoteName ( 'motivo' ),
+				$db->quoteName ( 'chave' ),
+				$db->quoteName ( 'id_usuario' ),
+				$db->quoteName ( 'data' ),
+				$db->quoteName ( 'host_ip' )))
+				->values(implode(',', array ($quantidade, $descricao,$KEY,$user->id, 'NOW()',$db->quote($this->getRemoteHostIp()))));
+		$db->setQuery( $query );
+		$db->execute();
+		$this->LogQuery($query);
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_fotografo' ))
+		->set(array('pontos = (pontos + ' . $quantidade . ') '))
+		->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+		$db->setQuery ( $query );
+		$db->execute ();
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_visitante' ))
+		->set(array('pontos = (pontos + ' . $quantidade . ') '))
+		->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+		$db->setQuery ( $query );
+		$db->execute ();
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_modelo' ))
+		->set(array('pontos = (pontos + ' . $quantidade . ') '))
+		->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+		$db->setQuery ( $query );
+		$db->execute ();
+
+	}
+	
+	private function EnviarMensagem($email, $nome, $tipo, $titulo, $texto){
+		$mailer = JFactory::getMailer();
+		
+		$config = JFactory::getConfig();
+		$sender = array(
+				$config->get( 'mailfrom' ),
+				$config->get( 'fromname' )
+		);
+		
+		$mailer->setSender($sender);
+		$body   = '<h2>Our mail</h2>'
+				. '<div>A message to our dear readers'
+				. '<img src="cid:logo_id" alt="logo"/></div>';
+		$mailer->isHTML(true);
+		$mailer->Encoding = 'base64';
+		$mailer->setBody($body);
+		// Optionally add embedded image
+		$mailer->AddEmbeddedImage( JPATH_COMPONENT.'/assets/logo128.jpg', 'logo_id', 'logo.jpg', 'base64', 'image/jpeg' );
+		
+		$send = $mailer->Send();
+		if ( $send !== true ) {
+			JError::raiseWarning( 100, $send->__toString() );
+			JLog::add($send->__toString(), JLog::WARNING);
+			return false;
+		} 
+		return true;
 	}
 }

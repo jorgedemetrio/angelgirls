@@ -51,7 +51,7 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 			<div class="carousel-inner" role="listbox">
 				<div class="item item-carrossel active" data-id-ver="2">
 				<?php
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$modelo->id.':medio');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$modelo->id.':thumb');
 				?>
 					<img src="<?php echo($urlImg);?>" alt="<?php echo($modelo->nome);?>" style="width:100%">
 					<div class="carousel-caption">
@@ -191,7 +191,7 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 		<div class="thumbnail">
 			<?php 
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':cube');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':thumb');
 				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 					<a href="<?php echo($url);?>"><img src="<?php echo($urlImg);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="width: 100%;"/></a>
 				<?php 

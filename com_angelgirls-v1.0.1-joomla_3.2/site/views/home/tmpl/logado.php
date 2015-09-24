@@ -31,15 +31,23 @@ $perfil = JRequest::getVar ( 'perfil' );
 		</div>
 		<ul class="nav nav-pills  nav-stacked">
 		  <li role="presentation" class="active"> <a href="#"><span class="glyphicon glyphicon-home"></span><span class="hidden-phone"> Home <?php echo(strtolower( $perfil->tipo)); ?></span> </a></li>
-		  <li role="presentation"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPerfil'));?>"><span class="glyphicon glyphicon-user"></span><span class="hidden-phone"> Editar meu Perfil</span></a></li>
-		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-inbox"></span><span class="hidden-phone"> Messages</span></a></li>
-		  
-<?php if($perfil->tipo=='MODELO' || $perfil->tipo=='FOTOGRAFO' ):?>		  
+		  <li role="presentation"><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPerfil'));?>"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-phone"> Meu perfil</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-inbox inbox"></span><span class="hidden-phone"> Messages</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-user"></span><span class="hidden-phone"> Grupos</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-globe"></span><span class="hidden-phone"> P&aacute;ginas</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-facetime-video"></span><span class="hidden-phone"> V&iacute;deos</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-sunglasses"></span><span class="hidden-phone"> Amigos</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-comment"></span><span class="hidden-phone"> Enviar convites</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-th-list"></span><span class="hidden-phone"> Noticias</span></a></li>
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-calendar"></span><span class="hidden-phone"> Calend&aacute;rio</span></a></li>
+<?php if($perfil->tipo=='MODELO' || $perfil->tipo=='FOTOGRAFO' ):?>		
+		  <li role="presentation inbox"><a href="#"><span class="glyphicon glyphicon-usd"></span><span class="hidden-phone"> Extrato</span></a></li>
+  
 		  <li role="presentation">
 		  	<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-camera"></span><span class="hidden-phone"> Sess&otilde;es</span></a>
 		    <ul class="dropdown-menu">
       			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarEditarSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Nova Sess&atilde;o</a></li>
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessoes&somente_minha=SIM'));?>">Minhas Sess&otilde;es</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarMinhasSessoes'));?>">Minhas Sess&otilde;es</a></li>
       			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessoes'));?>">Todas</a></li>
 		    </ul>
 		  </li>
@@ -75,7 +83,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 				break;
 			case 'SESSOES';
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->opt1.':cube');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->opt1.':thumb');
 				$titulo = $conteudo->titulo;
 				$botao = '';
 				$tipoGostar=null;

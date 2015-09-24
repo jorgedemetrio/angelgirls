@@ -126,7 +126,16 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`id_usuario` INT UNIQUE NOT NULL , 
 		`nome_artistico` VARCHAR(150) NOT NULL, 
 		`descricao` TEXT NULL, 
-		`meta_descricao` VARCHAR(250) NOT NULL , 
+		`meta_descricao` VARCHAR(250) NOT NULL ,
+		
+		`pontos` bigint DEFAULT 0,
+		
+		`foto_documento` VARCHAR(100),
+		`foto_comp_residencia` VARCHAR(100),
+		`status_documento` VARCHAR(20),
+		`status_comp_residencia` VARCHAR(20),
+		
+		
 		`foto_perfil` VARCHAR(100), 
 		`foto_inteira` VARCHAR(100),
 		`foto_inteira_horizontal` VARCHAR(100), 
@@ -155,6 +164,9 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`conta` VARCHAR(14),
 		
 		`custo_medio_diaria` NUMERIC(12,2) DEFAULT 0,
+		
+		
+		
 		
 		`status_modelo` VARCHAR(14) DEFAULT 'NOVA',
 		`qualificao_equipe` INT DEFAULT 0,
@@ -185,6 +197,8 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		
 		`nome_foto` varchar(150)  NULL,
 		
+		`pontos` bigint DEFAULT 0,
+		
 		`data_nascimento` DATE,
 		`sexo` ENUM('M','F') NOT NULL,
 		`nascionalidade` VARCHAR(25),
@@ -193,6 +207,11 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`profissao` VARCHAR(25),
 		`id_cidade` INT NOT NULL,
 		
+
+		`foto_documento` VARCHAR(100),
+		`foto_comp_residencia` VARCHAR(100),
+		`status_documento` VARCHAR(20),
+		`status_comp_residencia` VARCHAR(20),
 		
 
 		`status_fotografo` VARCHAR(14),
@@ -229,6 +248,7 @@ CREATE TABLE `#__angelgirls_visitante` (
 		`meta_descricao` VARCHAR(250) NOT NULL ,
 		`nome_foto` varchar(150)  NULL, 
 		`data_nascimento` DATE NOT NULL,
+		`pontos` bigint DEFAULT 0,
 		`sexo` ENUM('M','F') NOT NULL,
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
@@ -395,8 +415,10 @@ CREATE TABLE `#__angelgirls_video_sessao` (
 	`host_ip_alterador` varchar(20) NULL,
 	FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 	FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
-	FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`),
+	FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
 
 
 CREATE TABLE `#__angelgirls_sessao` ( 
@@ -404,6 +426,8 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`titulo` VARCHAR(250) NOT NULL UNIQUE, 
 		
 		`nome_foto` varchar(150)  NULL,
+		
+		`tipo` enum('VENDA','PONTOS','PATROCINIO','LEILAO')  DEFAULT 'VENDA',
 		
 		`executada` DATE NOT NULL, 
 		`descricao` TEXT NULL , 
@@ -449,13 +473,30 @@ CREATE TABLE `#__angelgirls_sessao` (
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `#__angelgirls_extrato_pontos` ( 
+		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+		
+		`chave` VARCHAR(25) DEFAULT 'SESSAO.CRIADA',
+		`pontos` bigint,
+		`motivo` text,
+		
+		`id_usuario` INT NOT NULL , 
+		`data` DATETIME NOT NULL, 
+		`host_ip` varchar(20) NOT NULL,
+
+		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
 
 CREATE TABLE `#__angelgirls_mensagens` ( 
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`id_resposta` INT, 
 		`titulo` VARCHAR(250) NOT NULL, 
 		`id_usuario_destino` INT NOT NULL ,
-		`mensagem` TEXT  NOT NULL , 
+		`mensagem` TEXT  NOT NULL ,
+		`token` varchar(250) NULL ,
+		`tipo` int DEFAULT 1,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_remetente` INT NOT NULL , 
  		`data_criado` DATETIME NOT NULL,

@@ -49,6 +49,7 @@ $agenda  = JRequest::getInt('agenda',$conteudo->id_agenda);
 $meta_descricao = JRequest::getString('meta_descricao',$conteudo->meta_descricao);
 $comentario = JRequest::getString('comentario',($perfil->tipo=='MODELO'? $conteudo->comentario_modelos:$conteudo->comentario_fotografo));
 $historia = JRequest::getInt('historia',$conteudo->historia);
+$tipo  = JRequest::getString('tipo',$conteudo->tipo);
 $tema  = JRequest::getInt('tema',$conteudo->id_tema);
 $locacao  = JRequest::getInt('locacao',$conteudo->id_locacao);
 $id_figurino_principal  = JRequest::getInt('id_figurino_principal',$conteudo->id_figurino_principal);
@@ -66,7 +67,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 ?>
 <form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=salvarSessao')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 	<input type="hidden" name="id" value="<?php echo JRequest::getInt('id'); ?>"/>
-	<input type="hidden" name="tipo" value="<?php echo $perfil->tipo; ?>"/>
+	
 	
 	<?php echo JHtml::_('form.token'); ?>
 	
@@ -153,6 +154,16 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
 					<label class="control-label"  for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
 					<?php echo JHtml::calendar($data_realizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
+				</div>
+				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
+					<label class="control-label"  for="tipo"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
+					<select name="tipo" id="tipo" class="form-control" data-validation="required">
+						<option></option>
+						<option value="VENDA"<?php echo($tipo=='VENDA'?' selected':''); ?>>Venda</option>
+						<option value="PONTOS"<?php echo($tipo=='PONTOS'?' selected':''); ?>>Pontos</option>
+						<option value="PATROCINIO"<?php echo($tipo=='PATROCINIO'?' selected':''); ?>>Patrocinio</option>
+						<option value="LEILAO"<?php echo($tipo=='LEILAO'?' selected':''); ?>>Leil&atilde;o</option>
+					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4 sr-only">
 					<label class="control-label"  for="agenda"><?php echo JText::_('Agenda'); ?> *</label>
