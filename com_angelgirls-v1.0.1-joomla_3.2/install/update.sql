@@ -59,3 +59,28 @@ CREATE TABLE `#__query_logs` (
 		`id_usuario` INT NOT NULL , 
 		`data` DATETIME NOT NULL  
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE #__angelgirls_figurino ADD FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`);
+ALTER TABLE #__angelgirls_figurino ADD FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`);
+
+CREATE TABLE `#__angelgirls_tema` ( 
+		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+		`nome` VARCHAR(250) NOT NULL UNIQUE, 
+		`descricao` TEXT NULL , 
+		`meta_descricao` VARCHAR(250) NOT NULL , 
+		
+		`nome_foto` varchar(150)  NULL,
+		
+		`audiencia_gostou` INT DEFAULT 0,
+		`audiencia_ngostou` INT DEFAULT 0,
+		`audiencia_view` INT DEFAULT 0,
+		
+		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+		`id_usuario_criador` INT NOT NULL , 
+		`id_usuario_alterador` INT NOT NULL , 
+		`data_criado` DATETIME NOT NULL  , 
+		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;

@@ -114,11 +114,19 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 			<a href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/> Para isso preencha o form&aacute;rio e clique em \"Processuir\".");'>Publicar fotos
 				<span class="glyphicon glyphicon-picture" aria-hidden="true"></span></a>
 		</li>
+		<li role="presentation" class="disabled">
+			<a href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/> Para isso preencha o form&aacute;rio e clique em \"Processuir\".");'>V&iacute;deo/MakingOf
+				<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></a>
+		</li>
 	<?php else: ?>
 		<li role="presentation" class="disabled">
 			<a href="#publicarFotos" data-toggle="tab" aria-controls="profile" role="tab">Publicar fotos
 				<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
 			</a>
+		</li>
+		<li role="presentation" class="disabled">
+			<a href='#videos' data-toggle="tab" aria-controls="profile" role="tab">V&iacute;deo/MakingOf
+				<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></a>
 		</li>
 	<?php endif;?>
 	</ul>
@@ -329,6 +337,12 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 		<div id="publicarFotos" class="tab-pane fade in" style="height: 210px;">
 			<h2>Publicar fotos</h2>
 			
+	    </div>
+		<div id="videos" class="tab-pane fade in" style="height: 210px;">
+			<h2>V&iacute;deo e Making Ofs</h2>
+<!-- 			https://developers.google.com/youtube/player_parameters?hl=pt-br -->
+<!-- 			https://developers.google.com/youtube/v3/code_samples/?hl=pt-br -->
+<!-- https://developer.vimeo.com/ -->
 	    </div>
 	</div>
 </form>

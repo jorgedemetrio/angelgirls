@@ -371,7 +371,31 @@ CREATE TABLE `#__angelgirls_figurino` (
 	`data_criado` DATETIME NOT NULL, 
 	`data_alterado` DATETIME NOT NULL,
 	`host_ip_criador` varchar(20) NOT NULL,
-	`host_ip_alterador` varchar(20) NULL
+	`host_ip_alterador` varchar(20) NULL,
+	FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `#__angelgirls_video_sessao` (
+	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	`titulo` VARCHAR(250) NOT NULL ,
+	`id_sessao` INT NOT NULL, 
+	`url_youtube` VARCHAR(250),
+	`id_youtube` VARCHAR(250),
+	`id_vimeo` VARCHAR(250),
+	`url_vimeo` VARCHAR(250),
+	`makingof` ENUM('S','N') DEFAUL 'S',
+	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+	`id_usuario_criador` INT NOT NULL , 
+	`id_usuario_alterador` INT NOT NULL , 
+	`data_criado` DATETIME NOT NULL, 
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	`host_ip_alterador` varchar(20) NULL,
+	FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_sessao`) REFERENCES `#__angelgirls_sessao` (`id`),
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
