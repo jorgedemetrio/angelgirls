@@ -22,7 +22,7 @@ require_once JPATH_BASE .DS.'components/com_content/helpers/route.php';
 require_once JPATH_BASE .DS.'components/com_content/helpers/query.php';
 jimport( 'joomla.application.module.helper' );
 
-
+jimport('joomla.log.log');
 
 class StatusDado {
 	const PUBLICADO = 'PUBLICADO';
@@ -445,6 +445,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ($db->quoteName ( 'id' ) . ' = ' . $id);
 		$db->setQuery ( $query );
 		$db->execute ();
+//		$this->LogQuery($query);
 		
 		
 		$query = $db->getQuery ( true );
@@ -624,6 +625,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->where ($db->quoteName ( 'id' ) . ' = ' . $id);
 		$db->setQuery ( $query );
 		$db->execute ();
+//		$this->LogQuery($query);
 		
 		
 		$query = $db->getQuery ( true );
@@ -854,10 +856,12 @@ class AngelgirlsController extends JControllerLegacy{
 						->columns (array (
 							$db->quoteName ( $campoId ),
 							$db->quoteName ( 'id_usuario' ),
-							$db->quoteName ( 'data_criado' )))
-							->values(implode(',', array ($id, $user->id, 'NOW()')));
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'host_ip' )))
+							->values(implode(',', array ($id, $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()))));
 						$db->setQuery( $query );
 						$db->execute();
+						$this->LogQuery($query);
 					}
 					else{
 						$query = $db->getQuery ( true );
@@ -866,6 +870,7 @@ class AngelgirlsController extends JControllerLegacy{
 						->where (' id_usuario = ' . $user->id );
 						$db->setQuery( $query );
 						$db->execute();
+						$this->LogQuery($query);
 					}
 					$query = $db->getQuery ( true );
 					$query->update($db->quoteName($tabelaRegistroId));
@@ -877,10 +882,10 @@ class AngelgirlsController extends JControllerLegacy{
 						$query->set(array($db->quoteName ( 'audiencia_gostou' ) . '  =  ('.$db->quoteName ( 'audiencia_gostou' ).' - 1)'));
 						$jsonRetorno='{"status":"ok","mesage":"Removido","codigo":"200"}';
 					}
-					
 					$query->where ($db->quoteName ( 'id' ) . ' = ' . $id);
 					$db->setQuery ( $query );
 					$db->execute ();
+					//$this->LogQuery($query);
 				}
 				else{
 					$jsonRetorno='{"status":"nok","mesage":"Area n&aatilde;o reconhecida.","codigo":"403"}';
@@ -1226,7 +1231,9 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_usuario_criador' ),
 				$db->quoteName ( 'id_usuario_alterador' ),
 				$db->quoteName ( 'data_criado' ),
-				$db->quoteName ( 'data_alterado' )))
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
 				->values(implode(',', array ($db->quote($nome),$db->quote($descricao),$db->quote($descricao),$db->quote($nomearquivo),
 						$db->quote($endereco),
 						$db->quote($numero),
@@ -1238,10 +1245,13 @@ class AngelgirlsController extends JControllerLegacy{
 						$db->quote(substr($telefone,1,2)),
 						$db->quote(substr($telefone,5)),
 						$db->quote($email),
-						$user->id,$user->id, 'NOW()', 'NOW()')));
+						$user->id,$user->id, 'NOW()', 'NOW()',$db->quote($this->getRemoteHostIp()),$db->quote($this->getRemoteHostIp()))));
 		$db->setQuery( $query );
 		$db->execute();
 		$id = $db->insertid();
+		$this->LogQuery($query);
+		
+		
 		require_once 'views/sessoes/tmpl/adicionar_tema.php';
 		echo("<script>jQuery('#locacao',parent.document).append(new Option('$nome',$id));jQuery('#locacao',parent.document).val($id);jQuery('#locacao',parent.document).removeClass('error');jQuery('#locacao',parent.document).addClass('valid');jQuery('#locacao',parent.document).focus();parent.document.AngelGirls.FrameModalHide();</script>");
 		exit();
@@ -1320,11 +1330,20 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_usuario_criador' ),
 				$db->quoteName ( 'id_usuario_alterador' ),
 				$db->quoteName ( 'data_criado' ),
-				$db->quoteName ( 'data_alterado' )))
-				->values(implode(',', array ($db->quote(trim($nome)),$db->quote(trim($descricao)),$db->quote(trim($descricao)),$db->quote($nomearquivo), $user->id,$user->id, 'NOW()', 'NOW()')));
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+		->values(implode(',', array ($db->quote(trim($nome)),$db->quote(trim($descricao)),$db->quote(trim($descricao)),$db->quote($nomearquivo), $user->id,$user->id, 'NOW()', 'NOW()',
+		$db->quote($this->getRemoteHostIp()),
+		$db->quote($this->getRemoteHostIp()))));
+				
+				
 		$db->setQuery( $query );
 		$db->execute();
 		$id = $db->insertid();
+
+		$this->LogQuery($query);
+		
 		require_once 'views/sessoes/tmpl/adicionar_figurino.php';
 		echo("<script>jQuery('.figurino',parent.document).append(new Option('$nome',$id));jQuery('#$nomeCampo',parent.document).val($id);jQuery('#$nomeCampo',parent.document).removeClass('error');jQuery('#$nomeCampo',parent.document).addClass('valid');jQuery('#$nomeCampo',parent.document).focus();parent.document.AngelGirls.FrameModalHide();</script>");
 		exit();
@@ -1404,11 +1423,18 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_usuario_criador' ),
 				$db->quoteName ( 'id_usuario_alterador' ),
 				$db->quoteName ( 'data_criado' ),
-				$db->quoteName ( 'data_alterado' )))
-				->values(implode(',', array ($db->quote(trim($nome)),$db->quote(trim($descricao)),$db->quote(trim($descricao)),$db->quote($nomearquivo), $user->id,$user->id, 'NOW()', 'NOW()')));
+				$db->quoteName ( 'data_alterado' )		,
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+				->values(implode(',', array ($db->quote(trim($nome)),$db->quote(trim($descricao)),$db->quote(trim($descricao)),$db->quote($nomearquivo), $user->id,$user->id, 'NOW()', 'NOW()',
+		$db->quote($this->getRemoteHostIp()),
+		$db->quote($this->getRemoteHostIp()))));
 		$db->setQuery( $query );
 		$db->execute();
 		$id = $db->insertid();
+		$this->LogQuery($query);
+		
+		
 		require_once 'views/sessoes/tmpl/adicionar_tema.php';
 		echo("<script>jQuery('#tema',parent.document).append(new Option('$nome',$id));jQuery('#tema',parent.document).val($id);jQuery('#tema',parent.document).removeClass('error');jQuery('#tema',parent.document).addClass('valid');jQuery('#tema',parent.document).focus();parent.document.AngelGirls.FrameModalHide();</script>");
 		exit();
@@ -1497,7 +1523,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$meta_descricao = JRequest::getString('meta_descricao',null,'POST');
 		$comentario = JRequest::getString('comentario',null,'POST');
 		$tema  = JRequest::getInt('tema',null,'POST');
-		$historia = JRequest::getInt('historia',null,'POST');
+		$historia = JRequest::getString('historia',null,'POST');
 		$locacao  = JRequest::getInt('locacao',null,'POST');
 		$id_figurino_principal  = JRequest::getInt('id_figurino_principal',null,'POST');
 		$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',null,'POST');
@@ -1623,7 +1649,9 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'id_figurino_principal' ),
 				$db->quoteName ( 'id_figurino_secundario' ),
 				$db->quoteName ( 'status_modelo_principal' ),
-				$db->quoteName ( 'status_fotografo_principal' )))
+				$db->quoteName ( 'status_fotografo_principal' ),
+			$db->quoteName ( 'host_ip_criador' ),
+			$db->quoteName ( 'host_ip_alterador' )))
 			->values ( implode ( ',', array (
 					'\'NOVO\'',
 					'NOW()',
@@ -1647,11 +1675,17 @@ class AngelgirlsController extends JControllerLegacy{
 					(!isset($id_figurino_principal) || strlen(trim($id_figurino_principal))<=0 || $id_figurino_principal==0 ? ' null ' : $id_figurino_principal),
 					(!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
 					($perfil->tipo=='MODELO'?'1':'null'),
-					($perfil->tipo=='FOTOGRAFO'?'1':'null')
+					($perfil->tipo=='FOTOGRAFO'?'1':'null'),
+					$db->quote($this->getRemoteHostIp()),
+					$db->quote($this->getRemoteHostIp())
 			)));
 			$db->setQuery( $query );
 			$db->execute();
 			$id = $db->insertid();
+
+			$this->LogQuery($query);
+			
+			
 			JRequest::setVar('id',$id);
 			
 			
@@ -1663,6 +1697,10 @@ class AngelgirlsController extends JControllerLegacy{
 					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
 			$db->setQuery ( $query );
 			$db->execute();
+			$this->LogQuery($query);
+			
+			
+			
 			
 			if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
 					
@@ -1681,18 +1719,54 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ( $db->quoteName ( 'id' ) . " =  " . $id );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
-			$NomeArquivoAntigo =  $result->nome_foto;
-			$token = $result->token;
 			
-
-			
-			if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
-				$this->SalvarUploadArquivo($imagem,
-						PATH_IMAGEM_SESSOES . $token,
-						$this->GerarNovoNomeArquivo($imagem['name'], $id ),
-						'#__angelgirls_sessao','nome_foto',$id,true,true, $NomeArquivoAntigo);
+			if(isset($result)){
+				$NomeArquivoAntigo =  $result->nome_foto;
+				$token = $result->token;
+	
+				$query = $db->getQuery ( true );
+				$query->update( $db->quoteName ( '#__angelgirls_sessao' ))
+					  ->set (array(
+					  		$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					  		$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+					  		$db->quoteName ( 'titulo' ) . ' = ' . (!isset($titulo) || strlen(trim($titulo))<=0 ? ' null ' : $db->quote(trim($titulo))),
+					  		$db->quoteName ( 'executada' ) . ' = ' . (!isset($dataFormatadaBanco) || strlen(trim($dataFormatadaBanco))<=0 ? ' null ' : $dataFormatadaBanco),
+					  		$db->quoteName ( 'descricao' ) . ' = ' . (!isset($descricao) || strlen(trim($descricao))<=0 ? ' null ' : $db->quote(trim($descricao))),
+					  		$db->quoteName ( 'historia' ) . ' = ' . (!isset($historia) || strlen(trim($historia))<=0 ? ' null ' : $db->quote(trim($historia))),
+					  		($perfil->tipo!='FOTOGRAFO'? $db->quoteName ( 'comentario_fotografo' )  : $db->quoteName ( 'comentario_modelos' )  ). ' = ' . ((!isset($comentario) || strlen(trim($comentario))<=0) ?  ' null ' : $db->quote(trim($comentario))),
+					  		$db->quoteName ( 'meta_descricao' ) . ' = ' . (!isset($meta_descricao) || strlen(trim($meta_descricao))<=0 ? ' null ' : $db->quote(trim($meta_descricao))),
+					  		$db->quoteName ( 'id_agenda' ) . ' = ' . (!isset($agenda) || strlen(trim($agenda))<=0 || $agenda==0  ? ' null ' : $agenda),
+					  		$db->quoteName ( 'id_tema' ) . ' = ' . (!isset($tema) || strlen(trim($tema))<=0 || $tema==0 ? ' null ' : $tema),
+					  		$db->quoteName ( 'id_modelo_principal' ) . ' = ' . (!isset($id_modelo_principal) || strlen(trim($id_modelo_principal))<=0 || $id_modelo_principal==0 ? ' null ' : $id_modelo_principal),
+					  		$db->quoteName ( 'id_modelo_secundaria' ) . ' = ' . (!isset($id_modelo_secundaria) || strlen(trim($id_modelo_secundaria))<=0 || $id_modelo_secundaria==0 ? ' null ' : $id_modelo_secundaria),
+					  		$db->quoteName ( 'id_locacao' ) . ' = ' . (!isset($locacao) || strlen(trim($locacao))<=0 || $locacao==0 ? ' null ' : $locacao),
+					  		$db->quoteName ( 'id_fotografo_principal' ) . ' = ' . (!isset($id_fotografo_principal) || strlen(trim($id_fotografo_principal))<=0 || $id_fotografo_principal==0 ? ' null ' : $id_fotografo_principal),
+					  		$db->quoteName ( 'id_fotografo_secundario' ) . ' = ' . (!isset($id_fotografo_secundario) || strlen(trim($id_fotografo_secundario))<=0 || $id_fotografo_secundario==0 ? ' null ' : $id_fotografo_secundario),
+					  		$db->quoteName ( 'id_figurino_principal' ) . ' = ' . (!isset($id_figurino_principal) || strlen(trim($id_figurino_principal))<=0 || $id_figurino_principal==0 ? ' null ' : $id_figurino_principal),
+					  		$db->quoteName ( 'id_figurino_secundario' ) . ' = ' . (!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+					  ))
+					->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
+					->where ( $db->quoteName ( 'id' ) . " =  " . $id );
+				$db->setQuery ( $query );
+				$this->LogQuery($query);
+				if(!$db->execute()){
+					return false;
+				}
+				$this->LogQuery($query);
+				
+				if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
+					$this->SalvarUploadArquivo($imagem,
+							PATH_IMAGEM_SESSOES . $token,
+							$this->GerarNovoNomeArquivo($imagem['name'], $id ),
+							'#__angelgirls_sessao','nome_foto',$id,true,true, $NomeArquivoAntigo);
+				}
 			}
-			
+			else{
+				JError::raiseWarning( 100, 'O informa&ccedi;&atilde;o que tentou salvar n&atilde;o exite.' );
+				$this->logado();
+				return;
+			}
 		}
 		$this->carregarEditarSessao();
 	}
@@ -1746,9 +1820,11 @@ class AngelgirlsController extends JControllerLegacy{
 						$db->quoteName ( 'id' ) . ' = ' . $id
 				) );
 				$db->setQuery ( $query );
+				$this->LogQuery($query);
 				if(!$db->execute()){
 					return false;
 				}
+				
 			}
 		}
 		
@@ -2733,50 +2809,56 @@ class AngelgirlsController extends JControllerLegacy{
 	 * @return usuario salvo
 	 */
 	private function salvarUsuario($tipo){
-		$user = JFactory::getUser();
-		$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
-		$senha = trim(JRequest::getString( 'password', '', 'POST' ));
-		$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));		
-		$nome = trim(JRequest::getString( 'name', null, 'POST' ));
-		
-		
-		if(!isset($user) || !isset($user->id) || $user->id==0){
-			$user = JFactory::getUser(0);
-
-			$usersParams = JComponentHelper::getParams('com_users');
-			$userdata = array();
-			$userdata['username'] = $usuario;
-			$defaultUserGroup = $usersParams->get('new_usertype', 2);
-
-			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
-			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
-			$userdata['name'] = $nome;
-			$userdata['password'] = $senha;
-			$userdata['password2'] = $senha2;
-			$userdata['block'] = 0;
+		try{
+			$user = JFactory::getUser();
+			$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+			$senha = trim(JRequest::getString( 'password', '', 'POST' ));
+			$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));		
+			$nome = trim(JRequest::getString( 'name', null, 'POST' ));
 			
-			if(strtolower($tipo)=='fotografo'){
-				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
-			}
-			elseif(strtolower($tipo)=='modelo'){
-				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
+			
+			if(!isset($user) || !isset($user->id) || $user->id==0){
+				$user = JFactory::getUser(0);
+	
+				$usersParams = JComponentHelper::getParams('com_users');
+				$userdata = array();
+				$userdata['username'] = $usuario;
+				$defaultUserGroup = $usersParams->get('new_usertype', 2);
+	
+				$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
+				$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
+				$userdata['name'] = $nome;
+				$userdata['password'] = $senha;
+				$userdata['password2'] = $senha2;
+				$userdata['block'] = 0;
+				
+				if(strtolower($tipo)=='fotografo'){
+					$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
+				}
+				elseif(strtolower($tipo)=='modelo'){
+					$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
+				}
+				else{
+					$userdata['groups']=array($defaultUserGroup);
+				}
+				if (!$user->bind($userdata)) {
+					JError::raiseWarning(100,JText::_( $user->getError()));
+					return null;
+				}
 			}
 			else{
-				$userdata['groups']=array($defaultUserGroup);
+				$user->name = $nome;
 			}
-			if (!$user->bind($userdata)) {
-				JError::raiseWarning(100,JText::_( $user->getError()));
-				return null;
+	
+			if (!$user->save()) {
+				JError::raiseWarning(100, JText::_( $user->getError())); 
 			}
+			return $user;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-		else{
-			$user->name = $nome;
-		}
-
-		if (!$user->save()) {
-			JError::raiseWarning(100, JText::_( $user->getError())); 
-		}
-		return $user;
+		return null;
 	}
 	
 	
@@ -2785,207 +2867,222 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	private function salvarVisitante( $usuario){
-
-
-		$sucesso=true;
-		
-		
-		$erro = false;
-		
-		$id = JRequest::getString('id',0);
-		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
-		}
-		$email = JRequest::getString ( 'email', null, 'POST' );
-		$username = JRequest::getString ( 'username', null, 'POST' );
-		$password = JRequest::getString ( 'password', null, 'POST' );
-		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
-		$name = JRequest::getString ( 'name', null, 'POST' );
-		$descricao = JRequest::getString ( 'descricao', null, 'POST' );
-		$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
-		$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
-		$profissao = JRequest::getString ( 'profissao', null, 'POST' );
-		$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
-		$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
-		$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
-		$site = JRequest::getString ( 'site', null, 'POST' );
-		$sexo = JRequest::getString ( 'sexo', null, 'POST' );
-		$cpf = JRequest::getString ( 'cpf', null, 'POST' );
-		$banco = JRequest::getString ( 'banco', null, 'POST' );
-		$agencia = JRequest::getString ( 'agencia', null, 'POST' );
-		$conta = JRequest::getString ( 'conta', null, 'POST' );
-		$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
-		$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
-		$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
-		$dataFormatadaBanco = 'null';
-
-		
-		
-		$foto_perfil = $_FILES ['foto_perfil'];
-
-		
-		$db = JFactory::getDbo ();
-		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
-		}
-		
-
-		
-		
-		if (isset($usuario)  && $usuario->id != 0) {// UPDATE
-			$usuario = JFactory::getUser();
-			$query = $db->getQuery ( true );
-			$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
-					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
-					$db->quoteName ( 'apelido' ) . ' = ' . $db->quote($nomeArtistico),
-					$db->quoteName ( 'sobre' ) . ' = ' . $db->quote($descricao),
-					$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
-					$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
-					$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataNascimento,
-					$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
-					$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
-					$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
-					$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
-					$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
-					$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
-					$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
-			))
-			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
-			$db->setQuery ( $query );
-			$db->execute ();
-		} else {
+		try{
+			
+			$id = JRequest::getString('id',0);
+			if(!(strpos($id,':')===false)){
+				$id = explode(':',$id)[0];
+			}
+			$email = JRequest::getString ( 'email', null, 'POST' );
+			$username = JRequest::getString ( 'username', null, 'POST' );
+			$password = JRequest::getString ( 'password', null, 'POST' );
+			$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+			$name = JRequest::getString ( 'name', null, 'POST' );
+			$descricao = JRequest::getString ( 'descricao', null, 'POST' );
+			$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
+			$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
+			$profissao = JRequest::getString ( 'profissao', null, 'POST' );
+			$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
+			$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
+			$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
+			$site = JRequest::getString ( 'site', null, 'POST' );
+			$sexo = JRequest::getString ( 'sexo', null, 'POST' );
+			$cpf = JRequest::getString ( 'cpf', null, 'POST' );
+			$banco = JRequest::getString ( 'banco', null, 'POST' );
+			$agencia = JRequest::getString ( 'agencia', null, 'POST' );
+			$conta = JRequest::getString ( 'conta', null, 'POST' );
+			$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
+			$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
+			$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
+			$dataFormatadaBanco = 'null';
+	
+			
+			
+			$foto_perfil = $_FILES ['foto_perfil'];
+	
+			
+			$db = JFactory::getDbo ();
+			if($dataNascimento != null && strlen($dataNascimento) > 8){
+				$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
+			}
+			
+	
+			
+			
+			if (isset($usuario)  && $usuario->id != 0) {// UPDATE
+				$usuario = JFactory::getUser();
 				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_visitante' ) )->columns ( array (
-					$db->quoteName ( 'status_dado' ),
-					$db->quoteName ( 'data_criado' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'data_alterado' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
-					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'apelido' ),
-					$db->quoteName ( 'sobre' ),
-					$db->quoteName ( 'meta_descricao' ),
-					$db->quoteName ( 'profissao' ),
-					$db->quoteName ( 'nascionalidade' ),
-					$db->quoteName ( 'id_cidade_nasceu' ),
-					$db->quoteName ( 'data_nascimento' ),
-					$db->quoteName ( 'site' ),
-					$db->quoteName ( 'sexo' ),
-					$db->quoteName ( 'cpf' ),
-					$db->quoteName ( 'banco' ),
-					$db->quoteName ( 'agencia' ),
-					$db->quoteName ( 'conta' ),
-					$db->quoteName ( 'custo_medio_diaria' ),
-					$db->quoteName ( 'qualificao_equipe' ),
-					$db->quoteName ( 'id_cidade' )))
-				->values ( implode ( ',', array (
-					'\'NOVO\'',
-					'NOW()',
-					$usuario->id,
-					'NOW()',
-					$usuario->id,
-					$usuario->id,
-					$db->quote(trim($nomeArtistico)),
-					$db->quote(trim($descricao),
-					$db->quote(trim($metaDescricao)),
-					(!isset($profissao)? ' null ' : $db->quote(trim($profissao))),
-					(!isset($nascionalidade)? ' null ' : $db->quote(trim($nascionalidade))),
-					(!isset($idCidadeNasceu)? ' null ' : $db->quote($idCidadeNasceu)),
-					$dataFormatadaBanco,
-					(!isset($site)? ' null ' : $db->quote(trim($site))),
-					(!isset($sexo)? ' null ' : $db->quote($sexo))),
-					(!isset($cpf)? ' null ' : $db->quote(trim($cpf))),
-					(!isset($banco)? ' null ' : $db->quote(trim($banco))),
-					(!isset($agencia)? ' null ' : $db->quote(trim($agencia))),
-					(!isset($conta)? ' null ' : $db->quote(trim($conta))),
-					(!isset($custoMedioDiaria)? ' null ' : $db->quote(trim($custoMedioDiaria))),
-					(!isset($qualificaoEquipe)? ' null ' : $db->quote(trim($qualificaoEquipe))),
-					(!isset($idCidade)? ' null ' : $db->quote($idCidade))
-				)));
-				$db->setQuery( $query );
-				$db->execute();
-				$id = $db->insertid();
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
-					->columns ( array (
+				$query->update ( $db->quoteName ( '#__angelgirls_visitante' ) )->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
+						$db->quoteName ( 'apelido' ) . ' = ' . $db->quote($nomeArtistico),
+						$db->quoteName ( 'sobre' ) . ' = ' . $db->quote($descricao),
+						$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
+						$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
+						$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+						$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+						$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataNascimento,
+						$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
+						$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
+						$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
+						$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
+						$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
+						$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
+						$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+						$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+						$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade)),
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
+				$db->setQuery ( $query );
+				$db->execute ();
+				$this->LogQuery($query);
+			} else {
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_visitante' ) )->columns ( array (
 						$db->quoteName ( 'status_dado' ),
 						$db->quoteName ( 'data_criado' ),
 						$db->quoteName ( 'id_usuario_criador' ),
 						$db->quoteName ( 'data_alterado' ),
 						$db->quoteName ( 'id_usuario_alterador' ),
 						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'email' ),
-						$db->quoteName ( 'ordem' )))
+						$db->quoteName ( 'apelido' ),
+						$db->quoteName ( 'sobre' ),
+						$db->quoteName ( 'meta_descricao' ),
+						$db->quoteName ( 'profissao' ),
+						$db->quoteName ( 'nascionalidade' ),
+						$db->quoteName ( 'id_cidade_nasceu' ),
+						$db->quoteName ( 'data_nascimento' ),
+						$db->quoteName ( 'site' ),
+						$db->quoteName ( 'sexo' ),
+						$db->quoteName ( 'cpf' ),
+						$db->quoteName ( 'banco' ),
+						$db->quoteName ( 'agencia' ),
+						$db->quoteName ( 'conta' ),
+						$db->quoteName ( 'custo_medio_diaria' ),
+						$db->quoteName ( 'qualificao_equipe' ),
+						$db->quoteName ( 'id_cidade' ),
+						$db->quoteName ( 'host_ip_criador' ),
+						$db->quoteName ( 'host_ip_alterador' )))
 					->values ( implode ( ',', array (
-							'\'NOVO\'',
-							'NOW()',
-							$usuario->id,
-							'NOW()',
-							$usuario->id,
-							$usuario->id,
-							$db->quote('S'),
-							$db->quote($email),
-							'0')));
-				$db->setQuery( $query );
-				$db->execute();
-				
-				
-				$query = $db->getQuery ( true );
-				$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
-				->columns ( array (
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'id_usuario' ),
-						$db->quoteName ( 'tipo' ),
-						$db->quoteName ( 'principal' ),
-						$db->quoteName ( 'ddd' ),
-						$db->quoteName ( 'telefone' ),
-						$db->quoteName ( 'ordem' )))
-				->values ( implode ( ',', array (
+						'\'NOVO\'',
+						'NOW()',
+						$usuario->id,
+						'NOW()',
+						$usuario->id,
+						$usuario->id,
+						$db->quote(trim($nomeArtistico)),
+						$db->quote(trim($descricao),
+						$db->quote(trim($metaDescricao)),
+						(!isset($profissao)? ' null ' : $db->quote(trim($profissao))),
+						(!isset($nascionalidade)? ' null ' : $db->quote(trim($nascionalidade))),
+						(!isset($idCidadeNasceu)? ' null ' : $db->quote($idCidadeNasceu)),
+						$dataFormatadaBanco,
+						(!isset($site)? ' null ' : $db->quote(trim($site))),
+						(!isset($sexo)? ' null ' : $db->quote($sexo))),
+						(!isset($cpf)? ' null ' : $db->quote(trim($cpf))),
+						(!isset($banco)? ' null ' : $db->quote(trim($banco))),
+						(!isset($agencia)? ' null ' : $db->quote(trim($agencia))),
+						(!isset($conta)? ' null ' : $db->quote(trim($conta))),
+						(!isset($custoMedioDiaria)? ' null ' : $db->quote(trim($custoMedioDiaria))),
+						(!isset($qualificaoEquipe)? ' null ' : $db->quote(trim($qualificaoEquipe))),
+						(!isset($idCidade)? ' null ' : $db->quote($idCidade)),
+					$db->quote($this->getRemoteHostIp()),
+					$db->quote($this->getRemoteHostIp())
+					)));
+					$db->setQuery( $query );
+					$db->execute();
+					$id = $db->insertid();
+					$this->LogQuery($query);
+					
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+						->columns ( array (
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'email' ),
+							$db->quoteName ( 'ordem' ),
+					$db->quoteName ( 'host_ip_criador' ),
+					$db->quoteName ( 'host_ip_alterador' )))
+						->values ( implode ( ',', array (
 								'\'NOVO\'',
 								'NOW()',
 								$usuario->id,
 								'NOW()',
 								$usuario->id,
 								$usuario->id,
-								$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
 								$db->quote('S'),
-								$db->quote(substr($telefone,1,2)),
-								$db->quote(substr($telefone,5)),
-								
-						'0')));
-				$db->setQuery( $query );
-				$db->execute();
-		}
-		
-		$query = $db->getQuery ( true );
-		$query->select('nome_foto ')
-		->from ('#__angelgirls_visitante')
-		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-		->where ( $db->quoteName ('id').' = ' . $id);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		
+								$db->quote($email),
+								'0',
+								$db->quote($this->getRemoteHostIp()),
+								$db->quote($this->getRemoteHostIp()))));
+					$db->setQuery( $query );
+					$db->execute();
+					$this->LogQuery($query);
+					
+					$query = $db->getQuery ( true );
+					$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+					->columns ( array (
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'id_usuario' ),
+							$db->quoteName ( 'tipo' ),
+							$db->quoteName ( 'principal' ),
+							$db->quoteName ( 'ddd' ),
+							$db->quoteName ( 'telefone' ),
+							$db->quoteName ( 'ordem' ),
+					$db->quoteName ( 'host_ip_criador' ),
+					$db->quoteName ( 'host_ip_alterador' )))
+					->values ( implode ( ',', array (
+									'\'NOVO\'',
+									'NOW()',
+									$usuario->id,
+									'NOW()',
+									$usuario->id,
+									$usuario->id,
+									$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
+									$db->quote('S'),
+									$db->quote(substr($telefone,1,2)),
+									$db->quote(substr($telefone,5)),
+									'0',
+									$db->quote($this->getRemoteHostIp()),
+									$db->quote($this->getRemoteHostIp()))));
+					$db->setQuery( $query );
+					$db->execute();
+					$this->LogQuery($query);
+			}
 			
-		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$this->SalvarUploadArquivo($foto_perfil,
-					PATH_IMAGEM_VISITANTES,
-					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
-					'#__angelgirls_visitante','nome_foto',$id,true,false, $result->nome_foto);
+			$query = $db->getQuery ( true );
+			$query->select('nome_foto ')
+			->from ('#__angelgirls_visitante')
+			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id').' = ' . $id);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			
+				
+			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($foto_perfil,
+						PATH_IMAGEM_VISITANTES,
+						$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+						'#__angelgirls_visitante','nome_foto',$id,true,false, $result->nome_foto);
+			}
+	
+	
+			return true;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-
-
-		return true;
+		return false;
 	}
 	
 	
@@ -3034,201 +3131,218 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	private function salvarFotografo($usuario){
-		$sucesso=true;
-		
-		$erro = false;
-		
-		$id =  $usuario->id;
-		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
-		}
-		$email = JRequest::getString ( 'email', null, 'POST' );
-		$username = JRequest::getString ( 'username', null, 'POST' );
-		$password = JRequest::getString ( 'password', null, 'POST' );
-		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
-		$name = JRequest::getString ( 'name', null, 'POST' );
-		$descricao = JRequest::getString ( 'descricao', null, 'POST' );
-		$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
-		$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
-		$profissao = JRequest::getString ( 'profissao', null, 'POST' );
-		$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
-		$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
-		$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
-		$site = JRequest::getString ( 'site', null, 'POST' );
-		$sexo = JRequest::getString ( 'sexo', null, 'POST' );
-		$cpf = JRequest::getString ( 'cpf', null, 'POST' );
-		$banco = JRequest::getString ( 'banco', null, 'POST' );
-		$agencia = JRequest::getString ( 'agencia', null, 'POST' );
-		$conta = JRequest::getString ( 'conta', null, 'POST' );
-		$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
-		
-		$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
-		$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
-		$dataFormatadaBanco = 'null';
-
-		$foto_perfil = $_FILES ['foto_perfil'];
-
-		
-		$db = JFactory::getDbo ();
-		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
-		}
-		
-		if (isset($usuario) && $usuario->id != 0) { // UPDATE
-			$query = $db->getQuery ( true );
-			$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
-					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
-					$db->quoteName ( 'nome_artistico' ) . ' = ' . $db->quote($nomeArtistico),
-					$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
-					$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
-					$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
-					$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataFormatadaBanco,
-					$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
-					$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
-					$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
-					$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
-					$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
-					$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
-					$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
-			))
-			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
-			$db->setQuery ( $query );
-			$db->execute ();
-		} else {
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_fotografo' ) )->columns ( array (
-				$db->quoteName ( 'status_dado' ),
-				$db->quoteName ( 'data_criado' ),
-				$db->quoteName ( 'id_usuario_criador' ),
-				$db->quoteName ( 'data_alterado' ),
-				$db->quoteName ( 'id_usuario_alterador' ),
-				$db->quoteName ( 'id_usuario' ),
-				$db->quoteName ( 'nome_artistico' ),
-				$db->quoteName ( 'descricao' ),
-				$db->quoteName ( 'meta_descricao' ),
-				$db->quoteName ( 'profissao' ),
-				$db->quoteName ( 'nascionalidade' ),
-				$db->quoteName ( 'id_cidade_nasceu' ),
-				$db->quoteName ( 'data_nascimento' ),
-				$db->quoteName ( 'site' ),
-				$db->quoteName ( 'sexo' ),
-				$db->quoteName ( 'cpf' ),
-				$db->quoteName ( 'banco' ),
-				$db->quoteName ( 'agencia' ),
-				$db->quoteName ( 'conta' ),
-				$db->quoteName ( 'custo_medio_diaria' ),
-				$db->quoteName ( 'qualificao_equipe' ),
-				$db->quoteName ( 'id_cidade' )))
-			->values ( implode ( ',', array (
-				'\'NOVO\'',
-				'NOW()',
-				$usuario->id,
-				'NOW()',
-				$usuario->id,
-				$usuario->id,
-				$db->quote($nomeArtistico),
-				$db->quote($descricao),
-				$db->quote($metaDescricao),
-				($profissao == null ? ' null ' : $db->quote($profissao)),
-				($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-				($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-				$dataFormatadaBanco,
-				($site == null ? ' null ' : $db->quote($site)),
-				($sexo == null ? ' null ' : $db->quote($sexo)),
-				($cpf == null ? ' null ' : $db->quote($cpf)),
-				($banco == null ? ' null ' : $db->quote($banco)),
-				($agencia == null ? ' null ' : $db->quote($agencia)),
-				($conta == null ? ' null ' : $db->quote($conta)),
-				($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-				($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-				($idCidade == null ? ' null ' : $db->quote($idCidade))
-			)));
-			$db->setQuery( $query );
-			$db->execute();
-			$id = $db->insertid();
+		try{
+			$id =  $usuario->id;
+			if(!(strpos($id,':')===false)){
+				$id = explode(':',$id)[0];
+			}
+			$email = JRequest::getString ( 'email', null, 'POST' );
+			$username = JRequest::getString ( 'username', null, 'POST' );
+			$password = JRequest::getString ( 'password', null, 'POST' );
+			$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+			$name = JRequest::getString ( 'name', null, 'POST' );
+			$descricao = JRequest::getString ( 'descricao', null, 'POST' );
+			$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
+			$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
+			$profissao = JRequest::getString ( 'profissao', null, 'POST' );
+			$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
+			$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
+			$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
+			$site = JRequest::getString ( 'site', null, 'POST' );
+			$sexo = JRequest::getString ( 'sexo', null, 'POST' );
+			$cpf = JRequest::getString ( 'cpf', null, 'POST' );
+			$banco = JRequest::getString ( 'banco', null, 'POST' );
+			$agencia = JRequest::getString ( 'agencia', null, 'POST' );
+			$conta = JRequest::getString ( 'conta', null, 'POST' );
+			$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
 			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
-				->columns ( array (
+			$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
+			$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
+			$dataFormatadaBanco = 'null';
+	
+			$foto_perfil = $_FILES ['foto_perfil'];
+	
+			
+			$db = JFactory::getDbo ();
+			if($dataNascimento != null && strlen($dataNascimento) > 8){
+				$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
+			}
+			
+			if (isset($usuario) && $usuario->id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_fotografo' ) )->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
+						$db->quoteName ( 'nome_artistico' ) . ' = ' . $db->quote($nomeArtistico),
+						$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
+						$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
+						$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
+						$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+						$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+						$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataFormatadaBanco,
+						$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
+						$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
+						$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
+						$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
+						$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
+						$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
+						$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+						$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+						$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade)),
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' .$db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
+				$db->setQuery ( $query );
+				$db->execute ();
+				$this->LogQuery($query);
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_fotografo' ) )->columns ( array (
 					$db->quoteName ( 'status_dado' ),
 					$db->quoteName ( 'data_criado' ),
 					$db->quoteName ( 'id_usuario_criador' ),
 					$db->quoteName ( 'data_alterado' ),
 					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'principal' ),
-					$db->quoteName ( 'email' ),
-					$db->quoteName ( 'ordem' )))
+					$db->quoteName ( 'nome_artistico' ),
+					$db->quoteName ( 'descricao' ),
+					$db->quoteName ( 'meta_descricao' ),
+					$db->quoteName ( 'profissao' ),
+					$db->quoteName ( 'nascionalidade' ),
+					$db->quoteName ( 'id_cidade_nasceu' ),
+					$db->quoteName ( 'data_nascimento' ),
+					$db->quoteName ( 'site' ),
+					$db->quoteName ( 'sexo' ),
+					$db->quoteName ( 'cpf' ),
+					$db->quoteName ( 'banco' ),
+					$db->quoteName ( 'agencia' ),
+					$db->quoteName ( 'conta' ),
+					$db->quoteName ( 'custo_medio_diaria' ),
+					$db->quoteName ( 'qualificao_equipe' ),
+					$db->quoteName ( 'id_cidade' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
 				->values ( implode ( ',', array (
-						'\'NOVO\'',
-						'NOW()',
-						$usuario->id,
-						'NOW()',
-						$usuario->id,
-						$usuario->id,
-						$db->quote('S'),
-						$db->quote($email),
-						'0')));
-			$db->setQuery( $query );
-			$db->execute();
-			
-			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
-			->columns ( array (
-					$db->quoteName ( 'status_dado' ),
-					$db->quoteName ( 'data_criado' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'data_alterado' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
-					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'tipo' ),
-					$db->quoteName ( 'principal' ),
-					$db->quoteName ( 'ddd' ),
-					$db->quoteName ( 'telefone' ),
-					$db->quoteName ( 'ordem' )))
-			->values ( implode ( ',', array (
+					'\'NOVO\'',
+					'NOW()',
+					$usuario->id,
+					'NOW()',
+					$usuario->id,
+					$usuario->id,
+					$db->quote($nomeArtistico),
+					$db->quote($descricao),
+					$db->quote($metaDescricao),
+					($profissao == null ? ' null ' : $db->quote($profissao)),
+					($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+					($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+					$dataFormatadaBanco,
+					($site == null ? ' null ' : $db->quote($site)),
+					($sexo == null ? ' null ' : $db->quote($sexo)),
+					($cpf == null ? ' null ' : $db->quote($cpf)),
+					($banco == null ? ' null ' : $db->quote($banco)),
+					($agencia == null ? ' null ' : $db->quote($agencia)),
+					($conta == null ? ' null ' : $db->quote($conta)),
+					($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+					($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+					($idCidade == null ? ' null ' : $db->quote($idCidade)),
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp())
+				)));
+				$db->setQuery( $query );
+				$db->execute();
+				$id = $db->insertid();
+				$this->LogQuery($query);
+				
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+					->columns ( array (
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'email' ),
+						$db->quoteName ( 'ordem' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+					->values ( implode ( ',', array (
 							'\'NOVO\'',
 							'NOW()',
 							$usuario->id,
 							'NOW()',
 							$usuario->id,
 							$usuario->id,
-							$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
 							$db->quote('S'),
-							$db->quote(substr($telefone,1,2)),
-							$db->quote(substr($telefone,5)),
-							
-					'0')));
-			$db->setQuery( $query );
-			$db->execute();
-		}
-		
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select('nome_foto ')
-		->from ('#__angelgirls_fotografo')
-		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-		->where ( $db->quoteName ('id').' = ' . $id);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		
+							$db->quote($email),
+							'0',
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp()))));
+				$db->setQuery( $query );
+				$db->execute();
+				$this->LogQuery($query);
+				
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+				->columns ( array (
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'tipo' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ddd' ),
+						$db->quoteName ( 'telefone' ),
+						$db->quoteName ( 'ordem' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+				->values ( implode ( ',', array (
+								'\'NOVO\'',
+								'NOW()',
+								$usuario->id,
+								'NOW()',
+								$usuario->id,
+								$usuario->id,
+								$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
+								$db->quote('S'),
+								$db->quote(substr($telefone,1,2)),
+								$db->quote(substr($telefone,5)),
+						'0',
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp()))));
+				$db->setQuery( $query );
+				$db->execute();
+				$this->LogQuery($query);
+			}
 			
-		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$this->SalvarUploadArquivo($foto_perfil,
-					PATH_IMAGEM_FOTOGRAFOS,
-					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
-					'#__angelgirls_fotografo','nome_foto',$id,true,false, $result->nome_foto);
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select('nome_foto ')
+			->from ('#__angelgirls_fotografo')
+			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id').' = ' . $id);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			
+				
+			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($foto_perfil,
+						PATH_IMAGEM_FOTOGRAFOS,
+						$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+						'#__angelgirls_fotografo','nome_foto',$id,true,false, $result->nome_foto);
+			}
+	
+	
+			return true;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-
-
-		return true;
+		return false;
 	}
 	
 	/**
@@ -3536,273 +3650,293 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	private function salvarModelo($usuario){
-		
+		try{
 
-		$sucesso=true;
-		
-		
-		$erro = false;
-		
-		$id = JRequest::getString('id',0);
-		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
-		}
-		$email = JRequest::getString ( 'email', null, 'POST' );
-		$username = JRequest::getString ( 'username', null, 'POST' );
-		$password = JRequest::getString ( 'password', null, 'POST' );
-		$telefone = JRequest::getString ( 'telefone', null, 'POST' );
-		$name = JRequest::getString ( 'name', null, 'POST' );
-		$descricao = JRequest::getString ( 'descricao', null, 'POST' );
-		$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
-		$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
-		$altura = JRequest::getFloat ( 'altura', null, 'POST' );
-		$peso = JRequest::getFloat ( 'peso', null, 'POST' );
-		$busto = JRequest::getFloat ( 'busto', null, 'POST' );
-		$calsa = JRequest::getInt ( 'calsa', null, 'POST' );
-		$calsado = JRequest::getInt ( 'calsado', null, 'POST' );
-		$olhos = JRequest::getString ( 'olhos', null, 'POST' );
-		$pele = JRequest::getString ( 'pele', null, 'POST' );
-		$etinia = JRequest::getString ( 'etinia', null, 'POST' );
-		$cabelo = JRequest::getString ( 'cabelo', null, 'POST' );
-		$tamanhoCabelo = JRequest::getString ( 'tamanho_cabelo', null, 'POST' );
-		$corCabelo = JRequest::getString ( 'cor_cabelo', null, 'POST' );
-		$outraCorCabelo = JRequest::getString ( 'outra_cor_cabelo', null, 'POST' );
-		$profissao = JRequest::getString ( 'profissao', null, 'POST' );
-		$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
-		$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
-		$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
-		$site = JRequest::getString ( 'site', null, 'POST' );
-		$sexo = JRequest::getString ( 'sexo', null, 'POST' );
-		$cpf = JRequest::getString ( 'cpf', null, 'POST' );
-		$banco = JRequest::getString ( 'banco', null, 'POST' );
-		$agencia = JRequest::getString ( 'agencia', null, 'POST' );
-		$conta = JRequest::getString ( 'conta', null, 'POST' );
-		$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
-		$statusModelo = JRequest::getString ( 'status_modelo', null, 'POST' );
-		$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
-		$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
-		$dataFormatadaBanco = 'null';
-
-		
-		
-		$foto_perfil = $_FILES ['foto_perfil'];
-		$foto_inteira = $_FILES ['foto_inteira'];
-		$foto_inteira_horizontal = $_FILES ['foto_inteira_horizontal'];
-		
-		$db = JFactory::getDbo ();
-		if($dataNascimento != null && strlen($dataNascimento) > 8){
-			$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
-		}
-		
-
-		if (isset($usuario) && $usuario->id != 0) { // UPDATE
-			$query = $db->getQuery ( true );
-			$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
-					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
-					$db->quoteName ( 'nome_artistico' ) . ' = ' . $db->quote($nomeArtistico),
-					$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
-					$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
-					$db->quoteName ( 'altura' ) . ' = ' . ($altura == null ? ' null ' : $db->quote($altura)),
-					$db->quoteName ( 'peso' ) . ' = ' . ($peso == null ? ' null ' : $db->quote($peso)),
-					$db->quoteName ( 'busto' ) . ' = ' . ($busto == null ? ' null ' : $db->quote($busto)),
-					$db->quoteName ( 'calsa' ) . ' = ' . ($calsa == null ? ' null ' : $db->quote($calsa)),
-					$db->quoteName ( 'calsado' ) . ' = ' . ($calsado == null ? ' null ' : $db->quote($calsado)),
-					$db->quoteName ( 'olhos' ) . ' = ' . ($olhos == null ? ' null ' : $db->quote($olhos)),
-					$db->quoteName ( 'pele' ) . ' = ' . ($pele == null ? ' null ' : $db->quote($pele)),
-					$db->quoteName ( 'etinia' ) . ' = ' . ($etinia == null ? ' null ' : $db->quote($etinia)),
-					$db->quoteName ( 'cabelo' ) . ' = ' . ($cabelo == null ? ' null ' : $db->quote($cabelo)),
-					$db->quoteName ( 'tamanho_cabelo' ) . ' = ' . ($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
-					$db->quoteName ( 'cor_cabelo' ) . ' = ' . ($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
-					$db->quoteName ( 'outra_cor_cabelo' ) . ' = ' . ($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
-					$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
-					$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-					$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-					$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataFormatadaBanco,
-					$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
-					$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
-					$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
-					$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
-					$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
-					$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
-					$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-					$db->quoteName ( 'status_modelo' ) . ' = ' . ($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
-					$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-					$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade))
-			))
-			->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
-			$db->setQuery ( $query );
-
-			$db->execute ();
-		} else {
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_modelo' ) )->columns ( array (
-				$db->quoteName ( 'status_dado' ),
-				$db->quoteName ( 'data_criado' ),
-				$db->quoteName ( 'id_usuario_criador' ),
-				$db->quoteName ( 'data_alterado' ),
-				$db->quoteName ( 'id_usuario_alterador' ),
-				$db->quoteName ( 'id_usuario' ),
-				$db->quoteName ( 'nome_artistico' ),
-				$db->quoteName ( 'descricao' ),
-				$db->quoteName ( 'meta_descricao' ),
-				$db->quoteName ( 'altura' ),
-				$db->quoteName ( 'peso' ),
-				$db->quoteName ( 'busto' ),
-				$db->quoteName ( 'calsa' ),
-				$db->quoteName ( 'calsado' ),
-				$db->quoteName ( 'olhos' ),
-				$db->quoteName ( 'pele' ),
-				$db->quoteName ( 'etinia' ),
-				$db->quoteName ( 'cabelo' ),
-				$db->quoteName ( 'tamanho_cabelo' ),
-				$db->quoteName ( 'cor_cabelo' ),
-				$db->quoteName ( 'outra_cor_cabelo' ),
-				$db->quoteName ( 'profissao' ),
-				$db->quoteName ( 'nascionalidade' ),
-				$db->quoteName ( 'id_cidade_nasceu' ),
-				$db->quoteName ( 'data_nascimento' ),
-				$db->quoteName ( 'site' ),
-				$db->quoteName ( 'sexo' ),
-				$db->quoteName ( 'cpf' ),
-				$db->quoteName ( 'banco' ),
-				$db->quoteName ( 'agencia' ),
-				$db->quoteName ( 'conta' ),
-				$db->quoteName ( 'custo_medio_diaria' ),
-				$db->quoteName ( 'status_modelo' ),
-				$db->quoteName ( 'qualificao_equipe' ),
-				$db->quoteName ( 'id_cidade' )))
-			->values ( implode ( ',', array (
-				'\'NOVO\'',
-				'NOW()',
-				$usuario->id,
-				'NOW()',
-				$usuario->id,
-				$usuario->id,
-				$db->quote($nomeArtistico),
-				$db->quote($descricao),
-				$db->quote($metaDescricao),
-				($altura == null ? ' null ' : $db->quote($altura)),
-				($peso == null ? ' null ' : $db->quote($peso)),
-				($busto == null ? ' null ' : $db->quote($busto)),
-				($calsa == null ? ' null ' : $db->quote($calsa)),
-				($calsado == null ? ' null ' : $db->quote($calsado)),
-				($olhos == null ? ' null ' : $db->quote($olhos)),
-				($pele == null ? ' null ' : $db->quote($pele)),
-				($etinia == null ? ' null ' : $db->quote($etinia)),
-				($cabelo == null ? ' null ' : $db->quote($cabelo)),
-				($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
-				($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
-				($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
-				($profissao == null ? ' null ' : $db->quote($profissao)),
-				($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
-				($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
-				$dataFormatadaBanco,
-				($site == null ? ' null ' : $db->quote($site)),
-				($sexo == null ? ' null ' : $db->quote($sexo)),
-				($cpf == null ? ' null ' : $db->quote($cpf)),
-				($banco == null ? ' null ' : $db->quote($banco)),
-				($agencia == null ? ' null ' : $db->quote($agencia)),
-				($conta == null ? ' null ' : $db->quote($conta)),
-				($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
-				($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
-				($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
-				($idCidade == null ? ' null ' : $db->quote($idCidade))
-			)));
-			$db->setQuery( $query );
-			$db->execute();
-			$id = $db->insertid();
+			$sucesso=true;
 			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
-				->columns ( array (
+			
+			$erro = false;
+			
+			$id = JRequest::getString('id',0);
+			if(!(strpos($id,':')===false)){
+				$id = explode(':',$id)[0];
+			}
+			$email = JRequest::getString ( 'email', null, 'POST' );
+			$username = JRequest::getString ( 'username', null, 'POST' );
+			$password = JRequest::getString ( 'password', null, 'POST' );
+			$telefone = JRequest::getString ( 'telefone', null, 'POST' );
+			$name = JRequest::getString ( 'name', null, 'POST' );
+			$descricao = JRequest::getString ( 'descricao', null, 'POST' );
+			$metaDescricao = JRequest::getString ( 'meta_descricao', null, 'POST' );
+			$nomeArtistico = JRequest::getString ( 'nome_artistico', null, 'POST' );
+			$altura = JRequest::getFloat ( 'altura', null, 'POST' );
+			$peso = JRequest::getFloat ( 'peso', null, 'POST' );
+			$busto = JRequest::getFloat ( 'busto', null, 'POST' );
+			$calsa = JRequest::getInt ( 'calsa', null, 'POST' );
+			$calsado = JRequest::getInt ( 'calsado', null, 'POST' );
+			$olhos = JRequest::getString ( 'olhos', null, 'POST' );
+			$pele = JRequest::getString ( 'pele', null, 'POST' );
+			$etinia = JRequest::getString ( 'etinia', null, 'POST' );
+			$cabelo = JRequest::getString ( 'cabelo', null, 'POST' );
+			$tamanhoCabelo = JRequest::getString ( 'tamanho_cabelo', null, 'POST' );
+			$corCabelo = JRequest::getString ( 'cor_cabelo', null, 'POST' );
+			$outraCorCabelo = JRequest::getString ( 'outra_cor_cabelo', null, 'POST' );
+			$profissao = JRequest::getString ( 'profissao', null, 'POST' );
+			$nascionalidade = JRequest::getString ( 'nascionalidade', '', 'POST' );
+			$idCidadeNasceu = JRequest::getInt ( 'id_cidade_nasceu', null, 'POST' );
+			$dataNascimento = JRequest::getString ( 'data_nascimento', null, 'POST' );
+			$site = JRequest::getString ( 'site', null, 'POST' );
+			$sexo = JRequest::getString ( 'sexo', null, 'POST' );
+			$cpf = JRequest::getString ( 'cpf', null, 'POST' );
+			$banco = JRequest::getString ( 'banco', null, 'POST' );
+			$agencia = JRequest::getString ( 'agencia', null, 'POST' );
+			$conta = JRequest::getString ( 'conta', null, 'POST' );
+			$custoMedioDiaria = JRequest::getString ( 'custo_medio_diaria', null, 'POST' );
+			$statusModelo = JRequest::getString ( 'status_modelo', null, 'POST' );
+			$qualificaoEquipe = JRequest::getString ( 'qualificao_equipe', null, 'POST' );
+			$idCidade = JRequest::getInt ( 'id_cidade', null, 'POST' );
+			$dataFormatadaBanco = 'null';
+	
+			
+			
+			$foto_perfil = $_FILES ['foto_perfil'];
+			$foto_inteira = $_FILES ['foto_inteira'];
+			$foto_inteira_horizontal = $_FILES ['foto_inteira_horizontal'];
+			
+			$db = JFactory::getDbo ();
+			if($dataNascimento != null && strlen($dataNascimento) > 8){
+				$dataFormatadaBanco= $db->quote(JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'));
+			}
+			
+	
+			if (isset($usuario) && $usuario->id != 0) { // UPDATE
+				$query = $db->getQuery ( true );
+				$query->update ( $db->quoteName ( '#__angelgirls_modelo' ) )->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $usuario->id,
+						$db->quoteName ( 'nome_artistico' ) . ' = ' . $db->quote($nomeArtistico),
+						$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
+						$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
+						$db->quoteName ( 'altura' ) . ' = ' . ($altura == null ? ' null ' : $db->quote($altura)),
+						$db->quoteName ( 'peso' ) . ' = ' . ($peso == null ? ' null ' : $db->quote($peso)),
+						$db->quoteName ( 'busto' ) . ' = ' . ($busto == null ? ' null ' : $db->quote($busto)),
+						$db->quoteName ( 'calsa' ) . ' = ' . ($calsa == null ? ' null ' : $db->quote($calsa)),
+						$db->quoteName ( 'calsado' ) . ' = ' . ($calsado == null ? ' null ' : $db->quote($calsado)),
+						$db->quoteName ( 'olhos' ) . ' = ' . ($olhos == null ? ' null ' : $db->quote($olhos)),
+						$db->quoteName ( 'pele' ) . ' = ' . ($pele == null ? ' null ' : $db->quote($pele)),
+						$db->quoteName ( 'etinia' ) . ' = ' . ($etinia == null ? ' null ' : $db->quote($etinia)),
+						$db->quoteName ( 'cabelo' ) . ' = ' . ($cabelo == null ? ' null ' : $db->quote($cabelo)),
+						$db->quoteName ( 'tamanho_cabelo' ) . ' = ' . ($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
+						$db->quoteName ( 'cor_cabelo' ) . ' = ' . ($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
+						$db->quoteName ( 'outra_cor_cabelo' ) . ' = ' . ($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
+						$db->quoteName ( 'profissao' ) . ' = ' . ($profissao == null ? ' null ' : $db->quote($profissao)),
+						$db->quoteName ( 'nascionalidade' ) . ' = ' . ($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+						$db->quoteName ( 'id_cidade_nasceu' ) . ' = ' . ($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+						$db->quoteName ( 'data_nascimento' ) . ' = ' . $dataFormatadaBanco,
+						$db->quoteName ( 'site' ) . ' = ' . ($site == null ? ' null ' : $db->quote($site)),
+						$db->quoteName ( 'sexo' ) . ' = ' . ($sexo == null ? ' null ' : $db->quote($sexo)),
+						$db->quoteName ( 'cpf' ) . ' = ' . ($cpf == null ? ' null ' : $db->quote($cpf)),
+						$db->quoteName ( 'banco' ) . ' = ' . ($banco == null ? ' null ' : $db->quote($banco)),
+						$db->quoteName ( 'agencia' ) . ' = ' . ($agencia == null ? ' null ' : $db->quote($agencia)),
+						$db->quoteName ( 'conta' ) . ' = ' . ($conta == null ? ' null ' : $db->quote($conta)),
+						$db->quoteName ( 'custo_medio_diaria' ) . ' = ' . ($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+						$db->quoteName ( 'status_modelo' ) . ' = ' . ($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
+						$db->quoteName ( 'qualificao_equipe' ) . ' = ' . ($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+						$db->quoteName ( 'id_cidade' ) . ' = ' . ($idCidade == null ? ' null ' : $db->quote($idCidade)),
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $usuario->id);
+				$db->setQuery ( $query );
+				$db->execute ();
+				$this->LogQuery($query);
+			} else {
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_modelo' ) )->columns ( array (
 					$db->quoteName ( 'status_dado' ),
 					$db->quoteName ( 'data_criado' ),
 					$db->quoteName ( 'id_usuario_criador' ),
 					$db->quoteName ( 'data_alterado' ),
 					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'principal' ),
-					$db->quoteName ( 'email' ),
-					$db->quoteName ( 'ordem' )))
+					$db->quoteName ( 'nome_artistico' ),
+					$db->quoteName ( 'descricao' ),
+					$db->quoteName ( 'meta_descricao' ),
+					$db->quoteName ( 'altura' ),
+					$db->quoteName ( 'peso' ),
+					$db->quoteName ( 'busto' ),
+					$db->quoteName ( 'calsa' ),
+					$db->quoteName ( 'calsado' ),
+					$db->quoteName ( 'olhos' ),
+					$db->quoteName ( 'pele' ),
+					$db->quoteName ( 'etinia' ),
+					$db->quoteName ( 'cabelo' ),
+					$db->quoteName ( 'tamanho_cabelo' ),
+					$db->quoteName ( 'cor_cabelo' ),
+					$db->quoteName ( 'outra_cor_cabelo' ),
+					$db->quoteName ( 'profissao' ),
+					$db->quoteName ( 'nascionalidade' ),
+					$db->quoteName ( 'id_cidade_nasceu' ),
+					$db->quoteName ( 'data_nascimento' ),
+					$db->quoteName ( 'site' ),
+					$db->quoteName ( 'sexo' ),
+					$db->quoteName ( 'cpf' ),
+					$db->quoteName ( 'banco' ),
+					$db->quoteName ( 'agencia' ),
+					$db->quoteName ( 'conta' ),
+					$db->quoteName ( 'custo_medio_diaria' ),
+					$db->quoteName ( 'status_modelo' ),
+					$db->quoteName ( 'qualificao_equipe' ),
+					$db->quoteName ( 'id_cidade' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
 				->values ( implode ( ',', array (
-						'\'NOVO\'',
-						'NOW()',
-						$usuario->id,
-						'NOW()',
-						$usuario->id,
-						$usuario->id,
-						$db->quote('S'),
-						$db->quote($email),
-						'0')));
-			$db->setQuery( $query );
-			$db->execute();
-			
-			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
-			->columns ( array (
-					$db->quoteName ( 'status_dado' ),
-					$db->quoteName ( 'data_criado' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'data_alterado' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
-					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'tipo' ),
-					$db->quoteName ( 'principal' ),
-					$db->quoteName ( 'ddd' ),
-					$db->quoteName ( 'telefone' ),
-					$db->quoteName ( 'ordem' )))
-			->values ( implode ( ',', array (
+					'\'NOVO\'',
+					'NOW()',
+					$usuario->id,
+					'NOW()',
+					$usuario->id,
+					$usuario->id,
+					$db->quote($nomeArtistico),
+					$db->quote($descricao),
+					$db->quote($metaDescricao),
+					($altura == null ? ' null ' : $db->quote($altura)),
+					($peso == null ? ' null ' : $db->quote($peso)),
+					($busto == null ? ' null ' : $db->quote($busto)),
+					($calsa == null ? ' null ' : $db->quote($calsa)),
+					($calsado == null ? ' null ' : $db->quote($calsado)),
+					($olhos == null ? ' null ' : $db->quote($olhos)),
+					($pele == null ? ' null ' : $db->quote($pele)),
+					($etinia == null ? ' null ' : $db->quote($etinia)),
+					($cabelo == null ? ' null ' : $db->quote($cabelo)),
+					($tamanhoCabelo == null ? ' null ' : $db->quote($tamanhoCabelo)),
+					($corCabelo == null ? ' null ' : $db->quote($corCabelo)),
+					($outraCorCabelo == null ? ' null ' : $db->quote($outraCorCabelo)),
+					($profissao == null ? ' null ' : $db->quote($profissao)),
+					($nascionalidade == null ? ' null ' : $db->quote($nascionalidade)),
+					($idCidadeNasceu == null ? ' null ' : $db->quote($idCidadeNasceu)),
+					$dataFormatadaBanco,
+					($site == null ? ' null ' : $db->quote($site)),
+					($sexo == null ? ' null ' : $db->quote($sexo)),
+					($cpf == null ? ' null ' : $db->quote($cpf)),
+					($banco == null ? ' null ' : $db->quote($banco)),
+					($agencia == null ? ' null ' : $db->quote($agencia)),
+					($conta == null ? ' null ' : $db->quote($conta)),
+					($custoMedioDiaria == null ? ' null ' : $db->quote($custoMedioDiaria)),
+					($statusModelo == null ? ' null ' : $db->quote($statusModelo)),
+					($qualificaoEquipe == null ? ' null ' : $db->quote($qualificaoEquipe)),
+					($idCidade == null ? ' null ' : $db->quote($idCidade)),
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp())
+				)));
+				$db->setQuery( $query );
+				$db->execute();
+				$id = $db->insertid();
+				$this->LogQuery($query);
+				
+				
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_email' ) )
+					->columns ( array (
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'email' ),
+						$db->quoteName ( 'ordem' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+					->values ( implode ( ',', array (
 							'\'NOVO\'',
 							'NOW()',
 							$usuario->id,
 							'NOW()',
 							$usuario->id,
 							$usuario->id,
-							$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
 							$db->quote('S'),
-							$db->quote(substr($telefone,1,2)),
-							$db->quote(substr($telefone,5)),
-							
-					'0')));
-			$db->setQuery( $query );
-			$db->execute();
-		}
-		
-
-		
-		$query = $db->getQuery ( true );
-		$query->select('foto_perfil, foto_inteira, foto_inteira_horizontal ')
-		->from ('#__angelgirls_modelo')
-		->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-		->where ( $db->quoteName ('id').' = ' . $id);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		
+							$db->quote($email),
+							'0',
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp()))));
+				$db->setQuery( $query );
+				$db->execute();
+				$this->LogQuery($query);
+				
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_telefone' ) )
+				->columns ( array (
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'tipo' ),
+						$db->quoteName ( 'principal' ),
+						$db->quoteName ( 'ddd' ),
+						$db->quoteName ( 'telefone' ),
+						$db->quoteName ( 'ordem' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+				->values ( implode ( ',', array (
+								'\'NOVO\'',
+								'NOW()',
+								$usuario->id,
+								'NOW()',
+								$usuario->id,
+								$usuario->id,
+								$db->quote(strlen($telefone) > 14 ? 'CELULAR': 'OUTRO'),
+								$db->quote('S'),
+								$db->quote(substr($telefone,1,2)),
+								$db->quote(substr($telefone,5)),
+						'0',
+				$db->quote($this->getRemoteHostIp()),
+				$db->quote($this->getRemoteHostIp()))));
+				$db->setQuery( $query );
+				$db->execute();
+				$this->LogQuery($query);
+			}
 			
-		if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
-			$this->SalvarUploadArquivo($foto_perfil,
-					PATH_IMAGEM_MODELOS,
-					$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
-					'#__angelgirls_modelo','foto_perfil',$id,true,true, $result->foto_perfil);
+	
+			
+			$query = $db->getQuery ( true );
+			$query->select('foto_perfil, foto_inteira, foto_inteira_horizontal ')
+			->from ('#__angelgirls_modelo')
+			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id').' = ' . $id);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			
+				
+			if (isset ( $foto_perfil ) && JFile::exists ( $foto_perfil ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($foto_perfil,
+						PATH_IMAGEM_MODELOS,
+						$this->GerarNovoNomeArquivo($foto_perfil['name'], $id ),
+						'#__angelgirls_modelo','foto_perfil',$id,true,true, $result->foto_perfil);
+			}
+			if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($foto_inteira,
+						PATH_IMAGEM_MODELOS,
+						$this->GerarNovoNomeArquivo($foto_inteira['name'], $id ),
+						'#__angelgirls_modelo','foto_inteira',$id,true,true, $result->foto_inteira);
+			}
+			if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
+				$this->SalvarUploadArquivo($foto_inteira_horizontal,
+						PATH_IMAGEM_MODELOS,
+						$this->GerarNovoNomeArquivo($foto_inteira_horizontal['name'], $id ),
+						'#__angelgirls_modelo','foto_inteira_horizontal',$id,true,true, $result->foto_inteira_horizontal);
+			}
+			
+			
+	
+			return true;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-		if (isset ( $foto_inteira ) && JFile::exists ( $foto_inteira ['tmp_name'] )) {
-			$this->SalvarUploadArquivo($foto_inteira,
-					PATH_IMAGEM_MODELOS,
-					$this->GerarNovoNomeArquivo($foto_inteira['name'], $id ),
-					'#__angelgirls_modelo','foto_inteira',$id,true,true, $result->foto_inteira);
-		}
-		if (isset ( $foto_inteira_horizontal ) && JFile::exists ( $foto_inteira_horizontal ['tmp_name'] )) {
-			$this->SalvarUploadArquivo($foto_inteira_horizontal,
-					PATH_IMAGEM_MODELOS,
-					$this->GerarNovoNomeArquivo($foto_inteira_horizontal['name'], $id ),
-					'#__angelgirls_modelo','foto_inteira_horizontal',$id,true,true, $result->foto_inteira_horizontal);
-		}
-		
-		
-
-		return true;
+		return false;
 	}
 	
 	/**
@@ -3831,14 +3965,15 @@ class AngelgirlsController extends JControllerLegacy{
 				if(!$db->execute()){
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
-				
+				$this->LogQuery($query);
 				if($jsonRetorno==""){
 					$query = $db->getQuery ( true );
 					$query->update($db->quoteName('#__angelgirls_endereco' ))
 					->set(array (
 							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()) )))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -3848,9 +3983,11 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -3882,7 +4019,8 @@ class AngelgirlsController extends JControllerLegacy{
 				->set(array (
 						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
 						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
@@ -3892,8 +4030,10 @@ class AngelgirlsController extends JControllerLegacy{
 				else{
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
+				$this->LogQuery($query);
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -3978,7 +4118,9 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'id_usuario_alterador' ),
 							$db->quoteName ( 'data_criado' ),
 							$db->quoteName ( 'data_alterado' ),
-							$db->quoteName ( 'ordem' )))
+							$db->quoteName ( 'ordem' ),
+							$db->quoteName ( 'host_ip_criador' ),
+							$db->quoteName ( 'host_ip_alterador' )))
 						->values(implode(',', array(
 							$db->quote($tipo),
 							$db->quote($principal),
@@ -3992,8 +4134,9 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quote(StatusDado::NOVO),
 							$user->id, 
 							$user->id, 'NOW()', 'NOW()',
-								$ordem)));
-		
+								$ordem,
+					$db->quote($this->getRemoteHostIp()),
+					$db->quote($this->getRemoteHostIp()))));
 							$db->setQuery( $query );
 					if($db->execute()){
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
@@ -4001,8 +4144,11 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
+					
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
 			}
 			else{
@@ -4018,7 +4164,8 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'cep' ) . ' = ' . (isset($cep)?$db->quote($cep):'null'),
 							$db->quoteName ( 'id_cidade' ) . ' = ' . (isset($cidade)?$cidade:'null'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' .  $db->quote($this->getRemoteHostIp())))
 						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 						$db->setQuery( $query );
@@ -4028,9 +4175,12 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
+				
 			}
 		}
 		else{
@@ -4078,14 +4228,15 @@ class AngelgirlsController extends JControllerLegacy{
 				if(!$db->execute()){
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
-	
+				$this->LogQuery($query);
 				if($jsonRetorno==""){
 					$query = $db->getQuery ( true );
 					$query->update($db->quoteName('#__angelgirls_telefone' ))
 					->set(array (
 							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  ',
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -4095,9 +4246,11 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -4129,7 +4282,8 @@ class AngelgirlsController extends JControllerLegacy{
 				->set(array (
 						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
 						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
@@ -4139,8 +4293,10 @@ class AngelgirlsController extends JControllerLegacy{
 				else{
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
+				$this->LogQuery($query);
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -4220,7 +4376,9 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'id_usuario_alterador' ),
 							$db->quoteName ( 'data_criado' ),
 							$db->quoteName ( 'data_alterado' ),
-							$db->quoteName ( 'ordem' )))
+							$db->quoteName ( 'ordem' ),
+							$db->quoteName ( 'host_ip_criador' ),
+							$db->quoteName ( 'host_ip_alterador' )))
 							->values(implode(',', array(
 									$db->quote($tipo),
 									$db->quote($principal),
@@ -4231,7 +4389,9 @@ class AngelgirlsController extends JControllerLegacy{
 									$db->quote(StatusDado::NOVO),
 									$user->id,
 									$user->id, 'NOW()', 'NOW()',
-									$ordem)));
+									$ordem,
+									$db->quote($this->getRemoteHostIp()),
+									$db->quote($this->getRemoteHostIp()))));
 	
 							$db->setQuery( $query );
 							if($db->execute()){
@@ -4240,8 +4400,10 @@ class AngelgirlsController extends JControllerLegacy{
 							else{
 								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 							}
+							$this->LogQuery($query);
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
 			}
 			else{
@@ -4254,7 +4416,8 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'ddd' ) . ' = ' . (isset($ddd)?$db->quote($ddd):'null'),
 							$db->quoteName ( 'telefone' ) . ' = ' . (isset($telefone)?$db->quote($telefone):'null'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' )  . ' = ' . $db->quote($this->getRemoteHostIp()) ))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -4264,8 +4427,10 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
 			}
 		}
@@ -4314,33 +4479,42 @@ class AngelgirlsController extends JControllerLegacy{
 				if(!$db->execute()){
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
-	
+				$this->LogQuery($query);
+				
 				if($jsonRetorno==""){
 					$query = $db->getQuery ( true );
 					$query->update($db->quoteName('#__angelgirls_email' ))
 					->set(array (
 							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
 					if($db->execute()){
 						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+						$this->LogQuery($query);
+						
+						
+						$query = $db->getQuery ( true );
+						$query->update($db->quoteName('#__users' ))
+						->set(array (
+								$db->quoteName ( 'email' ) . ' = (SELECT email FROM #__angelgirls_email WHERE id = '.$id.' )'))
+								->where ($db->quoteName ( 'id' ) . ' = ' . $user->id);
+						$db->setQuery( $query );
+						$db->execute();
+						$this->LogQuery($query);
 					}
 					else{
+						$this->LogQuery($query);
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
-					$query = $db->getQuery ( true );
-					$query->update($db->quoteName('#__users' ))
-						->set(array (
-							$db->quoteName ( 'email' ) . ' = (SELECT email FROM #__angelgirls_email WHERE id = '.$id.' )')) 
-						->where ($db->quoteName ( 'id' ) . ' = ' . $user->id);
-					$db->setQuery( $query );
-					$db->execute();
+
 				}
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -4372,7 +4546,8 @@ class AngelgirlsController extends JControllerLegacy{
 				->set(array (
 						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
 						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 				$db->setQuery( $query );
@@ -4382,8 +4557,10 @@ class AngelgirlsController extends JControllerLegacy{
 				else{
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
+				$this->LogQuery($query);
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -4448,7 +4625,9 @@ class AngelgirlsController extends JControllerLegacy{
 							$db->quoteName ( 'id_usuario_alterador' ),
 							$db->quoteName ( 'data_criado' ),
 							$db->quoteName ( 'data_alterado' ),
-							$db->quoteName ( 'ordem' )))
+							$db->quoteName ( 'ordem' ),
+							$db->quoteName ( 'host_ip_criador' ),
+							$db->quoteName ( 'host_ip_alterador' )))
 							->values(implode(',', array(
 									$db->quote($principal),
 									(isset($email)?$db->quote($email):'null'),
@@ -4456,7 +4635,9 @@ class AngelgirlsController extends JControllerLegacy{
 									$db->quote(StatusDado::NOVO),
 									$user->id,
 									$user->id, 'NOW()', 'NOW()',
-									$ordem)));
+									$ordem,
+									$db->quote($this->getRemoteHostIp()),
+									$db->quote($this->getRemoteHostIp()))));
 	
 							$db->setQuery( $query );
 							if($db->execute()){
@@ -4465,8 +4646,11 @@ class AngelgirlsController extends JControllerLegacy{
 							else{
 								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 							}
+							$this->LogQuery($query);
+							
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
 			}
 			else{
@@ -4476,7 +4660,8 @@ class AngelgirlsController extends JControllerLegacy{
 					->set(array (
 							$db->quoteName ( 'email' ) . ' = ' . (isset($email)?$db->quote($email):'null'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -4486,8 +4671,10 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}catch(Exception $e) {
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
 			}
 		}
@@ -4535,14 +4722,15 @@ class AngelgirlsController extends JControllerLegacy{
 				if(!$db->execute()){
 					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 				}
-	
+				$this->LogQuery($query);
 				if($jsonRetorno==""){
 					$query = $db->getQuery ( true );
 					$query->update($db->quoteName('#__angelgirls_redesocial' ))
 					->set(array (
 							$db->quoteName ( 'principal' ) . ' = ' . $db->quote('S'),
 							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-							$db->quoteName ( 'data_alterado' ) . '=  NOW()  '))
+							$db->quoteName ( 'data_alterado' ) . '=  NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
 							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
 							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
 					$db->setQuery( $query );
@@ -4552,9 +4740,11 @@ class AngelgirlsController extends JControllerLegacy{
 					else{
 						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
 					}
+					$this->LogQuery($query);
 				}
 			}catch(Exception $e) {
 				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
 			}
 		}
 		else{
@@ -4570,43 +4760,52 @@ class AngelgirlsController extends JControllerLegacy{
 	 * Remover rede_social
 	 */
 	public function removerRedeSocialJson(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery (true);
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery (true);
+		
+			$id  = JRequest::getString ( 'id' );
+			$jsonRetorno="";
+		
+			$mensagensErro = "";
 	
-		$id  = JRequest::getString ( 'id' );
-		$jsonRetorno="";
 	
-		$mensagensErro = "";
-
-
-		if(isset($id) && $id!=0){
-			try {
-				$query = $db->getQuery ( true );
-				$query->update($db->quoteName('#__angelgirls_redesocial' ))
-				->set(array (
-						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
-						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
-						$db->quoteName ( 'data_alterado' ) . ' = NOW()  '))
-						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
-						->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
-				$db->setQuery( $query );
-				if($db->execute()){
-					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+			if(isset($id) && $id!=0){
+				try {
+					$query = $db->getQuery ( true );
+					$query->update($db->quoteName('#__angelgirls_redesocial' ))
+					->set(array (
+							$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+							$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+							$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+							->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+							->where ($db->quoteName ( 'id_usuario' ) . ' = ' . $user->id);
+					$db->setQuery( $query );
+					if($db->execute()){
+						$jsonRetorno='{"ok":"ok", "menssagem":""}';
+					}
+					else{
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
+					}
+					$this->LogQuery($query);
+				}catch(Exception $e) {
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+					JLog::add($e->getMessage(), JLog::WARNING);
 				}
-				else{
-					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
-				}
-			}catch(Exception $e) {
-				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 			}
+			else{
+				$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
+			}
+			header('Content-Type: application/json; charset=utf8');
+			header("Content-Length: " . strlen($jsonRetorno));
+			echo $jsonRetorno;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
-		}
-		header('Content-Type: application/json; charset=utf8');
-		header("Content-Length: " . strlen($jsonRetorno));
-		echo $jsonRetorno;
+		return null;
 		exit();
 	}
 	
@@ -4615,93 +4814,102 @@ class AngelgirlsController extends JControllerLegacy{
 	 * Salvar o rede_social via JSON
 	 */
 	public function salvarRedeSocialJson(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery (true);
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery (true);
+		
+			$id  = JRequest::getString ( 'id', null, 'POST' );
+			$tipo = JRequest::getString ( 'tipo', null, 'POST' );
+			$rede = JRequest::getString ( 'rede', null, 'POST' );
+			$contato = JRequest::getString ( 'contato', null, 'POST' );
 	
-		$id  = JRequest::getString ( 'id', null, 'POST' );
-		$tipo = JRequest::getString ( 'tipo', null, 'POST' );
-		$rede = JRequest::getString ( 'rede', null, 'POST' );
-		$contato = JRequest::getString ( 'contato', null, 'POST' );
-
-
-		$jsonRetorno="";
 	
-		$mensagensErro = "";
+			$jsonRetorno="";
+		
+			$mensagensErro = "";
+		
+			if(!isset($rede)){
+				$mensagensErro = $mensagensErro . "Rede Social um campo obrigat&oacute;rio.<br/>";
+			}
+			if(!isset($contato) || strlen($contato)<1){
+				$mensagensErro = $mensagensErro . "Contato um campo obrigat&oacute;rio .<br/>";
+			}
 	
-		if(!isset($rede)){
-			$mensagensErro = $mensagensErro . "Rede Social um campo obrigat&oacute;rio.<br/>";
-		}
-		if(!isset($contato) || strlen($contato)<1){
-			$mensagensErro = $mensagensErro . "Contato um campo obrigat&oacute;rio .<br/>";
-		}
-
-		if($mensagensErro==""){
-			if(!isset($id) || $id==0){
-				try {
-					$principal='N';
-					$ordem = 0;
+			if($mensagensErro==""){
+				if(!isset($id) || $id==0){
+					try {
+						$principal='N';
+						$ordem = 0;
+							
+						$query = $db->getQuery ( true );
+						$query->select('max(end.`ordem`) AS total')
+						->from ('#__angelgirls_redesocial AS end')
+						->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
+						->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
+						$db->setQuery ( $query );
+						$result = $db->loadObject();
+							
+	
 						
-					$query = $db->getQuery ( true );
-					$query->select('max(end.`ordem`) AS total')
-					->from ('#__angelgirls_redesocial AS end')
-					->where ( $db->quoteName ('end.id_usuario').' = ' . $user->id )
-					->where ( $db->quoteName ('end.status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO));
-					$db->setQuery ( $query );
-					$result = $db->loadObject();
+						if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
+							$principal='S';
+						}else{
+							$ordem = $result->total+1;
+						}
+	
 						
-
-					
-					if(!isset($result) || sizeof($result)<=0 || !isset($result->total)){
-						$principal='S';
-					}else{
-						$ordem = $result->total+1;
+						$query = $db->getQuery ( true );
+						$query->insert( $db->quoteName ( '#__angelgirls_redesocial' ) )
+						->columns (array (
+								$db->quoteName ( 'principal' ),
+								$db->quoteName ( 'rede_social' ),
+								$db->quoteName ( 'url_usuario' ),
+								$db->quoteName ( 'id_usuario' ),
+								$db->quoteName ( 'status_dado' ),
+								$db->quoteName ( 'id_usuario_criador' ),
+								$db->quoteName ( 'id_usuario_alterador' ),
+								$db->quoteName ( 'data_criado' ),
+								$db->quoteName ( 'data_alterado' ),
+								$db->quoteName ( 'ordem' ),
+								$db->quoteName ( 'host_ip_criador' ),
+								$db->quoteName ( 'host_ip_alterador' )))
+								->values(implode(',', array(
+										$db->quote($principal),
+										(isset($rede)?$db->quote($rede):'null'),
+										(isset($contato)?$db->quote($contato):'null'),
+										$user->id,
+										$db->quote(StatusDado::NOVO),
+										$user->id,
+										$user->id, 'NOW()', 'NOW()',
+										$ordem,
+										$db->quote($this->getRemoteHostIp()),
+										$db->quote($this->getRemoteHostIp()))));
+		
+								$db->setQuery( $query );
+								if($db->execute()){
+									$jsonRetorno='{"ok":"ok", "menssagem":""}';
+								}
+								else{
+									$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
+								}
+								$this->LogQuery($query);
+					}catch(Exception $e) {
+						$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+						JLog::add($e->getMessage(), JLog::WARNING);
 					}
-;
-					
-					$query = $db->getQuery ( true );
-					$query->insert( $db->quoteName ( '#__angelgirls_redesocial' ) )
-					->columns (array (
-							$db->quoteName ( 'principal' ),
-							$db->quoteName ( 'rede_social' ),
-							$db->quoteName ( 'url_usuario' ),
-							$db->quoteName ( 'id_usuario' ),
-							$db->quoteName ( 'status_dado' ),
-							$db->quoteName ( 'id_usuario_criador' ),
-							$db->quoteName ( 'id_usuario_alterador' ),
-							$db->quoteName ( 'data_criado' ),
-							$db->quoteName ( 'data_alterado' ),
-							$db->quoteName ( 'ordem' )))
-							->values(implode(',', array(
-									$db->quote($principal),
-									(isset($rede)?$db->quote($rede):'null'),
-									(isset($contato)?$db->quote($contato):'null'),
-									$user->id,
-									$db->quote(StatusDado::NOVO),
-									$user->id,
-									$user->id, 'NOW()', 'NOW()',
-									$ordem)));
-	
-							$db->setQuery( $query );
-							if($db->execute()){
-								$jsonRetorno='{"ok":"ok", "menssagem":""}';
-							}
-							else{
-								$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
-							}
-				}catch(Exception $e) {
-					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
 				}
 			}
+			else{
+				$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
+			}
+			header('Content-Type: application/json; charset=utf8');
+			header("Content-Length: " . strlen($jsonRetorno));
+			echo $jsonRetorno;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-		else{
-			$jsonRetorno='{"ok":"nok", "menssagem":"'.$mensagensErro.'"}';
-		}
-	
-	
-		header('Content-Type: application/json; charset=utf8');
-		header("Content-Length: " . strlen($jsonRetorno));
-		echo $jsonRetorno;
 		exit();
 	}
 	
@@ -4716,32 +4924,43 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	private function getUFs(){
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select ( $db->quoteName ( array ('a.ds_uf_sigla','a.ds_uf_nome'),array ('uf','nome') ) )
-		->from ( $db->quoteName ( '#__uf', 'a' ) )
-		->order ( 'a.ds_uf_sigla' );
-		$db->setQuery ( $query );
-		return $db->loadObjectList();
+		try{
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select ( $db->quoteName ( array ('a.ds_uf_sigla','a.ds_uf_nome'),array ('uf','nome') ) )
+			->from ( $db->quoteName ( '#__uf', 'a' ) )
+			->order ( 'a.ds_uf_sigla' );
+			$db->setQuery ( $query );
+			return $db->loadObjectList();
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	}
 	
 	
 	
 	function cidadeJson(){
-		$uf = 	JRequest::getString( 'uf','','POST');
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		
-		$query->select ( $db->quoteName ( array (
-				'a.id',
-				'a.nome')))
-		->from ( $db->quoteName ('#__cidade', 'a' ))
-		->where ( $db->quoteName ('a.uf').' = ' .$db->quote($uf) )
-		->order ( 'a.nome' );
-		$db->setQuery ( $query );
-		$cidades = $db->loadObjectList ();
-		header('Content-Type: application/json; charset=utf8');
-		echo json_encode($cidades);
+		try{
+			$uf = 	JRequest::getString( 'uf','','POST');
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			
+			$query->select ( $db->quoteName ( array (
+					'a.id',
+					'a.nome')))
+			->from ( $db->quoteName ('#__cidade', 'a' ))
+			->where ( $db->quoteName ('a.uf').' = ' .$db->quote($uf) )
+			->order ( 'a.nome' );
+			$db->setQuery ( $query );
+			$cidades = $db->loadObjectList ();
+			header('Content-Type: application/json; charset=utf8');
+			echo json_encode($cidades);
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
 		exit();
 	}
 	
@@ -4757,28 +4976,33 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function logado(){
-		$db = JFactory::getDbo();
-		
-		$perfil = $this->getPerfilLogado();
-		
-		if(!isset($perfil)){
-			$this->nologado();
-			return;
+		try{
+			$db = JFactory::getDbo();
+			
+			$perfil = $this->getPerfilLogado();
+			
+			if(!isset($perfil)){
+				$this->nologado();
+				return;
+			}
+				
+				
+			JRequest::setVar ( 'perfil', $perfil );
+			
+			$query = $db->getQuery ( true );
+			$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
+					->from ('#__timeline')
+					->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
+							( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
+							. ') OR (tipo<>\'CONTENT\'))' )
+					->setLimit(15);
+			$db->setQuery ( $query );
+			$result = $db->loadObjectList();
+			JRequest::setVar ( 'conteudos', $result );
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-			
-			
-		JRequest::setVar ( 'perfil', $perfil );
-		
-		$query = $db->getQuery ( true );
-		$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
-				->from ('#__timeline')
-				->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
-						( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
-						. ') OR (tipo<>\'CONTENT\'))' )
-				->setLimit(15);
-		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'conteudos', $result );
 		JRequest::setVar ( 'view', 'home' );
 		JRequest::setVar ( 'layout', 'logado' );
 		parent::display ();
@@ -4786,84 +5010,114 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	private function getPerfilLogado(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`tipo`,`usuario`,`nome_completo`,`email_principal`,`id_usuario`,`apelido`,`descricao`,`meta_descricao`,`foto_perfil`,
-					`foto_adicional1`,`foto_adicional2`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,`pele`,`etinia`,`cabelo`,
-					`tamanho_cabelo`,`cor_cabelo`,`outra_cor_cabelo`,`profissao`,`nascionalidade`,`id_cidade_nasceu`,`uf_nasceu`,`data_nascimento`,`site`,
-					`sexo`,`cpf`,`banco`,`agencia`,	`conta`,`custo_medio_diaria`,`outro_status`,`qualificao_equipe`,`audiencia_gostou`,
-					`audiencia_ngostou`,`audiencia_view`,`id_cidade`,`uf`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,
-					`data_criado`,`data_alterado`')
-							->from ('#__angelgirls_perfil')
-							->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-							->setLimit(1);
-		$db->setQuery ( $query );
-		return $db->loadObject();
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`tipo`,`usuario`,`nome_completo`,`email_principal`,`id_usuario`,`apelido`,`descricao`,`meta_descricao`,`foto_perfil`,
+						`foto_adicional1`,`foto_adicional2`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,`pele`,`etinia`,`cabelo`,
+						`tamanho_cabelo`,`cor_cabelo`,`outra_cor_cabelo`,`profissao`,`nascionalidade`,`id_cidade_nasceu`,`uf_nasceu`,`data_nascimento`,`site`,
+						`sexo`,`cpf`,`banco`,`agencia`,	`conta`,`custo_medio_diaria`,`outro_status`,`qualificao_equipe`,`audiencia_gostou`,
+						`audiencia_ngostou`,`audiencia_view`,`id_cidade`,`uf`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,
+						`data_criado`,`data_alterado`')
+								->from ('#__angelgirls_perfil')
+								->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+								->setLimit(1);
+			$db->setQuery ( $query );
+			return $db->loadObject();
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	}
 	
 	private function getEnderecosPefil(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
-				end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
-				end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
-						->from ('#__angelgirls_endereco AS end')
-						->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
-						->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		return $results;
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
+					end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
+					end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
+							->from ('#__angelgirls_endereco AS end')
+							->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
+							->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
+							->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+							->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+							->order('ordem');
+			$db->setQuery ( $query );
+			$results = $db->loadObjectList();
+			return $results;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	} 
 	
 	private function getTelefonesPefil(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_telefone')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		return $results;
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+							->from ('#__angelgirls_telefone')
+							->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+							->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+							->order('ordem');
+			$db->setQuery ( $query );
+			$results = $db->loadObjectList();
+			return $results;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	}
 	
 	
 	private function getRedesSociaisPefil(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_redesocial')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery ( $query );
-		$results = $db->loadObjectList();
-		return $results;
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+							->from ('#__angelgirls_redesocial')
+							->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+							->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+							->order('ordem');
+			$db->setQuery ( $query );
+			$results = $db->loadObjectList();
+			return $results;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	}
 	
 	private function getEmailsPefil(){
-		$user = JFactory::getUser();
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
-		$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
-				`id_usuario_alterador`,`data_criado`,`data_alterado`')
-						->from ('#__angelgirls_email')
-						->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-						->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
-						->order('ordem');
-		$db->setQuery($query);
-		$results = $db->loadObjectList();
-		return $results;
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+							->from ('#__angelgirls_email')
+							->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+							->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+							->order('ordem');
+			$db->setQuery($query);
+			$results = $db->loadObjectList();
+			return $results;
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return null;
 	}	
 	
 	
@@ -4871,26 +5125,31 @@ class AngelgirlsController extends JControllerLegacy{
 
 	
 	public function carregarPerfil(){
-		$user = JFactory::getUser();
-		$this->carregarCadastro();
-		
-		if(!isset($user) || $user->id==0){
-			JError::raiseWarning(100,JText::_('Usu&aacute;rio n&atilde;o est&aacute; logado.'));
-			$this->nologado();
-			return;
+		try{
+			$user = JFactory::getUser();
+			$this->carregarCadastro();
+			
+			if(!isset($user) || $user->id==0){
+				JError::raiseWarning(100,JText::_('Usu&aacute;rio n&atilde;o est&aacute; logado.'));
+				$this->nologado();
+				return;
+			}
+			
+	
+			
+			JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+			
+			//Dados
+			JRequest::setVar ( 'enderecos', $this->getEnderecosPefil());
+			JRequest::setVar ( 'emails', $this->getEmailsPefil());
+			JRequest::setVar ( 'redes', $this->getRedesSociaisPefil());
+			JRequest::setVar ( 'telefones', $this->getTelefonesPefil());
+			//Carregar Cadastro j&aacute; busca Ufs
+			//JRequest::setVar ( 'ufs', $this->getUFs());
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
-		
-
-		
-		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
-		
-		//Dados
-		JRequest::setVar ( 'enderecos', $this->getEnderecosPefil());
-		JRequest::setVar ( 'emails', $this->getEmailsPefil());
-		JRequest::setVar ( 'redes', $this->getRedesSociaisPefil());
-		JRequest::setVar ( 'telefones', $this->getTelefonesPefil());
-		//Carregar Cadastro j&aacute; busca Ufs
-		//JRequest::setVar ( 'ufs', $this->getUFs());
 		
 		JRequest::setVar ( 'view', 'perfil' );
 		JRequest::setVar ( 'layout', 'default' );
@@ -4899,119 +5158,121 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	public function nologado(){
 		//Nova modelo
-		$db = JFactory::getDbo ();
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
-				array('id','nome','descricao','foto', 'alias')))
-				->from ('#__angelgirls_modelo')
-				->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
-				->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-				->where ( $db->quoteName ( 'foto_perfil' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'foto_perfil' ) . " <> '' " )
+		try{
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
+					array('id','nome','descricao','foto', 'alias')))
+					->from ('#__angelgirls_modelo')
+					->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
+					->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+					->where ( $db->quoteName ( 'foto_perfil' ) . ' IS NOT NULL ' )
+					->where ( $db->quoteName ( 'foto_perfil' ) . " <> '' " )
+					->order('data_criado DESC ')
+					->setLimit(1);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			JRequest::setVar ( 'modelo', $result );
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
+					array('id','nome','descricao','foto', 'alias','token')))
+					->from ('#__angelgirls_sessao')
+					->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+					->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' )
+					->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+					->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+					->order('data_criado DESC ')
+					->setLimit(1);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			JRequest::setVar ( 'sessao', $result );
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
+					array('id','nome','descricao','foto', 'alias','token')))
+					->from ('#__angelgirls_sessao')
+					->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
+					->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' );
+			if(isset($result) && isset($result->id)){
+				$query->where ( $db->quoteName ( 'id' ) . ' <> ' . $result->id );
+			}
+			$query->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+					->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+					->order('data_criado DESC ')
+					->setLimit(4);
+			$db->setQuery ( $query );
+			$result = $db->loadObjectList();
+			JRequest::setVar ( 'sessoes', $result );
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao,`id_sessao`, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias,token")
+				->from ('#__angelgirls_foto_sessao')
+				->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+				->where ( $db->quoteName ( 'id_sessao' ) . ' IN (select id FROM #__angelgirls_sessao WHERE status_dado IN (' . $db->quote(StatusDado::PUBLICADO) . ' ) AND  publicar<= NOW()) ')
+				->where ( $db->quoteName ( 'possui_nudes' ) . " = 'N'")
 				->order('data_criado DESC ')
-				->setLimit(1);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		JRequest::setVar ( 'modelo', $result );
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
-				array('id','nome','descricao','foto', 'alias','token')))
-				->from ('#__angelgirls_sessao')
-				->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
-				->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
-				->order('data_criado DESC ')
-				->setLimit(1);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		JRequest::setVar ( 'sessao', $result );
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo','token'),
-				array('id','nome','descricao','foto', 'alias','token')))
-				->from ('#__angelgirls_sessao')
-				->where ( $db->quoteName ( 'status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
-				->where ( $db->quoteName ( 'publicar' ) . ' <= NOW() ' );
-		if(isset($result) && isset($result->id)){
-			$query->where ( $db->quoteName ( 'id' ) . ' <> ' . $result->id );
-		}
-		$query->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
-				->order('data_criado DESC ')
-				->setLimit(4);
-		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'sessoes', $result );
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select(" `id` ,`titulo` as nome,`meta_descricao` as descricao,`id_sessao`, `id_sessao` + '/' + `id` + 'm.jpg' as foto, `titulo` as alias,token")
-			->from ('#__angelgirls_foto_sessao')
-			->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
-			->where ( $db->quoteName ( 'id_sessao' ) . ' IN (select id FROM #__angelgirls_sessao WHERE status_dado IN (' . $db->quote(StatusDado::PUBLICADO) . ' ) AND  publicar<= NOW()) ')
-			->where ( $db->quoteName ( 'possui_nudes' ) . " = 'N'")
-			->order('data_criado DESC ')
-			->setLimit(2);
-		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'fotos', $result );
-		
-		
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias as slug, catid, language,  MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+				->setLimit(2);
+			$db->setQuery ( $query );
+			$result = $db->loadObjectList();
+			JRequest::setVar ( 'fotos', $result );
+			
+			
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias as slug, catid, language,  MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
+				->from ('#__content')
+				->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
+				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+				->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
+				->order('created DESC ')
+				->setLimit(3);
+			$db->setQuery ( $query );
+			$result = $db->loadObjectList();
+			JRequest::setVar ( 'conteudos', $result );
+			
+			 
+			
+			$query = $db->getQuery ( true );
+			$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias  as slug, catid, language, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
 			->from ('#__content')
-			->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
-			->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
-			->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
-			->order('created DESC ')
-			->setLimit(3);
-		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'conteudos', $result );
-		
-		 
-		
-		$query = $db->getQuery ( true );
-		$query->select("`id` ,`title` as nome,`introtext` as descricao,  id + ':' + alias  as slug, catid, language, MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) as foto,alias")
-		->from ('#__content')
-			->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
-			->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
-			->where ( $db->quoteName ( 'catid' ) . ' = ' . $this::CATEGORIA_MAKINGOF )
-			->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
-			->order('created DESC ')
-			->setLimit(4);
-		$db->setQuery ( $query );
-		
-
-		
-		
-		$result = $db->loadObjectList();
-		JRequest::setVar ( 'makingofs', $result );
-		
-		
-		$query = $db->getQuery ( true );
-		$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
-				array('id','nome','descricao','foto', 'alias')))
-				->from ('#__angelgirls_promocao')
-				->where ( $db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::ATIVO) . ' ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
-				->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
-				->order('data_criado DESC ')
-				->setLimit(1);
-		$db->setQuery ( $query );
-		$result = $db->loadObject();
-		JRequest::setVar ( 'promocao', $result );
+				->where ( $db->quoteName ( 'publish_up' ) . '  <= NOW()  ' )
+				->where ( $db->quoteName ( 'state' ) . ' = 1  ' )
+				->where ( $db->quoteName ( 'catid' ) . ' = ' . $this::CATEGORIA_MAKINGOF )
+				->where ( $db->quoteName ( 'access' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . ')' )
+				->order('created DESC ')
+				->setLimit(4);
+			$db->setQuery ( $query );
+			
+	
+			
+			
+			$result = $db->loadObjectList();
+			JRequest::setVar ( 'makingofs', $result );
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select($db->quoteName(array('id','titulo','meta_descricao','nome_foto','titulo'),
+					array('id','nome','descricao','foto', 'alias')))
+					->from ('#__angelgirls_promocao')
+					->where ( $db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::ATIVO) . ' ' )
+					->where ( $db->quoteName ( 'nome_foto' ) . ' IS NOT NULL ' )
+					->where ( $db->quoteName ( 'nome_foto' ) . " <> '' " )
+					->order('data_criado DESC ')
+					->setLimit(1);
+			$db->setQuery ( $query );
+			$result = $db->loadObject();
+			JRequest::setVar ( 'promocao', $result );
 		
 		
-		
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
 		
 		
 		JRequest::setVar ( 'view', 'home' );
@@ -5024,52 +5285,94 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
 		
-		
-		$user = JFactory::getUser();
-		$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
-		$senha = trim(JRequest::getString( 'password', '', 'POST' ));
-		$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));
-		$nome = trim(JRequest::getString( 'name', null, 'POST' ));
-		if(!isset($user) || !isset($user->id) || $user->id==0){
-			$user = JFactory::getUser(0);
-		
-			$usersParams = JComponentHelper::getParams('com_users');
-			$userdata = array();
-			$userdata['username'] = $usuario;
-			$defaultUserGroup = $usersParams->get('new_usertype', 2);
-		
-			$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
-			$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
-			$userdata['name'] = $nome;
-			$userdata['password'] = $senha;
-			$userdata['password2'] = $senha2;
-			$userdata['block'] = 0;
-				
-			if(strtolower($tipo)=='fotografo'){
-				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
-			}
-			elseif(strtolower($tipo)=='modelo'){
-				$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
+		try{
+			$user = JFactory::getUser();
+			$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
+			$senha = trim(JRequest::getString( 'password', '', 'POST' ));
+			$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));
+			$nome = trim(JRequest::getString( 'name', null, 'POST' ));
+			if(!isset($user) || !isset($user->id) || $user->id==0){
+				$user = JFactory::getUser(0);
+			
+				$usersParams = JComponentHelper::getParams('com_users');
+				$userdata = array();
+				$userdata['username'] = $usuario;
+				$defaultUserGroup = $usersParams->get('new_usertype', 2);
+			
+				$userdata['email'] = trim(JRequest::getString( 'email', '', 'POST' ));
+				$userdata['email1'] = JRequest::getString( 'email1', null, 'POST' );
+				$userdata['name'] = $nome;
+				$userdata['password'] = $senha;
+				$userdata['password2'] = $senha2;
+				$userdata['block'] = 0;
+					
+				if(strtolower($tipo)=='fotografo'){
+					$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::FOTOGRAFO);
+				}
+				elseif(strtolower($tipo)=='modelo'){
+					$userdata['groups']=array($defaultUserGroup,GrupoAcesso::FOTOGRAFO_MODELO,GrupoAcesso::MODELO);
+				}
+				else{
+					$userdata['groups']=array($defaultUserGroup);
+				}
+				if (!$user->bind($userdata)) {
+					JError::raiseWarning(100,JText::_( $user->getError()));
+					return null;
+				}
 			}
 			else{
-				$userdata['groups']=array($defaultUserGroup);
+				$user->name = $nome;
 			}
-			if (!$user->bind($userdata)) {
-				JError::raiseWarning(100,JText::_( $user->getError()));
-				return null;
+			
+			if (!$user->save()) {
+				JError::raiseWarning(100, JText::_( $user->getError()));
 			}
-		}
-		else{
-			$user->name = $nome;
-		}
-		
-		if (!$user->save()) {
-			JError::raiseWarning(100, JText::_( $user->getError()));
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
 		}
 		return $user;
 	}
 	
 	
-
-		
+	private function LogQuery($queryLog, $idUsuario = 0){
+		try{
+			$db = JFactory::getDbo();
+			$user = JFactory::getUser();
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__query_logs' ) )
+			->columns (array (
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'query' ),
+					$db->quoteName ( 'host_ip' ),
+					$db->quoteName ( 'data' )))
+			->values(implode(',', array (
+					(!isset($idUsuario) || $idUsuario==0? $user->id:$idUsuario), 
+					$db->quote($queryLog), 
+					$db->quote($db->quote($this->getRemoteHostIp())),
+					'NOW()')));
+			$db->setQuery( $query );
+			$db->execute();
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+	}
+	
+	private function getRemoteHostIp(){
+		$ip='';
+		try{
+			if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+				$ip = $_SERVER['HTTP_CLIENT_IP'];
+			} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			} else {
+				$ip = $_SERVER['REMOTE_ADDR'];
+			}
+		}catch(Exception $e) {
+			JLog::add($e->getMessage(), JLog::WARNING);
+			JError::raiseWarning(100, $e->getMessage());
+		}
+		return $ip; 
+	}
 }

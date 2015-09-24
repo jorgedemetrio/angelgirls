@@ -33,8 +33,8 @@ CREATE TABLE `#__angelgirls_agenda` (
 		`id_modelo` INT,
 		`id_locacao` INT,
 		`id_fotografo` INT,
-		
-		
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		`publicar` DATE, 
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
@@ -50,7 +50,8 @@ CREATE TABLE `#__angelgirls_email` (
 		`email` VARCHAR(150) NOT NULL , 
 		`id_usuario` INT NOT NULL,
 		`ordem` int,
-		
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
@@ -67,7 +68,8 @@ CREATE TABLE `#__angelgirls_redesocial` (
 		`url_usuario` VARCHAR(150) NOT NULL , 
 		`id_usuario` INT NOT NULL ,
 		`ordem` int,
-		
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
@@ -85,7 +87,8 @@ CREATE TABLE `#__angelgirls_telefone` (
 		`telefone` VARCHAR(15) NOT NULL , 
 		`id_usuario` INT NOT NULL ,
 		`ordem` int,
-		
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
@@ -105,7 +108,8 @@ CREATE TABLE `#__angelgirls_endereco` (
 		`id_cidade` INT NOT NULL, 
 		`id_usuario` INT NOT NULL ,
 		`ordem` int,
-		
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
@@ -164,6 +168,8 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)
@@ -207,6 +213,8 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)  
@@ -241,6 +249,8 @@ CREATE TABLE `#__angelgirls_visitante` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)  
@@ -279,7 +289,9 @@ CREATE TABLE `#__angelgirls_equipe` (
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
-		`data_alterado` DATETIME NOT NULL  
+		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -313,7 +325,9 @@ CREATE TABLE `#__angelgirls_locacao` (
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
-		`data_alterado` DATETIME NOT NULL  
+		`data_alterado` DATETIME NOT NULL ,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -333,7 +347,9 @@ CREATE TABLE `#__angelgirls_tema` (
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
-		`data_alterado` DATETIME NOT NULL  
+		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_figurino` ( 
@@ -352,8 +368,10 @@ CREATE TABLE `#__angelgirls_figurino` (
 	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 	`id_usuario_criador` INT NOT NULL , 
 	`id_usuario_alterador` INT NOT NULL , 
-	`data_criado` DATETIME NOT NULL  , 
-	`data_alterado` DATETIME NOT NULL  
+	`data_criado` DATETIME NOT NULL, 
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	`host_ip_alterador` varchar(20) NULL
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -398,8 +416,10 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATETIME NOT NULL  , 
-		`data_alterado` DATETIME NOT NULL ,
+		`data_criado` DATETIME NOT NULL, 
+		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
@@ -415,6 +435,8 @@ CREATE TABLE `#__angelgirls_mensagens` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_remetente` INT NOT NULL , 
  		`data_criado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
  		FOREIGN KEY (`id_usuario_remetente`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_destino`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_resposta`) REFERENCES `#__angelgirls_mensagens` (`id`)
@@ -449,6 +471,8 @@ CREATE TABLE `#__angelgirls_foto_sessao` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_agenda`) REFERENCES `#__angelgirls_agenda` (`id`),
 		FOREIGN KEY (`id_tema`) REFERENCES `#__angelgirls_tema` (`id`),
 		FOREIGN KEY (`id_modelo_principal`) REFERENCES `#__angelgirls_modelo` (`id`),
@@ -476,7 +500,9 @@ CREATE TABLE `#__angelgirls_post` (
 	`id_usuario_criador` INT NOT NULL , 
 	`id_usuario_alterador` INT NOT NULL , 
 	`data_criado` DATETIME NOT NULL  , 
-	`data_alterado` DATETIME NOT NULL
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	`host_ip_alterador` varchar(20) NULL
 )ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 CREATE TABLE `#__angelgirls_comentario_post` (
@@ -496,7 +522,9 @@ CREATE TABLE `#__angelgirls_comentario_post` (
 	`id_usuario_criador` INT NOT NULL , 
 	`id_usuario_alterador` INT NOT NULL , 
 	`data_criado` DATETIME NOT NULL  , 
-	`data_alterado` DATETIME NOT NULL
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	`host_ip_alterador` varchar(20) NULL
 )ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -517,8 +545,10 @@ CREATE TABLE `#__angelgirls_promocao` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_criador` INT NOT NULL , 
 		`id_usuario_alterador` INT NOT NULL , 
-		`data_criado` DATETIME NOT NULL  , 
-		`data_alterado` DATETIME NOT NULL  
+		`data_criado` DATETIME NOT NULL, 
+		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
@@ -545,6 +575,8 @@ CREATE TABLE `#__angelgirls_album` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL ,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
@@ -573,6 +605,8 @@ CREATE TABLE `#__angelgirls_foto_album` (
 		`id_usuario_alterador` INT NOT NULL , 
 		`data_criado` DATETIME NOT NULL  , 
 		`data_alterado` DATETIME NOT NULL,
+		`host_ip_criador` varchar(20) NOT NULL,
+		`host_ip_alterador` varchar(20) NULL,
 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`),
 		FOREIGN KEY (`id_album`) REFERENCES `#__angelgirls_album` (`id`)
@@ -584,6 +618,7 @@ CREATE TABLE `#__angelgirls_vt_foto_album` (
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	FOREIGN KEY (`id_foto`) REFERENCES `#__angelgirls_foto_album` (`id`),
 	PRIMARY KEY(`id_foto`,`id_usuario`)
@@ -594,6 +629,7 @@ CREATE TABLE `#__angelgirls_vt_album` (
 	`id_album` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	FOREIGN KEY (`id_album`) REFERENCES `#__angelgirls_album` (`id`),
 	PRIMARY KEY(`id_album`,`id_usuario`)
@@ -603,6 +639,7 @@ CREATE TABLE `#__angelgirls_vt_fotografo` (
 	`id_fotografo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_fotografo`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -611,6 +648,7 @@ CREATE TABLE `#__angelgirls_vt_sessao` (
 	`id_sessao` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_sessao`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -618,6 +656,7 @@ CREATE TABLE `#__angelgirls_vt_modelo` (
 	`id_modelo` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_modelo`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -625,6 +664,7 @@ CREATE TABLE `#__angelgirls_vt_foto_sessao` (
 	`id_foto` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_foto`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -632,7 +672,8 @@ CREATE TABLE `#__angelgirls_vt_foto_sessao` (
 
 CREATE TABLE `#__angelgirls_vt_equipe` ( 
 	`id_equipe` INT NOT NULL, 
-	`id_usuario` INT NOT NULL, 
+	`id_usuario` INT NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	`data_criado` DATETIME NOT NULL,
 	PRIMARY KEY(`id_equipe`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
@@ -643,6 +684,7 @@ CREATE TABLE `#__angelgirls_vt_post` (
 	`id_post` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_post`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -650,8 +692,20 @@ CREATE TABLE `#__angelgirls_vt_comentario_post` (
 	`id_comentario` INT NOT NULL, 
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
 	PRIMARY KEY(`id_usuario`,`id_comentario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `#__query_logs` ( 
+		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+		`query` text NOT NULL,
+		`host_ip` varchar(20) NOT NULL,
+		`id_usuario` INT NOT NULL , 
+		`data` DATETIME NOT NULL  
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
 
 
 CREATE  INDEX album_foto_usuario_criador_idx ON `#__angelgirls_foto_album`(`id_usuario_criador`,`id_album` );
