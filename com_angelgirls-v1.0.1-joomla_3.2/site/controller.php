@@ -1495,15 +1495,22 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ('perfil', $this->getPerfilLogado() );
 		
-		$sessao = $this->getSessaoById($id);
-		
+		$sessao = $this->getSessaoById($id,true);
+
 		if(isset($sessao) && $sessao->status_dado == StatusDado::PUBLICADO){
 			JError::raiseWarning(100,JText::_('A Sess&atilde;o que tentou acessar j&aacute; foi publicada por isso n&atilde;o pode ser editada.'));
 			$sessao == null;
 			$id = 0;
+			$this->logado();
+			exit();
+		}
+		if(!isset($sessao)){
+			JError::raiseWarning(404,JText::_('Página não encontrada.'));
+			$this->loadImage();
+			exit();
 		}
 		
-		JRequest::setVar ( 'sessao', $sessao);
+		JRequest::setVar ('sessao', $sessao);
 		
 		
 		
@@ -1949,7 +1956,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	
-	private function getSessaoById($id ){
+	private function getSessaoById($id,$StatusInterno=false ){
 		$db = JFactory::getDbo ();
 		$user = JFactory::getUser();
 		
@@ -1986,9 +1993,14 @@ class AngelgirlsController extends JControllerLegacy{
 			->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo1 ON fot1.id = vt_fo1.id_fotografo')
 			->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo2 ON fot2.id = vt_fo2.id_fotografo')
 			->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod1 ON mod1.id = vt_mod1.id_modelo')
-			->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON mod2.id = vt_mod2.id_modelo')
-			->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' )
-			->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
+			->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON mod2.id = vt_mod2.id_modelo');
+			if($StatusInterno){
+				$query->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ', ' . $db->quote(StatusDado::REPROVADO) . ') ' );
+			}
+			else{
+				$query->where ( $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') ' );
+			}
+			$query->where ( $db->quoteName ( 's.publicar' ) . " <= NOW() " )
 			->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
 		
 		

@@ -9,6 +9,7 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 				<th colspan="2">Modelo Principal</th>
 				<th colspan="2">Fotografo Principal</th>
 				<th>Data</th>
+				<th>status</th>
 			</tr>
 		</thead>
 			<tbody>
@@ -33,6 +34,24 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 				<td><a href="<?php echo($url);?>"><img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 50px"/></a></td>
 				<td class="editavel"><a href="<?php echo($url);?>"><?php echo($conteudo->fotografo1); ?></a></td>
 				<td class="editavel"><a href="<?php echo($url);?>"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></a></td>
+				<td class="editavel">
+<?php switch ($conteudo->status_dado) :?>
+<?php case StatusDado::ANALIZE : ?>
+	<span class="glyphicon glyphicon-eye-open"></span>
+<?php
+		break; 
+	case $conteudo->status_dado==StatusDado::ATIVO : ?>
+	<span class="glyphicon glyphicon-eye-open"></span>
+<?php
+		break; 
+	case  $conteudo->status_dado==StatusDado::PUBLICADO : ?>
+	<span class="glyphicon glyphicon-eye-open"></span>
+<?php
+		break; 
+	default:  ?>
+	<span class="glyphicon glyphicon-pencil"></span>
+<?php endswitch;?>
+				</td>
 			</tr>
 		
 <?php

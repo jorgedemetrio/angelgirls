@@ -286,7 +286,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Fotografo Principal</h5>				
 <?php if((!isset($id_fotografo_principal) || $id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$perfil->id.':ico'); ?>		
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_principal.':ico'); ?>		
 					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $perfil->id;?>"/>
 					<div id="dadosFotografoPricipal" class="row" style="text-align: center; margin-top: 50px;">
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"><img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($perfil->apelido);?>" alt="Fotografo <?php echo($perfil->apelido);?>" class="img-circle"  style="height: 100px"/></div>
@@ -294,7 +294,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					</div>
 <?php 
 else:
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$id_fotografo_principal.':ico');?>
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_principal.':ico');?>
 					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal"  value="<?php echo $id_fotografo_principal;?>"/>
 					<a href="JavaScript: BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');" class="btn">Selecionar Fotografo <span class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
