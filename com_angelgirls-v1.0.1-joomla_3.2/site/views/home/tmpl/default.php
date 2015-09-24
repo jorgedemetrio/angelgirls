@@ -139,8 +139,8 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 		foreach($fotos as $conteudo){ ?>
 			<div class="thumbnail hidden-phone">
 				<?php
-					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->id.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
-					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->token.':'.$conteudo->id_sessao.'-thumbnail');
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFoto&id='.$conteudo->token.':foto-sensual-'.strtolower(str_replace(" ","-",$conteudo->alias)),false);
+					$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$conteudo->token.':thumb');
 					if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
 						<a href="<?php echo($url );?>"><img src="<?php echo($urlFoto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" style="height: 150px;"/></a>
 					<?php 

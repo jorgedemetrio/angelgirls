@@ -1505,7 +1505,7 @@ class AngelgirlsController extends JControllerLegacy{
 			exit();
 		}
 		if(!isset($sessao)){
-			JError::raiseWarning(404,JText::_('Página n&atilde;o encontrada.'));
+			JError::raiseWarning(404,JText::_('P&aacute;gina n&atilde;o encontrada.'));
 			$this->loadImage();
 			exit();
 		}
@@ -1952,12 +1952,15 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$user = JFactory::getUser();
 		$id =  JRequest::getVar('id',null,'POST');
-		
 		$imagem = $foto_perfil = $_FILES ['imagem']; 
 		
 		$jsonRetorno = "";
-		
-		if (isset ( $imagem ) && JFile::exists ( $imagem ['tmp_name'] )) {
+		echo('ARQUIVO');
+		print_r( $_REQUEST );
+		echo('ARQUIVO 2');
+		exit();
+		if (isset($imagem) && JFile::exists($imagem ['tmp_name'])) {
+
 			$query = $db->getQuery ( true );
 			$query->select('token, nome_foto')
 			->from ('#__angelgirls_sessao')
@@ -1967,7 +1970,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			
-			if(isset($result) && isset($result->token) && strlen(trim($result))>=1){
+			if(isset($result) && isset($result->token) && strlen(trim($result->token))>=1){
 				
 				$token = "";
 				$contador=0;
@@ -2040,7 +2043,14 @@ class AngelgirlsController extends JControllerLegacy{
 						null,null,$id,true,true);
 				
 				
-				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$imagem['name'].'","meta_descricao":"'.$imagem['name'].'","descricao":""}';
+				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':foto-sensual-'.strtolower(str_replace(" ","-",$foto->titulo)));
+				$urlIco = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$token.':ico');
+				$urlcube = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$token.':cube');
+				$urlthumb = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$token.':thumb');
+				
+				
+				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$imagem['name'] . 
+				 					'","meta_descricao":"'.$imagem['name'].'","descricao":"","url","'.$url.'","ico","'.$urlIco.'","cube","'.$urlcube.'","thumb","'.$urlthumb.'"}';
 			}
 			else{
 				$jsonRetorno= '{"ok":"nok","mensagem":"Sess&atilde;o n&atilde;o localizada, ou n&atilde;o tem permiss&atilde;o para isso."}';
@@ -2055,15 +2065,13 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	
-	
 	private function getSessaoById($id,$StatusInterno=false ){
 		$db = JFactory::getDbo ();
 		$user = JFactory::getUser();
 		
 		
 		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`tipo`,`s`.`nome_foto`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`tipo`,`s`.`nome_foto`,`s`.`token`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
 			`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 			`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
 			`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,

@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
 jimport('joomla.application.component.view');
+JHtml::_('jquery.framework'); // load jquery
+JHtml::_('jquery.ui');
 
 /**
  * Temas View

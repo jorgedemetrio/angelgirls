@@ -77,6 +77,10 @@ td.padrao{
 	  text-transform: capitalize;
 }
 
+.uploadarea:hover{
+	cursor: pointer;
+}
+
 .ajuda:hover{
 	cursor: help;
 }

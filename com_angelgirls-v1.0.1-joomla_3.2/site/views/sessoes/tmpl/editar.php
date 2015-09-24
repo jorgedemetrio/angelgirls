@@ -12,6 +12,9 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 
 JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css');
 JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js');
+//
+//http://hayageek.com/drag-and-drop-file-upload-jquery/
+//
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/editar_sessao.js?v='.VERSAO_ANGELGIRLS);
 
 $editor = JFactory::getEditor();
@@ -20,6 +23,74 @@ $params = array('images'=> '0','smilies'=> '0', 'html' => '1', 'style'  => '0', 
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
 
+JFactory::getDocument()->addStyleDeclaration('
+#dragandrophandler
+{
+border:2px dotted #0B85A1;
+___nowidth:400px;
+color:#92AAB0;
+text-align:center;vertical-align:middle;
+padding:10px 10px 10 10px;
+margin-bottom:10px;
+font-size:200%;
+}
+.progressBar {
+    width: 200px;
+    height: 22px;
+    border: 1px solid #ddd;
+    border-radius: 5px; 
+    overflow: hidden;
+    display:inline-block;
+    margin:0px 10px 5px 5px;
+    vertical-align:top;
+}
+ 
+.progressBar div {
+    height: 100%;
+    color: #fff;
+    text-align: right;
+    line-height: 22px; /* same as #progressBar height if we want text middle aligned */
+    width: 0;
+    background-color: #0ba1b5; border-radius: 3px; 
+}
+.statusbar
+{
+    border-top:1px solid #A9CCD1;
+    min-height:25px;
+    width:100%;
+    padding:10px 10px 0px 10px;
+    vertical-align:top;
+}
+.statusbar:nth-child(odd){
+    background:#EBEFF0;
+}
+.filename
+{
+display:inline-block;
+vertical-align:top;
+no_width:250px;
+min-height: 25px;
+}
+.filesize
+{
+display:inline-block;
+vertical-align:top;
+color:#30693D;
+width:100px;
+margin-left:10px;
+margin-right:5px;
+}
+.abort{
+    background-color:#A8352F;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    border-radius:4px;display:inline-block;
+    color:#fff;
+    font-family:arial;font-size:13px;font-weight:normal;
+    padding:4px 15px;
+    cursor:pointer;
+    vertical-align:top
+    }');
 
 $perfil = JRequest::getVar('perfil');
 
@@ -65,7 +136,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 
 
 ?>
-<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=salvarSessao')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
+<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=salvarSessao')); ?>" method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 	<input type="hidden" name="id" value="<?php echo JRequest::getInt('id'); ?>"/>
 	
 	
@@ -73,10 +144,10 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 	
 	<div class="btn-toolbar pull-right"  pull-right" role="toolbar" >
 		<div class="btn-group" role="group">
-			<button  class="btn btn-default ajuda"  type="button">
+			<button  class="btn btn-info ajuda"  type="button">
 				Dicas e Sujest&otilde;es <span class="glyphicon glyphicon-question-sign"></span>
 			</button>
-			<button  class="btn btn-default"  type="button">
+			<button  class="btn btn-info"  type="button">
 				Termos e condi&ccedil;&otilde;es <span class="glyphicon glyphicon-paperclip"></span>
 			</button>
 		</div>
@@ -85,7 +156,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
 			</button>
 <?php if(isset($id) && $id != 0) :?>
-			<button  class="btn btn-danger" type="button" ><span class="hidden-phone"><?php echo JText::_('Remover'); ?></span>
+			<button  class="btn btn-danger" type="button" ><span class="hidden-phone"><?php echo JText::_('Apagar'); ?></span>
 				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 			</button>
 <?php endif;?>
@@ -120,12 +191,12 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></a>
 		</li>
 	<?php else: ?>
-		<li role="presentation" class="disabled">
+		<li role="presentation" >
 			<a href="#publicarFotos" data-toggle="tab" aria-controls="profile" role="tab">Publicar fotos
 				<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
 			</a>
 		</li>
-		<li role="presentation" class="disabled">
+		<li role="presentation">
 			<a href='#videos' data-toggle="tab" aria-controls="profile" role="tab">V&iacute;deo/MakingOf
 				<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></a>
 		</li>
@@ -141,21 +212,32 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<label class="control-label" for="termos"><?php echo JText::_('Ao clicar aqui declaro que aceito todas as condi&ccedil;&otilde;es e termos de publica&ccedil;&atilde;o de uma sess&atilde;o neste site.'); ?></label>
 					<input class="form-control"  data-validation="required" type="checkbox" name="termos" value="SIM" id="termos" title="Termos para publicar a sess&atilde;o, ao clicar nesse item indica que est&aacute; de acordo." style="text-align: left; width: 30px"/>
 				</div>
-		<?php endif;?>			
+		
+					
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label"  for="titulo"><?php echo JText::_('T&iacute;itulo'); ?> *</label>
 					<input class="form-control" data-validation="required" style="width: 90%;" type="text" name="titulo"  id="titulo" maxlength="250" value="<?php echo $titulo;?>" title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"/>
 				</div>
-	
-				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
-					<label class="control-label"  for="imagem"><?php echo JText::_('Imagem de Capa'); ?> *</label>
-					<input class="form-control" data-validation="required size mime dimension" type="file" name="imagem"  id="imagem" title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>" accept="image/*" data-validation-dimension="min300x500"  data-validation="size" data-validation-max-size="5M" data-validation-allowing="jpg, png, gif, JPG, PNG, GIF" />
+		<?php else: ?>
+				<div class="form-group col-sm-2 col-md-2 col-lg-2 hidden-phone">
+					<a class="btn btn-default zoominImagem" href="JavaScript: OpenImagem('<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':thumb'));?>')" title="Clique aqui para ver a imagem anterior"><img alt="" src="<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':ico'));?>"/></a>
 				</div>
-				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
+				<div class="form-group col-xs-12 col-sm-10 col-md-10 col-lg-10">
+					<label class="control-label"  for="titulo"><?php echo JText::_('T&iacute;itulo'); ?> *</label>
+					<input class="form-control" data-validation="required" style="width: 90%;" type="text" name="titulo"  id="titulo" maxlength="250" value="<?php echo $titulo;?>" title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"/>
+				</div>
+		<?php endif;?>
+		
+				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
+					<label class="control-label"  for="imagem"><?php echo JText::_('Imagem de Capa'); ?> *
+					</label>
+					<input class="form-control"  style="width: 90%;" data-validation="required size mime dimension" type="file" name="imagem"  id="imagem" title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>" accept="image/*" data-validation-dimension="min300x500"  data-validation="size" data-validation-max-size="5M" data-validation-allowing="jpg, png, gif, JPG, PNG, GIF" />
+				</div>
+				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label"  for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
 					<?php echo JHtml::calendar($data_realizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
 				</div>
-				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4">
+				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label"  for="tipo"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
 					<select name="tipo" id="tipo" class="form-control" data-validation="required">
 						<option></option>
@@ -165,7 +247,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 						<option value="LEILAO"<?php echo($tipo=='LEILAO'?' selected':''); ?>>Leil&atilde;o</option>
 					</select>
 				</div>
-				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-4 sr-only">
+				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3 sr-only">
 					<label class="control-label"  for="agenda"><?php echo JText::_('Agenda'); ?> *</label>
 					<input class="form-control"  type="text" name="agenda" id="agenda"/>
 				</div>
@@ -347,7 +429,10 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 		</div>
 		<div id="publicarFotos" class="tab-pane fade in" style="height: 210px;">
 			<h2>Publicar fotos</h2>
-			
+			<div class="row">
+				<div id="dragandrophandler" class="col col-xs-11 col-sm-10 col-md-8 col-lg-8 text-center uploadarea"><br/>Para fazer upload arraste seus arquivos JPGs sobre essa imagem.<img src="<?php echo(JURI::base( true ).'/components/com_angelgirls/fotos.png');?>" title="Arraste sua imagem aqui"/></div>
+				<div id="dragandrophandlerArquivos" class="col col-xs-1 col-sm-2 col-md-4 col-lg-4 text-center" style="height: 350px; overflow: scroll;"><h5 id="tituloArquivosRecebidos">Lista de imagens <span class="glyphicon glyphicon-picture"></span></h5></div>
+			</div>
 	    </div>
 		<div id="videos" class="tab-pane fade in" style="height: 210px;">
 			<h2>V&iacute;deo e Making Ofs</h2>
@@ -357,25 +442,12 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 	    </div>
 	</div>
 </form>
+<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarFotosSessao')); ?>" class="dropzone" method="post" enctype="multipart/form-data">
+</form>
 <?php if(isset($this->item) && $this->item->id != 0) :?>
 <h2>Fotos</h2>
 <div class="row"  id="linha">
-	<?php
-	$count = 0;
-	foreach($fotos as $foto): 
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFoto&id='.$foto->id.':foto-sensual-'.strtolower(str_replace(" ","-",$foto->titulo))); 
-		$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->id.':'.$conteudo->id.'-thumbnail'); ?>
-		<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail">
-    		<a href="<?php echo($url);?>"><img src="<?php echo($urlFoto);?>" /></a>
-    	</div>
-	<?php
-	endforeach; 
-	?>
-</div>
-<div class="row" id="carregando" style="display: none">
-	<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
-		<img src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/loading_img.gif" alt="carregando" title="Carregando" style="width: 450px"/>
-	</div>
+<?php require_once 'fotos.php'; ?>
 </div>
 <?php endif;?>
 <script>
@@ -398,8 +470,216 @@ function BuscarFotografo(idCampo, idDivNome, idDivImagem){
 			"JavaScript: $('#iFrameModal').contents().find('#dadosFormBuscarFotografo').submit();",350);
 }
 
-jQuery(document).ready(function() {
+function OpenImagem(imagem){
+	alert('<div style="text-align:center"><img src="'+imagem+'" style="height:350px;"/></div>');
 
+}
+
+function sendFileToServer(formData,status)
+{
+	console.log(formData);
+    var uploadURL ="<?php echo(JURI::base( true ).'/index.php'); ?>"; //Upload URL
+
+    jQuery.ajax({
+        url: "<?php echo(JURI::base( true ).'/index.php'); ?>",
+        type: 'POST',
+        contentType: false,
+        processData: false,
+        cache: false,
+        data: formData,
+        success: function(data){
+	        console.log(data);                     
+	    },
+	    complete: function(e){
+	        console.log(e);
+	        alert('Completo');
+	    }
+	}); 
+
+    
+    var jqXHR=jQuery.ajax({
+	        url: uploadURL,
+	        type: 'POST',
+	        contentType: false,
+	        processData: false,
+	        cache: false,
+	        data: formData,
+            xhr: function() {
+            var xhrobj = jQuery.ajaxSettings.xhr();
+            if (xhrobj.upload) {
+                    xhrobj.upload.addEventListener('progress', function(event) {
+                        var percent = 0;
+                        var position = event.loaded || event.position;
+                        var total = event.total;
+                        if (event.lengthComputable) {
+                            percent = Math.ceil(position / total * 100);
+                        }
+                        //Set progress
+                        status.setProgress(percent);
+                    }, false);
+                }
+            return xhrobj;
+        },
+        success: function(data){
+            if(data.ok=='ok'){
+                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail"><a href="'+data.thumb+'"><img src="'+data.url+'" /></a></div>'
+                jQuery('#linha').after(html);
+            }
+            else{
+            	status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> '+data.mensagem+'</span>');
+     		    status.abort.hide();
+    		    status.progressBar.hide();
+    		    status.size.hide();
+            }
+            status.setProgress(100);                       
+        },
+        complete: function(e){
+            console.log(e);
+            alert('Completo');
+        }
+    }); 
+ 
+    status.setAbort(jqXHR);
+}
+var rowCount=0;
+function handleFileUpload(files,obj)
+{
+   for (var i = 0; i < files.length; i++) {
+       var fd = new FormData();
+       fd.append('imagem', files[i]);
+       fd.append('option', 'com_angelgirls');
+       fd.append('view', 'sessoes');
+       fd.append('task', 'enviarFotosSessao');
+       fd.append('id', '<?php echo($id); ?>');
+
+
+       var T = {imagem:  files[i],
+    	       option:  'com_angelgirls',
+    	       view:  'sessoes',
+    	       task:  'enviarFotosSessao',
+    	       id: '<?php echo($id); ?>'};
+
+
+       jQuery.ajax({
+           url: "<?php echo(JURI::base( true ).'/index.php'); ?>",
+           type: 'POST',
+           contentType: false,
+           processData: false,
+           cache: false,
+           data: fd,
+           success: function(data){
+   	        console.log(data);                     
+   	    	},
+	   	    complete: function(e){
+	   	        console.log(e);
+	   	        alert('Completo');
+	   	    }
+	   	}); 
+      	return;
+       
+       var status = new createStatusbar(obj); //Using this we can set progress.
+        
+	   if(files[i].type.toUpperCase().indexOf('JPG')>0 || files[i].type.toUpperCase().indexOf('JPEG')>0){
+		    status.setFileNameSize(files[i].name,files[i].size);
+	        sendFileToServer(fb ,status);
+	   }
+	   else{
+		   status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> "'+files[i].name+'" n&atilde;o &eacute; JPG</span>',files[i].size);
+		   status.abort.hide();
+		   status.progressBar.hide();
+		   status.size.hide();
+	   }
+   }
+}
+function createStatusbar(obj) {
+    rowCount++;
+    var row="odd";
+    if(rowCount %2 ==0) row ="even";
+    this.statusbar = $("<div class='statusbar "+row+"'></div>");
+    this.filename = $("<div class='filename'></div>").appendTo(this.statusbar);
+    this.size = $("<div class='filesize'></div>").appendTo(this.statusbar);
+    this.progressBar = $("<div class='progressBar'><div></div></div>").appendTo(this.statusbar);
+    this.abort = $("<div class='abort'>Abortar</div>").appendTo(this.statusbar);
+    jQuery('#tituloArquivosRecebidos').after(this.statusbar);
+
+   this.setFileNameSize = function(name,size)
+   {
+       var sizeStr="";
+       var sizeKB = size/1024;
+       if(parseInt(sizeKB) > 1024)
+       {
+           var sizeMB = sizeKB/1024;
+           sizeStr = sizeMB.toFixed(2)+" MB";
+       }
+       else
+       {
+           sizeStr = sizeKB.toFixed(2)+" KB";
+       }
+
+       this.filename.html(name);
+       this.size.html(sizeStr);
+   }
+   this.setProgress = function(progress)
+   {       
+       var progressBarWidth =progress*this.progressBar.width()/ 100;  
+       this.progressBar.find('div').animate({ width: progressBarWidth }, 10).html(progress + "% ");
+       if(parseInt(progress) >= 100)
+       {
+           this.abort.hide();
+       }
+   }
+   this.setAbort = function(jqxhr)
+   {
+       var sb = this.statusbar;
+       this.abort.click(function()
+       {
+           jqxhr.abort();
+           sb.hide();
+       });
+   }
+}
+
+
+jQuery(document).ready(function() {
+	var obj = $("#dragandrophandler");
+	obj.on('dragenter', function (e) 
+	{
+	    e.stopPropagation();
+	    e.preventDefault();
+	    $(this).css('border', '2px solid #0B85A1');
+	});
+	obj.on('dragover', function (e) 
+	{
+	     e.stopPropagation();
+	     e.preventDefault();
+	});
+	obj.on('drop', function (e) 
+	{
+	 
+	     $(this).css('border', '2px dotted #0B85A1');
+	     e.preventDefault();
+	     var files = e.originalEvent.dataTransfer.files;
+	 
+	     //We need to send dropped files to Server
+	     handleFileUpload(files,obj);
+	});
+
+	$(document).on('dragenter', function (e) 
+	{
+	    e.stopPropagation();
+	    e.preventDefault();
+	});
+	$(document).on('dragover', function (e) 
+	{
+	  e.stopPropagation();
+	  e.preventDefault();
+	  obj.css('border', '2px dotted #0B85A1');
+	});
+	$(document).on('drop', function (e) 
+	{
+	    e.stopPropagation();
+	    e.preventDefault();
+	});
 
 	
 	jQuery('#tema').change(function(){
