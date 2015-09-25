@@ -11,6 +11,14 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
+JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/jquery.dataTables.css?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.foundation.css?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.bootstrap.css?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/jquery.dataTables.js?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.foundation.js?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.bootstrap.js?v='.VERSAO_ANGELGIRLS);
+
+
 $sessoes = JRequest::getVar('sessoes');
 $modelos = JRequest::getVar('modelos');
 $fotografos = JRequest::getVar('fotografos');
@@ -30,6 +38,36 @@ if($dataInicio!=''){
 if($dataFim!=''){
 	$dataFim = DateTime::createFromFormat('d/m/Y', $dataFim )->format('Y-m-d');
 }
+
+JFactory::getDocument()->addScriptDeclaration('
+
+jQuery(document).ready(function() {
+//		setTimeout(function(){
+		    jQuery("#tabelaComSessoes").DataTable({
+				"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+				"language": {
+		            "lengthMenu": "Exibir _MENU_ itens por p&aacute;gina",
+		            "zeroRecords": "N&atilde;o encontrado - sorry",
+		            "info": "Exibir pag. _PAGE_ de _PAGES_",
+		            "infoEmpty": "Sem registros",
+		            "infoFiltered": "(filtrado de _MAX_ total)"
+		        },
+				"aoColumns": [
+		            null,
+					null,
+		            { "orderSequence": [ "desc", "asc" ] },
+		            null,
+		            { "orderSequence": [ "desc", "asc" ] },
+		            null,
+		            { "orderSequence": [ "desc", "asc" ] },
+					{ "orderSequence": [ "desc", "asc" ] }
+		        ]
+			});
+		
+//		},5000);
+});
+');
+
 ?>
 <div class="page-header">
 	<h1>Sess&otilde;es de fotos sensuais <small>com as modelos mais bonitas, gatas e gostosas</small></h1>

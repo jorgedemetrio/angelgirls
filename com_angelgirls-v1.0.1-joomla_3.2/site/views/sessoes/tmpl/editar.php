@@ -10,8 +10,9 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
-JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css');
-JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js');
+JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css?v='.VERSAO_ANGELGIRLS);
+
+JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js?v='.VERSAO_ANGELGIRLS);
 
 
 
@@ -23,12 +24,71 @@ JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form
 //
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/editar_sessao.js?v='.VERSAO_ANGELGIRLS);
 
+
 $editor = JFactory::getEditor();
 $params = array('images'=> '0','smilies'=> '0', 'html' => '1', 'style'  => '0', 'layer'  => '1', 'table'  => '1', 'clear_entities'=>'0');
 
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
-JFactory::getDocument()->addScriptDeclaration('var lidos = 0;');
+
+
+$perfil = JRequest::getVar('perfil');
+
+$temas = JRequest::getVar('temas');
+$figurinos =  JRequest::getVar('figurinos');
+$locacoes =  JRequest::getVar('locacoes');
+
+$this->item = $conteudo;
+
+
+
+$id  = JRequest::getInt('id',$conteudo->id);
+$termos = JRequest::getString('termos','');
+$titulo = JRequest::getString('titulo',$conteudo->titulo);
+$imagem = JRequest::getString('imagem',null);
+$data_realizada = JRequest::getString('data_realizada',null);
+$dataRealizada="";
+if(isset($data_realizada) && strlen(trim($data_realizada))>8){
+	$dataRealizada = DateTime::createFromFormat('d/m/Y H:i:s', $data_realizada.' 00:00:00')->format('Y-m-d');
+}
+else{
+	$dataRealizada = $conteudo->executada;
+}
+
+$agenda  = JRequest::getInt('agenda',$conteudo->id_agenda);
+$meta_descricao = JRequest::getString('meta_descricao',$conteudo->meta_descricao);
+$comentario = JRequest::getString('comentario',($perfil->tipo=='MODELO'? $conteudo->comentario_modelos:$conteudo->comentario_fotografo));
+$historia = JRequest::getInt('historia',$conteudo->historia);
+$tipo  = JRequest::getString('tipo',$conteudo->tipo);
+$tema  = JRequest::getInt('tema',$conteudo->id_tema);
+$locacao  = JRequest::getInt('locacao',$conteudo->id_locacao);
+$id_figurino_principal  = JRequest::getInt('id_figurino_principal',$conteudo->id_figurino_principal);
+$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',$conteudo->id_figurino_secundario);
+$id_modelo_principal  = JRequest::getInt('id_modelo_principal',$conteudo->id_modelo_principal);
+$id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',$conteudo->id_modelo_secundaria);
+$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',$conteudo->id_fotografo_principal);
+$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',$conteudo->id_fotografo_secundario);
+
+
+$descricao = JRequest::getString('descricao',$conteudo->descricao);
+
+JFactory::getDocument()->addScriptDeclaration('
+		if(!EditarSessao){
+			var EditarSessao = new Object();
+		}
+		var lidos = 0;
+		var carregando = false;
+		var temMais=false;
+		EditarSessao.ImagensPublicadas = '.sizeof($fotos).';
+		EditarSessao.BuscarModeloURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarModeloModal',false) . '";
+		EditarSessao.BuscarFotografoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarFotografoModal',false) . '";
+		EditarSessao.sendFileToServerURL = "'.JURI::base( true ) . '/index.php";
+		EditarSessao.SessaoID = "'.$id.'";
+		EditarSessao.TemaURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false) .'";
+		EditarSessao.LocacaoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarLocacao',false) .'";
+		EditarSessao.FigurinoURL = "' .JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false).'";
+		EditarSessao.LoadImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false).'";
+');
 
 JFactory::getDocument()->addStyleDeclaration('
 #dragandrophandler
@@ -45,20 +105,20 @@ font-size:200%;
     width: 200px;
     height: 22px;
     border: 1px solid #ddd;
-    border-radius: 5px; 
+    border-radius: 5px;
     overflow: hidden;
     display:inline-block;
     margin:0px 10px 5px 5px;
     vertical-align:top;
 }
- 
+
 .progressBar div {
     height: 100%;
     color: #fff;
     text-align: right;
     line-height: 22px; /* same as #progressBar height if we want text middle aligned */
     width: 0;
-    background-color: #0ba1b5; border-radius: 3px; 
+    background-color: #0ba1b5; border-radius: 3px;
 }
 .statusbar
 {
@@ -98,49 +158,6 @@ margin-right:5px;
     cursor:pointer;
     vertical-align:top
     }');
-
-$perfil = JRequest::getVar('perfil');
-
-$temas = JRequest::getVar('temas');
-$figurinos =  JRequest::getVar('figurinos');
-$locacoes =  JRequest::getVar('locacoes');
-
-$this->item = $conteudo;
-
-
-
-$id  = JRequest::getInt('id',$conteudo->id);
-$termos = JRequest::getString('termos','');
-$titulo = JRequest::getString('titulo',$conteudo->titulo);
-$imagem = JRequest::getString('imagem',null);
-$data_realizada = JRequest::getString('data_realizada',null);
-
-if(isset($data_realizada) && strlen(trim($data_realizada))>8){
-	$dataRealizadoSessao = DateTime::createFromFormat('d/m/Y H:i:s', $data_realizada.' 00:00:00');
-	$data_realizada = $dataRealizadoSessao->format('Y-m-d');
-}
-else{
-	$data_realizada = $conteudo->data_realizada;
-}
-
-$agenda  = JRequest::getInt('agenda',$conteudo->id_agenda);
-$meta_descricao = JRequest::getString('meta_descricao',$conteudo->meta_descricao);
-$comentario = JRequest::getString('comentario',($perfil->tipo=='MODELO'? $conteudo->comentario_modelos:$conteudo->comentario_fotografo));
-$historia = JRequest::getInt('historia',$conteudo->historia);
-$tipo  = JRequest::getString('tipo',$conteudo->tipo);
-$tema  = JRequest::getInt('tema',$conteudo->id_tema);
-$locacao  = JRequest::getInt('locacao',$conteudo->id_locacao);
-$id_figurino_principal  = JRequest::getInt('id_figurino_principal',$conteudo->id_figurino_principal);
-$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',$conteudo->id_figurino_secundario);
-$id_modelo_principal  = JRequest::getInt('id_modelo_principal',$conteudo->id_modelo_principal);
-$id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',$conteudo->id_modelo_secundaria);
-$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',$conteudo->id_fotografo_principal);
-$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',$conteudo->id_fotografo_secundario);
-
-
-$descricao = JRequest::getString('descricao',$conteudo->descricao);
-
-
 
 ?>
 <form
@@ -247,7 +264,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 		<?php else: ?>
 				<div class="form-group col-sm-2 col-md-2 col-lg-2 hidden-phone">
 					<a class="btn btn-default zoominImagem"
-						href="JavaScript: OpenImagem('<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':thumb'));?>')"
+						href="JavaScript: EditarSessao.OpenImagem('<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':thumb'));?>')"
 						title="Clique aqui para ver a imagem anterior"><img alt=""
 						src="<?php echo( JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':ico'));?>" /></a>
 				</div>
@@ -265,9 +282,11 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<label class="control-label" for="imagem"><?php echo JText::_('Imagem de Capa'); ?> *
 					</label> <input class="form-control" style="width: 90%;"
 		<?php if(!isset($this->item) || $id == 0) :?>
-						data-validation="required size mime dimension" type="file" required
+						data-validation="required size mime dimension"  required
+		<?php else:?>
+						data-validation="size mime dimension"
 		<?php endif;?>
-		
+						type="file"
 						name="imagem" id="imagem"
 						title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>"
 						accept="image/*" data-validation-dimension="min300x500"
@@ -276,7 +295,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label" for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
-					<?php echo JHtml::calendar($data_realizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" required data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
+					<?php echo JHtml::calendar($dataRealizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" required data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label" for="tipo"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
@@ -429,7 +448,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<input type="hidden" name="id_modelo_principal"
 						id="id_modelo_principal"
 						value="<?php echo $id_modelo_principal;?>" /> <a
-						href="JavaScript: BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');"
+						href="JavaScript: EditarSessao.BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');"
 						class="btn">Selecionar Modelo <span
 						class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosModeloPricipal" class="row"
@@ -460,7 +479,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<input type="hidden" name="id_modelo_secundaria"
 						id="id_modelo_secundaria"
 						value="<?php echo $id_modelo_secundaria;?>" /> <a
-						href="JavaScript: BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');"
+						href="JavaScript: EditarSessao.BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');"
 						class="btn">Selecionar Modelo <span
 						class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosModeloPricipal" class="row"
@@ -514,7 +533,7 @@ else:
 					<input type="hidden" name="id_fotografo_principal"
 						id="id_fotografo_principal"
 						value="<?php echo $id_fotografo_principal;?>" /> <a
-						href="JavaScript: BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');"
+						href="JavaScript: EditarSessao.BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');"
 						class="btn">Selecionar Fotografo <span
 						class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosModeloPricipal" class="row"
@@ -556,7 +575,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 					<input type="hidden" name="id_fotografo_secundario"
 						id="id_fotografo_secundario"
 						value="<?php echo $id_fotografo_secundario;?>" /> <a
-						href="JavaScript: BuscarFotografo('id_fotografo_secundario','nomeFotografoSecundaria','fotoFotografoSecundaria');"
+						href="JavaScript: EditarSessao.BuscarFotografo('id_fotografo_secundario','nomeFotografoSecundaria','fotoFotografoSecundaria');"
 						class="btn">Selecionar Fotografo/Assistente <span
 						class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosFotografoPricipal" class="row"
@@ -618,8 +637,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 		</div>
 	</div>
 </form>
-<form
-	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarFotosSessao')); ?>"
+<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarFotosSessao')); ?>"
 	id="enviar" method="post" enctype="multipart/form-data"></form>
 <?php if(isset($this->item) && $this->item->id != 0) :?>
 <h2>Fotos</h2>
@@ -627,263 +645,8 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 <?php require_once 'fotos.php'; ?>
 </div>
 <?php endif;?>
-<script>
-
-var carregando = false;
-var temMais=false;
-
-
-function BuscarModelo(idCampo, idDivNome, idDivImagem){
-	var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarModeloModal',false));?>";
-	url = url + (url.indexOf('?')>0?'&':'?') + 'campo='+idCampo+'&divNome='+idDivNome+'&divImagem='+idDivImagem;
-	AngelGirls.FrameModal("Selecionar modelo",url , "<?php echo JText::_('Buscar'); ?> <span class='glyphicon glyphicon-search' aria-hidden='true'></span>", 
-			"JavaScript: $('#iFrameModal').contents().find('#dadosFormBuscarModelo').submit();",350);
-}
-
-function BuscarFotografo(idCampo, idDivNome, idDivImagem){
-	var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarFotografoModal',false));?>";
-	url = url + (url.indexOf('?')>0?'&':'?') + 'campo='+idCampo+'&divNome='+idDivNome+'&divImagem='+idDivImagem;
-	AngelGirls.FrameModal("Selecionar Fotografo",url , "<?php echo JText::_('Buscar'); ?> <span class='glyphicon glyphicon-search' aria-hidden='true'></span>", 
-			"JavaScript: $('#iFrameModal').contents().find('#dadosFormBuscarFotografo').submit();",350);
-}
-
-function OpenImagem(imagem){
-	alert('<div style="text-align:center"><img src="'+imagem+'" style="height:350px;"/></div>');
-
-}
-
-function sendFileToServer(formData,status)
-{
-	console.log(formData);
-    var uploadURL ="<?php echo(JURI::base( true ).'/index.php'); ?>"; //Upload URL
-
-    
-    var jqXHR=jQuery.ajax({
-	        url: uploadURL,
-	        type: 'POST',
-	        dataType: 'json',
-	        contentType: false,
-	        processData: false,
-	        cache: false,
-	        data: formData,
-            xhr: function() {
-            var xhrobj = jQuery.ajaxSettings.xhr();
-            if (xhrobj.upload) {
-                    xhrobj.upload.addEventListener('progress', function(event) {
-                        var percent = 0;
-                        var position = event.loaded || event.position;
-                        var total = event.total;
-                        if (event.lengthComputable) {
-                            percent = Math.ceil(position / total * 100);
-                        }
-                        //Set progress
-                        status.setProgress(percent);
-                    }, false);
-                }
-            return xhrobj;
-        },
-        success: function(data){
-            if(data.ok=='ok'){
-                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail"><a href="'+data.url+'"><img src="'+data.cube+'" /></a></div>'
-                jQuery('#linha').append(html);
-            }
-            else{
-            	status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> '+data.mensagem+'</span>');
-     		    status.abort.hide();
-    		    status.progressBar.hide();
-    		    status.size.hide();
-            }
-            status.setProgress(100);                       
-        },
-        complete: function(data){
-           console.log(data);
-        }  
-    }); 
- 
-    status.setAbort(jqXHR);
-}
-var rowCount=0;
-function handleFileUpload(files,obj)
-{
-   for (var i = 0; i < files.length; i++) {
-       var fd = new FormData(jQuery('#enviar'));
-       fd.append('imagem', files[i]);
-       fd.append('option', 'com_angelgirls');
-       fd.append('view', 'sessoes');
-       fd.append('task', 'enviarFotosSessao');
-       fd.append('id', '<?php echo($id); ?>');
-
-       
-       var status = new createStatusbar(obj); //Using this we can set progress.
-        
-	   if(files[i].type.toUpperCase().indexOf('JPG')>0 || files[i].type.toUpperCase().indexOf('JPEG')>0){
-		    status.setFileNameSize(files[i].name,files[i].size);
-	        sendFileToServer(fd ,status);
-	   }
-	   else{
-		   status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> "'+files[i].name+'" n&atilde;o &eacute; JPG</span>',files[i].size);
-		   status.abort.hide();
-		   status.progressBar.hide();
-		   status.size.hide();
-	   }
-   }
-}
-function createStatusbar(obj) {
-    rowCount++;
-    var row="odd";
-    if(rowCount %2 ==0) row ="even";
-    this.statusbar = $("<div class='statusbar "+row+"'></div>");
-    this.filename = $("<div class='filename'></div>").appendTo(this.statusbar);
-    this.size = $("<div class='filesize'></div>").appendTo(this.statusbar);
-    this.progressBar = $("<div class='progressBar'><div></div></div>").appendTo(this.statusbar);
-    this.abort = $("<div class='abort'>Abortar</div>").appendTo(this.statusbar);
-    jQuery('#tituloArquivosRecebidos').after(this.statusbar);
-
-   this.setFileNameSize = function(name,size)
-   {
-       var sizeStr="";
-       var sizeKB = size/1024;
-       if(parseInt(sizeKB) > 1024)
-       {
-           var sizeMB = sizeKB/1024;
-           sizeStr = sizeMB.toFixed(2)+" MB";
-       }
-       else
-       {
-           sizeStr = sizeKB.toFixed(2)+" KB";
-       }
-
-       this.filename.html(name);
-       this.size.html(sizeStr);
-   }
-   this.setProgress = function(progress)
-   {       
-       var progressBarWidth =progress*this.progressBar.width()/ 100;  
-       this.progressBar.find('div').animate({ width: progressBarWidth }, 10).html(progress + "% ");
-       if(parseInt(progress) >= 100)
-       {
-           this.abort.hide();
-       }
-   }
-   this.setAbort = function(jqxhr)
-   {
-       var sb = this.statusbar;
-       this.abort.click(function()
-       {
-           jqxhr.abort();
-           sb.hide();
-       });
-   }
-}
-
-
-jQuery(document).ready(function() {
-	var obj = $("#dragandrophandler");
-	obj.on('dragenter', function (e) 
-	{
-	    e.stopPropagation();
-	    e.preventDefault();
-	    $(this).css('border', '2px solid #0B85A1');
-	});
-	obj.on('dragover', function (e) 
-	{
-	     e.stopPropagation();
-	     e.preventDefault();
-	});
-	obj.on('drop', function (e) 
-	{
-	 
-	     $(this).css('border', '2px dotted #0B85A1');
-	     e.preventDefault();
-	     var files = e.originalEvent.dataTransfer.files;
-	 
-	     //We need to send dropped files to Server
-	     handleFileUpload(files,obj);
-	});
-
-	$(document).on('dragenter', function (e) 
-	{
-	    e.stopPropagation();
-	    e.preventDefault();
-	});
-	$(document).on('dragover', function (e) 
-	{
-	  e.stopPropagation();
-	  e.preventDefault();
-	  obj.css('border', '2px dotted #0B85A1');
-	});
-	$(document).on('drop', function (e) 
-	{
-	    e.stopPropagation();
-	    e.preventDefault();
-	});
-
-	
-	jQuery('#tema').change(function(){
-		if(jQuery('#tema option:selected').val()=='NOVO'){
-			jQuery('#tema').val('');
-			AngelGirls.FrameModal("Cadastrar Novo Temas", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormTema').submit();",270);
-		}
-	});
-
-	jQuery('#locacao').change(function(){
-		if(jQuery('#locacao option:selected').val()=='NOVO'){
-			jQuery('#locacao').val('');
-			AngelGirls.FrameModal("Cadastrar Nova Loca&ccedil;&atilde;o", "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarLocacao',false));?>", "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormLocacao').submit();",350);
-		}
-	});
-
-	jQuery('#id_figurino_principal').change(function(){
-		if(jQuery('#id_figurino_principal option:selected').val()=='NOVO'){
-			jQuery('#id_figurino_principal').val('');
-			var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false));?>";
-			url = url +  (url.indexOf('?')>0?'&campo=id_figurino_principal':'?campo=id_figurino_principal');
-			AngelGirls.FrameModal("Cadastrar Novo Figurino", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
-		}
-	});
-	jQuery('#id_figurino_secundario').change(function(){
-		if(jQuery('#id_figurino_secundario option:selected').val()=='NOVO'){
-			jQuery('#id_figurino_secundario').val('');
-			var url = "<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false));?>";
-			url = url +  (url.indexOf('?')>0?'&campo=id_figurino_secundario':'?campo=id_figurino_secundario');
-			AngelGirls.FrameModal("Cadastrar Novo Figurino", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
-		}
-	});
-
-	
-	if(lidos>=24){
-		jQuery('#carregando').css('display','');
-		temMais=true;
-	}
-	else{
-		jQuery('#carregando').css('display','none');
-		temMais=false;
-	}
-
-
-	
-
-
-	
-	
-	jQuery(document).scroll(function(){
-		 if( (jQuery(window).height()+jQuery(this).scrollTop()+300) >= jQuery(document).height() && !carregando && temMais) {
-			carregando = true;
-			jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false)); ?>',
-					{posicao: lidos}, function(dado){
-				jQuery("#carregando").css("display","none");
-				if(dado.length<=0){
-					jQuery("#carregando").css("display","none");
-					temMais=false;
-				}
-				else{
-					//lidos = lidos+24;
-					jQuery('#carregando').css('display','');
-					jQuery('#linha').append(dado);
-				}		
-				carregando=false;					
-			},'html');
-		 }
-	});
-});
-</script>
+<div class="row" id="carregando" style="display: none">
+	<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
+		<img src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/loading_img.gif" alt="carregando" title="Carregando" style="width: 450px"/>
+	</div>
+</div>

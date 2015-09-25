@@ -22,7 +22,7 @@ $perfil = JRequest::getVar('perfil');
 
 ?>
 <div class="page-header">
-	<h1><?php echo($conteudo->titulo);?>
+	<h1><?php echo($conteudo->titulo);?> 
 	<small><?php echo($conteudo->nome_tema);?></small>
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessao);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 </h1>

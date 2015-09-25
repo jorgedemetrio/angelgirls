@@ -267,15 +267,15 @@ input[type="file"]{
 			<div class="row">
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemRosto);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_perfil" name="ifoto_perfil" class="img-thumbnail"/>
-					<input style="width: 250px;" type="file" class="form-control" data-validation="size" data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation="required" required name="foto_perfil" data-validation-dimension="min300x500" id="foto_perfil" accept="image/*"/></div>
+					<input style="width: 90%;" type="file"  name="foto_perfil" id="foto_perfil" accept="image/*"   data-validation-max-size="3M" class="form-control" data-validation="size" data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation-dimension="min300x500"/></div>
 <?php	if($this->item->tipo=='MODELO') : ?>
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemCorpo);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira" name="ifoto_inteira" class="img-thumbnail"/>
-					<input style="width: 250px;" type="file" name="foto_inteira" id="foto_inteira" accept="image/*"  data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation-dimension="min300x500"/></div>					
+					<input style="width: 90%;" type="file" name="foto_inteira" id="foto_inteira" accept="image/*"  data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation-dimension="min300x500"/></div>					
 					
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemCorpoHorizontal);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira_horizontal" name="ifoto_inteira_horizontal" class="img-thumbnail" data-validation-dimension="min500x300"/>
-					<input style="width: 250px;" type="file" name="foto_inteira_horizontal" id="foto_inteira_horizontal" accept="image/*"  data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" /></div>
+					<input style="width: 90%;" type="file" name="foto_inteira_horizontal" id="foto_inteira_horizontal" accept="image/*"  data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" /></div>
 <?php endif;?>
 			</div>
 		</div>

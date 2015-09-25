@@ -439,7 +439,7 @@ class AngelgirlsController extends JControllerLegacy{
 		header("Status: 404 Not Found");
 		JRequest::setVar ( 'view', 'erro' );
 		JRequest::setVar ( 'layout', '404' );
-		parent::display (true, false);
+		parent::display ();
 	}
 	
 	public function carregarFotografo(){
@@ -1500,12 +1500,12 @@ class AngelgirlsController extends JControllerLegacy{
 			$sessao == null;
 			$id = 0;
 			$this->RegistroNaoEncontado();
-			exit();
+			return;
 		}
 		if(!isset($sessao) && isset($id) && $id>0){
 			JError::raiseWarning(404,JText::_('P&aacute;gina n&atilde;o encontrada.'));
 			$this->RegistroNaoEncontado();
-			exit();
+			return;
 		}
 		
 		JRequest::setVar ('sessao', $sessao);
@@ -1835,17 +1835,15 @@ class AngelgirlsController extends JControllerLegacy{
 		} else {
 			if(isset($tabela) && strlen(trim($tabela))>0 ){
 				$query = $db->getQuery ( true );
-				$query->update( $db->quoteName ( $tabela ) )->set ( array (
-						$db->quoteName ( $campo ) . ' = ' . $db->quote ( $arquivo )
-				) )->where ( array (
-						$db->quoteName ( 'id' ) . ' = ' . $id
-				) );
+				$query
+					->update($db->quoteName ( $tabela ))
+					->set (array ($db->quoteName ( $campo ) . ' = ' . $db->quote ( $arquivo )))
+					->where ($db->quoteName ( 'id' ) . ' = ' . $id);
 				$db->setQuery ( $query );
-				$this->LogQuery($query);
 				if(!$db->execute()){
 					return false;
 				}
-				
+				$this->LogQuery($query);				
 			}
 		}
 		
@@ -1909,11 +1907,13 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			list($widthlogo, $heightlogo) = getimagesize(COMPONENT_AG_PATH . 'angelgirls.png');
 			
-			imagecopyresized($ico, $img, 0, 0, 0, 0, $icowidth, $icoheight, $width, $height );
+			imagecopyresized($ico, $img, ($icowidth>300?(($icowidth-300)/2)*-1 :0), 0, 0, 0, $icowidth, $icoheight, $width, $height );
 			imagecopyresized($thumb, $img, 0, 0, 0, 0, $thumbwidth, $thumbheight, $width, $height );
 			//CENTRALIZAVA
 			//imagecopyresized($cube, $img, ($cubewidth>300?(($cubewidth-300)/2)*-1 :0), ($cubeheight>300?(($cubeheight-300)/2)*-1:0), 0, 0, $cubewidth, $cubeheight, $width, $height );
-			imagecopyresized($cube, $img, 0, 0, 0, 0, $cubewidth, $cubeheight, $width, $height );
+			
+			
+			imagecopyresized($cube, $img, ($cubewidth>300?(($cubewidth-300)/2)*-1 :0), 0, 0, 0, $cubewidth, $cubeheight, $width, $height );
 			imagecopyresampled($full, $img, 0, 0, 0, 0, $fullwidth, $fullheight, $width, $height );
 			
 			if($ComLogo){
@@ -1926,16 +1926,16 @@ class AngelgirlsController extends JControllerLegacy{
 
 			
 			
-			if(!imagejpeg($ico, $dest . DS . 'ico_' . $arquivo)){
+			if(!imagejpeg($ico, $dest . DS . 'ico_' . $arquivo, 70)){
 				return false;
 			}
-			if(!imagejpeg($thumb, $dest . DS . 'thumb_' . $arquivo)){
+			if(!imagejpeg($thumb, $dest . DS . 'thumb_' . $arquivo, 50)){
 				return false;
 			}
-			if(!imagejpeg($cube, $dest . DS . 'cube_' . $arquivo)){
+			if(!imagejpeg($cube, $dest . DS . 'cube_' . $arquivo, 50)){
 				return false;
 			}
-			if(!imagejpeg($full, $dest . DS . $arquivo)){
+			if(!imagejpeg($full, $dest . DS . $arquivo,100)){
 				return false;
 			}
 		}
@@ -2143,7 +2143,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		if(!isset($result)){
 			$this->RegistroNaoEncontado();
-			exit();
+			return;
 		}
 		
 		$query = $db->getQuery ( true );
@@ -2203,7 +2203,7 @@ class AngelgirlsController extends JControllerLegacy{
 			->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ') ' )
 			->where ( $db->quoteName ( 's.id_sessao' ) . " =  " . $iSessao);
 			if( !isset($user) || $user->id <= 0){
-				$query->where ( $db->quoteName ( ' s.possui_nudes ' ) . " = 'N'");
+				$query->where ( $db->quoteName ( 's.possui_nudes' ) . " = 'N'");
 			} 
 			$query->order('`s`.`ordem` ');
 		if($limit>0){
@@ -5335,8 +5335,18 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			
 	
+			$perfil = $this->getPerfilLogado();
 			
-			JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+			if(!isset($perfil) || $perfil->id <= 0){
+				$this->RegistroNaoEncontado();
+				return;				
+			}
+			
+			JRequest::setVar ( 'perfil',  $perfil);
+			
+
+			
+			
 			
 			//Dados
 			JRequest::setVar ( 'enderecos', $this->getEnderecosPefil());

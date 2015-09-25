@@ -1,6 +1,15 @@
+#tabelaComSessoes_wrapper .row {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+#tabelaComSessoes_wrapper  {
+	padding-left: 20px;
+	padding-right: 20px;
+}
 
-.form-control:valid {background:#006600;color:#fff }
-.form-control:invalid {background:#990000; color:#fff}
+
+.form-control:valid { }
+.form-control:invalid {border:1px solid #990000; }
 
 .itemCarroussel p{
 	text-overflow: ellipsis;

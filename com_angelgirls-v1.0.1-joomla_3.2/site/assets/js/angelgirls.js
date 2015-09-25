@@ -2,54 +2,6 @@
  * Processando
  */
 
-////FACEBOOK API
-//(function(d, s, id) {
-//	  var js, fjs = d.getElementsByTagName(s)[0];
-//	  if (d.getElementById(id)) return;
-//	  js = d.createElement(s); js.id = id;
-//	  js.src = "//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.4";
-//	  fjs.parentNode.insertBefore(js, fjs);
-//	}(document, 'script', 'facebook-jssdk'));
-//
-//
-//
-//
-////GOOGLE API
-//window.___gcfg = {lang: 'pt-BR'};
-//
-//(function() {
-//  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-//  po.src = 'https://apis.google.com/js/platform.js';
-//  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-//})();
-//
-//
-//(function() {
-//    var cx = '007002280365302771262:9-iwnl5ixt0';
-//    var gcse = document.createElement('script');
-//    gcse.type = 'text/javascript';
-//    gcse.async = true;
-//    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-//        '//cse.google.com/cse.js?cx=' + cx;
-//    var s = document.getElementsByTagName('script')[0];
-//    s.parentNode.insertBefore(gcse, s);
-//  })();
-
-//VK
-//(function() {
-//	  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-//	  po.src = 'http://vk.com/js/api/share.js?9';
-//	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-//	  jQuery(document).ready(function(){
-//		setTimeout(function(){
-//			jQuery('.vkShare').each(function(){
-//				$this = jQuery(this);
-//				$this.html(VK.Share.button($this.attr('data-href') && $this.attr('data-href')!=''? $this.attr('data-href'):window.location, {type: 'link'}));
-//			});
-//		}, 1000);
-//	  });
-//})();
-
 function TestaCPF(strCPF) {
 	var Soma; 
 	var Resto; 
@@ -213,9 +165,6 @@ AngelGirls.ResetConfig = function(){
 }; 
 
 jQuery(document).ready(function(){
-
-
-	
 	jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
 	jQuery(".validate-inteiro").mask("9999999999999");
 	jQuery(".validate-cep").mask("99999-999");
@@ -227,7 +176,22 @@ jQuery(document).ready(function(){
 	jQuery(".validate-telefone-simples").mask("99999-9999");
 
 		
-		
+//	jQuery('.table-responsive .table').each(function(){
+//		var $this = jQuery(this);
+//		var maximoItensParam=$this.attr('data-item-per-page');
+//		if(maximoItensParam){
+//			var maximoItens =  parseInt(maximoItensParam);
+//			var $linhas = $this.find('tbody tr');
+//			if($linhas.length > maximoItens){
+//				AngelGirls.TablePagined[] = $this;
+//				for(var i=maximoItens-1; i<maximoItens;i++){
+//					$linhas[i].
+//					
+//					
+//				}
+//			}
+//		}
+//	});
 		
 	jQuery(".estado").change(function(){
 		$objeto = jQuery(this);
