@@ -30,7 +30,7 @@ foreach($sessoes as $conteudo){ ?>
 <?php
 }
 $contador = sizeof($sessoes);
-echo("<script>lidos+=$contador\n");
+echo("<script>lidos+=$contador;\n");
 if($contador<AngelgirlsController::LIMIT_DEFAULT):
 	echo('jQuery("#carregando").css("display","none");temMais=false;');	
 endif;

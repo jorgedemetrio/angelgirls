@@ -6,7 +6,7 @@ CREATE TABLE `#__angelgirls_video_sessao` (
 	`id_youtube` VARCHAR(250),
 	`id_vimeo` VARCHAR(250),
 	`url_vimeo` VARCHAR(250),
-	`makingof` ENUM('S','N') DEFAUL 'S',
+	`makingof` ENUM('S','N') DEFAULT 'S',
 	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 	`id_usuario_criador` INT NOT NULL , 
 	`id_usuario_alterador` INT NOT NULL , 
@@ -29,7 +29,7 @@ ALTER TABLE `#__angelgirls_fotografo` ADD COLUMN `status_comp_residencia` VARCHA
 ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `foto_documento` VARCHAR(100);
 ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `foto_comp_residencia` VARCHAR(100);
 ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `status_documento` VARCHAR(20);
-ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `status_comp_residencia` VARCHAR(20);]
+ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `status_comp_residencia` VARCHAR(20);
 
 ALTER TABLE `#__angelgirls_modelo` ADD COLUMN `pontos` bigint DEFAULT 0;
 ALTER TABLE `#__angelgirls_fotografo` ADD COLUMN `pontos` bigint DEFAULT 0;

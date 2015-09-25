@@ -10,7 +10,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
-
+JFactory::getDocument()->addScriptDeclaration('var lidos = 0;');
 
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
@@ -311,7 +311,6 @@ $perfil = JRequest::getVar('perfil');
 </div>
 
 <script>
-var lidos = <?php echo(sizeof($fotos));?>;
 var carregando = false;
 var temMais=false;
 jQuery(document).ready(function() {

@@ -10,7 +10,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarSessoes&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
-
+JFactory::getDocument()->addScriptDeclaration('var lidos = 0;');
 $sessoes = JRequest::getVar('sessoes');
 $modelos = JRequest::getVar('modelos');
 $fotografos = JRequest::getVar('fotografos');
@@ -45,7 +45,7 @@ if($dataFim!=''){
 	<div class="btn-toolbar pull-right" role="toolbar">
 		<?php if(isset($perfil)) : ?>
 		<div class="btn-group" role="group"  aria-label="Funções">
-			<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarNova&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
+			<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
 				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 			</a>
 		</div>
@@ -138,7 +138,6 @@ require_once 'sessoes_html.php';
 	</div>
 </div>
 <script>
-var lidos = <?php echo(sizeof($sessoes));?>;
 var carregando = false;
 var temMais=false;
 jQuery(document).ready(function() {

@@ -16,15 +16,15 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 <?php 	foreach($sessoes as $conteudo): ?>
 	<?php
 	$url = '';
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':ico');
+	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&session_id='. session_id().'&task=loadImage&id='.$conteudo->token.':ico');
 	if($conteudo->status_dado==StatusDado::ANALIZE || $conteudo->status_dado==StatusDado::ATIVO  || $conteudo->status_dado==StatusDado::PUBLICADO):
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)));
+		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&session_id='. session_id().'&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)));
 	else:
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&id='.$conteudo->id);
+		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&session_id='. session_id().'&task=carregarEditarSessao&id='.$conteudo->id);
 	endif; 
 	
-	$urlImgModelo = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
-	$urlImgFotografo = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
+	$urlImgModelo = JRoute::_('index.php?option=com_angelgirls&view=modelo&session_id='. session_id().'&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
+	$urlImgFotografo = JRoute::_('index.php?option=com_angelgirls&view=fotografo&session_id='. session_id().'o&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
 	?>
 			<tr>
 				<td><a href="<?php echo($url);?>"><img alt="<?php echo($conteudo->nome); ?>" src="<?php echo($urlImg);?>" class="img-responsive" style="width: 50px"/></a></td>

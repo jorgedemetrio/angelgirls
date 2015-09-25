@@ -1472,7 +1472,6 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		$user = JFactory::getUser();
 		
-		
 		$perfil = $this->getPerfilLogado();
 		
 		if(!isset($perfil)){
@@ -1481,11 +1480,10 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		
 		if($perfil->tipo != 'MODELO' && $perfil->tipo != 'FOTOGRAFO'){
-			JError::raiseWarning(100,JText::_('&aacute;rea permitida apenas para modelos ou fotografos.'));
+			JError::raiseWarning(100,JText::_('&Aacute;rea permitida apenas para modelos ou fotografos.'));
 			$this->logado();
 			return;
 		}
-		
 		JRequest::setVar ('modelos', $this->getAllModelos() );
 		
 		JRequest::setVar ('fotografos', $this->getAllFotografos() );
@@ -1501,12 +1499,12 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning(100,JText::_('A Sess&atilde;o que tentou acessar j&aacute; foi publicada por isso n&atilde;o pode ser editada.'));
 			$sessao == null;
 			$id = 0;
-			$this->logado();
+			$this->RegistroNaoEncontado();
 			exit();
 		}
-		if(!isset($sessao)){
+		if(!isset($sessao) && isset($id) && $id>0){
 			JError::raiseWarning(404,JText::_('P&aacute;gina n&atilde;o encontrada.'));
-			$this->loadImage();
+			$this->RegistroNaoEncontado();
 			exit();
 		}
 		
@@ -1561,7 +1559,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		elseif($perfil->tipo!='MODELO' && $perfil->tipo!='FOTOGRAFO'){
 			JError::raiseWarning(100,JText::_('Est&aacute; &aacute;rea &eacute; permitida apenas para perfil tipo modelo ou fotografo. Opera&ccedil;&atilde;o cancelada.'));
-			$this->logado();
+			$this->RegistroNaoEncontado();
 			return;
 		}
 
@@ -1704,11 +1702,11 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery( $query );
 			$db->execute();
 			$id = $db->insertid();
-
+			JRequest::setVar('id',$id);
 			$this->LogQuery($query);
 			
 			
-			JRequest::setVar('id',$id);
+
 			
 			
 			$token = $this->GerarToken($titulo,$id,true,false);
@@ -1787,7 +1785,7 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			else{
 				JError::raiseWarning( 100, 'O informa&ccedi;&atilde;o que tentou salvar n&atilde;o exite.' );
-				$this->logado();
+				$this->RegistroNaoEncontado();
 				return;
 			}
 		}
@@ -1955,12 +1953,17 @@ class AngelgirlsController extends JControllerLegacy{
 		$imagem = $foto_perfil = $_FILES ['imagem']; 
 		
 		$jsonRetorno = "";
-		echo('ARQUIVO');
-		print_r( $_REQUEST );
-		echo('ARQUIVO 2');
-		exit();
-		if (isset($imagem) && JFile::exists($imagem ['tmp_name'])) {
 
+		if (isset($imagem) && JFile::exists($imagem ['tmp_name'])) {
+			
+			$query = $db->getQuery ( true );
+			$query->select('CASE isnull(max(ordem)) WHEN 0 THEN max(ordem)+1 ELSE 1 END AS ORDEM ')
+			->from (  '#__angelgirls_foto_sessao')
+			->where ('id_sessao  =  ' . $id);
+			$db->setQuery ( $query );
+			$max = $db->loadObject();
+			
+			
 			$query = $db->getQuery ( true );
 			$query->select('token, nome_foto')
 			->from ('#__angelgirls_sessao')
@@ -1969,23 +1972,26 @@ class AngelgirlsController extends JControllerLegacy{
 			->where ( $db->quoteName ( 'id' ) . " =  " . $id );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
-			
+
 			if(isset($result) && isset($result->token) && strlen(trim($result->token))>=1){
-				
 				$token = "";
 				$contador=0;
 				do{
 					$token = $this->GerarToken($imagem['name'] , ($contador.$id.intval(date('su')) ), true, false);
-					
 					$query = $db->getQuery ( true );
 					$query->select('id')
-								->from (  '#__angelgirls_foto_sessao')
-								->where ('token  =  ' . $db->quote($token));
+					->from (  '#__angelgirls_foto_sessao')
+					->where ('token  =  ' . $db->quote($token));
 					$db->setQuery ( $query );
 					$results = $db->loadObjectList();
 					++$contador;
-				}while(isset($results) || isset($results->id) || $results->id > 0 );
+				}while(isset($results) && isset($results->id) && $results->id > 0 );
 
+				
+				
+
+				
+				
 				
 				$query = $db->getQuery ( true );
 				$query->insert( $db->quoteName ( '#__angelgirls_foto_sessao' ) )
@@ -1998,24 +2004,21 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'titulo' ),
 					$db->quoteName ( 'meta_descricao' ),
 					$db->quoteName ( 'token' ),
-					$db->quoteName ( 'token_imagem' ),
 					$db->quoteName ( 'id_sessao' ),
 					$db->quoteName ( 'ordem' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
 					$db->quoteName ( 'host_ip_criador' ),
 					$db->quoteName ( 'host_ip_alterador' )))
 					->values ( implode ( ',', array (
 							'\'NOVO\'',
 							'NOW()',
-							$usuario->id,
+							$user->id,
 							'NOW()',
-							$usuario->id,
+							$user->id,
 							$db->quote($imagem['name']),
 							$db->quote($imagem['name']),
 							$db->quote($token),
 							$id,
-							'(SELECT CASE isnull(max(ordem)) WHEN 0 THEN max(ordem)+1 ELSE 1 END FROM #__angelgirls_foto_sessao WHERE id_sessao = '.$id.')',
+							$max->ORDEM,
 							$db->quote($this->getRemoteHostIp()),
 							$db->quote($this->getRemoteHostIp())
 					)));
@@ -2036,9 +2039,10 @@ class AngelgirlsController extends JControllerLegacy{
 				  $db->execute ();
 				  
 	
+				  
 							
 				$this->SalvarUploadArquivo($imagem,
-						PATH_IMAGEM_SESSOES . $result->token,
+						PATH_IMAGEM_SESSOES . $result->token .DS,
 						$arquivo,
 						null,null,$id,true,true);
 				
@@ -2050,7 +2054,7 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				
 				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$imagem['name'] . 
-				 					'","meta_descricao":"'.$imagem['name'].'","descricao":"","url","'.$url.'","ico","'.$urlIco.'","cube","'.$urlcube.'","thumb","'.$urlthumb.'"}';
+				 					'","meta_descricao":"'.$imagem['name'].'","descricao":"","url":"'.$url.'","ico":"'.$urlIco.'","cube":"'.$urlcube.'","thumb":"'.$urlthumb.'"}';
 			}
 			else{
 				$jsonRetorno= '{"ok":"nok","mensagem":"Sess&atilde;o n&atilde;o localizada, ou n&atilde;o tem permiss&atilde;o para isso."}';
@@ -2218,11 +2222,15 @@ class AngelgirlsController extends JControllerLegacy{
 		//    Thumb 300x300			thumb
 		//    Cube  300x300			cube	fixo
 		//    FULL  2000x2000
-		//    BACKUP				bk		$user = JFactory::getUser();
+		//    BACKUP				bk		
+
+		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$id = JRequest::getString('id','');
 		$tipo = "";
 
+		
+		
 		if(!(strpos($id,':')===false)){
 			$arr = explode(':',$id);
 			$id = $arr[0];
@@ -2238,10 +2246,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$NaoLogado = COMPONENT_AG_PATH . 'no_logado.png';
 		$AreaVIP = COMPONENT_AG_PATH . 'no_logado.png';
 		
-		
+
 		
 		$logado = ( isset($user) && $user->id > 0); 
-
+		
 		
 		if($view=='fotosessao'){
 			
@@ -2254,6 +2262,8 @@ class AngelgirlsController extends JControllerLegacy{
 			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
+			
+			
 			if(isset($result)){
 				if(!$logado && $result->possui_nudes=='S'){
 					$arquivo = $NaoLogado;
@@ -2267,9 +2277,8 @@ class AngelgirlsController extends JControllerLegacy{
 						$db->setQuery ( $query );
 						$db->execute ();
 					}
-					$arquivo =  PATH_IMAGEM_SESSOES . $result->sessao_token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'')  . $result->foto_token  . '.jpg';
+					$arquivo =  PATH_IMAGEM_SESSOES . $result->sessao_token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'')  . $result->foto_token;
 				}
-				
 
 //				TODO CONTROLE IMAGEM DA &aacute;REA VIP
 // 				if($logado && $result->area_vip='S'){
@@ -5582,7 +5591,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		if(!isset($sessao) || !isset($sessao->id) | $sessao->id <= 0){
 			JError::raiseWarning( 100, 'A Sess&atilde;o n&aatilde;o foi localizada');
-			$this->logado();
+			$this->RegistroNaoEncontado();
 			return;
 		}
 		if($user->id != $sessao->id_usuario_criador){
