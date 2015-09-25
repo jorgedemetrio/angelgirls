@@ -1,3 +1,7 @@
+
+.form-control:valid {background:#006600;color:#fff }
+.form-control:invalid {background:#990000; color:#fff}
+
 .itemCarroussel p{
 	text-overflow: ellipsis;
 	width: 100%; 

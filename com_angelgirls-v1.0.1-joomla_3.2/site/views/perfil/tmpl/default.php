@@ -164,15 +164,15 @@ input[type="file"]{
 			<div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-6">
 					<label class="control-label"  for="name"><?php echo JText::_('Nome Completo'); ?></label>
-					<input class="form-control" data-validation="required" style="width: 90%;" type="text" name="name"  id="name" size="32" maxlength="250" value="<?php echo $this->item->nome_completo;?>" title="<?php echo JText::_('Nome Completo'); ?>" placeholder="<?php echo JText::_('Nome Completo'); ?>"/>
+					<input class="form-control" data-validation="required" requiredstyle="width: 90%;" type="text" name="name"  id="name" size="32" maxlength="250" value="<?php echo $this->item->nome_completo;?>" title="<?php echo JText::_('Nome Completo'); ?>" placeholder="<?php echo JText::_('Nome Completo'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-6">
 					<label class="control-label"  for="nome_artistico"><?php echo JText::_('Apelido/Nome Artistico'); ?></label>
-					<input class="form-control" data-validation="required" style="width: 90%;" type="text" name="nome_artistico"  id="nome_artistico" size="32" maxlength="150" value="<?php echo $this->item->apelido;?>" title="<?php echo JText::_('Apelido/Nome Artistico'); ?>" placeholder="<?php echo JText::_('Apelido/Nome Artistico'); ?>"/>
+					<input class="form-control" data-validation="required" required style="width: 90%;" type="text" name="nome_artistico"  id="nome_artistico" size="32" maxlength="150" value="<?php echo $this->item->apelido;?>" title="<?php echo JText::_('Apelido/Nome Artistico'); ?>" placeholder="<?php echo JText::_('Apelido/Nome Artistico'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label"  for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?> <small>(restam <span id="maxlength">250</span> cadacteres)</small></label>
-					<textarea class="form-control" data-validation="required" style="width: 95%;" rows="5" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"><?php echo $this->item->meta_descricao;?></textarea>
+					<textarea class="form-control" data-validation="required" required style="width: 95%;" rows="5" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"  title="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"><?php echo $this->item->meta_descricao;?></textarea>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="username"><?php echo JText::_('Usu&aacute;rio'); ?></label>
@@ -180,7 +180,7 @@ input[type="file"]{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="sexo"><?php echo JText::_('Sexo'); ?></label>
-					<select name="sexo" id="sexo" class="form-control" data-validation="required" style="width: 90%;" placeholder="<?php echo JText::_('Selecione um sexo'); ?>">
+					<select name="sexo" id="sexo" class="form-control" data-validation="required" required style="width: 90%;" placeholder="<?php echo JText::_('Selecione um sexo'); ?>">
 						<option></option>
 						<option value="M"<?php echo($this->item->sexo=="M"?" selected":"");?>>Masculino</option>
 						<option value="F"<?php echo($this->item->sexo=="F"?" selected":"");?>>Feminino</option>
@@ -195,11 +195,11 @@ input[type="file"]{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="cpf"> <?php echo JText::_('CPF'); ?></label>
-					<input class="form-control validate-cpf" data-valido='SIM' data-exite='NAO' data-validation="required length" data-validation-length="min14" style="width: 90%;" type="text" name="cpf"  id="cpf" size="32" maxlength="14" value="<?php echo $this->item->cpf;?>" placeholder="<?php echo JText::_('Digite um CPF v&aacute;lido'); ?>"/>
+					<input class="form-control validate-cpf" data-valido='SIM' data-exite='NAO' required data-validation="required length" data-validation-length="min14" style="width: 90%;" type="text" name="cpf"  id="cpf" size="32" maxlength="14" value="<?php echo $this->item->cpf;?>" placeholder="<?php echo JText::_('Digite um CPF v&aacute;lido'); ?>"/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="estado_reside"><?php echo JText::_('Estado Que Reside'); ?></label>
-					<select name="estado_reside" id="estado_reside" class="form-control estado" data-validation="required" data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que reside'); ?>">
+					<select name="estado_reside" id="estado_reside" class="form-control estado" data-validation="required" required data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que reside'); ?>">
 						<option></option>
 						<?php
 						foreach ($ufs as $f){ 
@@ -212,13 +212,13 @@ input[type="file"]{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
-					<select name="id_cidade" id="id_cidade" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" data-validation="required" style="width: 90%;">
+					<select name="id_cidade" id="id_cidade" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" data-validation="required" required style="width: 90%;">
 						<option></option>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="estado_nasceu"><?php echo JText::_('Estado Que Nasceu'); ?></label>
-					<select name="estado_nasceu" id="estado_nasceu" class="form-control estado" data-validation="required" data-carregar="id_cidade_nasceu" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que nasceu'); ?>">
+					<select name="estado_nasceu" id="estado_nasceu" class="form-control estado" data-validation="required" required data-carregar="id_cidade_nasceu" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que nasceu'); ?>">
 						<option></option>
 						<?php
 						foreach ($ufs as $f){ 
@@ -231,7 +231,7 @@ input[type="file"]{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label>
-					<select name="id_cidade_nasceu" id="id_cidade_nasceu" data-value="<?php echo($this->item->id_cidade_nasceu);?>" class="form-control" data-validation="required" style="width: 90%;">
+					<select name="id_cidade_nasceu" id="id_cidade_nasceu" data-value="<?php echo($this->item->id_cidade_nasceu);?>" class="form-control" data-validation="required" required style="width: 90%;">
 						<option></option>
 					</select>
 				</div>
@@ -241,13 +241,13 @@ input[type="file"]{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="nascionalidade"><?php echo JText::_('Nascionalidade'); ?></label>
-					<input class="form-control" data-validation="required" style="width: 90%;" type="text" name="nascionalidade"  id="nascionalidade" size="32" maxlength="25" value="<?php echo $this->item->nascionalidade;?>" placeholder="<?php echo JText::_('Nascionalidade'); ?>"/>
+					<input class="form-control" data-validation="required" required style="width: 90%;" type="text" name="nascionalidade"  id="nascionalidade" size="32" maxlength="25" value="<?php echo $this->item->nascionalidade;?>" placeholder="<?php echo JText::_('Nascionalidade'); ?>"/>
 				</div>
 
 
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="data_nascimento"><?php echo JText::_('Data de Nascimento'); ?></label>
-					<?php echo JHtml::calendar($this->item->data_nascimento, 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" data-validation-format="dd/mm/yyyy" style="height: 28px; width: 70%; margin-bottom: 6px;"');?>
+					<?php echo JHtml::calendar($this->item->data_nascimento, 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" required data-validation-format="dd/mm/yyyy" style="height: 28px; width: 70%; margin-bottom: 6px;"');?>
 				</div>
 				
 				
@@ -267,7 +267,7 @@ input[type="file"]{
 			<div class="row">
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemRosto);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_perfil" name="ifoto_perfil" class="img-thumbnail"/>
-					<input style="width: 250px;" type="file" class="form-control" data-validation="size" data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation="required" name="foto_perfil" data-validation-dimension="min300x500" id="foto_perfil" accept="image/*"/></div>
+					<input style="width: 250px;" type="file" class="form-control" data-validation="size" data-validation-max-size="3M" data-validation-allowing="jpg, png, gif" data-validation="required" required name="foto_perfil" data-validation-dimension="min300x500" id="foto_perfil" accept="image/*"/></div>
 <?php	if($this->item->tipo=='MODELO') : ?>
 				<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 text-center">
 					<img src="<?php echo($imagemCorpo);?>" alt="Clique para mudar a imagem" title="Clique para mudar a imagem" id="ifoto_inteira" name="ifoto_inteira" class="img-thumbnail"/>
@@ -284,27 +284,27 @@ input[type="file"]{
 			<h3><?php echo JText::_('Caracteristicas F&iacute;sicas da Modelo'); ?></h3>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="altura"><?php echo JText::_('Altura'); ?></label>
-				<input class="validate-numeric form-control" data-validation="required" style="width: 90%;" type="text" name="altura" id="altura" size="32" maxlength="4" value="<?php echo $this->item->altura;?>" placeholder="<?php echo JText::_('Sua altura em Metros com ","'); ?>"/>
+				<input class="validate-numeric form-control" data-validation="required" required style="width: 90%;" type="text" name="altura" id="altura" size="32" maxlength="4" value="<?php echo $this->item->altura;?>" placeholder="<?php echo JText::_('Sua altura em Metros com ","'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="peso"><?php echo JText::_('Peso'); ?></label>
-				<input class="validate-inteiro form-control" data-validation="required" style="width: 90%;" type="text" name="peso" id="peso" size="32" maxlength="3" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
+				<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="peso" id="peso" size="32" maxlength="3" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="busto"><?php echo JText::_('Busto'); ?></label>
-				<input class="validate-inteiro form-control" data-validation="required" style="width: 90%;" type="text" name="busto" id="busto" size="32" maxlength="2" value="<?php echo $this->item->busto;?>" placeholder="<?php echo JText::_('O tamanho do seu busto ou numero da camisa'); ?>"/>
+				<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="busto" id="busto" size="32" maxlength="2" value="<?php echo $this->item->busto;?>" placeholder="<?php echo JText::_('O tamanho do seu busto ou numero da camisa'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="calsa"><?php echo JText::_('Calsa'); ?></label>
-				<input class="validate-inteiro form-control" data-validation="required" style="width: 90%;" type="text" name="calsa" id="calsa" size="32" maxlength="2" value="<?php echo $this->item->calsa;?>" placeholder="<?php echo JText::_('O numero da calsa que usa'); ?>"/>
+				<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="calsa" id="calsa" size="32" maxlength="2" value="<?php echo $this->item->calsa;?>" placeholder="<?php echo JText::_('O numero da calsa que usa'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="calsado"> <?php echo JText::_('Tamanho dos Calsados'); ?></label>
-				<input class="validate-inteiro" data-validation="required" style="width: 90%;" type="text" name="calsado" id="calsado" size="32" maxlength="2" value="<?php echo $this->item->calsado;?>" placeholder="<?php echo JText::_('Tamanho do calsado (Tenis/Sapato).'); ?>"/>
+				<input class="validate-inteiro" data-validation="required" required style="width: 90%;" type="text" name="calsado" id="calsado" size="32" maxlength="2" value="<?php echo $this->item->calsado;?>" placeholder="<?php echo JText::_('Tamanho do calsado (Tenis/Sapato).'); ?>"/>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="olhos"> <?php echo JText::_('Olhos'); ?></label>
-				<select name="olhos" id="olhos" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="olhos" id="olhos" class="form-control" data-validation="required" required style="width: 90%;">
 					<option></option>
 					<option value="NEGROS"<?php echo($this->item->olhos=="NEGROS"?" selected":"");?> class="text-transform: capitalize;">NEGROS</option>
 					<option value="AZUIS"<?php echo($this->item->olhos=="AZUIS"?" selected":"");?> class="text-transform: capitalize;">AZUIS</option>
@@ -316,7 +316,7 @@ input[type="file"]{
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="pele"> <?php echo JText::_('Pele'); ?></label>
-				<select name="pele" id="pele" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="pele" id="pele" class="form-control" data-validation="required" required style="width: 90%;">
 					<option></option>
 					<option value="CALCASIANA"<?php echo($this->item->pele=="CALCASIANA"?" selected":"");?> class="text-transform: capitalize;">CALCASIANA</option>
 					<option value="BRANCA"<?php echo($this->item->pele=="BRANCA"?" selected":"");?> class="text-transform: capitalize;">BRANCA</option>
@@ -329,7 +329,7 @@ input[type="file"]{
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="etinia"> <?php echo JText::_('Etinia'); ?></label>
-				<select name="etinia" id="etinia" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="etinia" id="etinia" class="form-control" data-validation="required" required style="width: 90%;">
 					<option></option>
 					<option value="AZIATICA"<?php echo($this->item->etinia=="AZIATICA"?" selected":"");?> class="text-transform: capitalize;">AZIATICA</option>
 					<option value="AFRO"<?php echo($this->item->etinia=="AFRO"?" selected":"");?> class="text-transform: capitalize;">AFRO</option>
@@ -342,7 +342,7 @@ input[type="file"]{
 
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="cabelo"> <?php echo JText::_('Tipo de Cabelo'); ?></label>
-				<select name="cabelo" id="cabelo" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="cabelo" id="cabelo" class="form-control" data-validation="required" required style="width: 90%;">
 					<option></option>
 					<option value="LIZO"<?php echo($this->item->cabelo=="LIZO"?" selected":"");?> class="text-transform: capitalize;">LIZO</option>
 					<option value="ENCARACOLADO"<?php echo($this->item->cabelo=="ENCARACOLADO"?" selected":"");?> class="text-transform: capitalize;">ENCARACOLADO</option>
@@ -355,7 +355,7 @@ input[type="file"]{
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label"  for="tamanho_cabelo"> <?php echo JText::_('Tamanho do Cabelo'); ?></label>
-				<select name="tamanho_cabelo" id="tamanho_cabelo" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="tamanho_cabelo" id="tamanho_cabelo" class="form-control" required data-validation="required" style="width: 90%;">
 					<option></option>
 					<option value="MUITO CURTO"<?php echo($this->item->tamanho_cabelo=="MUITO CURTO"?" selected":"");?> class="text-transform: capitalize;">MUITO CURTO</option>
 					<option value="CURTO"<?php echo($this->item->tamanho_cabelo=="CURTO"?" selected":"");?> class="text-transform: capitalize;">CURTO</option>
@@ -368,7 +368,7 @@ input[type="file"]{
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 				<label class="control-label" for="cor_cabelo"> <?php echo JText::_('Cor do Cabelo'); ?></label>
-				<select name="cor_cabelo" id="cor_cabelo" class="form-control" data-validation="required" style="width: 90%;">
+				<select name="cor_cabelo" id="cor_cabelo" class="form-control" data-validation="required" required style="width: 90%;">
 					<option></option>
 					<option value="BRANCO"<?php echo($this->item->cor_cabelo=="BRANCO"?" selected":"");?> class="text-transform: capitalize;">BRANCO</option>
 					<option value="LOIRA CLARA"<?php echo($this->item->cor_cabelo=="LOIRA CLARA"?" selected":"");?> class="text-transform: capitalize;">LOIRA CLARA</option>

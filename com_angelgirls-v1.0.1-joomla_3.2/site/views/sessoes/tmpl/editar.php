@@ -229,7 +229,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 		<?php if(!isset($this->item) || $id == 0) :?>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label" for="termos"><?php echo JText::_('Ao clicar aqui declaro que aceito todas as condi&ccedil;&otilde;es e termos de publica&ccedil;&atilde;o de uma sess&atilde;o neste site.'); ?></label>
-					<input class="form-control" data-validation="required"
+					<input class="form-control" data-validation="required" required
 						type="checkbox" name="termos" value="SIM" id="termos"
 						title="Termos para publicar a sess&atilde;o, ao clicar nesse item indica que est&aacute; de acordo."
 						style="text-align: left; width: 30px" />
@@ -238,7 +238,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label" for="titulo"><?php echo JText::_('T&iacute;itulo'); ?> *</label>
-					<input class="form-control" data-validation="required"
+					<input class="form-control" data-validation="required" required
 						style="width: 90%;" type="text" name="titulo" id="titulo"
 						maxlength="250" value="<?php echo $titulo;?>"
 						title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"
@@ -253,7 +253,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				</div>
 				<div class="form-group col-xs-12 col-sm-10 col-md-10 col-lg-10">
 					<label class="control-label" for="titulo"><?php echo JText::_('T&iacute;itulo'); ?> *</label>
-					<input class="form-control" data-validation="required"
+					<input class="form-control" data-validation="required" required
 						style="width: 90%;" type="text" name="titulo" id="titulo"
 						maxlength="250" value="<?php echo $titulo;?>"
 						title="<?php echo JText::_('Titulo da sess&atilde;o'); ?>"
@@ -264,7 +264,10 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label" for="imagem"><?php echo JText::_('Imagem de Capa'); ?> *
 					</label> <input class="form-control" style="width: 90%;"
-						data-validation="required size mime dimension" type="file"
+		<?php if(!isset($this->item) || $id == 0) :?>
+						data-validation="required size mime dimension" type="file" required
+		<?php endif;?>
+		
 						name="imagem" id="imagem"
 						title="<?php echo JText::_('Imagem que representa o a loca&ccedil&atilde;o da sess&atilde;o'); ?>"
 						accept="image/*" data-validation-dimension="min300x500"
@@ -273,12 +276,12 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label" for="name"><?php echo JText::_('Sess&atilde;o Realizada'); ?> *</label>
-					<?php echo JHtml::calendar($data_realizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
+					<?php echo JHtml::calendar($data_realizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" required data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
 					<label class="control-label" for="tipo"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
 					<select name="tipo" id="tipo" class="form-control"
-						data-validation="required">
+						data-validation="required" required>
 						<option></option>
 						<option value="VENDA"
 							<?php echo($tipo=='VENDA'?' selected':''); ?>>Venda</option>
@@ -298,7 +301,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 					<label class="control-label" for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?> <small>(restam
 							<span id="maxlength">250</span> cadacteres)
 					</small></label>
-					<textarea class="form-control" data-validation="required"
+					<textarea class="form-control" data-validation="required" required
 						style="width: 95%;" rows="5" type="text" name="meta_descricao"
 						id="meta_descricao" size="32" maxlength="250"
 						placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre a sess&atilde;o fotos. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"
@@ -309,7 +312,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<label class="control-label" for="tema"><?php echo JText::_('Tema'); ?></label>
 					<select class="form-control" name="tema" id="tema"
-						data-validation="required" style="width: 90%;">
+						data-validation="required" style="width: 90%;" required>
 						<option value=""></option>
 						<option value="NOVO">NOVO</option>
 						<optgroup label="Itens existentes">Itens existentes
@@ -326,7 +329,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<label class="control-label" for="locacao"><?php echo JText::_('Loca&ccedil;&atilde;o'); ?></label>
 					<select class="form-control" name="locacao" id="locacao"
-						data-validation="required" style="width: 90%;">
+						data-validation="required" style="width: 90%;" required>
 						<option value=""></option>
 						<option value="NOVO">NOVO</option>
 						<optgroup label="Itens existentes">Itens existentes
@@ -343,7 +346,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 					<label class="control-label" for="id_figurino_principal"><?php echo JText::_('Figurino Principal'); ?></label>
 					<select class="form-control figurino" name="id_figurino_principal"
-						id="id_figurino_principal" data-validation="required"
+						id="id_figurino_principal" data-validation="required" required
 						style="width: 90%;">
 						<option value=""></option>
 						<option value="NOVO">NOVO</option>
@@ -380,7 +383,7 @@ $descricao = JRequest::getString('descricao',$conteudo->descricao);
 				<label class="control-label" for="comentario">Coment&aacute;rio do(a) <?php echo(strtolower( $perfil->tipo));?> <small>(restam
 						<span id="maxlengthComentario">250</span> cadacteres)
 				</small></label>
-				<textarea class="form-control" data-validation="required"
+				<textarea class="form-control" data-validation="required" required
 					style="width: 95%;" rows="3" type="text" name="comentario"
 					id="comentario" maxlength="250"
 					placeholder="<?php echo JText::_('Coment&aacute;rio com seu ponto de vista sobre a sess&atilde;o. Evite nomes completos prefira nomes artisticos ou apelidos e evite colocar contatos como telefone, e-mail ou outros. Com at&eacute; 250 caracteres.'); ?>"
