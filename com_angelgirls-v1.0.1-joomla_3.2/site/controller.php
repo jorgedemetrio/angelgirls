@@ -1537,6 +1537,9 @@ class AngelgirlsController extends JControllerLegacy{
 		$tema  = JRequest::getInt('tema',null,'POST');
 		$historia = JRequest::getString('historia',null,'POST');
 		$locacao  = JRequest::getInt('locacao',null,'POST');
+		
+		$tipo_sessao = JRequest::getString('tipo_sessao',null,'POST');
+		
 		$id_figurino_principal  = JRequest::getInt('id_figurino_principal',null,'POST');
 		$id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',null,'POST');
 		$id_modelo_principal  = JRequest::getInt('id_modelo_principal',null,'POST');
@@ -1544,7 +1547,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',null,'POST');
 		$id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',null,'POST');
 		$descricao = JRequest::getString('descricao',null,'POST');
-		$tipo = JRequest::getString('tipo',null,'POST');
+
 		$erros = false;
 		$dataRealizadoSessao =null;
 		$dataFormatadaBanco = null;
@@ -1590,12 +1593,11 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning(100,JText::_('O campo "Titulo" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
 			$erros = true;
 		}
-
-		if(!isset($tipo) || strlen(trim($tipo)) <=0 ){
+		
+		if(!isset($tipo_sessao) || strlen(trim($tipo_sessao)) <=0){
 			JError::raiseWarning(100,JText::_('O campo "Tipo" &eacute; um campo obrigat&oacute;rio.'));
 			$erros = true;
 		}
-		
 		
 		if(strlen(trim($titulo)) >250 ){
 			JError::raiseWarning(100,JText::_('O campo "Titulo" passou de 250 caracteres.'));
@@ -1695,12 +1697,13 @@ class AngelgirlsController extends JControllerLegacy{
 					(!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
 					($perfil->tipo=='MODELO'?'1':'null'),
 					($perfil->tipo=='FOTOGRAFO'?'1':'null'),
-					(!isset($tipo) || strlen(trim($tipo))<=0 || $tipo==0 ? ' null ' : $tipo),
+					(!isset($tipo_sessao) || strlen(trim($tipo_sessao))<=0  ? ' null ' :  $db->quote($tipo_sessao)),
 					$db->quote($this->getRemoteHostIp()),
 					$db->quote($this->getRemoteHostIp())
 			)));
 			$db->setQuery( $query );
 			$db->execute();
+
 			$id = $db->insertid();
 			JRequest::setVar('id',$id);
 			$this->LogQuery($query);
@@ -1764,13 +1767,12 @@ class AngelgirlsController extends JControllerLegacy{
 					  		$db->quoteName ( 'id_fotografo_secundario' ) . ' = ' . (!isset($id_fotografo_secundario) || strlen(trim($id_fotografo_secundario))<=0 || $id_fotografo_secundario==0 ? ' null ' : $id_fotografo_secundario),
 					  		$db->quoteName ( 'id_figurino_principal' ) . ' = ' . (!isset($id_figurino_principal) || strlen(trim($id_figurino_principal))<=0 || $id_figurino_principal==0 ? ' null ' : $id_figurino_principal),
 					  		$db->quoteName ( 'id_figurino_secundario' ) . ' = ' . (!isset($id_figurino_secundario) || strlen(trim($id_figurino_secundario))<=0 || $id_figurino_secundario==0 ? ' null ' : $id_figurino_secundario),
-					  		$db->quoteName ( 'tipo' ) . ' = ' . (!isset($tipo) || strlen(trim($tipo))<=0 || $tipo==0 ? ' null ' : $tipo),
+					  		$db->quoteName ( 'tipo' ) . ' = ' . (!isset($tipo_sessao) || strlen(trim($tipo_sessao))<=0  ? ' null ' : $db->quote($tipo_sessao)),
 							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
 					  ))
 					->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
 					->where ( $db->quoteName ( 'id' ) . " =  " . $id );
 				$db->setQuery ( $query );
-				$this->LogQuery($query);
 				if(!$db->execute()){
 					return false;
 				}
@@ -1989,7 +1991,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 				
 				
-
+				$NomeArquivoArray = explode ( '.', $imagem['name'] );
 				
 				
 				
@@ -2014,8 +2016,8 @@ class AngelgirlsController extends JControllerLegacy{
 							$user->id,
 							'NOW()',
 							$user->id,
-							$db->quote($imagem['name']),
-							$db->quote($imagem['name']),
+							$db->quote($NomeArquivoArray[0]),
+							$db->quote($NomeArquivoArray[0]),
 							$db->quote($token),
 							$id,
 							$max->ORDEM,
@@ -2029,6 +2031,10 @@ class AngelgirlsController extends JControllerLegacy{
 					
 					
 				  $arquivo = $this->GerarNovoNomeArquivo($imagem['name'], $idFoto );
+				  
+
+
+				  
 
 				  $query = $db->getQuery ( true );
 				  $query->update($db->quoteName('#__angelgirls_foto_sessao' ))
@@ -2181,6 +2187,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$results = $this->runFotoSessao($user, $posicao, $id,$this::LIMIT_DEFAULT );
 		
 		JRequest::setVar('fotos', $results);
+		JRequest::setVar('sessao', $this->getSessaoById($db));
 		
 		
 		
@@ -5570,6 +5577,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	private function getRemoteHostIp(){
 		$ip='';
+		
 		try{
 			if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 				$ip = $_SERVER['HTTP_CLIENT_IP'];

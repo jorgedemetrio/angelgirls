@@ -59,7 +59,7 @@ $agenda  = JRequest::getInt('agenda',$conteudo->id_agenda);
 $meta_descricao = JRequest::getString('meta_descricao',$conteudo->meta_descricao);
 $comentario = JRequest::getString('comentario',($perfil->tipo=='MODELO'? $conteudo->comentario_modelos:$conteudo->comentario_fotografo));
 $historia = JRequest::getInt('historia',$conteudo->historia);
-$tipo  = JRequest::getString('tipo',$conteudo->tipo);
+$tipo  = JRequest::getString('tipo_sessao',$conteudo->tipo);
 $tema  = JRequest::getInt('tema',$conteudo->id_tema);
 $locacao  = JRequest::getInt('locacao',$conteudo->id_locacao);
 $id_figurino_principal  = JRequest::getInt('id_figurino_principal',$conteudo->id_figurino_principal);
@@ -298,8 +298,8 @@ margin-right:5px;
 					<?php echo JHtml::calendar($dataRealizada, 'data_realizada', 'data_nascimento', '%d/%m/%Y', 'class="form-control"  data-validation="date required" required data-validation-format="dd/mm/yyyy" style="height: 28px; width: 80%; margin-bottom: 6px;"');?>
 				</div>
 				<div class="form-group col-xs-12 col-sm-5 col-md-2 col-lg-3">
-					<label class="control-label" for="tipo"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
-					<select name="tipo" id="tipo" class="form-control"
+					<label class="control-label" for="tipo_sessao"><?php echo JText::_('Tipo de Sess&atilde;o'); ?> *</label>
+					<select name="tipo_sessao" id="tipo_sessao" class="form-control"
 						data-validation="required" required>
 						<option></option>
 						<option value="VENDA"
