@@ -20,42 +20,57 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 <?php 	foreach($sessoes as $conteudo): ?>
 	<?php
 	$url = '';
+	$urlVer = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)));;
+	$urlEditar = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&id='.$conteudo->id);
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':ico');
 	if($conteudo->status_dado==StatusDado::ANALIZE || $conteudo->status_dado==StatusDado::ATIVO  || $conteudo->status_dado==StatusDado::PUBLICADO):
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->alias)));
+		$url = $urlVer;
 	else:
-		$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&id='.$conteudo->id);
+		$url = $urlEditar;
 	endif; 
 	
 	$urlImgModelo = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
 	$urlImgFotografo = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
 	?>
-			<tr class="editavel" onclick="JavaScript: window.location='<?php echo($url);?>';">
-				<td class="editavel"><a href="<?php echo($url);?>">
+			<tr class="editavel">
+<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
 <?php switch ($conteudo->status_dado) :?>
 <?php case StatusDado::ANALIZE : ?>
-	<span class="glyphicon glyphicon-eye-open"></span>
+		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
 <?php
 		break; 
 	case $conteudo->status_dado==StatusDado::ATIVO : ?>
-	<span class="glyphicon glyphicon-eye-open"></span>
+		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
 <?php
 		break; 
 	case  $conteudo->status_dado==StatusDado::PUBLICADO : ?>
-	<span class="glyphicon glyphicon-eye-open"></span>
+		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
+<?php
+		break; 
+	case  $conteudo->status_dado==StatusDado::NOVO : ?>
+		<a href="<?php echo($urlVer);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>&nbsp;
+		<a href="<?php echo($url);?>" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;
+		<a href="<?php  echo('index.php?option=com_angelgirls&view=sessoes&task=removerSessao&id='.$conteudo->id);?>"  title="Remover">
+			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+		</a>
+		
 <?php
 		break; 
 	default:  ?>
-	<span class="glyphicon glyphicon-pencil"></span>
-<?php endswitch;?></a>
+				<a href="<?php echo($url);?>"   title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
+<?php endswitch;?>
+
+
+
+
 				</td>
-				<td style="width: 30px"><a href="<?php echo($url);?>"><img alt="<?php echo($conteudo->nome); ?>" src="<?php echo($urlImg);?>" class="img-responsive" style="width: 30px; height: 30px;"/></a></td>
-				<td class="editavel"><a href="<?php echo($url);?>"><?php echo($conteudo->nome); ?></a></td>
-				<td style="width: 30px"><a href="<?php echo($url);?>"><img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></a></td>
-				<td class="editavel"><a href="<?php echo($url);?>"><?php echo($conteudo->modelo1); ?></a></td>
-				<td style="width: 30px"><a href="<?php echo($url);?>"><img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></a></td>
-				<td class="editavel"><a href="<?php echo($url);?>"><?php echo($conteudo->fotografo1); ?></a></td>
-				<td class="editavel"><a href="<?php echo($url);?>"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></a></td>
+				<td style="width: 30px"><img alt="<?php echo($conteudo->nome); ?>" src="<?php echo($urlImg);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->nome); ?></td>
+				<td style="width: 30px" style="vertical-align: middle;"><img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
+				<td class="editavel"><?php echo($conteudo->modelo1); ?></td>
+				<td style="width: 30px" style="vertical-align: middle;"><img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->fotografo1); ?></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></td>
 
 			</tr>
 		

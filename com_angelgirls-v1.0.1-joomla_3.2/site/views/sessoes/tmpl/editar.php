@@ -80,6 +80,7 @@ JFactory::getDocument()->addScriptDeclaration('
 		var carregando = false;
 		var temMais=false;
 		EditarSessao.ImagensPublicadas = '.sizeof($fotos).';
+		EditarSessao.ImagensSemNunes = 0;
 		EditarSessao.BuscarModeloURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarModeloModal',false) . '";
 		EditarSessao.BuscarFotografoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarFotografoModal',false) . '";
 		EditarSessao.sendFileToServerURL = "'.JURI::base( true ) . '/index.php";
@@ -163,6 +164,9 @@ margin-right:5px;
     vertical-align:top
     }');
 
+
+
+
 ?>
 <form
 	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=salvarSessao')); ?>"
@@ -191,11 +195,11 @@ margin-right:5px;
 <!-- 				<span class="hidden-phone"><?php echo JText::_('Voltar'); ?></span> -->
 <!-- 			</button> -->
 <?php if(isset($id) && $id != 0) :?>
-			<button class="btn btn-danger" type="button">
+			<a class="btn btn-danger" href="<?php  echo('index.php?option=com_angelgirls&view=sessoes&task=removerSessao&id='.$conteudo->id);?>">
 				<span class="hidden-phone"><?php echo JText::_('Apagar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-			</button>
+			</a>
 <?php endif;?>
 			<button class="btn btn-success" type="submit">
 <?php if(!isset($this->item) || $id == 0) :?>

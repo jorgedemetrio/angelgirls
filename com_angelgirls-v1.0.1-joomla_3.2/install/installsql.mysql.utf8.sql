@@ -405,6 +405,7 @@ CREATE TABLE `#__angelgirls_video_sessao` (
 	`id_youtube` VARCHAR(250),
 	`id_vimeo` VARCHAR(250),
 	`url_vimeo` VARCHAR(250),
+	`url_vimeo` VARCHAR(250),
 	`makingof` ENUM('S','N') DEFAUL 'S',
 	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 	`id_usuario_criador` INT NOT NULL , 

@@ -95,50 +95,57 @@ jQuery(document).ready(function(){
 	});
 
 	
-	if(lidos>=24){
-		jQuery('#carregando').css('display','');
-		temMais=true;
-	}
-	else{
-		jQuery('#carregando').css('display','none');
-		temMais=false;
-	}
-
-
-	
+	try{
+		if(lidos>=24){
+			jQuery('#carregando').css('display','');
+			temMais=true;
+		}
+		else{
+			jQuery('#carregando').css('display','none');
+			temMais=false;
+		}
 
 
 	
 	
-	jQuery(document).scroll(function(){
-		 //if( (jQuery(window).height()+jQuery(this).scrollTop()+350) >= jQuery(document).height() && !carregando && temMais) {
-		if( (jQuery(window).height()+jQuery(this).scrollTop()) >= jQuery("#carregando").position().top && !carregando && temMais){
-			
-			carregando = true;
-			jQuery.post(EditarSessao.LoadImagensURL,
-					{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
-				jQuery("#carregando").css("display","none");
-				if(dado.length<=0){
+	
+		
+		
+		jQuery(document).scroll(function(){
+			 //if( (jQuery(window).height()+jQuery(this).scrollTop()+350) >= jQuery(document).height() && !carregando && temMais) {
+			if( (jQuery(window).height()+jQuery(this).scrollTop()) >= jQuery("#carregando").position().top && !carregando && temMais){
+				
+				carregando = true;
+				jQuery.post(EditarSessao.LoadImagensURL,
+						{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
 					jQuery("#carregando").css("display","none");
-					temMais=false;
-				}
-				else{
-					jQuery('#carregando').css('display','');
-					jQuery('#linha').append(dado);
-				}		
-				jQuery('.thumbnail').each(function(){
-					$this = jQuery(this);
-					$img = jQuery($this.find('img'));
-					$img.ready(function(){
-						if(!$this.hasClass('in')){
-							$this.addClass('in');
-						}
+					if(dado.length<=0){
+						jQuery("#carregando").css("display","none");
+						temMais=false;
+					}
+					else{
+						jQuery('#carregando').css('display','');
+						jQuery('#linha').append(dado);
+					}		
+					jQuery('.thumbnail').each(function(){
+						$this = jQuery(this);
+						$img = jQuery($this.find('img'));
+						$img.ready(function(){
+							if(!$this.hasClass('in')){
+								$this.addClass('in');
+							}
+						});
 					});
-				});
-				carregando=false;					
-			},'html');
-		 }
-	});
+					carregando=false;					
+				},'html');
+			 }
+		});
+	
+	}
+	catch(ex){
+		
+	}
+
 	
 });
 
@@ -149,9 +156,9 @@ if(!EditarSessao){
 }
 
 EditarSessao.EditarDadosFoto = function(id){
-	var url = EditarSessao.EditarSessao.EditarTextoImagemURL;
+	var url = EditarSessao.EditarTextoImagemURL;
 	url = url +  (url.indexOf('?')>0?'&id=':'?id=')+id;
-	AngelGirls.FrameModal("Editar Texto Imagem", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
+	AngelGirls.FrameModal("Editar Texto Imagem", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormEditarFoto').submit();",270);
 }
 
 EditarSessao.RemoverFoto = function(idParam){
@@ -166,11 +173,13 @@ EditarSessao.PossuiNudes = function(idParam){
 	jQuery.post(EditarSessao.PossuiNudesURL,
 			{id: idParam}, function(){
 		if(jQuery('#PossuiNudes'+idParam).attr('data-valor')=='S'){
-			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart-empty" title="N&atilde;o possui nudes."></span>&nbsp;');
+			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart-empty" title="N&atilde;o possui nudez."></span>&nbsp;');
 			jQuery('#PossuiNudes'+idParam).attr('data-valor','N');
+			EditarSessao.ImagensSemNunes = EditarSessao.ImagensSemNunes+1;
 		}else{
-			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart" title="Possui nudes."></span>&nbsp;');
-			jQuery('#PossuiNudes'+idParam).attr('data-valor','S');			
+			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart" title="Possui nudez."></span>&nbsp;');
+			jQuery('#PossuiNudes'+idParam).attr('data-valor','S');
+			EditarSessao.ImagensSemNunes = EditarSessao.ImagensSemNunes-1;
 		}
 			
 	},'json');

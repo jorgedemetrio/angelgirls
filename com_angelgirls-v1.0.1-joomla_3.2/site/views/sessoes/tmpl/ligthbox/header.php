@@ -1,23 +1,23 @@
 <html>
 	<head>
 		  <link href="<?php echo(JUri::root()); ?>/templates/protostar/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
-		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/angelgirls.css?v=1.0" type="text/css" />
-		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/bootstrap-theme.css?v=1.0" type="text/css" />
-		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/bootstrap.css?v=1.0" type="text/css" />
+		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/angelgirls.css?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/css" />
+		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/bootstrap-theme.css?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/css" />
+		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/css/bootstrap.css?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/css" />
 		  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css" type="text/css" />
 		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/media/system/css/calendar-jos.css" type="text/css"  title="Verde"  media="all" />
-		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/templates/protostar/css/template.css?v=1.0" type="text/css" />
+		  <link rel="stylesheet" href="<?php echo(JUri::root()); ?>/templates/protostar/css/template.css?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/css" />
 		  <script src="<?php echo(JUri::root()); ?>/media/jui/js/jquery.min.js" type="text/javascript"></script>
 		  <script src="<?php echo(JUri::root()); ?>/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>
 		  <script src="<?php echo(JUri::root()); ?>/media/jui/js/jquery.ui.core.min.js" type="text/javascript"></script>
-		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/jquery.mask.min.js?v=1.0" type="text/javascript"></script>
-		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/angelgirls.js?v=1.0" type="text/javascript"></script>
+		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/jquery.mask.min.js?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/javascript"></script>
+		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/angelgirls.js?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/javascript"></script>
 		  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js" type="text/javascript"></script>
-		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/editar_sessao.js?v=1.0" type="text/javascript"></script>
+		  <script src="<?php echo(JUri::root()); ?>/components/com_angelgirls/assets/js/editar_sessao.js?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/javascript"></script>
 		  <script src="<?php echo(JUri::root()); ?>/media/jui/js/bootstrap.min.js" type="text/javascript"></script>
 		  <script src="<?php echo(JUri::root()); ?>/media/system/js/calendar.js" type="text/javascript"></script>
 		  <script src="<?php echo(JUri::root()); ?>/media/system/js/calendar-setup.js" type="text/javascript"></script>
-		  <script src="<?php echo(JUri::root()); ?>/templates/protostar/js/template.js?v=1.0" type="text/javascript"></script>
+		  <script src="<?php echo(JUri::root()); ?>/templates/protostar/js/template.js?v=<?php echo(VERSAO_ANGELGIRLS); ?>" type="text/javascript"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('.hasTooltip').tooltip({"html": true,"container": "body"});
@@ -41,17 +41,6 @@ jQuery(document).ready(function($) {Calendar.setup({
 		document.PathBase="<?php JUri::root() ?>/";
 		document.UrlLogin ="/angelgirls/index.php?option=com_users&view=login";
   </script>
-		<script>
-		jQuery(document).ready(function(){
-			jQuery('#descricao').restrictLength($('#maxlength'));
-			
-			jQuery.validate({
-			    modules : 'security, date, file, html5',
-			    language : ptBRValidation,
-			    decimalSeparator : ','
-			}); 
-		}); 		
-		</script>
 		<link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
 	</head>
 	<body>

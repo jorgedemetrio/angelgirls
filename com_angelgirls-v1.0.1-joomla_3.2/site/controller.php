@@ -1952,6 +1952,87 @@ class AngelgirlsController extends JControllerLegacy{
 		return true;
 	}
 
+	
+	public function salvarAlteracaoFoto(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		
+		$id = JRequest::getInt('id', 0, 'POST');
+		$titulo = JRequest::getVar('titulo', null, 'POST');
+		$metaDescricao = JRequest::getVar('meta_descricao', null, 'POST');
+		$descricao = JRequest::getVar('descricao', null, 'POST');
+		$aplicarTodos = JRequest::getVar('aplicar_todos', 'N', 'POST');
+
+		$erro = false;
+		
+		
+		if($titulo=='' || strlen(trim($titulo))<=5){
+			JError::raiseWarning(100,'Campo "Titulo" &eacute; obrigat&oacute;rio. Minimo de 5 caracteres.');
+			$erro = true;
+		}
+		
+		if($metaDescricao=='' || strlen(trim($metaDescricao))<=5){
+			JError::raiseWarning(100,'Campo "Descri&ccedil;&atilde;o breve" &eacute; obrigat&oacute;rio. Minimo de 5 caracteres.');
+			$erro = true;
+		}
+		
+		if($metaDescricao=='' || strlen(trim($metaDescricao))<=5){
+			JError::raiseWarning(100,'Campo "Descri&ccedil;&atilde;o" &eacute; obrigat&oacute;rio. Minimo de 5 caracteres.');
+			$erro = true;
+		}
+		
+		if($erro){
+			$this->carregarEditarFoto();
+			return;
+		}
+		$query = $db->getQuery ( true );
+		$query->select('id_sessao')
+		->from ('#__angelgirls_sessao as s')
+		->join('INNER','#__angelgirls_foto_sessao as f ON s.id = f.id_sessao')
+		->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+		$db->setQuery ( $query );
+		$sessao = $db->loadObject();
+		
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+		->set(array (
+				$db->quoteName ( 'titulo' ) . ' = ' . $db->quote(trim($titulo)),
+				$db->quoteName ( 'descricao' ) . ' = ' . $db->quote(trim($descricao)),
+				$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote(trim($metaDescricao)),
+				$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+		->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+		
+		
+		if($aplicarTodos!='S'){
+			$query->where ($db->quoteName ( 'id' ) . ' = ' . $id);
+		}
+		else{
+			$query->where ($db->quoteName ( 'id_sessao' ) . ' = ' . $sessao->id_sessao);
+		}
+		
+		
+		$db->setQuery( $query );
+		$db->execute();
+		$this->LogQuery($query);
+
+		
+		
+
+		
+		require_once 'views/sessoes/tmpl/editar_foto.php';
+		if($aplicarTodos=='S'){
+			echo("<script>jQuery('.labelsFotos',parent.document).html('".$titulo."');");
+		}
+		else{
+			echo("<script>jQuery('#labelFoto". $id ."',parent.document).html('".$titulo."');");
+		}
+		echo("parent.document.AngelGirls.FrameModalHide();</script>");
+		exit();
+	}
+	
 	/**
 	 * 
 	 */
@@ -1971,14 +2052,13 @@ class AngelgirlsController extends JControllerLegacy{
 				->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
 		$db->setQuery( $query );
 		$db->execute();
-		$this->LogQuery($queryLog);
+		$this->LogQuery($query);
 		$jsonRetorno='{"ok":"ok"}';
 		
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
 		echo $jsonRetorno;
 		exit();
-		
 	}
 	
 	public function carregarEditarFoto(){
@@ -1987,14 +2067,18 @@ class AngelgirlsController extends JControllerLegacy{
 		$id =  JRequest::getVar('id');
 		
 		$query = $db->getQuery ( true );
-		$query->select('s.area_vip, s.possui_nudes, s.meta_descricao, s.descricao, s.titulo, s.token, f.token_imagem, f.titulo, ')
+		$query->select('f.area_vip, f.possui_nudes, f.meta_descricao, f.descricao, f.titulo, s.token as token_sessao, f.token, f.token_imagem, f.titulo ')
 		->from ('#__angelgirls_sessao as s')
 		->join('INNER','#__angelgirls_foto_sessao as f ON s.id = f.id_sessao')
-		->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
-		->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
-		->where ( $db->quoteName ( 'id' ) . " =  " . $id );
+		->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+		->where ( $db->quoteName ( 'f.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+		->where ( $db->quoteName ( 'f.id_usuario_criador' ) . " =  " . $user->id )
+		->where ( $db->quoteName ( 's.id_usuario_criador' ) . " =  " . $user->id )
+		->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 		$db->setQuery ( $query );
 		$result = $db->loadObject();
+		
+		JRequest::setVar ( 'foto', $result );
 		
 		require_once 'views/sessoes/tmpl/editar_foto.php';
 		exit();
@@ -2006,7 +2090,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public function removerFotoSessaoJson(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
-		$query = $db->getQuery (true);
+		
 	
 		$id  = JRequest::getString ( 'id', null, 'POST' );
 		$jsonRetorno="";
@@ -2067,6 +2151,39 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
+	
+	public function removerSessao(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$id  = JRequest::getString ( 'id', 0);
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+		->set(array (
+				$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+				$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+				->where ($db->quoteName ( 'id_sessao' ) . ' = ' . $id)
+				->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+		$db->setQuery( $query );
+		$db->execute();
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_sessao' ))
+		->set(array (
+				$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+				$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+				->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+				->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+		$db->setQuery( $query );
+		$db->execute();
+		
+		JFactory::getApplication()->enqueueMessage(JText::_('Sess&atilde;o removida com sucesso!'));
+		$this->carregarMinhasSessoes();
+	}
 	
 	
 	/**
