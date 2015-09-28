@@ -152,31 +152,11 @@ EditarSessao.EditarDadosFoto = function(id){
 	
 }
 
-EditarSessao.RemoverFoto = function(id){
-	jQuery.post(EditarSessao.RemoveFotoURL,
-			{id: id}, function(dado){
-		jQuery("#carregando").css("display","none");
-		if(dado.length<=0){
-			jQuery("#carregando").css("display","none");
-			temMais=false;
-		}
-		else{
-			jQuery('#carregando').css('display','');
-			jQuery('#linha').append(dado);
-		}		
-		jQuery('.thumbnail').each(function(){
-			$this = jQuery(this);
-			$img = jQuery($this.find('img'));
-			$img.ready(function(){
-				if(!$this.hasClass('in')){
-					$this.addClass('in');
-				}
-			});
-		});
-		carregando=false;					
-	},'html');
-	
-	jQuery('#ft'+id).remove();
+EditarSessao.RemoverFoto = function(idParam){
+	jQuery.post(EditarSessao.RemoverImagemURL,
+			{id: idParam}, function(){
+		jQuery('#ft'+id).remove();
+	},'text');
 }
 
 

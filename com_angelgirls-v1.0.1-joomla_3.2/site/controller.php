@@ -1945,6 +1945,54 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	/**
+	 * Remover Endereco
+	 */
+	public function removerFotoSessaoJson(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery (true);
+	
+		$id  = JRequest::getString ( 'id', null, 'POST' );
+		$jsonRetorno="";
+	
+		$mensagensErro = "";
+	
+		if(isset($id) && $id!=0){
+			try {
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+				->set(array (
+						$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+						$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+						$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+						->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+				$db->setQuery( $query );
+				if($db->execute()){
+					$jsonRetorno='{"ok":"ok", "menssagem":""}';
+				}
+				else{
+					$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel salvar a informa&ccedil;&atilde;o."}';
+				}
+				$this->LogQuery($query);
+			}catch(Exception $e) {
+				$jsonRetorno='{"ok":"nok", "menssagem":"N&atilde;o foi possivel remover a informa&ccedil;&atilde;o ['.$e->getMessage().':'.$e->getCode().']."}';
+				JLog::add($e->getMessage(), JLog::WARNING);
+			}
+		}
+		else{
+			$jsonRetorno='{"ok":"nok", "menssagem":"Endere&ccedil;o n&atilde;o encontrado."}';
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	
+	/**
 	 *
 	 */
 	public function enviarFotosSessao(){
