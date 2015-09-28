@@ -116,7 +116,7 @@ jQuery(document).ready(function(){
 			
 			carregando = true;
 			jQuery.post(EditarSessao.LoadImagensURL,
-					{posicao: lidos}, function(dado){
+					{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
 				jQuery("#carregando").css("display","none");
 				if(dado.length<=0){
 					jQuery("#carregando").css("display","none");
@@ -149,14 +149,31 @@ if(!EditarSessao){
 }
 
 EditarSessao.EditarDadosFoto = function(id){
-	
+	var url = EditarSessao.EditarSessao.EditarTextoImagemURL;
+	url = url +  (url.indexOf('?')>0?'&id=':'?id=')+id;
+	AngelGirls.FrameModal("Editar Texto Imagem", url, "Salvar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormFigurino').submit();",270);
 }
 
 EditarSessao.RemoverFoto = function(idParam){
+	jQuery('#foto'+idParam).removeClass('in');
 	jQuery.post(EditarSessao.RemoverImagemURL,
 			{id: idParam}, function(){
-		jQuery('#ft'+id).remove();
+		jQuery('#foto'+idParam).remove();
 	},'text');
+}
+
+EditarSessao.PossuiNudes = function(idParam){
+	jQuery.post(EditarSessao.PossuiNudesURL,
+			{id: idParam}, function(){
+		if(jQuery('#PossuiNudes'+idParam).attr('data-valor')=='S'){
+			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart-empty" title="N&atilde;o possui nudes."></span>&nbsp;');
+			jQuery('#PossuiNudes'+idParam).attr('data-valor','N');
+		}else{
+			jQuery('#PossuiNudes'+idParam).html('<span class="glyphicon glyphicon-heart" title="Possui nudes."></span>&nbsp;');
+			jQuery('#PossuiNudes'+idParam).attr('data-valor','S');			
+		}
+			
+	},'json');
 }
 
 

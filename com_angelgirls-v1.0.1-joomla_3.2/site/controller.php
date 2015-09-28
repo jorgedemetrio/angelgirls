@@ -1794,6 +1794,31 @@ class AngelgirlsController extends JControllerLegacy{
 		$this->carregarEditarSessao();
 	}
 	
+	
+	private function MoverImagemoParapastaLixo($ArquivoAntigoApagavel, $dest){
+		if(isset($ArquivoAntigoApagavel) && strlen(trim($ArquivoAntigoApagavel))>0
+				&& JFile::exists (  $dest . $ArquivoAntigoApagavel )){
+			if ((isset( $upload ) && JFile::exists ( $upload ['tmp_name'] ))){
+				$arquivoAntigo = $dest  . DS .  $ArquivoAntigoApagavel;
+				$arquivoAntigoBK = $dest  . DS . 'bk_' . $ArquivoAntigoApagavel;
+				$arquivoAntigoICO = $dest . DS . 'ico_' . $ArquivoAntigoApagavel;
+				$arquivoAntigoTHUMB = $dest  . DS . 'thumb_' . $ArquivoAntigoApagavel;
+				$arquivoAntigoCUBE = $dest  . DS . 'cube_' . $ArquivoAntigoApagavel;
+				if (JFolder::exists ( $arquivoAntigo )) {
+					$trahspath = $dest . DS . 'LIXO'  ;
+					if(!JFolder::exists($trahspath)){
+						JFolder::create($trahspath);
+					}
+					JFile::move($arquivoAntigo,  $trahspath . DS);
+					JFile::move($arquivoAntigoBK,  $trahspath . DS);
+					JFile::move($arquivoAntigoICO,  $trahspath . DS);
+					JFile::move($arquivoAntigoTHUMB,  $trahspath . DS);
+					JFile::move($arquivoAntigoCUBE,  $trahspath . DS);
+				}
+			}
+		}
+	}
+	
 
 	private function SalvarUploadArquivo($upload, $dest, $arquivo, $tabela=null, $campo=null, $id = 0, $gerarImagens=true, $ComLogo=true, $ArquivoAntigoApagavel=null){
 		$db = JFactory::getDbo();
@@ -1804,25 +1829,8 @@ class AngelgirlsController extends JControllerLegacy{
 		//    FULL  2000x2000
 		//    BACKUP				bk
 		
-		if(isset($ArquivoAntigoApagavel) && strlen(trim($ArquivoAntigoApagavel))>0 
-				&& JFile::exists (  $dest . $ArquivoAntigoApagavel )){		
-			if ((isset( $upload ) && JFile::exists ( $upload ['tmp_name'] ))){
-				$arquivoAntigo = $dest  . DS .  $ArquivoAntigoApagavel;
-				$arquivoAntigoBK = $dest  . DS . 'bk_' . $ArquivoAntigoApagavel;
-				$arquivoAntigoICO = $dest . DS . 'ico_' . $ArquivoAntigoApagavel;
-				$arquivoAntigoTHUMB = $dest  . DS . 'thumb_' . $ArquivoAntigoApagavel;
-				if (JFolder::exists ( $arquivoAntigo )) {
-					$trahspath = $dest . DS . 'LIXO'  ;
-					if(!JFolder::exists($trahspath)){
-						JFolder::create($trahspath);
-					}
-					JFile::move($arquivoAntigo,  $dest  . DS . 'LIXO' . DS);
-					JFile::move($arquivoAntigoBK,  $dest . DS . 'LIXO' . DS);
-					JFile::move($arquivoAntigoICO,  $dest . DS . 'LIXO' . DS);
-					JFile::move($arquivoAntigoTHUMB,  $dest . DS . 'LIXO' . DS);
-				}
-			}
-		}
+
+		$this->MoverImagemoParapastaLixo($ArquivoAntigoApagavel, $dest);
 		
 		
 		$fileName = $upload ['name'];
@@ -1943,6 +1951,54 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		return true;
 	}
+
+	/**
+	 * 
+	 */
+	public function alterarPossuiNudesFotoJSon(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$id =  JRequest::getInt('id');
+		
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
+		->set(array (
+				$db->quoteName ( 'possui_nudes' ) . " = CASE possui_nudes WHEN 'S' THEN 'N' ELSE 'S' END ",
+				$db->quoteName ( 'id_usuario_alterador') . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' = NOW()  ',
+				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())))
+				->where ($db->quoteName ( 'id' ) . ' = ' . $id)
+				->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+		$db->setQuery( $query );
+		$db->execute();
+		$this->LogQuery($queryLog);
+		$jsonRetorno='{"ok":"ok"}';
+		
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+		
+	}
+	
+	public function carregarEditarFoto(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();	
+		$id =  JRequest::getVar('id');
+		
+		$query = $db->getQuery ( true );
+		$query->select('s.area_vip, s.possui_nudes, s.meta_descricao, s.descricao, s.titulo, s.token, f.token_imagem, f.titulo, ')
+		->from ('#__angelgirls_sessao as s')
+		->join('INNER','#__angelgirls_foto_sessao as f ON s.id = f.id_sessao')
+		->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+		->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
+		->where ( $db->quoteName ( 'id' ) . " =  " . $id );
+		$db->setQuery ( $query );
+		$result = $db->loadObject();
+		
+		require_once 'views/sessoes/tmpl/editar_foto.php';
+		exit();
+	}
 	
 	/**
 	 * Remover Endereco
@@ -1959,6 +2015,27 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		if(isset($id) && $id!=0){
 			try {
+				
+				
+
+				$query = $db->getQuery ( true );
+				$query->select('s.token, f.token_imagem')
+				->from ('#__angelgirls_sessao as s')
+				->join('INNER','#__angelgirls_foto_sessao as f ON s.id = f.id_sessao')
+				->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+				->where ( $db->quoteName ( 'f.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . $db->quote(StatusDado::REPROVADO) . ') ' )
+				->where ( $db->quoteName ( 'f.id_usuario_criador' ) . " =  " . $user->id )
+				->where ( $db->quoteName ( 's.id_usuario_criador' ) . " =  " . $user->id )
+				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
+				$db->setQuery ( $query );
+				$result = $db->loadObject();
+				
+				if(isset($result)){
+					$this->MoverImagemoParapastaLixo($result->token_imagem, PATH_IMAGEM_SESSOES . DS . $result->token);
+				}
+				
+				
+				
 				$query = $db->getQuery ( true );
 				$query->update($db->quoteName('#__angelgirls_foto_sessao' ))
 				->set(array (
@@ -2232,10 +2309,15 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$posicao = JRequest::getString( 'posicao');
 		
-		$results = $this->runFotoSessao($user, $posicao, $id,$this::LIMIT_DEFAULT );
+		$results = $this->runFotoSessao($user, $posicao, $id, $this::LIMIT_DEFAULT );
 		
 		JRequest::setVar('fotos', $results);
-		JRequest::setVar('sessao', $this->getSessaoById($id));
+		
+		
+		$sessao = $this->getSessaoById($id,true);
+		
+
+		JRequest::setVar('sessao', $sessao);
 		
 		
 		
@@ -2251,7 +2333,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		
 		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`descricao`,`s`.`meta_descricao`, `s`.`audiencia_gostou`,s.token_imagem, s.token,
+		$query->select('`s`.`possui_nudes`, `s`.`area_vip`, `s`.`id`,`s`.`titulo`,`s`.`descricao`,`s`.`meta_descricao`, `s`.`audiencia_gostou`,s.token_imagem, s.token,
 			CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_tema`, `s`.`id_sessao` as `sessao`')
 			->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 's' ) )
 			->join ( 'LEFT', '(SELECT data_criado, id_foto FROM #__angelgirls_vt_foto_sessao WHERE id_usuario='.$user->id.') vt_sessao ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName('vt_sessao.id_foto'))

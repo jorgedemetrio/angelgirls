@@ -89,6 +89,8 @@ JFactory::getDocument()->addScriptDeclaration('
 		EditarSessao.FigurinoURL = "' .JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false).'";
 		EditarSessao.LoadImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false).'";
 		EditarSessao.RemoverImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=removerFotoSessaoJson',false).'";
+		EditarSessao.EditarTextoImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarFoto',false).'";
+		EditarSessao.PossuiNudesURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=alterarPossuiNudesFotoJSon',false).'";
 		
 		');
 
@@ -184,13 +186,14 @@ margin-right:5px;
 			</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button class="btn" type="button"
-				onclick="JavaScript:window.history.back(-1);">
-				<span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
-			</button>
+<!-- 			<button class="btn" type="button" -->
+<!-- 				onclick="JavaScript:window.history.back(-1);"> -->
+<!-- 				<span class="hidden-phone"><?php echo JText::_('Voltar'); ?></span> -->
+<!-- 			</button> -->
 <?php if(isset($id) && $id != 0) :?>
 			<button class="btn btn-danger" type="button">
-				<span class="hidden-phone"><?php echo JText::_('Apagar'); ?></span>
+				<span class="hidden-phone"><?php echo JText::_('Apagar'); ?><span class="hidden-tablet">
+						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 			</button>
 <?php endif;?>
@@ -641,6 +644,8 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 </form>
 <form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarFotosSessao')); ?>"
 	id="enviar" method="post" enctype="multipart/form-data"></form>
+
+
 <?php if(isset($this->item) && $this->item->id != 0) :?>
 <h2>Fotos</h2>
 <div class="row" id="linha">
