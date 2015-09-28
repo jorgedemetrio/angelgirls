@@ -8,6 +8,14 @@
 }
 
 
+.btn-foto{
+	height: 30px; 
+	width: 30px; 
+	margin: 0px 5px 0px 0px; 
+	vertical-align: middle; 
+	text-align: center; 
+}
+
 .form-control:valid { }
 .form-control:invalid {border:1px solid #990000; }
 

@@ -2187,7 +2187,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$results = $this->runFotoSessao($user, $posicao, $id,$this::LIMIT_DEFAULT );
 		
 		JRequest::setVar('fotos', $results);
-		JRequest::setVar('sessao', $this->getSessaoById($db));
+		JRequest::setVar('sessao', $this->getSessaoById($id));
 		
 		
 		
