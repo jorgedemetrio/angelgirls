@@ -2292,152 +2292,171 @@ class AngelgirlsController extends JControllerLegacy{
 		$descricao =  JRequest::getString('descricao',null,'POST');
 		$metaDescricao =  JRequest::getString('meta_descricao',null,'POST');
 		$tipo =  JRequest::getString('tipo',null,'POST');
-		
+		$video = $foto_perfil = $_FILES ['video'];
+		$mensagem = '';
 		
 
+		if(strlen(trim($descricao))<5){
+			$mensagem = $mensagem . "O campo \"Descri&ccedil;&atilde;o\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+		}
+		if(strlen(trim($titulo))<5){
+			$mensagem = $mensagem . "O campo \"Titulo\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+		}
+		if(strlen(trim($metaDescricao))<5){
+			$mensagem = $mensagem . "O campo \"Descri&ccedil;&atilde;o Breve\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+		}
+		if(strlen(trim($tipo))==''){
+			$mensagem = $mensagem . "O campo \"Tipo\" &eacute; um campo obrigat&oacute;rio!<br/>";
+		}
+		
+		if((!isset($idSessao) || $idSessao == '' || $idSessao==0 ) && (!isset($video) || !JFile::exists($video ['tmp_name']))) {
+			$mensagem = $mensagem . "O campo \"V&iacute;deo\" &eacute; um campo obrigat&oacute;rio!<br/>";
+		}
 		
 		
 		
-		$imagem = $foto_perfil = $_FILES ['video'];
 	
 		$jsonRetorno = "";
 	
 
 				
-			
-			
-		if(isset($idVideo) && $idVideo > 0){
-			$query = $db->getQuery ( true );
-			$query->update ( $db->quoteName ( '#__angelgirls_video_sessao' ) )->set ( array (
-					$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
-					$db->quoteName ( 'titulo' ) . ' = ' . $db->quote($titulo),
-					$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
-					$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
-					$db->quoteName ( 'tipo' ) . ' = ' . $db->quote($tipo),
-					$db->quoteName ( 'host_ip_alterador' ) . ' = ' .$db->quote($this->getRemoteHostIp())
-			))
-			->where ($db->quoteName ( 'id' ) . ' = ' . $idVideo)
-			->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
-			$db->setQuery ( $query );
-			$db->execute ();
-			$this->LogQuery($query);
-			
-			$jsonRetorno= '{"ok":"ok","mensagem":""}';
+		if(strelen(trim($mensagem))>0){
+			$jsonRetorno= '{"ok":"nok","mensagem":"'.$mensagem.'"}';
 		}
-		else{
-
-			if (isset($imagem) && JFile::exists($imagem ['tmp_name'])) {
+		else{	
 				
+			if(isset($idVideo) && $idVideo > 0){
 				$query = $db->getQuery ( true );
-				$query->select('CASE isnull(max(ordem)) WHEN 0 THEN max(ordem)+1 ELSE 1 END AS ORDEM ')
-				->from (  '#__angelgirls_video_sessao')
-				->where ('id_sessao  =  ' . $idSessao);
+				$query->update ( $db->quoteName ( '#__angelgirls_video_sessao' ) )->set ( array (
+						$db->quoteName ( 'data_alterado' ) . ' = NOW() ',
+						$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+						$db->quoteName ( 'titulo' ) . ' = ' . $db->quote($titulo),
+						$db->quoteName ( 'descricao' ) . ' = ' . $db->quote($descricao),
+						$db->quoteName ( 'meta_descricao' ) . ' = ' . $db->quote($metaDescricao),
+						$db->quoteName ( 'tipo' ) . ' = ' . $db->quote($tipo),
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' .$db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id' ) . ' = ' . $idVideo)
+				->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
 				$db->setQuery ( $query );
-				$max = $db->loadObject();
+				$db->execute ();
+				$this->LogQuery($query);
 				
-				
-				$query = $db->getQuery ( true );
-				$query->select('token')
-				->from ('#__angelgirls_sessao')
-				->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
-				->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
-				->where ( $db->quoteName ( 'id' ) . " =  " . $idSessao );
-				$db->setQuery ( $query );
-				$result = $db->loadObject();
-		
-				if(isset($result) && isset($result->token) && strlen(trim($result->token))>=1){
-					$token = "";
-					$contador=0;
-					do{
-						$token = $this->GerarToken($imagem['name'] , ($contador.$idSessao.intval(date('su')) ), true, false);
-						$query = $db->getQuery ( true );
-						$query->select('id')
-						->from (  '#__angelgirls_video_sessao')
-						->where ('token  =  ' . $db->quote($token));
-						$db->setQuery ( $query );
-						$results = $db->loadObjectList();
-						++$contador;
-					}while(isset($results) && isset($results->id) && $results->id > 0 );
-		
-		
-		
-					$NomeArquivoArray = explode ( '.', $imagem['name'] );
-		
-		
-		
-					$query = $db->getQuery ( true );
-					$query->insert( $db->quoteName ( '#__angelgirls_video_sessao' ) )
-					->columns(array(
-						$db->quoteName ( 'status_dado' ),
-						$db->quoteName ( 'data_criado' ),
-						$db->quoteName ( 'id_usuario_criador' ),
-						$db->quoteName ( 'data_alterado' ),
-						$db->quoteName ( 'id_usuario_alterador' ),
-						$db->quoteName ( 'titulo' ),
-						$db->quoteName ( 'meta_descricao' ),
-						$db->quoteName ( 'descricao' ),
-						$db->quoteName ( 'tipo' ),
-						$db->quoteName ( 'token' ),
-						$db->quoteName ( 'id_sessao' ),
-						$db->quoteName ( 'ordem' ),
-						$db->quoteName ( 'host_ip_criador' ),
-						$db->quoteName ( 'host_ip_alterador' )))
-					->values ( implode ( ',', array (
-							'\'NOVO\'',
-							'NOW()',
-							$user->id,
-							'NOW()',
-							$user->id,
-							$db->quote($titulo),
-							$db->quote($metaDescricao),
-							$db->quote($descricao),
-							$db->quote($tipo),
-							$db->quote($token),
-							$idSessao,
-							$max->ORDEM,
-							$db->quote($this->getRemoteHostIp()),
-							$db->quote($this->getRemoteHostIp())
-					)));
-					$db->setQuery( $query );
-					$db->execute();
-					$idVideo = $db->insertid();
-					$this->LogQuery($query);
-						
-						
-					$arquivo = $this->GerarNovoNomeArquivo($imagem['name'], $idVideo );
-					
-					
-					
-					$query = $db->getQuery ( true );
-					$query->update ( $db->quoteName ( '#__angelgirls_video_sessao' ) )
-						->set(array ($db->quoteName ( 'arquivo' ) . ' = ' . $db->quote($arquivo)))
-					->where ($db->quoteName ( 'id' ) . ' = ' . $idVideo)
-					->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
-					$db->setQuery ( $query );
-					$db->execute ();
-					$this->LogQuery($query);
-					
-					
-					
-						
-					$this->SalvarUploadVideo($imagem, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo);
-	
-
-//					echo($arquivo);exit();
-	
-	
-					$jsonRetorno= '{"ok":"ok","mensagem":""}';
-				}
-				else{
-					$jsonRetorno= '{"ok":"nok","mensagem":"Sess&atilde;o n&atilde;o localizada, ou n&atilde;o tem permiss&atilde;o para isso."}';
-				}
+				$jsonRetorno= '{"ok":"ok","mensagem":""}';
 			}
 			else{
-				$jsonRetorno= '{"ok":"nok","mensagem":"Falha ao enviar o arquivo."}';
+	
+				if (isset($video) && JFile::exists($video ['tmp_name'])) {
+					
+					$query = $db->getQuery ( true );
+					$query->select('CASE isnull(max(ordem)) WHEN 0 THEN max(ordem)+1 ELSE 1 END AS ORDEM ')
+					->from (  '#__angelgirls_video_sessao')
+					->where ('id_sessao  =  ' . $idSessao);
+					$db->setQuery ( $query );
+					$max = $db->loadObject();
+					
+					
+					$query = $db->getQuery ( true );
+					$query->select('token')
+					->from ('#__angelgirls_sessao')
+					->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::PUBLICADO) . ',' . $db->quote(StatusDado::REPROVADO) . ') ' )
+					->where ( $db->quoteName ( 'id_usuario_criador' ) . " =  " . $user->id )
+					->where ( $db->quoteName ( 'id' ) . " =  " . $idSessao );
+					$db->setQuery ( $query );
+					$result = $db->loadObject();
+			
+					if(isset($result) && isset($result->token) && strlen(trim($result->token))>=1){
+						$token = "";
+						$contador=0;
+						do{
+							$token = $this->GerarToken($video['name'] , ($contador.$idSessao.intval(date('su')) ), true, false);
+							$query = $db->getQuery ( true );
+							$query->select('id')
+							->from (  '#__angelgirls_video_sessao')
+							->where ('token  =  ' . $db->quote($token));
+							$db->setQuery ( $query );
+							$results = $db->loadObjectList();
+							++$contador;
+						}while(isset($results) && isset($results->id) && $results->id > 0 );
+			
+			
+			
+						$NomeArquivoArray = explode ( '.', $video['name'] );
+			
+			
+			
+						$query = $db->getQuery ( true );
+						$query->insert( $db->quoteName ( '#__angelgirls_video_sessao' ) )
+						->columns(array(
+							$db->quoteName ( 'status_dado' ),
+							$db->quoteName ( 'data_criado' ),
+							$db->quoteName ( 'id_usuario_criador' ),
+							$db->quoteName ( 'data_alterado' ),
+							$db->quoteName ( 'id_usuario_alterador' ),
+							$db->quoteName ( 'titulo' ),
+							$db->quoteName ( 'meta_descricao' ),
+							$db->quoteName ( 'descricao' ),
+							$db->quoteName ( 'tipo' ),
+							$db->quoteName ( 'token' ),
+							$db->quoteName ( 'id_sessao' ),
+							$db->quoteName ( 'ordem' ),
+							$db->quoteName ( 'host_ip_criador' ),
+							$db->quoteName ( 'host_ip_alterador' )))
+						->values ( implode ( ',', array (
+								'\'NOVO\'',
+								'NOW()',
+								$user->id,
+								'NOW()',
+								$user->id,
+								$db->quote($titulo),
+								$db->quote($metaDescricao),
+								$db->quote($descricao),
+								$db->quote($tipo),
+								$db->quote($token),
+								$idSessao,
+								$max->ORDEM,
+								$db->quote($this->getRemoteHostIp()),
+								$db->quote($this->getRemoteHostIp())
+						)));
+						$db->setQuery( $query );
+						$db->execute();
+						$idVideo = $db->insertid();
+						$this->LogQuery($query);
+							
+							
+						$arquivo = $this->GerarNovoNomeArquivo($video['name'], $idVideo );
+						
+						
+						
+						$query = $db->getQuery ( true );
+						$query->update ( $db->quoteName ( '#__angelgirls_video_sessao' ) )
+							->set(array ($db->quoteName ( 'arquivo' ) . ' = ' . $db->quote($arquivo)))
+						->where ($db->quoteName ( 'id' ) . ' = ' . $idVideo)
+						->where ($db->quoteName ( 'id_usuario_criador' ) . ' = ' . $user->id);
+						$db->setQuery ( $query );
+						$db->execute ();
+						$this->LogQuery($query);
+						
+						
+						
+							
+						$this->SalvarUploadVideo($video, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo);
+		
+	
+	//					echo($arquivo);exit();
+		
+		
+						$jsonRetorno= '{"ok":"ok","mensagem":""}';
+					}
+					else{
+						$jsonRetorno= '{"ok":"nok","mensagem":"Sess&atilde;o n&atilde;o localizada, ou n&atilde;o tem permiss&atilde;o para isso."}';
+					}
+				}
+				else{
+					$jsonRetorno= '{"ok":"nok","mensagem":"Falha ao enviar o arquivo."}';
+				}
 			}
 		}
-
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($jsonRetorno));
 		echo $jsonRetorno;

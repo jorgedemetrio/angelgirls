@@ -196,6 +196,32 @@ EditarSessao.RecarregarVideos = function(){
 
 
 EditarSessao.SalvarVideo = function(idParam){
+
+	var mensagemErro='';
+	
+    if(jQuery('#descricao_video').val().trim()=='' || jQuery('#descricao_video').val().trim().length<5){
+    	mensagemErro+="O campo \"Descri&ccedil;&atilde;o\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+    	
+    }
+    if(jQuery('#titulo_video').val().trim()=='' || jQuery('#titulo_video').val().trim().length<5){
+    	mensagemErro+="O campo \"Titulo\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+    }
+    if(jQuery('#meta_descricao_video').val().trim()=='' || jQuery('#meta_descricao_video').val().trim().length<5){
+    	mensagemErro+="O campo \"Descri&ccedil;&atilde;o Breve\" &eacute; um campo obrigat&oacute;rio! E deve conter no minimo 5 caracteres.<br/>";
+    }
+    if(jQuery('#tipo_video').val().trim()==''){
+    	mensagemErro+="O campo \"Tipo\" &eacute; um campo obrigat&oacute;rio!<br/>";
+    }
+    
+    if(jQuery('#id_video').val().trim()=='' && jQuery('#video').val()==''){
+    	mensagemErro+="O campo \"V&iacute;deo\" &eacute; um campo obrigat&oacute;rio!<br/>";
+    }
+    
+    if(mensagemErro.length>0){
+    	alert(mensagemErro);
+    	return;
+    }
+	
 	
     var fd = new FormData();
     fd.append('video', document.getElementById('video').files[0]);
@@ -205,6 +231,9 @@ EditarSessao.SalvarVideo = function(idParam){
     fd.append('titulo', jQuery('#titulo_video').val());
     fd.append('meta_descricao', jQuery('#meta_descricao_video').val());
     fd.append('tipo', jQuery('#tipo_video').val());
+    
+    
+
     
     AngelGirls.Processando().show();
     jQuery.ajax({
@@ -217,12 +246,22 @@ EditarSessao.SalvarVideo = function(idParam){
         data: fd,
 	    success: function(data){
 	    	AngelGirls.Processando().hide();
-			EditarSessao.RecarregarVideos();		
-			EditarSessao.LimparFormVideo();                       
+	    	if(data.ok=='ok'){
+	    		EditarSessao.RecarregarVideos();		
+				EditarSessao.LimparFormVideo();
+	    	}
+	    	else{
+	    		alert(data.mensagem);
+	    	}
 	    }  
 	}); 
 
 }
+
+
+EditarSessao.VerificarHabilitacaoPublicacao = function(){
+	
+} 
 
 
 EditarSessao.EditarVideo = function(id,titulo,tipo,meta_descricao,descricao){
