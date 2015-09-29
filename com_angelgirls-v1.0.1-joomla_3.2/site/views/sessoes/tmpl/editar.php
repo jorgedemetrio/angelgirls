@@ -638,11 +638,52 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 				</div>
 			</div>
 		</div>
-		<div id="videos" class="tab-pane fade in" style="height: 210px;">
+		<div id="videos" class="tab-pane fade in" style="height: 300px;">
+						<div class="btn-group pull-right" role="group">
+							<div class="btn-group" role="group">
+								<button  class="btn btn-danger fade" type="button" id="btnCancelarSalvarVideo" name="btnCancelarSalvarVideo" title="Cancelar altera&ccedil;&atilde;o de  video"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
+									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								</button>
+								<button class="btn btn-success fade" type="button" id="btnSalvarVideo" name="btnSalvarVideo" title="Salvar altera&ccedil;&atilde;o de video"><span class="hidden-phone">Salvar<span class="hidden-tablet"> v&iacute;deo</span></span>
+									<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+								</button>
+								<button class="btn btn-success fade in" type="button" id="btnAdicionarVideo" name="btnAdicionarVideo" title="Adicionar video novo"><span class="hidden-phone"><span class="hidden-tablet">Emviar</span> v&iacute;deo</span>
+									<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
 			<h2>V&iacute;deo e Making Ofs</h2>
 			<!-- 			https://developers.google.com/youtube/player_parameters?hl=pt-br -->
 			<!-- 			https://developers.google.com/youtube/v3/code_samples/?hl=pt-br -->
 			<!-- https://developer.vimeo.com/ -->
+			<input type="hidden" name="id_video" id="id_video"/>
+				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-6">
+					<label class="control-label" for="titulo_video"><?php echo JText::_('Titulo'); ?> *</label>
+					<input class="form-control" 
+						type="text" name="titulo_video"  id="titulo_video" maxlength="250"
+						style=" width:  90%" />
+				</div>
+				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
+					<label class="control-label" for="video"><?php echo JText::_('Arquivo'); ?> * <small>(Apenas MP4)</small> </label>
+					<input class="form-control" 
+						type="file" name="video"  id="video"
+						style=" width:  90%" />
+				</div>
+				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
+					<label class="control-label" for="tipoVideo"><?php echo JText::_('Tipo'); ?> *</label>
+					<select id="tipoVideo" name="tipoVideo">
+						<option></option>
+						<option value='MAKINGOF'>MakingOf</option>
+						<option value='AUTORIZACAOMODELO'>Modelo autorizando a sess&atilde;o</option>
+						<option value='OUTRO'>Outro</option>
+					</select>
+				</div>
+				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<label class="control-label" for="descricao_video"><?php echo JText::_('Descri&ccedil;&atilde;o'); ?></label>
+					<textarea rows="2" cols="3" name="descricao_video" id="descricao_video" style=" width:  90%"></textarea>
+				</div>
+			
+<?php 		require_once 'lista_videos.php';	?>
 		</div>
 	</div>
 </form>

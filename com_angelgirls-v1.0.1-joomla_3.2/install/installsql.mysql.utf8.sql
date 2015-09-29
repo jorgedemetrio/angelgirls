@@ -405,8 +405,12 @@ CREATE TABLE `#__angelgirls_video_sessao` (
 	`id_youtube` VARCHAR(250),
 	`id_vimeo` VARCHAR(250),
 	`url_vimeo` VARCHAR(250),
-	`url_vimeo` VARCHAR(250),
-	`makingof` ENUM('S','N') DEFAUL 'S',
+	`arquivo` VARCHAR(25),
+	`token` VARCHAR(25),
+	`ordem` int,
+	`descricao` TEXT NULL , 
+	`meta_descricao` VARCHAR(250) NOT NULL , 
+	`tipo` ENUM('MAKINGOF','AUTORIZACAOMODELO','OUTRO') DEFAULT 'MAKINGOF',
 	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 	`id_usuario_criador` INT NOT NULL , 
 	`id_usuario_alterador` INT NOT NULL , 
@@ -708,6 +712,7 @@ CREATE TABLE `#__angelgirls_vt_fotografo` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_fotografo`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -717,6 +722,7 @@ CREATE TABLE `#__angelgirls_vt_sessao` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_sessao`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -725,6 +731,7 @@ CREATE TABLE `#__angelgirls_vt_modelo` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_modelo`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -733,9 +740,18 @@ CREATE TABLE `#__angelgirls_vt_foto_sessao` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_foto`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
+CREATE TABLE `#__angelgirls_vt_video_sessao` ( 
+	`id_video` INT NOT NULL, 
+	`id_usuario` INT NOT NULL, 
+	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
+	PRIMARY KEY(`id_video`,`id_usuario`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `#__angelgirls_vt_equipe` ( 
@@ -743,6 +759,7 @@ CREATE TABLE `#__angelgirls_vt_equipe` (
 	`id_usuario` INT NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
 	`data_criado` DATETIME NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_equipe`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -753,6 +770,7 @@ CREATE TABLE `#__angelgirls_vt_post` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_post`,`id_usuario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -761,6 +779,7 @@ CREATE TABLE `#__angelgirls_vt_comentario_post` (
 	`id_usuario` INT NOT NULL, 
 	`data_criado` DATETIME NOT NULL,
 	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
 	PRIMARY KEY(`id_usuario`,`id_comentario`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
@@ -770,8 +789,9 @@ CREATE TABLE `#__query_logs` (
 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
 		`query` text NOT NULL,
 		`host_ip` varchar(20) NOT NULL,
-		`id_usuario` INT NOT NULL , 
-		`data` DATETIME NOT NULL  
+		`id_usuario`  NULL , 
+		`data` DATETIME NOT NULL ,
+		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 

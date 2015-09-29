@@ -1484,12 +1484,9 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->logado();
 			return;
 		}
-		JRequest::setVar ('modelos', $this->getAllModelos() );
+
 		
-		JRequest::setVar ('fotografos', $this->getAllFotografos() );
-		JRequest::setVar ('temas', $this->getAllTemas());
-		JRequest::setVar ('figurinos', $this->getAllFigurinos());
-		JRequest::setVar ('locacoes', $this->getAllLocacoes());
+		
 		
 		JRequest::setVar ('perfil', $this->getPerfilLogado() );
 		
@@ -1508,11 +1505,21 @@ class AngelgirlsController extends JControllerLegacy{
 			return;
 		}
 		
+		
+		JRequest::setVar ('modelos', $this->getAllModelos() );
+		
+		JRequest::setVar ('fotografos', $this->getAllFotografos() );
+		JRequest::setVar ('temas', $this->getAllTemas());
+		JRequest::setVar ('figurinos', $this->getAllFigurinos());
+		JRequest::setVar ('locacoes', $this->getAllLocacoes());
+		
+		
 		JRequest::setVar ('sessao', $sessao);
 		
-		
-		
 		JRequest::setVar ( 'fotos', $this->runFotoSessao($user, 0, $id, $this::LIMIT_DEFAULT) );
+		JRequest::setVar ( 'videos', $this->runVideosSessao($user, $id) );
+		
+		 ;
 		
 		JRequest::setVar('view', 'sessoes');
 		JRequest::setVar('layout', 'editar');
@@ -1796,26 +1803,41 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	private function MoverImagemoParapastaLixo($ArquivoAntigoApagavel, $dest){
+
+		
+		
 		if(isset($ArquivoAntigoApagavel) && strlen(trim($ArquivoAntigoApagavel))>0
-				&& JFile::exists (  $dest . $ArquivoAntigoApagavel )){
-			if ((isset( $upload ) && JFile::exists ( $upload ['tmp_name'] ))){
+				&& JFile::exists (  $dest . DS . $ArquivoAntigoApagavel )){
+
 				$arquivoAntigo = $dest  . DS .  $ArquivoAntigoApagavel;
 				$arquivoAntigoBK = $dest  . DS . 'bk_' . $ArquivoAntigoApagavel;
 				$arquivoAntigoICO = $dest . DS . 'ico_' . $ArquivoAntigoApagavel;
 				$arquivoAntigoTHUMB = $dest  . DS . 'thumb_' . $ArquivoAntigoApagavel;
 				$arquivoAntigoCUBE = $dest  . DS . 'cube_' . $ArquivoAntigoApagavel;
-				if (JFolder::exists ( $arquivoAntigo )) {
-					$trahspath = $dest . DS . 'LIXO'  ;
-					if(!JFolder::exists($trahspath)){
-						JFolder::create($trahspath);
-					}
-					JFile::move($arquivoAntigo,  $trahspath . DS);
-					JFile::move($arquivoAntigoBK,  $trahspath . DS);
-					JFile::move($arquivoAntigoICO,  $trahspath . DS);
-					JFile::move($arquivoAntigoTHUMB,  $trahspath . DS);
-					JFile::move($arquivoAntigoCUBE,  $trahspath . DS);
+				
+				
+				$trahspath = $dest . DS . 'LIXO'  ;
+				if(!JFolder::exists($trahspath)){
+					JFolder::create($trahspath);
 				}
-			}
+
+				if(JFile::exists ($arquivoAntigoBK)){
+					JFile::move($arquivoAntigoBK,  $trahspath . DS . 'bk_' . $ArquivoAntigoApagavel);
+				}
+				if(JFile::exists ($arquivoAntigoICO)){
+					JFile::move($arquivoAntigoICO,  $trahspath . DS . 'ico_' . $ArquivoAntigoApagavel);
+				}
+				if(JFile::exists ($arquivoAntigoTHUMB)){
+					JFile::move($arquivoAntigoTHUMB,  $trahspath . DS . 'thumb_' . $ArquivoAntigoApagavel);
+				}
+				if(JFile::exists ($arquivoAntigoCUBE)){
+					JFile::move($arquivoAntigoCUBE,  $trahspath . DS . 'cube_' . $ArquivoAntigoApagavel);
+				}
+				if(JFile::exists ($arquivoAntigo)){
+					JFile::move($arquivoAntigo,  $trahspath . DS .  $ArquivoAntigoApagavel);
+				}
+				
+			
 		}
 	}
 	
@@ -2115,7 +2137,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$result = $db->loadObject();
 				
 				if(isset($result)){
-					$this->MoverImagemoParapastaLixo($result->token_imagem, PATH_IMAGEM_SESSOES . DS . $result->token);
+					$this->MoverImagemoParapastaLixo($result->token_imagem, PATH_IMAGEM_SESSOES . $result->token);
 				}
 				
 				
@@ -2444,6 +2466,29 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();	
 	}
 	
+	
+	
+	
+	
+	
+	private function runVideosSessao($user, $iSessao){
+		$db = JFactory::getDbo ();
+		
+		$query = $db->getQuery ( true );
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`descricao`, `s`.`meta_descricao`, `s`.`id_sessao`,`s`.`url_youtube`,`s`.`id_youtube`,`s`.`id_vimeo`,
+				`s`.`url_vimeo`,`s`.`arquivo`,`s`.`token`,`s`.`tipo`,
+			CASE isnull(`vt_video`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_tema`, `s`.`id_sessao` as `sessao`')
+				->from ( $db->quoteName ( '#__angelgirls_video_sessao', 's' ) )
+				->join ( 'LEFT', '(SELECT data_criado, id_video FROM #__angelgirls_vt_video_sessao WHERE id_usuario='.$user->id.') vt_video ON ' . $db->quoteName ( 's.id' ) . ' = ' . $db->quoteName('vt_video.id_video'))
+				->where ( $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ') ' )
+				->where ( $db->quoteName ( 's.id_sessao' ) . " =  " . $iSessao);
+		$query->order('`s`.`ordem`');
+		$db->setQuery ( $query );
+	
+		$results = $db->loadObjectList();
+		//JRequest::setVar ( 'fotos', $results );
+		return $results;
+	}
 
 	
 	private function runFotoSessao($user, $posicao, $iSessao, $limit = 0 ){
