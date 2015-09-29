@@ -92,6 +92,11 @@ JFactory::getDocument()->addScriptDeclaration('
 		EditarSessao.RemoverImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=removerFotoSessaoJson',false).'";
 		EditarSessao.EditarTextoImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarFoto',false).'";
 		EditarSessao.PossuiNudesURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=alterarPossuiNudesFotoJSon',false).'";
+		EditarSessao.RemoverVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=removerVideoSessaoJson',false).'";
+		EditarSessao.SalvarVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarVideoSessao',false).'";
+		EditarSessao.CarregarVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarVideosContinuaHtml',false).'";
+		EditarSessao.VerVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=verVideo',false).'";
+				
 		
 		');
 
@@ -647,7 +652,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 								<button class="btn btn-success fade" type="button" id="btnSalvarVideo" name="btnSalvarVideo" title="Salvar altera&ccedil;&atilde;o de video"><span class="hidden-phone">Salvar<span class="hidden-tablet"> v&iacute;deo</span></span>
 									<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
 								</button>
-								<button class="btn btn-success fade in" type="button" id="btnAdicionarVideo" name="btnAdicionarVideo" title="Adicionar video novo"><span class="hidden-phone"><span class="hidden-tablet">Emviar</span> v&iacute;deo</span>
+								<button class="btn btn-success fade in" type="button" id="btnAdicionarVideo" name="btnAdicionarVideo" title="Adicionar video novo"><span class="hidden-phone"><span class="hidden-tablet">Enviar</span> v&iacute;deo</span>
 									<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 								</button>
 							</div>
@@ -659,31 +664,37 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 			<input type="hidden" name="id_video" id="id_video"/>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-6">
 					<label class="control-label" for="titulo_video"><?php echo JText::_('Titulo'); ?> *</label>
-					<input class="form-control" 
-						type="text" name="titulo_video"  id="titulo_video" maxlength="250"
+					<input class="form-control" type="text" name="titulo_video"  id="titulo_video" maxlength="250"
 						style=" width:  90%" />
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
 					<label class="control-label" for="video"><?php echo JText::_('Arquivo'); ?> * <small>(Apenas MP4)</small> </label>
-					<input class="form-control" 
-						type="file" name="video"  id="video"
-						style=" width:  90%" />
+					<input class="form-control"  type="file" name="video"  id="video" style=" width:  90%" accept="video/mp4" />
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
 					<label class="control-label" for="tipoVideo"><?php echo JText::_('Tipo'); ?> *</label>
-					<select id="tipoVideo" name="tipoVideo">
+					<select id="tipo_video" name="tipo_video">
 						<option></option>
 						<option value='MAKINGOF'>MakingOf</option>
 						<option value='AUTORIZACAOMODELO'>Modelo autorizando a sess&atilde;o</option>
 						<option value='OUTRO'>Outro</option>
 					</select>
 				</div>
-				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-7">
 					<label class="control-label" for="descricao_video"><?php echo JText::_('Descri&ccedil;&atilde;o'); ?></label>
-					<textarea rows="2" cols="3" name="descricao_video" id="descricao_video" style=" width:  90%"></textarea>
+					<textarea rows="2" name="descricao_video" id="descricao_video" style=" width:  90%"></textarea>
 				</div>
-			
+				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-5">
+					<label class="control-label" for="descricao_video"><?php echo JText::_('Descri&ccedil;&atilde;o breve'); ?> <small>(restam
+							<span id="maxlengthvideo">250</span> cadacteres)</label>
+					<textarea rows="2" name="meta_descricao_video" id="meta_descricao_video" style=" width:  90%"></textarea>
+				</div>
+				
+				<div class="row">				
+					<div  class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 table-responsive" id="listaVideos">
 <?php 		require_once 'lista_videos.php';	?>
+					</div>
+				</div>
 		</div>
 	</div>
 </form>

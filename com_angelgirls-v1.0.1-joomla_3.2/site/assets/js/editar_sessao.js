@@ -12,8 +12,25 @@ jQuery(document).ready(function(){
 		});
 	},900);
 	
+
+	jQuery('#btnSalvarVideo').click(function(){
+		EditarSessao.SalvarVideo();
+	});
+	jQuery('#btnAdicionarVideo').click(function(){
+		EditarSessao.SalvarVideo();
+	});
+	
+	jQuery('#btnCancelarSalvarVideo').click(function(){
+		EditarSessao.LimparFormVideo();
+	});
+	
+	
+	
+	
 	jQuery('#meta_descricao').restrictLength($('#maxlength'));
 	jQuery('#comentario').restrictLength($('#maxlengthComentario'));
+	jQuery('#meta_descricao_video').restrictLength($('#maxlengthvideo'));
+
 	
 	jQuery.validate({
 	    modules : 'security, date, file, html5',
@@ -154,6 +171,85 @@ jQuery(document).ready(function(){
 if(!EditarSessao){
 	var EditarSessao = new Object();
 }
+
+EditarSessao.VerVideo = function(id){
+	var url = EditarSessao.VerVideoURL;
+	url = url +  (url.indexOf('?')>0?'&id=':'?id=')+id;
+	alert('<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4"></video>');
+}
+
+EditarSessao.RemoverVideo = function(idParam){
+	jQuery.post(EditarSessao.RemoverVideoURL,
+			{id: idParam}, function(){
+		EditarSessao.RecarregarVideos();	
+	});
+}
+
+
+EditarSessao.RecarregarVideos = function(){
+	jQuery.post(EditarSessao.CarregarVideoURL,
+	{id: EditarSessao.SessaoID}, function(dados){
+		jQuery('#listaVideos').html(dados);
+	},'html');
+};
+ 
+
+
+EditarSessao.SalvarVideo = function(idParam){
+	
+    var fd = new FormData();
+    fd.append('video', document.getElementById('video').files[0]);
+    fd.append('id_sessao', EditarSessao.SessaoID);
+    fd.append('id', jQuery('#id_video').val());
+    fd.append('descricao', jQuery('#descricao_video').val());
+    fd.append('titulo', jQuery('#titulo_video').val());
+    fd.append('meta_descricao', jQuery('#meta_descricao_video').val());
+    fd.append('tipo', jQuery('#tipo_video').val());
+    
+    AngelGirls.Processando().show();
+    jQuery.ajax({
+        url: EditarSessao.SalvarVideoURL,
+        type: 'POST',
+        dataType: 'json',
+        contentType: false,
+        processData: false,
+        cache: false,
+        data: fd,
+	    success: function(data){
+	    	AngelGirls.Processando().hide();
+			EditarSessao.RecarregarVideos();		
+			EditarSessao.LimparFormVideo();                       
+	    }  
+	}); 
+
+}
+
+
+EditarSessao.EditarVideo = function(id,titulo,tipo,meta_descricao,descricao){
+	jQuery('#btnCancelarSalvarVideo').addClass('in');
+	jQuery('#btnSalvarVideo').addClass('in');
+	jQuery('#btnAdicionarVideo').removeClass('in');
+	jQuery('#id_video').val(id);
+	jQuery('#titulo_video').val(titulo);
+	jQuery('#tipo_video').val(tipo);
+	jQuery('#meta_descricao_video').val(meta_descricao);
+	jQuery('#descricao_video').val(descricao);
+	jQuery('#video').attr('disabled','disabled');
+}
+
+EditarSessao.LimparFormVideo = function(){
+	jQuery('#btnCancelarSalvarVideo').removeClass('in');
+	jQuery('#btnSalvarVideo').removeClass('in');
+	jQuery('#btnAdicionarVideo').addClass('in');
+	jQuery('#id_video').val('');
+	jQuery('#titulo_video').val('');
+	jQuery('#tipo_video').val('');
+	jQuery('#video').val('');
+	jQuery('#video').attr('disabled',null);
+	jQuery('#meta_descricao_video').val('');
+	jQuery('#descricao_video').val('');
+}
+
 
 EditarSessao.EditarDadosFoto = function(id){
 	var url = EditarSessao.EditarTextoImagemURL;
