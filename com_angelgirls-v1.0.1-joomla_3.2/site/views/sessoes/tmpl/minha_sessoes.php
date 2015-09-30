@@ -12,11 +12,11 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 }
 
 JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/jquery.dataTables.css?v='.VERSAO_ANGELGIRLS);
-JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.foundation.css?v='.VERSAO_ANGELGIRLS);
-JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.bootstrap.css?v='.VERSAO_ANGELGIRLS);
+//JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.foundation.css?v='.VERSAO_ANGELGIRLS);
+//JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/dataTables.bootstrap.css?v='.VERSAO_ANGELGIRLS);
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/jquery.dataTables.js?v='.VERSAO_ANGELGIRLS);
-JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.foundation.js?v='.VERSAO_ANGELGIRLS);
-JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.bootstrap.js?v='.VERSAO_ANGELGIRLS);
+//JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.foundation.js?v='.VERSAO_ANGELGIRLS);
+//JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.bootstrap.js?v='.VERSAO_ANGELGIRLS);
 
 
 $sessoes = JRequest::getVar('sessoes');
@@ -42,15 +42,16 @@ if($dataFim!=''){
 JFactory::getDocument()->addScriptDeclaration('
 
 jQuery(document).ready(function() {
-//		setTimeout(function(){
+		setTimeout(function(){
 		    jQuery("#tabelaComSessoes").DataTable({
-				"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "Todos"]],
+				"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
 				"language": {
 		            "lengthMenu": "Exibir _MENU_ itens por p&aacute;gina",
 		            "zeroRecords": "N&atilde;o encontrado - sorry",
 		            "info": "Exibir pag. _PAGE_ de _PAGES_",
 		            "infoEmpty": "Sem registros",
-		            "infoFiltered": "(filtrado de _MAX_ total)"
+		            "infoFiltered": "(filtrado de _MAX_ total)",
+					"search": "Busca"
 		        },
 				"aoColumns": [
 		            null,
@@ -64,7 +65,7 @@ jQuery(document).ready(function() {
 		        ]
 			});
 		
-//		},5000);
+		},1000);
 });
 ');
 
@@ -82,7 +83,7 @@ jQuery(document).ready(function() {
 	<div class="btn-toolbar pull-right" role="toolbar">
 		<?php if(isset($perfil)) : ?>
 		<div class="btn-group" role="group"  aria-label="Funções">
-			<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarNova&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
+			<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarEditarSessao'));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
 				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 			</a>
 		</div>
@@ -98,7 +99,7 @@ jQuery(document).ready(function() {
 	</div>
 	<h2>Filtro</h2>
 <div>
-	<div class="form-group col-xs-12 col-sm-12 col-md-4 col-lg-3">
+	<div class="form-group col-xs-12 col-sm-12 col-md-4 col-lg-6">
 		<label class="control-label"  for="nome"><?php echo JText::_('Titulo'); ?></label>
 		<input class="form-control" style="width: 90%;" type="text" name="nome"  id="nome" value="<?php echo($nome);?>" size="32" maxlength="150" placeholder="<?php echo JText::_('Buscar por titulo da sess&atilde;o'); ?>"/>
 	</div>
@@ -109,15 +110,6 @@ jQuery(document).ready(function() {
 	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 		<label class="control-label"  for="data_fim"><?php echo JText::_('At&eacute; a data'); ?></label>
 		<?php echo JHtml::calendar($dataFim, 'data_fim', 'data_fim', '%d/%m/%Y', 'class="form-control validate-data validate-ate"');?>
-	</div>
-	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-		<label class="control-label"  for="ordem"><?php echo JText::_('Ordem'); ?></label>
-		<select name="ordem" id="ordem" class="form-control">
-			<option value="1"<?php echo($ordem==1?' SELECTED':'')?>>Ultimas->Primeiras sess&otilde;es</option>
-			<option value="2"<?php echo($ordem==2?' SELECTED':'')?>>Primeiras->Ultimas sess&otilde;es</option>
-			<option value="3"<?php echo($ordem==3?' SELECTED':'')?>>Titulos de A->Z</option>
-			<option value="4"<?php echo($ordem==4?' SELECTED':'')?>>Titulos de Z->A</option>
-		</select>
 	</div>
 
 	<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">

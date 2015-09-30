@@ -1,7 +1,16 @@
-ALTER TABLE `#__angelgirls_sessao` ADD COLUMN `motivo_repro_modelo_principal` varchar(250);
-ALTER TABLE `#__angelgirls_sessao` ADD COLUMN `motivo_repro_modelo_secundaria` varchar(250);
-ALTER TABLE `#__angelgirls_sessao` ADD COLUMN `motivo_repro_fotografo_principal` varchar(250);
-ALTER TABLE `#__angelgirls_sessao` ADD COLUMN `motivo_repro_fotografo_secundario` varchar(250);
+ALTER TABLE `#__angelgirls_mensagens` ADD COLUMN `token` varchar(250) NULL;
 
-ALTER TABLE `#__angelgirls_mensagens` ADD COLUMN `data_lida` DATETIME NULL;
 
+CREATE TABLE `#__angelgirls_extrato_pontos` ( 
+		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+		
+		`chave` VARCHAR(25) DEFAULT 'SESSAO.CRIADA',
+		`pontos` bigint,
+		`motivo` text,
+		
+		`id_usuario` INT NOT NULL , 
+		`data` DATETIME NOT NULL, 
+		`host_ip` varchar(20) NOT NULL,
+
+		FOREIGN KEY (`id_usuario`) REFERENCES `test2_users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;

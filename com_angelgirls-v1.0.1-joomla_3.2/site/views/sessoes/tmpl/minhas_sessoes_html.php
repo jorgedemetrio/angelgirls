@@ -5,20 +5,17 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 	<table class="table table-hover display" id='tabelaComSessoes' cellspacing="0" width="100%">
 		<thead>
 			<tr>
-				<th></th>
-				<th></th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
 				<th>Titulo</th>
-				<th></th>
 				<th>Modelo Principal</th>
-				<th></th>
 				<th>Fotografo Principal</th>
 				<th>Data</th>
 				<th>Publica&ccedil;&atilde;o</th>
 				<th>Status</th>
-				
 			</tr>
 		</thead>
-			<tbody>
+		<tbody>
 <?php 	foreach($sessoes as $conteudo): ?>
 	<?php
 	$url = '';
@@ -61,22 +58,15 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 	default:  ?>
 				<a href="<?php echo($url);?>"   title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
 <?php endswitch;?>
-
-
-
-
-				</td>
+</td>
 				<td style="width: 30px"><img alt="<?php echo($conteudo->nome); ?>" src="<?php echo($urlImg);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->nome); ?></td>
-				<td style="width: 30px" style="vertical-align: middle;"><img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
-				<td class="editavel"><?php echo($conteudo->modelo1); ?></td>
-				<td style="width: 30px" style="vertical-align: middle;"><img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->fotografo1); ?></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->modelo1); ?> <img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->fotografo1); ?> <img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo(isset($conteudo->publicar) && strlen(trim($conteudo->publicar))>5 ?JDate::getInstance($conteudo->publicar)->format('d/m/Y'):'N/D'); ?></td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->status_dado); ?></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo(strtolower( $conteudo->status_dado)); ?></td>
 			</tr>
-		
 <?php
 	endforeach;?>
 		</tbody>

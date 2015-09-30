@@ -148,7 +148,7 @@ jQuery(document).ready(function(){
 		jQuery(document).scroll(function(){
 			 //if( (jQuery(window).height()+jQuery(this).scrollTop()+350) >= jQuery(document).height() && !carregando && temMais) {
 			
-			if(jQuery(this).scrollTop() >= jQuery("#Totais").position().top){
+			if(jQuery(this).scrollTop() >= jQuery("#Totais").position().top+(jQuery("#Totais").height()/2)){
 				jQuery("#TotaisHide").addClass('in');
 				jQuery("#TotaisHide").css('top', jQuery(this).scrollTop());
 				jQuery("#TotaisHide").css('left', jQuery("#Totais").position().left);
@@ -214,7 +214,10 @@ EditarSessao.VerVideo = function(id){
 EditarSessao.RemoverVideo = function(idParam){
 	jQuery.post(EditarSessao.RemoverVideoURL,
 			{id: idParam}, function(){
+		EditarSessao.VideosPublicados = EditarSessao.VideosPublicados - 1;
+		EditarSessao.VerificarHabilitacaoPublicacao();
 		EditarSessao.RecarregarVideos();	
+		
 	});
 }
 
@@ -282,6 +285,8 @@ EditarSessao.SalvarVideo = function(idParam){
 	    	if(data.ok=='ok'){
 	    		EditarSessao.RecarregarVideos();		
 				EditarSessao.LimparFormVideo();
+				EditarSessao.VideosPublicados = EditarSessao.VideosPublicados + 1;
+				EditarSessao.VerificarHabilitacaoPublicacao();
 	    	}
 	    	else{
 	    		alert(data.mensagem);
@@ -293,7 +298,7 @@ EditarSessao.SalvarVideo = function(idParam){
 
 EditarSessao.Publicar = function(){
 	
-	if(EditarSessao.ImagensPublicadas<40 || (EditarSessao.ImagensSemNunes<5 || EditarSessao.ImagensSemNunes>(EditarSessao.ImagensPublicadas-10))){
+	if(EditarSessao.ImagensPublicadas < 40 || (EditarSessao.ImagensSemNunes < 5 || 10 > (EditarSessao.ImagensPublicadas- EditarSessao.ImagensSemNunes))){
 		alert('Voc&ecirc; deve enviar no minimo 40 fotos, sendo delas no minimo 10 com nu ou semi nu e 5 sem nu nem semi nu!');
 		return;
 	}
@@ -304,7 +309,7 @@ EditarSessao.Publicar = function(){
 	
 	
 	jQuery('#publicar').val('S');
-	jQuery('#dadosForm').sumit();		
+	jQuery('#dadosForm').submit();		
 	
 };
 
@@ -354,10 +359,12 @@ EditarSessao.VerificarHabilitacaoPublicacao = function(){
 		EditarSessao.PublicacaoLiberada = false;
 		jQuery('.btnPublicar').removeClass('disabled');
 		jQuery('.btnPublicar').addClass('disabled');
+		jQuery('.btnPublicar').attr('disabled','disabled');
 	}
 	else{
 		EditarSessao.PublicacaoLiberada = true;
 		jQuery('.btnPublicar').removeClass('disabled');
+		jQuery('.btnPublicar').attr('disabled',null);
 	}
 } 
 

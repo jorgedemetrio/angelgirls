@@ -20,7 +20,7 @@ $conteudo =$foto;
 $fotos = JRequest::getVar('fotos');
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->token.':full');
 $urlSessao ='';
-if($foto->status_dado != StatusDado::PUBLICADO) :
+if($foto->status_dado == StatusDado::ATIVO || $foto->status_dado == StatusDado::NOVO) :
 	$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&id='.$conteudo->id_sessao);
 else :
 	$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
@@ -31,10 +31,11 @@ endif;
 		    	<a class="btn btn-primary" href="<?php echo($urlSessao );?>">Voltar para sess&atilde;o: <?php echo($conteudo->titulo_sessao); ?></a>
 		   	</div>
 <div class="page-header">
-	<h1><?php echo($conteudo->titulo);?>
+	<h1><?php echo($conteudo->titulo);?> 
 	<small><?php echo($conteudo->nome_tema);?></small>
+<?php if($conteudo->status_dado == StatusDado::PUBLICADO) :?>
 	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_foto);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotosessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div></h1>
-
+<?php endif;?>
 </div>
 
 <ul class="nav nav-tabs nav-justified" id="myTabTabs" role="tablist" style="margin-bottom: 0;">
@@ -108,7 +109,7 @@ endif;
 		<div class="row">
 			<div class="col col-xs-12 col-sm-4 col-md-2 col-lg-2 text-center" style="vertical-align: middle; height: 100%">
 				<div class="dropdown">
-				  <button class="btn btn-default dropdown-toggle <?php if($foto->status_dado != StatusDado::PUBLICADO) :?>disabled<?php endif;?>" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+				  <button class="btn btn-default dropdown-toggle<?php if($foto->status_dado != StatusDado::PUBLICADO) :?> disabled" disabled="disabled<?php endif;?>" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
 				  title="<?php if($foto->status_dado != StatusDado::PUBLICADO) :?>A&ccedil;&atilde;o n&atilde;o permitida para a sess&atilde;o, pois ainda n&atilde;o foi publicada.<?php else:?>Compartilhar foto<?php endif;?>">
 				    Compartilhar <span class="glyphicon glyphicon-share"></span>
 				    <span class="caret"></span>

@@ -70,6 +70,9 @@ $id_figurino_secundario  = JRequest::getInt('id_figurino_secundario',$conteudo->
 $id_modelo_principal  = JRequest::getInt('id_modelo_principal',$conteudo->id_modelo_principal);
 $id_modelo_secundaria  = JRequest::getInt('id_modelo_secundaria',$conteudo->id_modelo_secundaria);
 $id_fotografo_principal  = JRequest::getInt('id_fotografo_principal',$conteudo->id_fotografo_principal);
+
+
+
 $id_fotografo_secundario  = JRequest::getInt('id_fotografo_secundario',$conteudo->id_fotografo_secundario);
 
 
@@ -203,7 +206,7 @@ margin-right:5px;
 	
 	<?php echo JHtml::_('form.token'); ?>
 	
-	<div class="btn-toolbar pull-right" pull-right" role="toolbar">
+	<div class="btn-toolbar pull-right" role="toolbar">
 		<div class="btn-group" role="group">
 			<button class="btn btn-info ajuda" type="button">
 				Dicas e Sujest&otilde;es <span
@@ -215,17 +218,13 @@ margin-right:5px;
 			</button>
 		</div>
 		<div class="btn-group" role="group">
-<!-- 			<button class="btn" type="button" -->
-<!-- 				onclick="JavaScript:window.history.back(-1);"> -->
-<!-- 				<span class="hidden-phone"><?php echo JText::_('Voltar'); ?></span> -->
-<!-- 			</button> -->
 <?php if(isset($id) && $id != 0) :?>
 			<button class="btn btn-danger btnRemoverSessao" type="button">
 				<span class="hidden-phone"><?php echo JText::_('Apagar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 			</button>
-			<button class="btn btn-primary btnPublicar  disabled" type="button">
+			<button class="btn btn-primary btnPublicar  disabled" type="button" disable="disabled">
 				<span class="hidden-phone"><?php echo JText::_('Publicar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-send" aria-hidden="true"></span>
@@ -269,14 +268,13 @@ margin-right:5px;
 					<button class="btn btn-danger btnRemoverSessao" title="Apagar Sess&atilde;o"  type="button">
 						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 					</button>
-					<button class="btn btn-primary btnPublicar  disabled" type="button" title="Publicar  Sess&atilde;o">
+					<button class="btn btn-primary btnPublicar  disabled" type="button" title="Publicar  Sess&atilde;o"  disable="disabled">
 						<span class="glyphicon glyphicon-send" aria-hidden="true"></span>
 					</button>
 		<?php endif;?>
 					<button class="btn btn-success" type="submit"  title="Prosseguir/Salvar">
 		<?php if(!isset($this->item) || $id == 0) :?>
-					<span
-							class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
 		<?php else:?>
 					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 		<?php endif; ?>
@@ -299,13 +297,11 @@ margin-right:5px;
 		</a></li>
 	<?php if(!isset($this->item) || $id == 0) :?>
 		<li role="presentation" class="disabled"><a
-			href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/>
-			Para isso preencha o form&aacute;rio ecliqueem \"Processuir\".");'>Publicar
+			href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/>Para isso preencha o formul&aacute;rio eclique em \"Processuir\".");'>Publicar
 				fotos <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
 		</a></li>
 		<li role="presentation" class="disabled"><a
-			href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/>
-			Para isso preencha o form&aacute;rio ecliqueem \"Processuir\".");'>V&iacute;deo/MakingOf
+			href='JavaScript: info("Sess&atilde;o n&atilde;o foi salva. Salve a sess&atilde;o antes publicar as imagens.<br/>Para isso preencha o formul&aacute;rio eclique em \"Processuir\".");'>V&iacute;deo/MakingOf
 				<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
 		</a></li>
 	<?php else: ?>
@@ -504,145 +500,119 @@ margin-right:5px;
 
 
 			<div class="row">
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3"
-					style="text-align: center">
+			
+			
+			
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Modelo Principal</h5>		
 <?php if((!isset($id_modelo_principal) || $id_modelo_principal==0) && $perfil->tipo=="MODELO"):
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$perfil->id.':ico');
 ?>		
-					<input type="hidden" name="id_modelo_principal"
-						id="id_modelo_principal" value="<?php echo $perfil->id;?>" />
-					<div id="dadosModeloPricipal" class="row"
-						style="text-align: center; margin-top: 50px;">
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoModeloPrincipal">
-							<img src="<?php echo($urlImg);?>"
-								title="Modelo <?php echo($perfil->apelido);?>"
-								alt="Modelo <?php echo($perfil->apelido);?>" class="img-circle"
-								style="height: 100px" />
+					<input type="hidden" name="id_modelo_principal"	id="id_modelo_principal" value="<?php echo $perfil->id;?>" />
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 50px;">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal">
+							<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($perfil->apelido);?>"
+								alt="Modelo <?php echo($perfil->apelido);?>" class="img-circle" style="height: 100px" />
 						</div>
-						<div
-							class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"
-							id="nomeModeloPrincipal"><?php echo($perfil->apelido);?></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="nomeModeloPrincipal"><?php echo($perfil->apelido);?></div>
 					</div>
 <?php else:
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$id_modelo_principal.':ico');?>
-					<input type="hidden" name="id_modelo_principal"
-						id="id_modelo_principal"
-						value="<?php echo $id_modelo_principal;?>" /> <a
-						href="JavaScript: EditarSessao.BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');"
-						class="btn">Selecionar Modelo <span
-						class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row"
-						style="text-align: center; margin-top: 10px;">
+					<input type="hidden" name="id_modelo_principal"	id="id_modelo_principal" value="<?php echo $id_modelo_principal;?>" /> 
+						<a href="JavaScript: EditarSessao.BuscarModelo('id_modelo_principal','nomeModeloPrincipal','fotoModeloPrincipal');"
+						class="btn">
+							Selecionar <span class="glyphicon glyphicon-user"></span>
+						</a>
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php if(isset($id_modelo_principal) && $id_modelo_principal!=0):?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
 							id="fotoModeloPrincipal">
 							<img src="<?php echo($urlImg);?>"
 								title="Modelo <?php echo($this->item->modelo1);?>"
 								alt="Modelo <?php echo($this->item->modelo1);?>"
 								class="img-circle" style="height: 100px" />
 						</div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeModeloPrincipal"><?php echo($this->item->modelo1);?></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"><?php echo($this->item->modelo1);?></div>
 <?php else:?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoModeloPrincipal"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeModeloPrincipal"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloPrincipal"></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloPrincipal"></div>
 <?php endif;?>	
 					</div>
 <?php endif;
 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$id_modelo_secundaria.':ico');?>
 				</div>
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3"
-					style="text-align: center">
+
+				
+				
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Segunda Modelo</h5>
 					<input type="hidden" name="id_modelo_secundaria"
 						id="id_modelo_secundaria"
 						value="<?php echo $id_modelo_secundaria;?>" /> <a
 						href="JavaScript: EditarSessao.BuscarModelo('id_modelo_secundaria','nomeModeloSecundaria','fotoModeloSecundaria');"
-						class="btn">Selecionar Modelo <span
+						class="btn">Selecionar <span
 						class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row"
-						style="text-align: center; margin-top: 10px;">
+					<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
 <?php if(isset($id_modelo_secundaria) && $id_modelo_secundaria!=0):?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoModeloSecundaria">
-							<img src="<?php echo($urlImg);?>"
-								title="Modelo <?php echo($this->item->modelo2);?>"
-								alt="Modelo <?php echo($this->item->modelo12);?>"
-								class="img-circle" style="height: 100px" />
-						</div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeModeloSecundaria"><?php echo($this->item->modelo2);?></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria">
+						<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($this->item->modelo2);?>"
+							alt="Modelo <?php echo($this->item->modelo12);?>" class="img-circle" style="height: 100px" />
+					</div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"><?php echo($this->item->modelo2);?></div>
 <?php else:?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoModeloSecundaria"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeModeloSecundaria"></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoModeloSecundaria"></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeModeloSecundaria"></div>
 <?php endif;?>
 					</div>
 				</div>
 
 
 
+				
+				
+				
+				
+				
+				
+				
 
 
-				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3"
-					style="text-align: center">
+				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3" style="text-align: center">
 					<h5 calss="text-center">Fotografo Principal</h5>				
-<?php if((!isset($id_fotografo_principal) || $id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_principal.':ico'); ?>		
+<?php 
+	if((!isset($id_fotografo_principal) || $id_fotografo_principal==0) && $perfil->tipo=="FOTOGRAFO"):
+		$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$perfil->id.':ico'); ?>		
 					<input type="hidden" name="id_fotografo_principal"
 						id="id_fotografo_principal" value="<?php echo $perfil->id;?>" />
 					<div id="dadosFotografoPricipal" class="row"
 						style="text-align: center; margin-top: 50px;">
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoFotografoPrincipal">
-							<img src="<?php echo($urlImg);?>"
-								title="Fotografo <?php echo($perfil->apelido);?>"
-								alt="Fotografo <?php echo($perfil->apelido);?>"
-								class="img-circle" style="height: 100px" />
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal">
+							<img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($perfil->apelido);?>"
+								alt="Fotografo <?php echo($perfil->apelido);?>"	class="img-circle" style="height: 100px" />
 						</div>
-						<div
-							class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"
-							id="nomeFotografoPrincipal"><?php echo($perfil->apelido);?></div>
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="nomeFotografoPrincipal"><?php echo($perfil->apelido);?></div>
 					</div>
 <?php 
-else:
-	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_principal.':ico');?>
-					<input type="hidden" name="id_fotografo_principal"
-						id="id_fotografo_principal"
-						value="<?php echo $id_fotografo_principal;?>" /> <a
-						href="JavaScript: EditarSessao.BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');"
-						class="btn">Selecionar Fotografo <span
-						class="glyphicon glyphicon-user"></span></a>
-					<div id="dadosModeloPricipal" class="row"
-						style="text-align: center; margin-top: 10px;">
-<?php 
-	if(isset($id_fotografo_principal) && $id_fotografo_principal!=0) :?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoFotografoPrincipal">
-							<img src="<?php echo($urlImg);?>"
-								title="Fotografo <?php echo($this->item->fotografo1);?>"
-								alt="Fotografo <?php echo($this->item->fotografo1);?>"
-								class="img-circle" style="height: 100px" />
-						</div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeFotografoPrincipal"><?php echo($this->item->fotografo1);?></div>
-<?php else:?>
-					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="fotoFotografoPrincipal"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeFotografoPrincipal"></div>
-<?php 
-	endif;
-?>
+	else:
+		$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_principal.':ico');?>
+					<input type="hidden" name="id_fotografo_principal" id="id_fotografo_principal" value="<?php echo $id_fotografo_principal;?>" />
+						<a href="JavaScript: EditarSessao.BuscarFotografo('id_fotografo_principal','nomeFotografoPrincipal','fotoFotografoPrincipal');" class="btn">
+							Selecionar <span class="glyphicon glyphicon-user"></span>
+						</a>
+				<div id="dadosModeloPricipal" class="row" style="text-align: center; margin-top: 10px;">
+<?php	if(isset($id_fotografo_principal) && $id_fotografo_principal!=0) :?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal">
+						<img src="<?php echo($urlImg);?>" title="Fotografo <?php echo($this->item->fotografo1);?>"
+								alt="Fotografo <?php echo($this->item->fotografo1);?>" class="img-circle" style="height: 100px" />
+					</div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"><?php echo($this->item->fotografo1);?></div>
+<?php 	else:?>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="fotoFotografoPrincipal"></div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"></div>
+<?php 	endif; ?>
 				</div>
-				</div>
-<?php 
-endif;?>			
+<?php endif;?>
+			</div>			
 				
 				
 				
@@ -653,12 +623,12 @@ endif;?>
 $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$id_fotografo_secundario.':ico');?>
 				<div class="col col-xs-12 col-sm-6 col-md-3 col-lg-3"
 					style="text-align: center;">
-					<h5 calss="text-center">Segundo Fotografo/Assistente</h5>
+					<h5 calss="text-center">Segundo Fotografo/Equipe</h5>
 					<input type="hidden" name="id_fotografo_secundario"
 						id="id_fotografo_secundario"
 						value="<?php echo $id_fotografo_secundario;?>" /> <a
 						href="JavaScript: EditarSessao.BuscarFotografo('id_fotografo_secundario','nomeFotografoSecundaria','fotoFotografoSecundaria');"
-						class="btn">Selecionar Fotografo/Assistente <span
+						class="btn">Selecionar <span
 						class="glyphicon glyphicon-user"></span></a>
 					<div id="dadosFotografoPricipal" class="row"
 						style="text-align: center; margin-top: 10px;">
@@ -669,13 +639,12 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 								title="Fotografo <?php echo($this->item->fotografo1);?>"
 								alt="Fotografo <?php echo($this->item->fotografo2);?>"
 								class="img-circle" style="height: 100px" />
-						</div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
-							id="nomeFotografoPrincipal"><?php echo($this->item->fotografo2);?></div>
+					</div>
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" id="nomeFotografoPrincipal"><?php echo($this->item->fotografo2);?></div>
 <?php else:?>
 					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
 							id="fotoFotografoSecundaria"></div>
-						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
+					<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12"
 							id="nomeFotografoSecundaria"></div>
 <?php endif;?>
 
@@ -683,6 +652,13 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 				</div>
 
 			</div>
+			
+			
+			
+			
+			
+			
+			
 			<br />
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<label class="control-label" for="descricao"><strong>Descri&ccedil;&atilde;o
@@ -691,7 +667,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 			</div>
 
 		</div>
-		<div id="publicarFotos" class="tab-pane fade in"
+		<div id="publicarFotos" class="tab-pane fade"
 			style="height: 210px;">
 			<h2>Publicar fotos</h2>
 			<div class="row">
@@ -711,7 +687,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 				</div>
 			</div>
 		</div>
-		<div id="videos" class="tab-pane fade in" style="height: 300px;">
+		<div id="videos" class="tab-pane fade" style="height: 300px;">
 						<div class="btn-group pull-right" role="group">
 							<div class="btn-group" role="group">
 								<button  class="btn btn-danger fade" type="button" id="btnCancelarSalvarVideo" name="btnCancelarSalvarVideo" title="Cancelar altera&ccedil;&atilde;o de  video"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
@@ -754,7 +730,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-5">
 					<label class="control-label" for="descricao_video"><?php echo JText::_('Descri&ccedil;&atilde;o breve'); ?> <small>(restam
-							<span id="maxlengthvideo">250</span> cadacteres)</label>
+							<span id="maxlengthvideo">250</span> cadacteres)</small></label>
 					<textarea rows="2" name="meta_descricao_video" id="meta_descricao_video" style=" width:  90%"></textarea>
 				</div>
 				

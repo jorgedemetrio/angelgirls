@@ -10,7 +10,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
-JFactory::getDocument()->addScriptDeclaration('var lidos = 0;');
+
 
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
@@ -19,21 +19,83 @@ $id = JRequest::getInt('id');
 $perfil = JRequest::getVar('perfil');
 
 
+JFactory::getDocument()->addScriptDeclaration('
+var SessaoView = new Object();
+var lidos = 0;
+var carregando = false;
+var temMais=false;
+SessaoView.ImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false) . '";
+');
 
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/sessao.js?v='.VERSAO_ANGELGIRLS);
 ?>
+<?php if($conteudo->status_dado == StatusDado::ANALIZE) :?>
+	<div class="btn-toolbar pull-right" role="toolbar" id="BtnBotoesAcao">
+		<div class="btn-group" role="group">
+			<button class="btn btn-info ajuda" type="button">
+				Dicas e Sujest&otilde;es <span
+					class="glyphicon glyphicon-question-sign"></span>
+			</button>
+			<button class="btn btn-info informacoes" type="button">
+				Termos e condi&ccedil;&otilde;es <span
+					class="glyphicon glyphicon-paperclip"></span>
+			</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button class="btn btn-danger btnReprovar" type="button">
+				<span class="hidden-phone"><?php echo JText::_('Reprovar'); ?><span class="hidden-tablet">
+						Sess&atilde;o</span></span>
+				<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+			</button>
+			<button class="btn btn-success btnPublicar" type="button">
+				<span class="hidden-phone"><?php echo JText::_('Aprovar'); ?><span class="hidden-tablet">
+						Sess&atilde;o</span></span>
+				<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+			</button>
+		</div>
+	</div>
+	
+	<div class="hidden-phone">
+		<div id="TotaisHide" class="fade well" style="display:none; position: absolute; left: 0px; z-index: 500; background-color: rgba(245,245,245,0.6); 
+																								   background-image: -webkit-linear-gradient(top, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 70%); 
+																								   background-image: -o-linear-gradient(top, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 100%); 
+																								   background-image: linear-gradient(to bottom, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 100%); ">
+		
+			<div class="btn-toolbar pull-right" pull-right" role="toolbar" style=" padding: 0px; margin: 0px; ">
+				<div class="btn-group" role="group">
+					<button class="btn btn-info ajuda" type="button" title="Dicas e Sujest&otilde;es ">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</button>
+					<button class="btn btn-info informacoes" type="button" title="Termos e condi&ccedil;&otilde;es">
+						 <span class="glyphicon glyphicon-paperclip"></span>
+					</button>
+				</div>
+				
+				<div class="btn-group" role="group">
+			<button class="btn btn-danger btnReprovar" type="button" title="Aprovar Sess&atilde;o">
+				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+			</button>
+			<button class="btn btn-success btnPublicar" type="button"  title="Reprovar Sess&atilde;o">
+				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+			</button>
+				</div>
+			</div>
+<small>Aguardando aprova&ccecil;&atilde;o</small>
+		</div>
+	</div>
+	
+	
+<?php endif;?>
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?> 
-	<small><?php echo($conteudo->nome_tema);?></small>
-	<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessao);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
-</h1>
-
+			<small><?php echo($conteudo->nome_tema);?></small>
+<?php if($conteudo->status_dado == StatusDado::PUBLICADO) :?>
+		<div class="gostar" data-gostei='<?php echo($conteudo->gostei_sessao);?>' data-id='<?php echo($conteudo->id);?>' data-area='sessao' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>		
+<?php endif;?>
+	</h1>
 </div>
 
-<script>
 
-
-
-</script>
 <ul class="nav nav-tabs nav-justified" id="myTabTabs" role="tablist" style="margin-bottom: 0;">
 	<li class="active" role="presentation">
 		<a href="#general" data-toggle="tab" aria-controls="profile" role="tab">Detalhe sess&atilde;o
@@ -50,11 +112,13 @@ $perfil = JRequest::getVar('perfil');
 		<span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
 		</a>
 	</li>
+<?php if($conteudo->status_dado == StatusDado::PUBLICADO) :?>
 	<li role="presentation">
 		<a href="#comentarios" data-toggle="tab" aria-controls="profile" role="tab">Coment&aacute;rios
 		<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
 		</a>
 	</li>
+<?php endif;?>
 </ul>
 
 <div id="detalhesSessao" class="tab-content" style="overflow: auto;">
@@ -97,16 +161,18 @@ $perfil = JRequest::getVar('perfil');
 		    	<?php echo(JFactory::getDate($conteudo->executada)->format('d/m/Y')); ?>
 			</div>
 			<div class="col col-xs-12 col-sm-3 col-md-2 col-lg-1 text-center">
-		    	<?php echo(JFactory::getDate($conteudo->publicar)->format('d/m/Y')); ?>
+		    	<?php echo(isset($conteudo->publicar) && strlen(trim($conteudo->publicar)) >5 && $conteudo->publicar!='0000-00-00'?JFactory::getDate($conteudo->publicar)->format('d/m/Y'):'N/D'); ?>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-4 col-md-2 col-lg-2 text-center" style="vertical-align: middle; height: 100%">
 				<div class="dropdown">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <button class="btn btn-default dropdown-toggle<?php if($conteudo->status_dado != StatusDado::PUBLICADO) :?> disabled" disabled="disabled<?php endif;?>"  type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+					  title="<?php if($conteudo->status_dado != StatusDado::PUBLICADO) :?>A&ccedil;&atilde;o n&atilde;o permitida para a sess&atilde;o, pois ainda n&atilde;o foi publicada.<?php else:?>Compartilhar foto<?php endif;?>">
 				    Compartilhar <span class="glyphicon glyphicon-share"></span>
 				    <span class="caret"></span>
 				  </button>
+<?php if($conteudo->status_dado == StatusDado::PUBLICADO) :?>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				    <li><div class="fb-share-button" data-layout="button_count"></div></li>
 				    <li role="separator" class="divider"></li>
@@ -114,6 +180,7 @@ $perfil = JRequest::getVar('perfil');
 				    <li role="separator" class="divider"></li>
 				    <li><div class="g-plus" data-action="share"></div></li>
 				  </ul>
+<?php endif;?>
 				</div>
 			</div>
 			<div class="col col-xs-12 col-sm-8 col-md-10 col-lg-10 well">
@@ -311,38 +378,5 @@ $perfil = JRequest::getVar('perfil');
 </div>
 
 <script>
-var carregando = false;
-var temMais=false;
-jQuery(document).ready(function() {
 
-	if(lidos>=24){
-		jQuery('#carregando').css('display','');
-		temMais=true;
-	}
-	else{
-		jQuery('#carregando').css('display','none');
-		temMais=false;
-	}
-	
-	
-	jQuery(document).scroll(function(){
-		 if( (jQuery(window).height()+jQuery(this).scrollTop()+300) >= jQuery(document).height() && !carregando && temMais) {
-			carregando = true;
-			jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false)); ?>',
-					{posicao: lidos}, function(dado){
-				jQuery("#carregando").css("display","none");
-				if(dado.length<=0){
-					jQuery("#carregando").css("display","none");
-					temMais=false;
-				}
-				else{
-					//lidos = lidos+24;
-					jQuery('#carregando').css('display','');
-					jQuery('#linha').append(dado);
-				}		
-				carregando=false;					
-			},'html');
-		 }
-	});
-});
 </script>
