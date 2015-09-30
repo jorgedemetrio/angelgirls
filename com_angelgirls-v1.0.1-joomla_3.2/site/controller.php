@@ -34,6 +34,28 @@ class StatusDado {
 	const ANALIZE = 'ANALIZE';
 }
 
+class TipoMensagens {
+	const ENVIO_SESSAO_ANALIZE = 1;
+	const SESSAO_REJEICAO_EQUIPE = 2;
+	const SESSAO_APROVACAO_EQUIPE = 3;
+	const SESSAO_APROVACAO_ADMIN = 4;
+	const SESSAO_REJEICAO_ADMIN = 5;
+	const SESSAO_PUBLICADA = 6;
+	const SOLICITACAO_AMIZADE = 7;
+	const REJEITOU_AMIZADE = 8;
+	const ACEITOU_AMIZADE = 9;
+}
+
+class TipoSessao {
+	const VENDA = 'VENDA';
+	const PONTOS = 'PONTOS';
+	const PATROCINIO = 'PATROCINIO';
+	const LEILAO = 'LEILAO';
+	
+}
+
+
+
 class QuantidadePontos {
 	const SESSAO_PONTOS_CADASTRO = 100;
 	const SESSAO_OUTRA_CADASTRO = 5;
@@ -1152,6 +1174,272 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
+
+	public function repovarFrom(){
+		require_once 'views/sessoes/tmpl/repovar_from.php';
+		exit();
+	}
+	
+	
+	public function reprovarSessao(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		$perfil = $this->getPerfilLogado();
+		
+		$id = JRequest::getString('id',0);
+		$descricao = JRequest::getString('descricao','');
+		
+		$sessao = $this->getSessaoById($id);
+		
+		$erro = false;
+		
+		if($id==0 || !isset($sessao)){
+			JError::raiseWarning( 100, 'Falha ao aprovar sess&atilde;o. Sess&atilde;o n&atilde;o loalizada.' );
+			$erro = true;
+		}
+		
+		
+		
+		$todosAprovaram = true;
+		
+		if($sessao->status_modelo_principal != 1 || $sessao->status_fotografo_principal != 1){
+			$todosAprovaram = false;
+		}
+		
+		if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0
+				&& $sessao->status_fotografo_secundario != 1){
+			$todosAprovaram = false;
+		}
+		
+		if(isset($sessao->id_modelo_secundaria) && $sessao->id_modelo_secundaria>0
+				&& $sessao->status_modelo_secundaria != 1){
+			$todosAprovaram = false;
+		}
+		
+		
+		//Montando o texto da mensgem.
+		$titulo = 'Sessão reprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
+		$texto = ' sua sessão "' . $sessao->titulo . '" acaba de ser reprovada por um integrante.<br> ';
+		
+
+		
+		$texto = $texto . 'O motivo foi: <br/>'.$descricao;
+		
+		
+		$criador = $this->getPerfilById($sessao->id_usuario_criador);
+		
+		
+		
+		
+		
+		
+		//Alterando status
+		
+		if($perfil->id == $sessao->id_fotografo_principal && $perfil->tipo == 'FOTOGRAFO'){
+				
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
+					$db->quoteName ( 'status_fotografo_principal' ) . ' = 0 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_fotografo_secundario && $perfil->tipo=='FOTOGRAFO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
+					$db->quoteName ( 'status_fotografo_secundario' ) . ' = 0 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_modelo_principal && $perfil->tipo=='MODELO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
+					$db->quoteName ( 'status_modelo_principal' ) . ' = 0 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_modelo_secundaria && $perfil->tipo=='MODELO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
+					$db->quoteName ( 'status_modelo_secundario' ) . ' = 0 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		//Enviando mensagem
+		$this->EnviarMensagemEmail($criador->email, $criador->nome, TipoMensagens::SESSAO_REJEICAO_EQUIPE, $titulo, $texto);
+		$this->EnviarMensagemInbox($titulo, $sessao->id_usuario_criador, $texto, TipoMensagens::SESSAO_REJEICAO_EQUIPE);
+
+	
+		require_once 'views/sessoes/tmpl/repovar_from.php';
+		echo("<script>window.location='".JRoute::_('index.php?option=com_angelgirls&task=carregarMinhasSessoes',false) ."'; parent.document.AngelGirls.FrameModalHide();</script>");
+	}
+	
+	
+	public function aprovarSessao(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		$perfil = $this->getPerfilLogado();
+		
+		$id = JRequest::getString('id',0);
+		$sessao = $this->getSessaoById($id);
+		
+		$erro = false;
+		
+		if($id==0 || !isset($sessao)){
+			JError::raiseWarning( 100, 'Falha ao aprovar sess&atilde;o. Sess&atilde;o n&atilde;o loalizada.' );
+			$erro = true;
+		}
+		
+
+		
+		$todosAprovaram = true;
+
+		if($sessao->status_modelo_principal != 1 || $sessao->status_fotografo_principal != 1){
+			$todosAprovaram = false;
+		}
+		
+		if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0
+				&& $sessao->status_fotografo_secundario != 1){
+			$todosAprovaram = false;
+		}
+		
+		if(isset($sessao->id_modelo_secundaria) && $sessao->id_modelo_secundaria>0
+				&& $sessao->status_modelo_secundaria != 1){
+			$todosAprovaram = false;
+		}
+
+		
+		//Montando o texto da mensgem.
+		$titulo = 'Sessão aprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
+		$texto = 'Parab&eacute;ns a sua sessão "' . $sessao->titulo . '" acaba de ser apravada por mais um integrante.<br> ';
+		
+		if($todosAprovaram){ 
+			if( $sessao->tipo == TipoSessao::VENDA){
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram anaizar tecnicamente para ver se possuem interesse de compra.';
+			}
+			elseif( $sessao->tipo == TipoSessao::LEILAO){
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação para que outros usuários possam comprar o seu set ou iram entrar em contato.';
+			}
+			elseif( $sessao->tipo == TipoSessao::PATROCINIO){
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação para  ou iram entrar em contato.';
+			}
+			elseif( $sessao->tipo == TipoSessao::PONTOS){
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação ou iram entrar em contato.';
+			}
+		}
+		else{
+			$texto = $texto . 'Estamos aguardando todos integrantes aprovarem, falta pouco já já estará aprovado.';
+		}
+
+		$texto = $texto . '<br/>Continue participando. <br/>Não deixe de ler os termos e condições no site e acompanhe as dicas para ter maior resultado em seus trabalhos. <br/>Boa sorte.';
+		
+		
+		$criador = $this->getPerfilById($sessao->id_usuario_criador);
+		
+		
+
+
+		
+
+		//Alterando status
+		
+		if($perfil->id == $sessao->id_fotografo_principal && $perfil->tipo == 'FOTOGRAFO'){
+			
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+				$db->quoteName ( 'status_fotografo_principal' ) . ' = 1 ' ),
+				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+				$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+			->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_fotografo_secundario && $perfil->tipo=='FOTOGRAFO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_fotografo_secundario' ) . ' = 1 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_modelo_principal && $perfil->tipo=='MODELO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_modelo_principal' ) . ' = 1 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		if($perfil->id == $sessao->id_modelo_secundaria && $perfil->tipo=='MODELO'){
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName ('#__angelgirls_sessao'))
+			->set (array(
+					$db->quoteName ( 'status_modelo_secundario' ) . ' = 1 ' ),
+					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
+					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
+					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+			$db->setQuery ( $query );
+			$db->execute();
+			$this->LogQuery($query);
+		}
+		
+		//Enviando mensagem
+		$this->EnviarMensagemEmail($criador->email, $criador->nome, TipoMensagens::SESSAO_APROVACAO_EQUIPE, $titulo, $texto);
+		$this->EnviarMensagemInbox($titulo, $sessao->id_usuario_criador, $texto, TipoMensagens::SESSAO_APROVACAO_EQUIPE);
+	
+		$this->carregarMinhasSessoes();
+	}
+	
+	
+	
 	
 	public function carregarCadastrarLocacao(){
 	
@@ -1516,7 +1804,7 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		JRequest::setVar ('perfil', $this->getPerfilLogado() );
 		
-		$sessao = $this->getSessaoById($id,true);
+		$sessao = $this->getSessaoById($id);
 
 		
 		
@@ -1871,7 +2159,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		$id  = JRequest::getInt('id',null,'POST');
 		$perfil = $this->getPerfilLogado();
-		$sessao = $this->getSessaoById($id,true);
+		$sessao = $this->getSessaoById($id);
 		
 		
 		
@@ -1980,7 +2268,7 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_principal);
 				
-				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, 1, $titulo, $texto);
+				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_principal.')', $texto, 1);
 			}
 		}
@@ -1989,7 +2277,7 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				$modelo = $this->getPerfilModeloById($sessao->id_modelo_principal);
 				
-				$this->EnviarMensagemEmail($modelo->email, $modelo->nome, 1, $titulo, $texto);
+				$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_principal.')', $texto, 1);
 			}
 		}
@@ -1998,13 +2286,13 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			$modelo = $this->getPerfilModeloById($sessao->id_modelo_secundaria);
 			
-			$this->EnviarMensagemEmail($modelo->email, $modelo->nome, 1, $titulo, $texto);
+			$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 			$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_secundaria.')', $texto, 1);
 		}
 		if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
 			$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_secundario);
 			
-			$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, 1, $titulo, $texto);
+			$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 			$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_secundario.')', $texto, 1);
 		}
 		
@@ -2821,10 +3109,10 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	private function getSessaoById($id,$StatusInterno=false ){
+	private function getSessaoById($id){
 		$db = JFactory::getDbo ();
 		$user = JFactory::getUser();
-		
+
 		
 		
 		$query = $db->getQuery ( true );
@@ -2832,7 +3120,7 @@ class AngelgirlsController extends JControllerLegacy{
 			`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
 			`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
 			`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
-			`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,
+			`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,`s`.`status_modelo_principal`,`s`.`status_modelo_secundaria`,`s`.`status_fotografo_principal`,`s`.`status_fotografo_secundario`,
 			`tema`.`nome` AS `nome_tema`,`tema`.`descricao` AS `descricao_tema`,`tema`.`nome_foto` AS `foto_tema`,`tema`.`audiencia_gostou` AS `gostou_tema`,
 			CASE isnull(`vt_sessao`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_sessao`,
 			CASE isnull(`vt_fo1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot1`,
@@ -2935,7 +3223,7 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar('fotos', $results);
 		
 		
-		$sessao = $this->getSessaoById($id,true);
+		$sessao = $this->getSessaoById($id);
 		
 
 		JRequest::setVar('sessao', $sessao);

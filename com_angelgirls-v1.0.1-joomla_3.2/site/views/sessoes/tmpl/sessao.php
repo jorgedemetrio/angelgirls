@@ -42,12 +42,12 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 			</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button class="btn btn-danger btnReprovar" type="button">
+			<button class="btn btn-danger btnReprovar"  data-id="<?php echo($conteudo->id);?>" type="button">
 				<span class="hidden-phone"><?php echo JText::_('Reprovar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
 			</button>
-			<button class="btn btn-success btnPublicar" type="button">
+			<button class="btn btn-success btnAprovar"  data-id="<?php echo($conteudo->id);?>" type="button">
 				<span class="hidden-phone"><?php echo JText::_('Aprovar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
@@ -72,15 +72,15 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				</div>
 				
 				<div class="btn-group" role="group">
-			<button class="btn btn-danger btnReprovar" type="button" title="Aprovar Sess&atilde;o">
+			<button class="btn btn-danger btnReprovar" data-id="<?php echo($conteudo->id);?>" type="button" title="Aprovar Sess&atilde;o">
 				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
 			</button>
-			<button class="btn btn-success btnPublicar" type="button"  title="Reprovar Sess&atilde;o">
+			<button class="btn btn-success btnAprovar"  data-id="<?php echo($conteudo->id);?>" type="button"  title="Reprovar Sess&atilde;o">
 				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
 			</button>
 				</div>
 			</div>
-<small>Aguardando aprova&ccecil;&atilde;o</small>
+<small>Aguardando aprova&ccedil;&atilde;o</small>
 		</div>
 	</div>
 	

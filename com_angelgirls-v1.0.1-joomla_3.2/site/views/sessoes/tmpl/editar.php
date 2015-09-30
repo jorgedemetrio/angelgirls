@@ -23,6 +23,7 @@ JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form
 //http://hayageek.com/drag-and-drop-file-upload-jquery/
 //
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/editar_sessao.js?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/aprovacao.js?v='.VERSAO_ANGELGIRLS);
 
 
 $editor = JFactory::getEditor();

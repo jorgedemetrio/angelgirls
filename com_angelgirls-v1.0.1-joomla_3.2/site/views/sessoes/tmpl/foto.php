@@ -318,12 +318,13 @@ endif;
 	</a>
 	<h2><?php echo($foto->titulo); ?></h2>
 </div>
-
-<div style="overflow: hidden; margin-top:10px; top: 0px; transition: 0ms linear; text-align: center;left: -50px" class="hidden-phone row carousel slide" id="componente">
-	<div class="col col-xs-1 col-sm-1 col-md-1 col-lg-1 text-center" style="vertical-align: middle;"><a href="JavaScript: componente.left();" class="setaEsquerda setas left carousel-control" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left" ></span>
+<br/>
+<br/>
+<div style="overflow: hidden; margin:10px 0 0 0; top: 0px; transition: 0ms linear; text-align: center; display: inline-block;" class="row hidden-phone" id="componente">
+	<div class="col col-xs-1 col-sm-1 col-md-2 col-lg-1 text-center" style="vertical-align: middle;height: 150px;"><a href="JavaScript: componente.left();" class="setaEsquerda setas left carousel-control"><span class="glyphicon glyphicon-chevron-left" ></span>
 	<span class="sr-only">Voltar</span></a></div>
-	<div class=" col col-xs-10 col-sm-10 col-md-10 col-lg-10 text-center">
-		<div class="hidden-phone controle text-center" id="navegador" style="display: none;height: 225px;" >
+	<div class=" col col-xs-10 col-sm-10 col-md-8 col-lg-10 text-center" style="overflow: hidden;">
+		<div class="hidden-phone controle text-center" id="navegador" style="display: none;height: 150px; overflow: hidden;" >
 			<?php
 			$count = 0;
 			foreach($fotos as $conteudo): 
@@ -338,7 +339,7 @@ endif;
 			?>
 		</div>
 	</div>
-	<div class="col col-xs-1 col-sm-1 col-md-1 col-lg-1 text-center" style="vertical-align: middle;height: 225px;"><a href="JavaScript: componente.right();"  class="setaDireita setas right carousel-control" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span>
+	<div class="col col-xs-1 col-sm-1 col-md-2 col-lg-1 text-center" style="vertical-align: middle;height: 150px;"><a href="JavaScript: componente.right();"  class="setaDireita setas right carousel-control"><span class="glyphicon glyphicon-chevron-right"></span>
 	<span class="sr-only">Próximo</span></a></div>
 </div>
 
@@ -346,13 +347,13 @@ endif;
 
 <style>
 .setas{
-    top: 110px;
+    top: 80px;
 }
 #navegador {
 	display: block;
 	box-sizing: border-box;
 	display: inline-block;
-	height: 225px;
+	height: 150px;
 	position: relative;
 	overflow: hidden;
 }
@@ -370,7 +371,7 @@ endif;
 	opacity: 0.7;
 }
 #navegador 	img {
-	max-height: 225px;
+	max-height: 150px;
 }
 #navegador .ativo {
 	opacity: 1;

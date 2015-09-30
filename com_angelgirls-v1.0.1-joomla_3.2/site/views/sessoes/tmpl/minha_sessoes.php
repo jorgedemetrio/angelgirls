@@ -17,7 +17,7 @@ JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angel
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/jquery.dataTables.js?v='.VERSAO_ANGELGIRLS);
 //JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.foundation.js?v='.VERSAO_ANGELGIRLS);
 //JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/dataTables.bootstrap.js?v='.VERSAO_ANGELGIRLS);
-
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/aprovacao.js?v='.VERSAO_ANGELGIRLS);
 
 $sessoes = JRequest::getVar('sessoes');
 $modelos = JRequest::getVar('modelos');
