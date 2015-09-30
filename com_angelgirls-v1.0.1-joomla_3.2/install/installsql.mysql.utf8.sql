@@ -459,6 +459,11 @@ CREATE TABLE `#__angelgirls_sessao` (
 		`status_fotografo_principal` INT DEFAULT 0,
 		`status_fotografo_secundario` INT DEFAULT 0,
 		
+		
+		`motivo_repro_modelo_principal` varchar(250),
+		`motivo_repro_modelo_secundaria` varchar(250),
+		`motivo_repro_fotografo_principal` varchar(250),
+		`motivo_repro_fotografo_secundario` varchar(250),
 
 		
 		`audiencia_gostou` INT DEFAULT 0,
@@ -515,6 +520,7 @@ CREATE TABLE `#__angelgirls_mensagens` (
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
 		`id_usuario_remetente` INT NOT NULL , 
  		`data_criado` DATETIME NOT NULL,
+ 		`data_lida` DATETIME NULL,
 		`host_ip_criador` varchar(20) NOT NULL,
 		`host_ip_alterador` varchar(20) NULL,
  		FOREIGN KEY (`id_usuario_remetente`) REFERENCES `#__users` (`id`),

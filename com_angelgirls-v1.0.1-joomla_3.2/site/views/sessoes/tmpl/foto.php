@@ -19,7 +19,12 @@ $foto = JRequest::getVar('foto');
 $conteudo =$foto;
 $fotos = JRequest::getVar('fotos');
 $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$foto->token.':full');
-$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
+$urlSessao ='';
+if($foto->status_dado != StatusDado::PUBLICADO) :
+	$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&id='.$conteudo->id_sessao);
+else :
+	$urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id_sessao.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo_sessao)));
+endif;
 
 ?>
 		   <div class="pull-right">
@@ -48,11 +53,13 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		<span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
 		</a>
 	</li>
+<?php if($foto->status_dado == StatusDado::PUBLICADO) :?>
 	<li role="presentation">
 		<a href="#comentarios" data-toggle="tab" aria-controls="profile" role="tab">Coment&aacute;rios
 		<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
 		</a>
 	</li>
+<?php endif;?>
 </ul>
 
 <div id="detalhesSessao" class="tab-content" style="overflow: auto;">
@@ -101,18 +108,20 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 		<div class="row">
 			<div class="col col-xs-12 col-sm-4 col-md-2 col-lg-2 text-center" style="vertical-align: middle; height: 100%">
 				<div class="dropdown">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <button class="btn btn-default dropdown-toggle <?php if($foto->status_dado != StatusDado::PUBLICADO) :?>disabled<?php endif;?>" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+				  title="<?php if($foto->status_dado != StatusDado::PUBLICADO) :?>A&ccedil;&atilde;o n&atilde;o permitida para a sess&atilde;o, pois ainda n&atilde;o foi publicada.<?php else:?>Compartilhar foto<?php endif;?>">
 				    Compartilhar <span class="glyphicon glyphicon-share"></span>
 				    <span class="caret"></span>
 				  </button>
+<?php if($foto->status_dado == StatusDado::PUBLICADO) :?>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				    <li><div class="fb-share-button" data-layout="button_count"></div></li>
 				    <li role="separator" class="divider"></li>
 				    <li><div class="vkShare" data-action="share"></div></li>
 				    <li role="separator" class="divider"></li>
 				    <li><div class="g-plus" data-action="share"></div></li>
-
 				  </ul>
+<?php endif;?>
 				</div>
 			</div>
 			<div class="col col-xs-12 col-sm-8 col-md-10 col-lg-10 well">

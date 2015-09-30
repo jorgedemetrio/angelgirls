@@ -31,7 +31,6 @@ style="position: absolute; height: 30px; width: 100%; top: 4px; padding-right: 8
 			<span class="glyphicon glyphicon-heart" title="Possui nudez."></span>&nbsp;
 	<?php else: ?>
 			<span class="glyphicon glyphicon-heart-empty" title="N&atilde;o possui nudez."></span>&nbsp;
-<script>EditarSessao.ImagensSemNunes = EditarSessao.ImagensSemNunes+1;</script>
 	<?php endif;?>
 		</a>
 	</div></div>		

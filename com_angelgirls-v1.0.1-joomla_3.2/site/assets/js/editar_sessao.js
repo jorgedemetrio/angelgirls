@@ -24,7 +24,24 @@ jQuery(document).ready(function(){
 		EditarSessao.LimparFormVideo();
 	});
 	
+	jQuery('.btnRemoverSessao').click(function(){
+		EditarSessao.RemoverSessao();
+	});	
+
+
 	
+	jQuery('.btnPublicar').click(function(){
+		if(EditarSessao.PublicacaoLiberada){
+			EditarSessao.Publicar();		
+		}
+	});	
+	
+
+	
+	
+	
+	
+	EditarSessao.VerificarHabilitacaoPublicacao();
 	
 	
 	jQuery('#meta_descricao').restrictLength($('#maxlength'));
@@ -130,6 +147,21 @@ jQuery(document).ready(function(){
 		
 		jQuery(document).scroll(function(){
 			 //if( (jQuery(window).height()+jQuery(this).scrollTop()+350) >= jQuery(document).height() && !carregando && temMais) {
+			
+			if(jQuery(this).scrollTop() >= jQuery("#Totais").position().top){
+				jQuery("#TotaisHide").addClass('in');
+				jQuery("#TotaisHide").css('top', jQuery(this).scrollTop());
+				jQuery("#TotaisHide").css('left', jQuery("#Totais").position().left);
+				jQuery("#TotaisHide").width( jQuery("#Totais").width());
+				jQuery("#TotaisHide").css('display','');
+			}
+			else{
+				jQuery("#TotaisHide").removeClass('in');
+				jQuery("#TotaisHide").css('display','none');
+			}
+
+			
+			
 			if( (jQuery(window).height()+jQuery(this).scrollTop()) >= jQuery("#carregando").position().top && !carregando && temMais){
 				
 				carregando = true;
@@ -144,6 +176,7 @@ jQuery(document).ready(function(){
 						jQuery('#carregando').css('display','');
 						jQuery('#linha').append(dado);
 					}		
+					
 					jQuery('.thumbnail').each(function(){
 						$this = jQuery(this);
 						$img = jQuery($this.find('img'));
@@ -258,10 +291,81 @@ EditarSessao.SalvarVideo = function(idParam){
 
 }
 
+EditarSessao.Publicar = function(){
+	
+	if(EditarSessao.ImagensPublicadas<40 || (EditarSessao.ImagensSemNunes<5 || EditarSessao.ImagensSemNunes>(EditarSessao.ImagensPublicadas-10))){
+		alert('Voc&ecirc; deve enviar no minimo 40 fotos, sendo delas no minimo 10 com nu ou semi nu e 5 sem nu nem semi nu!');
+		return;
+	}
+	if(EditarSessao.VideosPublicados<1 ){
+		alert('Voc&ecirc; deve enviar no minimo 1 v&iacute;deo!<br/>Prefer&ecirc;ncia o v&iacute;deo com as modelos comentando ci&ecirc;ncia que o material ser&aacute; publicado na Angel Girls e conhecimentos dos termos e condiu&ccedil;&otilde;es.<br/>O MakingOf &eacute; opcional.');
+		return;
+	}
+	
+	
+	jQuery('#publicar').val('S');
+	jQuery('#dadosForm').sumit();		
+	
+};
+
+EditarSessao.PublicacaoLiberada = false;
 
 EditarSessao.VerificarHabilitacaoPublicacao = function(){
+	jQuery('.totalFotos').html(EditarSessao.ImagensPublicadas);
+	var erro=false;
+	if(EditarSessao.ImagensPublicadas<40){
+		jQuery('.totalFotos').removeClass('itemValor');
+		jQuery('.totalFotos').removeClass('itemValorErro');
+		jQuery('.totalFotos').addClass('itemValorErro');
+		erro=true;
+	}else{
+		jQuery('.totalFotos').removeClass('itemValor');
+		jQuery('.totalFotos').removeClass('itemValorErro');
+		jQuery('.totalFotos').addClass('itemValor');		
+	}
 	
+	
+	jQuery('.totalVideos').html(EditarSessao.VideosPublicados );
+	if(EditarSessao.VideosPublicados<1){
+		jQuery('.totalVideos').removeClass('itemValor');
+		jQuery('.totalVideos').removeClass('itemValorErro');
+		jQuery('.totalVideos').addClass('itemValorErro');
+		erro=true;
+	}else{
+		jQuery('.totalVideos').removeClass('itemValor');
+		jQuery('.totalVideos').removeClass('itemValorErro');
+		jQuery('.totalVideos').addClass('itemValor');		
+	}
+	
+	
+	jQuery('.totalFotosSemNu').html(EditarSessao.ImagensSemNunes);
+	if(EditarSessao.ImagensSemNunes<5 || EditarSessao.ImagensSemNunes>(EditarSessao.ImagensPublicadas-10)){
+		jQuery('.totalFotosSemNu').removeClass('itemValor');
+		jQuery('.totalFotosSemNu').removeClass('itemValorErro');
+		jQuery('.totalFotosSemNu').addClass('itemValorErro');
+		erro=true;
+	}else{
+		jQuery('.totalFotosSemNu').removeClass('itemValor');
+		jQuery('.totalFotosSemNu').removeClass('itemValorErro');
+		jQuery('.totalFotosSemNu').addClass('itemValor');		
+	}
+	
+	if(erro){
+		EditarSessao.PublicacaoLiberada = false;
+		jQuery('.btnPublicar').removeClass('disabled');
+		jQuery('.btnPublicar').addClass('disabled');
+	}
+	else{
+		EditarSessao.PublicacaoLiberada = true;
+		jQuery('.btnPublicar').removeClass('disabled');
+	}
 } 
+
+EditarSessao.RemoverSessao = function(){
+	if(confirm('Est\u00e1 certo disto?')){
+		window.location = EditarSessao.RemoverSessaoURL;		
+	}
+}
 
 
 EditarSessao.EditarVideo = function(id,titulo,tipo,meta_descricao,descricao){
@@ -301,6 +405,10 @@ EditarSessao.RemoverFoto = function(idParam){
 	jQuery.post(EditarSessao.RemoverImagemURL,
 			{id: idParam}, function(){
 		jQuery('#foto'+idParam).remove();
+		
+        EditarSessao.ImagensPublicadas = EditarSessao.ImagensPublicadas - 1;
+        
+        EditarSessao.VerificarHabilitacaoPublicacao();
 	},'text');
 }
 
@@ -316,7 +424,7 @@ EditarSessao.PossuiNudes = function(idParam){
 			jQuery('#PossuiNudes'+idParam).attr('data-valor','S');
 			EditarSessao.ImagensSemNunes = EditarSessao.ImagensSemNunes-1;
 		}
-			
+		EditarSessao.VerificarHabilitacaoPublicacao();
 	},'json');
 }
 
@@ -369,8 +477,19 @@ EditarSessao.sendFileToServer = function(formData,status) {
         },
         success: function(data){
             if(data.ok=='ok'){
-                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade in"><a href="'+data.url+'"><img src="'+data.cube+'" /></a></div>'
+                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade" id="imagemThumb'+data.id+'"><a href="'+data.url+'"><img src="'+data.cube+'" /></a></div>'
                 jQuery('#linha').append(html);
+                
+                EditarSessao.ImagensPublicadas = EditarSessao.ImagensPublicadas + 1;
+                
+                EditarSessao.VerificarHabilitacaoPublicacao();
+                
+        		jQuery('#imagemThumb'+data.id+'').ready(function(){
+        			$this = jQuery('#imagemThumb'+data.id+''); 
+    				if(!$this.hasClass('in')){
+    					$this.addClass('in');
+    				}
+        		});
             }
             else{
             	status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> '+data.mensagem+'</span>');
@@ -403,7 +522,6 @@ EditarSessao.handleFileUpload = function(files,obj) {
 	   if(files[i].type.toUpperCase().indexOf('JPG')>0 || files[i].type.toUpperCase().indexOf('JPEG')>0){
 		    status.setFileNameSize(files[i].name,files[i].size);
 		    EditarSessao.sendFileToServer(fd ,status);
-		    EditarSessao.ImagensPublicadas++;
 	   }
 	   else{
 		   status.setFileNameSize('<span class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> "'+files[i].name+'" n&atilde;o &eacute; JPG</span>',files[i].size);

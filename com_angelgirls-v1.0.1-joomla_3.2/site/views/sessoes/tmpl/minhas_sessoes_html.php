@@ -13,6 +13,8 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 				<th></th>
 				<th>Fotografo Principal</th>
 				<th>Data</th>
+				<th>Publica&ccedil;&atilde;o</th>
+				<th>Status</th>
 				
 			</tr>
 		</thead>
@@ -71,7 +73,8 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 				<td style="width: 30px" style="vertical-align: middle;"><img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->fotografo1); ?></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></td>
-
+				<td class="editavel" style="vertical-align: middle;"><?php echo(isset($conteudo->publicar) && strlen(trim($conteudo->publicar))>5 ?JDate::getInstance($conteudo->publicar)->format('d/m/Y'):'N/D'); ?></td>
+				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->status_dado); ?></td>
 			</tr>
 		
 <?php

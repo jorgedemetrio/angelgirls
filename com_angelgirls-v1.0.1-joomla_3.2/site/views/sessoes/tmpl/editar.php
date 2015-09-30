@@ -30,6 +30,7 @@ $params = array('images'=> '0','smilies'=> '0', 'html' => '1', 'style'  => '0', 
 
 $conteudo = JRequest::getVar('sessao');
 $fotos = JRequest::getVar('fotos');
+$videos = JRequest::getVar('videos');
 
 
 $perfil = JRequest::getVar('perfil');
@@ -37,6 +38,8 @@ $perfil = JRequest::getVar('perfil');
 $temas = JRequest::getVar('temas');
 $figurinos =  JRequest::getVar('figurinos');
 $locacoes =  JRequest::getVar('locacoes');
+$semNudes =  JRequest::getVar('sem_nudes',0);
+$totalFotos =  JRequest::getVar('total_fotos',0);
 
 $this->item = $conteudo;
 
@@ -79,8 +82,11 @@ JFactory::getDocument()->addScriptDeclaration('
 		var lidos = 0;
 		var carregando = false;
 		var temMais=false;
-		EditarSessao.ImagensPublicadas = '.sizeof($fotos).';
-		EditarSessao.ImagensSemNunes = 0;
+		EditarSessao.ImagensPublicadas = '.$totalFotos.';
+		EditarSessao.VideosPublicados = '.sizeof($videos).';
+		EditarSessao.ImagensSemNunes = '.$semNudes.';
+		
+		
 		EditarSessao.BuscarModeloURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarModeloModal',false) . '";
 		EditarSessao.BuscarFotografoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=buscarFotografoModal',false) . '";
 		EditarSessao.sendFileToServerURL = "'.JURI::base( true ) . '/index.php";
@@ -96,11 +102,24 @@ JFactory::getDocument()->addScriptDeclaration('
 		EditarSessao.SalvarVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=enviarVideoSessao',false).'";
 		EditarSessao.CarregarVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarVideosContinuaHtml',false).'";
 		EditarSessao.VerVideoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=verVideo',false).'";
+		EditarSessao.RemoverSessaoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=removerSessao&id='.$conteudo->id,false).'";
 				
 		
 		');
 
 JFactory::getDocument()->addStyleDeclaration('
+		
+.itemValor{
+	font-weight: bold;
+	color: green;
+}
+
+.itemValorErro{
+	font-weight: bold;
+	color: red;
+}
+		
+		
 #dragandrophandler
 {
 border:2px dotted #0B85A1;
@@ -180,6 +199,7 @@ margin-right:5px;
 	<input type="hidden" name="id"
 		value="<?php echo JRequest::getInt('id'); ?>" />
 	
+	<input type="hidden" name="publicar" id="publicar" value="N" />
 	
 	<?php echo JHtml::_('form.token'); ?>
 	
@@ -189,7 +209,7 @@ margin-right:5px;
 				Dicas e Sujest&otilde;es <span
 					class="glyphicon glyphicon-question-sign"></span>
 			</button>
-			<button class="btn btn-info" type="button">
+			<button class="btn btn-info informacoes" type="button">
 				Termos e condi&ccedil;&otilde;es <span
 					class="glyphicon glyphicon-paperclip"></span>
 			</button>
@@ -200,11 +220,16 @@ margin-right:5px;
 <!-- 				<span class="hidden-phone"><?php echo JText::_('Voltar'); ?></span> -->
 <!-- 			</button> -->
 <?php if(isset($id) && $id != 0) :?>
-			<a class="btn btn-danger" href="<?php  echo('index.php?option=com_angelgirls&view=sessoes&task=removerSessao&id='.$conteudo->id);?>">
+			<button class="btn btn-danger btnRemoverSessao" type="button">
 				<span class="hidden-phone"><?php echo JText::_('Apagar'); ?><span class="hidden-tablet">
 						Sess&atilde;o</span></span>
 				<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-			</a>
+			</button>
+			<button class="btn btn-primary btnPublicar  disabled" type="button">
+				<span class="hidden-phone"><?php echo JText::_('Publicar'); ?><span class="hidden-tablet">
+						Sess&atilde;o</span></span>
+				<span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+			</button>
 <?php endif;?>
 			<button class="btn btn-success" type="submit">
 <?php if(!isset($this->item) || $id == 0) :?>
@@ -222,6 +247,49 @@ margin-right:5px;
 	<div class="page-header">
 		<h1>Editar Sess&atilde;o</h1>
 	</div>
+	<div id="Totais" class="well"><small>Total de <span class="totalFotos itemValor">0</span> fotos e <span class="totalVideos itemValor">0</span> v&iacute;deos enviados. Sendo <span class="totalFotosSemNu itemValor">0</span> fotos sem nudes ou semi.</small></div>
+	<div class="hidden-phone">
+		<div id="TotaisHide" class="fade well" style="display:none; position: absolute; left: 0px; z-index: 500; background-color: rgba(245,245,245,0.6); 
+																								   background-image: -webkit-linear-gradient(top, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 70%); 
+																								   background-image: -o-linear-gradient(top, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 100%); 
+																								   background-image: linear-gradient(to bottom, rgba(232, 232, 232,0.5) 0%, rgba(245, 245, 245,0.5) 100%); ">
+		
+			<div class="btn-toolbar pull-right" pull-right" role="toolbar" style=" padding: 0px; margin: 0px; ">
+				<div class="btn-group" role="group">
+					<button class="btn btn-info ajuda" type="button" title="Dicas e Sujest&otilde;es ">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</button>
+					<button class="btn btn-info informacoes" type="button" title="Termos e condi&ccedil;&otilde;es">
+						 <span class="glyphicon glyphicon-paperclip"></span>
+					</button>
+				</div>
+				
+				<div class="btn-group" role="group">
+		<?php if(isset($id) && $id != 0) :?>
+					<button class="btn btn-danger btnRemoverSessao" title="Apagar Sess&atilde;o"  type="button">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+					<button class="btn btn-primary btnPublicar  disabled" type="button" title="Publicar  Sess&atilde;o">
+						<span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+					</button>
+		<?php endif;?>
+					<button class="btn btn-success" type="submit"  title="Prosseguir/Salvar">
+		<?php if(!isset($this->item) || $id == 0) :?>
+					<span
+							class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+		<?php else:?>
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+		<?php endif; ?>
+					</button>
+				</div>
+			</div>
+			
+			
+			<small>Total de <span class="totalFotos itemValor">0</span> fotos e <span class="totalVideos itemValor">0</span> v&iacute;deos enviados. Sendo <span class="totalFotosSemNu itemValor">0</span> fotos sem nudes ou semi.</small>
+		</div>
+	</div>
+	
+	
 	<ul class="nav nav-tabs nav-justified" id="myTabTabs" role="tablist"
 		style="margin-bottom: 0;">
 		<li class="active" role="presentation"><a href="#general"
@@ -619,7 +687,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<label class="control-label" for="descricao"><strong>Descri&ccedil;&atilde;o
 						da sess&atilde;o</strong></label>
-		    	<?php echo $editor->display('descricao', $this->item->descricao, '200', '200', '20', '20', false, $params); ?>
+		    	<?php echo $editor->display('descricao', $this->item->descricao, '50', '50', '10', '5', false, $params); ?>
 			</div>
 
 		</div>
@@ -635,7 +703,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 						title="Arraste sua imagem aqui" />
 				</div>
 				<div id="dragandrophandlerArquivos"
-					class="col col-xs-1 col-sm-2 col-md-4 col-lg-4 text-center"
+					class="col col-xs-1 col-sm-2 col-md-4 col-lg-4 text-center hidden-phone"
 					style="height: 350px; overflow: scroll;">
 					<h5 id="tituloArquivosRecebidos">
 						Lista de imagens <span class="glyphicon glyphicon-picture"></span>
@@ -668,8 +736,8 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIma
 						style=" width:  90%" />
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
-					<label class="control-label" for="video"><?php echo JText::_('Arquivo'); ?> * <small>(Apenas MP4)</small> </label>
-					<input class="form-control"  type="file" name="video"  id="video" style=" width:  90%" accept="video/mp4" />
+					<label class="control-label" for="video" title="V&iacute;deos com no m&aacute;ximo 2 minutos e 60 megabytes, o formato deve ser MP4 compacta&ccedil;&atilde;o H264 em HD (720p) ou Super HD (1080p). Recomendado em 24fps."><?php echo JText::_('V&iacute;deo'); ?> * <small>(Apenas MP4 em HD ou SHD, m&aacute;ximo 5 mins e 60Mb)</small> </label>
+					<input class="form-control"  type="file" name="video"  id="video" style=" width:  90%" accept="video/mp4" title="V&iacute;deos com no m&aacute;ximo 2 minutos e 60 megabytes, o formato deve ser MP4 compacta&ccedil;&atilde;o H264 em HD (720p) ou Super HD (1080p). Recomendado em 24fps."/>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
 					<label class="control-label" for="tipoVideo"><?php echo JText::_('Tipo'); ?> *</label>

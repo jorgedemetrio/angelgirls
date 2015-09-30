@@ -41,3 +41,4 @@ $videos = JRequest::getVar('videos');
 	<?php endforeach;?>
 	</tbody>
 </table>
+<script>EditarSessao.VideosPublicados = <?php echo(sizeof($videos)); ?>;</script>
