@@ -28,6 +28,7 @@ SessaoView.ImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=ses
 ');
 
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/sessao.js?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/aprovacao.js?v='.VERSAO_ANGELGIRLS);
 ?>
 <?php if($conteudo->status_dado == StatusDado::ANALIZE) :?>
 	<div class="btn-toolbar pull-right" role="toolbar" id="BtnBotoesAcao">

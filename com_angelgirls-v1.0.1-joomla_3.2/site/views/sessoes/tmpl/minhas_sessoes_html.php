@@ -36,6 +36,8 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 <?php switch ($conteudo->status_dado) :?>
 <?php case StatusDado::ANALIZE : ?>
 		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
+			<span class="glyphicon glyphicon-thumbs-down btnReprovar btn-danger"  data-id="<?php echo($conteudo->id);?>" aria-hidden="true"  title="Reprovar"></span>
+			<span class="glyphicon glyphicon-thumbs-up btnAprovar btn-success"  data-id="<?php echo($conteudo->id);?>" aria-hidden="true" title="Aprovar"></span>
 <?php
 		break; 
 	case $conteudo->status_dado==StatusDado::ATIVO : ?>

@@ -164,7 +164,40 @@ AngelGirls.ResetConfig = function(){
 	});
 }; 
 
+
+AngelGirls.CarregarDadosInformativos = function(){
+	jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
+		if(dado.mensagens>0){
+			jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
+		}
+		else{
+			jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
+		}
+		if(dado.aprovar>0){
+			jQuery('.sessoesAprovar').html('<a href="#"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
+		}
+		else{
+			jQuery('.sessoesAprovar').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
+		}
+		
+		
+	},'json');
+}
+
+
 jQuery(document).ready(function(){
+	//jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
+	jQuery('.caixaMensagens').removeClass('nav-header');
+	jQuery('.caixaMensagens').removeClass('sr-only');
+	jQuery('.sessoesAprovar').removeClass('nav-header');
+	jQuery('.sessoesAprovar').removeClass('sr-only');
+	
+	setInterval(function(){
+		AngelGirls.CarregarDadosInformativos();
+	}, 30000);
+	
+	AngelGirls.CarregarDadosInformativos();
+	
 	jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
 	jQuery(".validate-inteiro").mask("9999999999999");
 	jQuery(".validate-cep").mask("99999-999");
@@ -198,7 +231,7 @@ jQuery(document).ready(function(){
 		$ObjetoCidade = jQuery("#"+$objeto.attr("data-carregar"));
 		$ObjetoCidade.empty();
 		$ObjetoCidade.append(new Option("", ""));
-		jQuery.post('index.php?option=com_angelgirls&task=cidadeJson',{
+		jQuery.post('index.php?option=com_angelgirls&view=perfil&task=cidadeJson',{
 			uf: $objeto.val()}, function(dado){
 			for(var i=0; i<dado.length;i++){
 				var option = new Option(dado[i].nome, dado[i].id);

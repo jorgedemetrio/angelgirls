@@ -490,7 +490,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		
 		$query = $db->getQuery ( true );
@@ -677,7 +678,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		
 		$query = $db->getQuery ( true );
@@ -845,7 +847,8 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		$view = JRequest::getString('view','');
 		$jsonRetorno='';
@@ -1091,7 +1094,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 	
 	
@@ -1241,11 +1245,11 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->update($db->quoteName ('#__angelgirls_sessao'))
 			->set (array(
 					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
-					$db->quoteName ( 'status_fotografo_principal' ) . ' = 0 ' ),
+					$db->quoteName ( 'status_fotografo_principal' ) . ' = 0 ' ,
 					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
 					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
-					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+			->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
 			$db->setQuery ( $query );
 			$db->execute();
 			$this->LogQuery($query);
@@ -1256,11 +1260,11 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->update($db->quoteName ('#__angelgirls_sessao'))
 			->set (array(
 					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
-					$db->quoteName ( 'status_fotografo_secundario' ) . ' = 0 ' ),
+					$db->quoteName ( 'status_fotografo_secundario' ) . ' = 0 ' ,
 					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
 					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
-					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+			->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
 			$db->setQuery ( $query );
 			$db->execute();
 			$this->LogQuery($query);
@@ -1270,12 +1274,12 @@ class AngelgirlsController extends JControllerLegacy{
 			$query = $db->getQuery ( true );
 			$query->update($db->quoteName ('#__angelgirls_sessao'))
 			->set (array(
-					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
-					$db->quoteName ( 'status_modelo_principal' ) . ' = 0 ' ),
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::NOVO) ,
+					$db->quoteName ( 'status_modelo_principal' ) . ' = 0 ' ,
 					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
 					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
-					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+			->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
 			$db->setQuery ( $query );
 			$db->execute();
 			$this->LogQuery($query);
@@ -1286,23 +1290,28 @@ class AngelgirlsController extends JControllerLegacy{
 			$query->update($db->quoteName ('#__angelgirls_sessao'))
 			->set (array(
 					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quoteName(StatusDado::NOVO) ,
-					$db->quoteName ( 'status_modelo_secundario' ) . ' = 0 ' ),
+					$db->quoteName ( 'status_modelo_secundario' ) . ' = 0 ' ,
 					$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp()),
 					$db->quoteName ( 'data_alterado' ) . ' = NOW()',
-					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id)
-					->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id))
+			->where (array($db->quoteName ( 'id' ) . ' = ' . $id));
 			$db->setQuery ( $query );
 			$db->execute();
 			$this->LogQuery($query);
 		}
-		
-		//Enviando mensagem
-		$this->EnviarMensagemEmail($criador->email, $criador->nome, TipoMensagens::SESSAO_REJEICAO_EQUIPE, $titulo, $texto);
-		$this->EnviarMensagemInbox($titulo, $sessao->id_usuario_criador, $texto, TipoMensagens::SESSAO_REJEICAO_EQUIPE);
+		try{
+			//	Enviando mensagem
+			$this->EnviarMensagemEmail($criador->email, $criador->nome, TipoMensagens::SESSAO_REJEICAO_EQUIPE, $titulo, $texto);
+			$this->EnviarMensagemInbox($titulo, $sessao->id_usuario_criador, $texto, TipoMensagens::SESSAO_REJEICAO_EQUIPE);
+		}
+		catch(Exception $e){
+			JLog::add($e->getMessage(), JLog::WARNING);
+		}
 
 	
 		require_once 'views/sessoes/tmpl/repovar_from.php';
-		echo("<script>window.location='".JRoute::_('index.php?option=com_angelgirls&task=carregarMinhasSessoes',false) ."'; parent.document.AngelGirls.FrameModalHide();</script>");
+		echo("<script>window.location='".JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarMinhasSessoes',false) ."'; \\parent.document.AngelGirls.FrameModalHide();
+				</script>");
 	}
 	
 	
@@ -1759,11 +1768,11 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	private function GerarNovoNomeArquivo($fileName, $prefixo = null){
-		$uploadedFileNameParts = explode ( '.', $fileName );
-		$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
+		//$uploadedFileNameParts = explode ( '.', $fileName );
+		//$uploadedFileExtension = array_pop ( $uploadedFileNameParts );
 		//$nomearquivo = date('YmdHi').hash('sha256', $fileName . date('YmdHis')).'@'.md5($fileName . date('YmdHis')) . '.' . $uploadedFileExtension;
 		//$nomearquivo = (isset($prefixo)?$prefixo.'_':'') . date('YmdHis') . hash('sha256', $fileName . date('YmdHisu')) . '.' . $uploadedFileExtension;
-		$nomearquivo = (isset($prefixo)?$prefixo.'_':'') . date('YmdHis') . md5($fileName . date('YmdHisu')) . '.' . $uploadedFileExtension;
+		$nomearquivo = (isset($prefixo)?$prefixo.'_':'') . date('YmdHis') . md5($fileName . date('YmdHisu')) . '.' . JFile::getExt($fileName);
 		return $nomearquivo;
 	}
 	
@@ -1782,7 +1791,8 @@ class AngelgirlsController extends JControllerLegacy{
 	public function carregarEditarSessao(){
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		$user = JFactory::getUser();
 		
@@ -1934,7 +1944,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$erros = true;
 		}		
 		
-		if(!isset($titulo) || strlen(trim($titulo)) <=5 ){
+		if(!isset($titulo) || strlen(trim($titulo)) <5 ){
 			JError::raiseWarning(100,JText::_('O campo "Titulo" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
 			$erros = true;
 		}
@@ -1949,7 +1959,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$erros = true;
 		}
 		
-		if(!isset($meta_descricao) || strlen(trim($meta_descricao)) <=5 ){
+		if(!isset($meta_descricao) || strlen(trim($meta_descricao)) <5 ){
 			JError::raiseWarning(100,JText::_('O campo "Descri&ccedil;&atilde;o R&aacute;pida" &eacute; um campo obrigat&oacute;rio. E deve contar no minimo 5 e m&aacute;ximo 250 caracteres.'));
 			$erros = true;
 		}
@@ -2136,7 +2146,6 @@ class AngelgirlsController extends JControllerLegacy{
 				return;
 			}
 		}
-		
 		if($publicar=='S'){
 			if($this->publicarSessao()){
 				JFactory::getApplication()->enqueueMessage(JText::_('Sess&atilde;o publicada com sucesso!<br/>Aguardando aprova&ccedil;&atilde;o da(s) modelo(s) e fotografo(s) para ir para analize pelo comite.'));
@@ -2255,54 +2264,57 @@ class AngelgirlsController extends JControllerLegacy{
 
 		
 
+		try{
 		
-		
-		$base = JUri::root(true) ;
-		$url = $base . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarAprovarSessao&id='.$sessao->id);
-		
-		$titulo = 'Publicação de SET aguardando aprovação.';
-		
-		$texto = "<img src='$base/images/angelgirls.png'/><br/>Ola %NOME%, <br/>Foi cadastrado uma sess&atilde;o de fotos no site Angel Girls onde voc&ecirc;s marcado(a) como %TIPO%.<br/>Para aprovar ou repovar acesse o link <a href='$url'>$url</a> ."  ;
-		if($perfil->tipo != 'MODELO'){
-			if(isset($sessao->id_fotografo_principal) && $sessao->id_fotografo_principal>0){
-				
-				$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_principal);
-				
-				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
-				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_principal.')', $texto, 1);
+			$base = JUri::root(true) ;
+			$url = $base . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarAprovarSessao&id='.$sessao->id);
+			
+			$titulo = 'Publicação de SET aguardando aprovação.';
+			
+			$texto = "<img src='$base/images/angelgirls.png'/><br/>Ola %NOME%, <br/>Foi cadastrado uma sess&atilde;o de fotos no site Angel Girls onde voc&ecirc;s marcado(a) como %TIPO%.<br/>Para aprovar ou repovar acesse o link <a href='$url'>$url</a> ."  ;
+			if($perfil->tipo != 'MODELO'){
+				if(isset($sessao->id_fotografo_principal) && $sessao->id_fotografo_principal>0){
+					
+					$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_principal);
+					
+					$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
+					$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_principal.')', $texto, 1);
+				}
 			}
-		}
-		if($perfil->tipo != 'FOTOGRAFO'){
-			if(isset($sessao->id_modelo_principal) && $sessao->id_modelo_principal>0){
+			if($perfil->tipo != 'FOTOGRAFO'){
+				if(isset($sessao->id_modelo_principal) && $sessao->id_modelo_principal>0){
+					
+					$modelo = $this->getPerfilModeloById($sessao->id_modelo_principal);
+					
+					$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
+					$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_principal.')', $texto, 1);
+				}
+			}
+			
+			if(isset($sessao->id_modelo_secundaria) && $sessao->id_modelo_secundaria>0){
 				
-				$modelo = $this->getPerfilModeloById($sessao->id_modelo_principal);
+				$modelo = $this->getPerfilModeloById($sessao->id_modelo_secundaria);
 				
 				$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
-				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_principal.')', $texto, 1);
+				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_secundaria.')', $texto, 1);
+			}
+			if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
+				$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_secundario);
+				
+				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
+				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_secundario.')', $texto, 1);
+			}
+			
+			if($sessao->tipo=='PONTOS'){
+				$this->SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_PONTOS_CADASTRO);
+			}
+			else{
+				$this->SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_OUTRA_CADASTRO);
 			}
 		}
-		
-		if(isset($sessao->id_modelo_secundaria) && $sessao->id_modelo_secundaria>0){
-			
-			$modelo = $this->getPerfilModeloById($sessao->id_modelo_secundaria);
-			
-			$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
-			$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_secundaria.')', $texto, 1);
+		catch(Exception $e){
+			JLog::add($e->getMessage(), JLog::WARNING);
 		}
-		if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
-			$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_secundario);
-			
-			$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
-			$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_secundario.')', $texto, 1);
-		}
-		
-		if($sessao->tipo=='PONTOS'){
-			$this->SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_PONTOS_CADASTRO);
-		}
-		else{
-			$this->SomarPontos('Cadastro da sess&atilde;o ' . $sessao->titulo, 'SESSAO.PONTOS.CADASTRO', QuantidadePontos::SESSAO_OUTRA_CADASTRO);
-		}
-		
 		
 		return true;
 	} 
@@ -2311,7 +2323,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	private function MoverImagemoParapastaLixo($ArquivoAntigoApagavel, $dest){
-
+		$user = JFactory::getUser();
 		
 		
 		if(isset($ArquivoAntigoApagavel) && strlen(trim($ArquivoAntigoApagavel))>0
@@ -2329,7 +2341,7 @@ class AngelgirlsController extends JControllerLegacy{
 					JFolder::create($trahspath);
 				}
 
-				if(JFile::exists ($arquivoAntigoBK)){
+				/*if(JFile::exists ($arquivoAntigoBK)){
 					JFile::move($arquivoAntigoBK,  $trahspath . DS . 'bk_' . $ArquivoAntigoApagavel);
 				}
 				if(JFile::exists ($arquivoAntigoICO)){
@@ -2343,26 +2355,58 @@ class AngelgirlsController extends JControllerLegacy{
 				}
 				if(JFile::exists ($arquivoAntigo)){
 					JFile::move($arquivoAntigo,  $trahspath . DS .  $ArquivoAntigoApagavel);
+				}*/
+				
+				$zip = new ZipArchive();
+				if( $zip->open( $trahspath . DS . $ArquivoAntigoApagavel . '.zip' , ZipArchive::CREATE )  === true){
+					$zip->addFile($arquivoAntigo, $ArquivoAntigoApagavel);
+					$zip->addFile($arquivoAntigoBK, 'bk_' . $ArquivoAntigoApagavel);
+					$zip->addFile($arquivoAntigoICO, 'ico_' . $ArquivoAntigoApagavel);
+					$zip->addFile($arquivoAntigoTHUMB, 'thumb_' . $ArquivoAntigoApagavel);
+					$zip->addFile($arquivoAntigoCUBE, 'cube_' . $ArquivoAntigoApagavel);
+					$zip->addFromString('readme.txt' , 'Arquivo gerado por ' . $user->name  . "\n DATA " . date('d/m/Y H:i:s') );
+					$zip->close();
 				}
 				
+				
+				JFile::delete($arquivoAntigo);
+				JFile::delete($arquivoAntigoBK);
+				JFile::delete($arquivoAntigoICO);
+				JFile::delete($arquivoAntigoTHUMB);
+				JFile::delete($arquivoAntigoCUBE);
 			
 		}
 	}
 	
 	
-	private function SalvarUploadVideo($upload, $dest, $arquivo){
+	private function SalvarUploadVideo($upload, $dest, $arquivo, $descricao=''){
 		$db = JFactory::getDbo();
+		$user = JFactory::getUser();
+		
 
+		
 		$fileName = $upload ['name'];
 		$fileTemp = $upload ['tmp_name'];
-		$newfile = $dest . DS  . $arquivo;
-		if (JFolder::exists ( $newfile )) {
+		$newfile = $dest . DS . 'VIDEOS' . DS  . $arquivo;
+		if (JFile::exists ( $newfile )) {
 			JFile::delete ( $newfile );
+		}
+		if (JFile::exists ( $newfile. '.zip' )) {
+			JFile::delete ( $newfile. '.zip' );
 		}
 		if (! JFile::upload( $fileTemp, $newfile )) {
 			JError::raiseWarning( 100, 'Falha ao salvar o arquivo.' );
 			return false;
 		}
+		
+		$zip = new ZipArchive();
+		if( $zip->open( $newfile . '.zip' , ZipArchive::CREATE )  === true){
+			$zip->addFile( $newfile, $arquivo);
+			$zip->addFromString('readme.txt' , 'Arquivo gerado por ' . $user->name  .  "\n DATA " . date('d/m/Y H:i:s') . "\n " . $descricao );
+			$zip->close();
+		}
+		
+		
 		return true;
 	}
 	
@@ -2891,10 +2935,6 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				
 				
-							$NomeArquivoArray = explode ( '.', $video['name'] );
-				
-				
-				
 							$query = $db->getQuery ( true );
 							$query->insert( $db->quoteName ( '#__angelgirls_video_sessao' ) )
 							->columns(array(
@@ -2950,7 +2990,7 @@ class AngelgirlsController extends JControllerLegacy{
 							
 							
 								
-							$this->SalvarUploadVideo($video, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo);
+							$this->SalvarUploadVideo($video, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo, "Sessão  \"$titulo\" ID $idSessao ID-VIDEO $idVideo");
 			
 		
 		//					echo($arquivo);exit();
@@ -3093,7 +3133,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$urlthumb = JRoute::_('index.php?option=com_angelgirls&view=fotosessao&task=loadImage&id='.$token.':thumb');
 				
 				
-				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$imagem['name'] . 
+				$jsonRetorno= '{"ok":"ok","mensagem":"","token":"'.$token.'","id":"'.$idFoto.'","token":"'.$token.'","titulo":"'.$NomeArquivoArray[0] . 
 				 					'","meta_descricao":"'.$imagem['name'].'","descricao":"","url":"'.$url.'","ico":"'.$urlIco.'","cube":"'.$urlcube.'","thumb":"'.$urlthumb.'"}';
 			}
 			else{
@@ -3171,7 +3211,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 
 
@@ -3212,7 +3253,8 @@ class AngelgirlsController extends JControllerLegacy{
 
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		
 		
@@ -3244,7 +3286,8 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		$results = $this->runVideosSessao($user, $id );
 		JRequest::setVar('videos', $results);
@@ -3343,20 +3386,28 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
 			if(isset($result)){
-				$arquivo =  PATH_IMAGEM_SESSOES . $result->token . DS . $result->arquivo;
+				$arquivo =  PATH_IMAGEM_SESSOES .  $result->token . DS . 'VIDEOS' . DS . $result->arquivo;
 				$nomeArquivo = $result->titulo.'.mp4';
 			}
+			
 		}
 
 
+		$this->EnviarArquivo($arquivo, 'video/mp4',$nomeArquivo);
 
+	}
+	
+	private function EnviarArquivo($arquivo, $mime, $nome=null){
 		$fp = @fopen($arquivo, 'rb');
 		$size   = filesize($arquivo); // File size
 		$length = $size;           // Content length
 		$start  = 0;               // Start byte
 		$end    = $size - 1;       // End byte
-		header('Content-type: video/mp4');
+		header('Content-type: '.$mime);
 		header("Accept-Ranges: 0-$length");
+		if(isset($nome)){
+			header('Content-Disposition: inline; filename="'.$nome.'"');
+		}
 		if (isset($_SERVER['HTTP_RANGE'])) {
 			$c_start = $start;
 			$c_end   = $end;
@@ -3432,7 +3483,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$NaoLogado = COMPONENT_AG_PATH . 'no_logado.png';
 		$AreaVIP = COMPONENT_AG_PATH . 'no_logado.png';
 		
-
+		$nomeArquivo  = null;
 		
 		$logado = ( isset($user) && $user->id > 0); 
 		
@@ -3440,7 +3491,7 @@ class AngelgirlsController extends JControllerLegacy{
 		if($view=='fotosessao'){
 			
 			$query = $db->getQuery ( true );
-			$query->select('`f`.`token_imagem` AS foto_token, s.token AS sessao_token, f.area_vip, f.possui_nudes')
+			$query->select('`f`.`token_imagem` AS foto_token, f.titulo, s.token AS sessao_token, f.area_vip, f.possui_nudes')
 			->from ( $db->quoteName ( '#__angelgirls_foto_sessao', 'f' ) )
 			->join ('INNER', $db->quoteName ( '#__angelgirls_sessao', 's' ) . ' ON f.id_sessao = s.id')
 			->where ( $db->quoteName ( 'f.token' ) . ' = ' . $db->quote($id) )
@@ -3464,6 +3515,7 @@ class AngelgirlsController extends JControllerLegacy{
 						$db->execute ();
 					}
 					$arquivo =  PATH_IMAGEM_SESSOES . $result->sessao_token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'')  . $result->foto_token;
+					$nomeArquivo = $result->titulo;
 				}
 
 //				TODO CONTROLE IMAGEM DA &aacute;REA VIP
@@ -3477,7 +3529,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		else if($view=='sessoes'){
 			$query = $db->getQuery ( true );
-			$query->select('`s`.`nome_foto` AS `foto`, `s`.`token`')
+			$query->select('`s`.`nome_foto` AS `foto`, `s`.`token`, s.titulo')
 			->from ( $db->quoteName ( '#__angelgirls_sessao', 's' ) )
 			->where ( $db->quoteName ( 's.token' ) . " =  " . $db->quote($id) )
 			->where (' s.status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
@@ -3485,6 +3537,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$result = $db->loadObject();
 			if(isset($result)){
 				$arquivo =  PATH_IMAGEM_SESSOES . $result->token . DS . (trim(strtolower($tipo)) != 'full'? trim(strtolower($tipo)) . '_':'') . $result->foto;
+				$nomeArquivo = $result->titulo;
 			}
 			//echo($arquivo );exit();
 		}
@@ -3532,16 +3585,16 @@ class AngelgirlsController extends JControllerLegacy{
 			$detalhe = explode ( ' ', $tipo );
 			$query = $db->getQuery ( true );
 			if ($detalhe[1]=='ico'){
-				$query->select('`f`.`foto_perfil` AS `foto`');
+				$query->select('`f`.`foto_perfil` AS `foto`, `f`.`nome_artistico` as `nome` ');
 			}
 			else if ($detalhe[1]=='medium'){
-				$query->select('`f`.`foto_inteira` AS `foto`');
+				$query->select('`f`.`foto_inteira` AS `foto`, `f`.`nome_artistico` as `nome`');
 			}
 			else if ($detalhe[1]=='horizontal'){
-				$query->select('`f`.`foto_inteira_horizontal` AS `foto`');
+				$query->select('`f`.`foto_inteira_horizontal` AS `foto`, `f`.`nome_artistico` as `nome`');
 			}
 			else {
-				$query->select('`f`.`foto_perfil` AS `foto`');
+				$query->select('`f`.`foto_perfil` AS `foto`, `f`.`nome_artistico` as `nome`');
 			}
 			$query->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
 			->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) )
@@ -3550,11 +3603,12 @@ class AngelgirlsController extends JControllerLegacy{
 			$result = $db->loadObject();
 			if(isset($result)){
 				$arquivo =  PATH_IMAGEM_MODELOS . $result->foto;
+				$nomeArquivo = $result->nome;
 			}
 		}
 		else if($view=='fotografo'){
 			$query = $db->getQuery ( true );
-			$query->select('`f`.`nome_foto` AS `foto`')
+			$query->select('`f`.`nome_foto` AS `foto`, `f`.`nome_artistico` as `nome`')
 				->from ( $db->quoteName ( '#__angelgirls_fotografo', 'f' ) )
 				->where ( $db->quoteName ( 'f.id' ) . " =  " . $db->quote($id) )
 				->where (' status_dado NOT IN ( ' . $db->quote(StatusDado::REMOVIDO) . ')' );
@@ -3562,27 +3616,36 @@ class AngelgirlsController extends JControllerLegacy{
 			$result = $db->loadObject();
 			if(isset($result)){
 				$arquivo =  PATH_IMAGEM_FOTOGRAFOS . $result->foto;
+				$nomeArquivo = $result->nome;
 			}
 		}
+		
 		//header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
 			$imageInfo = getimagesize($arquivo);
+			$extencao='';
 			switch ($imageInfo[2]) {
 				case IMAGETYPE_JPEG:
-					$mime="Content-Type: image/jpg";
+					$mime="image/jpg";
+					$extencao='.jpeg';
 					break;
 				case IMAGETYPE_GIF:
-					$mime="Content-Type: image/gif";
+					$mime="image/gif";
+					$extencao='.gif';
 					break;
 				case IMAGETYPE_PNG:
-					$mime="Content-Type: image/png";
+					$mime="image/png";
+					$extencao='.png';
 					break;
 				default:
-					$mime="Content-Type: image/jpg";
+					$mime="image/jpg";
+					$extencao='.jpeg';
 			}
-			header ($mime);
-			header("Content-Length: " . filesize($arquivo));
-			readfile($arquivo );
+			//header ("Content-Type: $mime");
+			//header("Content-Length: " . filesize($arquivo));
+			//readfile($arquivo );
+			$this->EnviarArquivo($arquivo, $mime, $nomeArquivo.$extencao);
+			//header("X-Sendfile: $arquivo");
 		}
 		else{
 			header ('Content-Type: image/png');
@@ -3916,7 +3979,8 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		
 	
@@ -3971,7 +4035,8 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		$posicao = JRequest::getString( 'posicao');
 		$results = $this->runFotoAlbum($user, $posicao, $id, $this::LIMIT_DEFAULT );
@@ -4219,7 +4284,8 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			$id = JRequest::getString('id',0);
 			if(!(strpos($id,':')===false)){
-				$id = explode(':',$id)[0];
+				$var =explode(':',$id); 
+				$id = $var[0];
 			}
 			$email = JRequest::getString ( 'email', null, 'POST' );
 			$username = JRequest::getString ( 'username', null, 'POST' );
@@ -4482,7 +4548,8 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$id =  $usuario->id;
 			if(!(strpos($id,':')===false)){
-				$id = explode(':',$id)[0];
+				$var =explode(':',$id); 
+				$id = $var[0];
 			}
 			$email = JRequest::getString ( 'email', null, 'POST' );
 			$username = JRequest::getString ( 'username', null, 'POST' );
@@ -4704,7 +4771,8 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		$id = JRequest::getString('id',0);
 		if(!(strpos($id,':')===false)){
-			$id = explode(':',$id)[0];
+			$var =explode(':',$id); 
+			$id = $var[0];
 		}
 		
 		$email = JRequest::getString ( 'email', null, 'POST' );
@@ -5007,7 +5075,8 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			$id = JRequest::getString('id',0);
 			if(!(strpos($id,':')===false)){
-				$id = explode(':',$id)[0];
+				$var =explode(':',$id); 
+				$id = $var[0];
 			}
 			$email = JRequest::getString ( 'email', null, 'POST' );
 			$username = JRequest::getString ( 'username', null, 'POST' );
@@ -6302,7 +6371,7 @@ class AngelgirlsController extends JControllerLegacy{
 			->where ( $db->quoteName ('a.uf').' = ' .$db->quote($uf) )
 			->order ( 'a.nome' );
 			$db->setQuery ( $query );
-			$cidades = $db->loadObjectList ();
+			$cidades = $db->loadObjectList();
 			header('Content-Type: application/json; charset=utf8');
 			echo json_encode($cidades);
 		}catch(Exception $e) {
@@ -6810,6 +6879,46 @@ class AngelgirlsController extends JControllerLegacy{
 		$db->setQuery ( $query );
 		$db->execute ();
 
+	}
+	
+	/**
+	 * Carregado temporariamente os dados em JSon
+	 */
+	public function checarDados(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$perfil = $this->getPerfilLogado();
+		
+		$query = $db->getQuery ( true );
+		$query->select(" count(1) AS TOTAL")
+		->from ('#__angelgirls_mensagens')
+		->where ('id_usuario_remetente = ' . $user->id)
+		->where ('status_dado = \'NOVO\'');
+		$db->setQuery( $query );
+		$mensagens = $db->loadObject();
+		
+		$query = $db->getQuery ( true );
+		$query->select(" count(1) AS TOTAL")
+		->from ('#__angelgirls_sessao')
+		->where ('status_dado = ' . $db->quote(StatusDado::ANALIZE) );
+		if($perfil->tipo=='FOTOGRAFO'){
+			$query->where (  '((' . $db->quoteName ('id_fotografo_principal') . ' = ' . $perfil->id . ' AND status_fotografo_principal = 0 ) OR (' . $db->quoteName ('id_fotografo_secundario') . ' = ' . $perfil->id . ' AND status_fotografo_secundario = 0))');
+		}
+		elseif($perfil->tipo=='MODELO'){
+			$query->where ('(( ' . $db->quoteName ('id_modelo_principal') . ' = ' . $perfil->id . ' AND status_modelo_principal = 0) OR (' . $db->quoteName ('id_modelo_secundaria') . ' = ' . $perfil->id . ' AND  status_modelo_secundaria = 0 ))');
+		}
+		else{
+			$query->where ('1=0');
+		}
+		$db->setQuery( $query );
+		$sessoes = $db->loadObject();
+		
+		$json = '{"mensagens":"'. $mensagens->TOTAL .'", "aprovar":"'.$sessoes->total.'"}';
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+		
 	}
 	
 	private function EnviarMensagemInbox($titulo, $destino, $mensagem, $tipo, $repostaMensagemId=null){

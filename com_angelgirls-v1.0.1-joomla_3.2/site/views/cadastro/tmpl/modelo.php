@@ -180,11 +180,11 @@ input[type=\'file\']{
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="estado_reside"><?php echo JText::_('Estado Que Reside'); ?></label>
 					<select name="estado_reside" id="estado_reside" class="form-control required estado" data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que reside'); ?>">
-						<option></option>
+						<option>Selecione um estado</option>
 						<?php
 						foreach ($ufs as $f){ 
 						?>
-						<option value="<?php echo($f->uf) ?>"><?php echo($f->uf) ?></option>
+						<option value="<?php echo($f->uf) ?>"><?php echo($f->nome) ?></option>
 						<?php 
 						}
 						?>
@@ -203,7 +203,7 @@ input[type=\'file\']{
 						<?php
 						foreach ($ufs as $f){ 
 						?>
-						<option value="<?php echo($f->uf) ?>"><?php echo($f->uf) ?></option>
+						<option value="<?php echo($f->uf) ?>"><?php echo($f->nome) ?></option>
 						<?php 
 						}
 						?>
@@ -212,7 +212,7 @@ input[type=\'file\']{
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label>
 					<select name="id_cidade_nasceu" id="id_cidade_nasceu" class="form-control required" style="width: 90%;">
-						<option></option>
+						<option>Selecione um estado</option>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">

@@ -484,7 +484,34 @@ EditarSessao.sendFileToServer = function(formData,status) {
         },
         success: function(data){
             if(data.ok=='ok'){
-                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade" id="imagemThumb'+data.id+'"><a href="'+data.url+'"><img src="'+data.cube+'" /></a></div>'
+                var html = '<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade" id="imagemThumb'+data.id+'"><a href="'+data.url+'"><img src="'+data.cube+'" /></a><div class="fade" id="ftTools'+data.id+'"'; 
+                html += ' onmouseover="JavaScript: if(!jQuery(\'#ftTools'+data.id+'\').hasClass(\'in\')){jQuery(\'#ftTools'+data.id+'\').addClass(\'in\');}" onmouseout="JavaScript: if(jQuery(\'#ftTools'+data.id+'\').hasClass(\'in\')){jQuery(\'#ftTools'+data.id+'\').removeClass(\'in\');}" '; 
+                html += ' style="position: absolute; height: 30px; width: 100%; top: 4px; padding-right: 8px;"> <div style="background: rgba(0,0,0,0.5); width: 100%; height: 100%">'; 
+                html += ' <span style="font-size: 9px; text-align:right; padding-right:2px; float: right;text-transform: capitalize; color: #fff; width: 100px; overflow: inherit;" id="labelFoto'+data.id+'" class="labelsFotos">'+data.titulo+'</span>'; 
+                html += ' 	<div class="btn-toolbar" pull-right" role="toolbar" style=" width: 110px;display: inline-block;margin-top: 0px;">';
+                html += ' 		<div class="btn-group" role="group">';
+                html += ' 			<a href="JavaScript: EditarSessao.EditarDadosFoto('+data.id+');" class="btn btn-foto" style="padding: 5px 0px 0px 5px;" title="Editar titulo e descri&ccedil;&atilde;o">';
+                html += ' 					<span class="glyphicon glyphicon-pencil"></span>&nbsp;</a>';
+                html += ' 			<a href="JavaScript: EditarSessao.RemoverFoto('+data.id+');" class="btn  btn-foto" style="padding: 5px 0px 0px 5px;"  title="Apagar foto">';
+                html += ' 					<span class="glyphicon glyphicon-remove"></span>&nbsp;</a>';
+                html += ' 			<a href="JavaScript: EditarSessao.PossuiNudes('+data.id+',this);" class="btn  btn-foto" style="padding: 5px 0px 0px 5px;" id="PossuiNudes'+data.id+'" data-valor="S">';
+                html += ' 				<span class="glyphicon glyphicon-heart" title="Possui nudez."></span>&nbsp;';
+                html += ' 			</a>';
+                html += ' 		</div>';
+                html += ' 	</div>';
+                html += ' </div>';
+                html += ' </div>';
+                html += ' </div>';
+                
+                
+                
+                
+
+
+                
+                
+                
+                
                 jQuery('#linha').append(html);
                 
                 EditarSessao.ImagensPublicadas = EditarSessao.ImagensPublicadas + 1;

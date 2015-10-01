@@ -176,7 +176,7 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 						<?php
 						foreach ($ufs as $f){ 
 						?>
-						<option value="<?php echo($f->uf) ?>"<?php echo(JRequest::getVar('estado_reside')==$f->uf?" selected":"");?>><?php echo($f->uf) ?></option>
+						<option value="<?php echo($f->uf) ?>"<?php echo(JRequest::getVar('estado_reside')==$f->uf?" selected":"");?>><?php echo($f->nome) ?></option>
 						<?php 
 						}
 						?>
@@ -185,7 +185,7 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
 					<select name="id_cidade" id="id_cidade" class="form-control required" required style="width: 90%;">
-						<option></option>
+						<option>Selecione um estado</option>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
@@ -195,7 +195,7 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 						<?php
 						foreach ($ufs as $f){ 
 						?>
-						<option value="<?php echo($f->uf) ?>"<?php echo(JRequest::getVar('estado_nasceu')==$f->uf?" selected":"");?>><?php echo($f->uf) ?></option>
+						<option value="<?php echo($f->uf) ?>"<?php echo(JRequest::getVar('estado_nasceu')==$f->uf?" selected":"");?>><?php echo($f->nome) ?></option>
 						<?php 
 						}
 						?>
@@ -204,7 +204,7 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label>
 					<select name="id_cidade_nasceu" id="id_cidade_nasceu" class="form-control required" required style="width: 90%;">
-						<option></option>
+						<option>Selecione um estado</option>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
