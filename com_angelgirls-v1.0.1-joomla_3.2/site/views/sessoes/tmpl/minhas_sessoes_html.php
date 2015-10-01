@@ -1,6 +1,9 @@
 <?php
 $sessoes = JRequest::getVar('sessoes');
-if(isset($sessoes) && sizeof($sessoes)>0):?>
+$perfil = JRequest::getVar('perfil');
+
+if(isset($sessoes) && sizeof($sessoes)>0):
+?>
 <div class="table-responsive">
 	<table class="table table-hover display" id='tabelaComSessoes' cellspacing="0" width="100%">
 		<thead>
@@ -35,9 +38,21 @@ if(isset($sessoes) && sizeof($sessoes)>0):?>
 <td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
 <?php switch ($conteudo->status_dado) :?>
 <?php case StatusDado::ANALIZE : ?>
-		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>
-			<span class="glyphicon glyphicon-thumbs-down btnReprovar btn-danger"  data-id="<?php echo($conteudo->id);?>" aria-hidden="true"  title="Reprovar"></span>
-			<span class="glyphicon glyphicon-thumbs-up btnAprovar btn-success"  data-id="<?php echo($conteudo->id);?>" aria-hidden="true" title="Aprovar"></span>
+		<a href="<?php echo($url);?>"  title="Ver"><span class="glyphicon glyphicon-eye-open"></span></a>&nbsp;
+<?php 
+
+
+
+
+
+	if(($perfil->id == $conteudo->id_fotografo_principal && $perfil->tipo == 'FOTOGRAFO' && $conteudo->status_fotografo_principal == 0)
+		|| ($perfil->id == $conteudo->id_fotografo_secundario && $perfil->tipo =='FOTOGRAFO' && $conteudo->status_fotografo_secundario == 0)
+		|| ($perfil->id == $conteudo->id_modelo_principal && $perfil->tipo =='MODELO' && $conteudo->status_modelo_principal == 0)
+		|| ($perfil->id == $conteudo->id_modelo_secundaria && $perfil->tipo =='MODELO' && $conteudo->status_modelo_secundaria == 0)) :
+?>
+			<span class="glyphicon glyphicon-thumbs-down btnReprovar" data-id="<?php echo($conteudo->id);?>" aria-hidden="true"  title="Reprovar"></span>&nbsp;
+			<span class="glyphicon glyphicon-thumbs-up btnAprovar" data-id="<?php echo($conteudo->id);?>" aria-hidden="true" title="Aprovar"></span>
+<?php 	endif;?>
 <?php
 		break; 
 	case $conteudo->status_dado==StatusDado::ATIVO : ?>

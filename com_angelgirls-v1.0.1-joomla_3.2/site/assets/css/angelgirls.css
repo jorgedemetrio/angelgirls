@@ -7,6 +7,19 @@
 	padding-right: 20px;
 }
 
+.btnReprovar{
+	color: red ;
+}
+.btnAprovar{
+	color: green ;
+}
+
+.btnReprovar:hover{
+	color:#F18383;
+}
+.btnAprovar:hover{
+	color:#03EF03 ;
+}
 
 .btn-foto{
 	height: 30px; 
@@ -126,6 +139,10 @@ div > #jform_email1, div > #jform_email2, div > #jform_email1-lbl, div > #jform_
 }
 
 ul li .caixaMensagens .badge {
+margin-top: 8px;
+}
+
+ul li .sessoesAprovar .badge {
 margin-top: 8px;
 }
 

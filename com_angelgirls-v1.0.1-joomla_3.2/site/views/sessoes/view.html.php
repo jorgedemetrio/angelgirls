@@ -36,10 +36,12 @@ class AngelgirlsViewsessoes extends JViewLegacy
 
 		// Set the toolbar
 		$this->addToolBar();
-		
+
 
 		// Display the template
 		parent::display($tpl);
+		
+
 
 
 	}

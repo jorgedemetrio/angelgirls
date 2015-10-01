@@ -30,7 +30,12 @@ SessaoView.ImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=ses
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/sessao.js?v='.VERSAO_ANGELGIRLS);
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/aprovacao.js?v='.VERSAO_ANGELGIRLS);
 ?>
-<?php if($conteudo->status_dado == StatusDado::ANALIZE) :?>
+<?php if($conteudo->status_dado == StatusDado::ANALIZE) :
+	if(($perfil->id == $conteudo->id_fotografo_principal && $perfil->tipo == 'FOTOGRAFO' && $conteudo->status_fotografo_principal == 0)
+			|| ($perfil->id == $conteudo->id_fotografo_secundario && $perfil->tipo =='FOTOGRAFO' && $conteudo->status_fotografo_secundario == 0)
+			|| ($perfil->id == $conteudo->id_modelo_principal && $perfil->tipo =='MODELO' && $conteudo->status_modelo_principal == 0)
+			|| ($perfil->id == $conteudo->id_modelo_secundaria && $perfil->tipo =='MODELO' && $conteudo->status_modelo_secundaria == 0)) :
+?>
 	<div class="btn-toolbar pull-right" role="toolbar" id="BtnBotoesAcao">
 		<div class="btn-group" role="group">
 			<button class="btn btn-info ajuda" type="button">
@@ -73,12 +78,12 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				</div>
 				
 				<div class="btn-group" role="group">
-			<button class="btn btn-danger btnReprovar" data-id="<?php echo($conteudo->id);?>" type="button" title="Aprovar Sess&atilde;o">
-				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-			</button>
-			<button class="btn btn-success btnAprovar"  data-id="<?php echo($conteudo->id);?>" type="button"  title="Reprovar Sess&atilde;o">
-				<span class="hidden-phone"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-			</button>
+					<button class="btn btn-danger btnReprovar" data-id="<?php echo($conteudo->id);?>" type="button" title="Aprovar Sess&atilde;o">
+						<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+					</button>
+					<button class="btn btn-success btnAprovar"  data-id="<?php echo($conteudo->id);?>" type="button"  title="Reprovar Sess&atilde;o">
+						<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+					</button>
 				</div>
 			</div>
 <small>Aguardando aprova&ccedil;&atilde;o</small>
@@ -86,7 +91,9 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 	</div>
 	
 	
-<?php endif;?>
+<?php
+	endif; 
+endif;?>
 <div class="page-header">
 	<h1><?php echo($conteudo->titulo);?> 
 			<small><?php echo($conteudo->nome_tema);?></small>

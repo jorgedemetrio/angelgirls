@@ -71,7 +71,7 @@ jQuery(document).ready(function() {
 
 ?>
 <div class="page-header">
-	<h1>Suas sess&otilde;es<small>permite editar e alterar</small></h1>
+	<h1>Suas sess&otilde;es <small>permite editar e alterar</small></h1>
 </div>
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
 	<?php echo JHtml::_('form.token');?>

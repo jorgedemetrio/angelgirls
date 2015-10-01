@@ -134,7 +134,7 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`foto_comp_residencia` VARCHAR(100),
 		`status_documento` VARCHAR(20),
 		`status_comp_residencia` VARCHAR(20),
-		
+		`token` VARCHAR(250) UNIQUE NOT NULL,
 		
 		`foto_perfil` VARCHAR(100), 
 		`foto_inteira` VARCHAR(100),
@@ -206,7 +206,7 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
 		`id_cidade` INT NOT NULL,
-		
+		`token` VARCHAR(250) UNIQUE NOT NULL,
 
 		`foto_documento` VARCHAR(100),
 		`foto_comp_residencia` VARCHAR(100),
@@ -252,6 +252,7 @@ CREATE TABLE `#__angelgirls_visitante` (
 		`sexo` ENUM('M','F') NOT NULL,
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
+		`token` VARCHAR(250) UNIQUE NOT NULL,
 		`nascionalidade` VARCHAR(25),
 		`id_cidade_nasceu` INT,
 		`id_cidade` INT NOT NULL,
@@ -406,7 +407,7 @@ CREATE TABLE `#__angelgirls_video_sessao` (
 	`id_vimeo` VARCHAR(250),
 	`url_vimeo` VARCHAR(250),
 	`arquivo` VARCHAR(25),
-	`token` VARCHAR(25),
+	`token` VARCHAR(25) UNIQUE NOT NULL,
 	`ordem` int,
 	`descricao` TEXT NULL , 
 	`meta_descricao` VARCHAR(250) NOT NULL , 
@@ -518,6 +519,7 @@ CREATE TABLE `#__angelgirls_mensagens` (
 		`token` varchar(250) NULL ,
 		`tipo` int DEFAULT 1,
 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+		`status_mensagem` VARCHAR(25) DEFAULT 'NOVO', 
 		`id_usuario_remetente` INT NOT NULL , 
  		`data_criado` DATETIME NOT NULL,
  		`data_lida` DATETIME NULL,
@@ -800,6 +802,53 @@ CREATE TABLE `#__query_logs` (
 		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `#__angelgirls_amizade` ( 
+	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+	`id_usuario_solicidante` INT NOT NULL , 
+	`id_usuario_solicitado` INT NOT NULL , 
+	`data_solicitada` DATETIME NOT NULL, 
+	`data_aceita` DATETIME NULL,
+	`host_ip_solicitante` varchar(20) NOT NULL,
+	`host_ip_aceitou` varchar(20) NULL,
+	FOREIGN KEY (`id_usuario_solicidante`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_solicitado`) REFERENCES `#__users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+CREATE TABLE `#__angelgirls_amizade_lista_contato` (
+	`id_lista` INT NOT NULL,
+	`id_usuario` INT NOT NULL,
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	PRIMARY KEY(id_lista, id_usuario),
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_lista`) REFERENCES `#__angelgirls_amizade_lista` (`id`)
+)
+
+CREATE TABLE `#__angelgirls_amizade_lista` ( 
+	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+    `nome` varchar(255) NOT NULL DEFAULT 'AMIGOS', 
+	`status_dado` VARCHAR(25) DEFAULT 'NOVO',
+	`id_usuario_criador` INT NOT NULL , 
+	`id_usuario_alterador` INT NOT NULL ,
+    `sistema` enum('S','N') DEFAULT 'N',
+	`data_criado` DATETIME NOT NULL, 
+	`data_alterado` DATETIME NOT NULL,
+	`host_ip_criador` varchar(20) NOT NULL,
+	`host_ip_alterador` varchar(20) NULL,
+	FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+CREATE TABLE `#__angelgirls_seguindo` ( 
+	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+	`id_usuario_seguidor` INT NOT NULL , 
+	`id_usuario_seguido` INT NOT NULL , 
+	`data` DATETIME NOT NULL, 
+	`host_ip` varchar(20) NULL,
+	FOREIGN KEY (`id_usuario_seguidor`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_seguido`) REFERENCES `#__users` (`id`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
 
 CREATE  INDEX album_foto_usuario_criador_idx ON `#__angelgirls_foto_album`(`id_usuario_criador`,`id_album` );

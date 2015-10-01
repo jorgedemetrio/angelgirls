@@ -167,17 +167,18 @@ AngelGirls.ResetConfig = function(){
 
 AngelGirls.CarregarDadosInformativos = function(){
 	jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
+		var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
 		if(dado.mensagens>0){
-			jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
+			jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
 		}
 		else{
-			jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
+			jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
 		}
 		if(dado.aprovar>0){
-			jQuery('.sessoesAprovar').html('<a href="#"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
+			jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
 		}
 		else{
-			jQuery('.sessoesAprovar').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
+			jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
 		}
 		
 		

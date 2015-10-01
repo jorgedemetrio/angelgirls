@@ -318,9 +318,7 @@ endif;
 	</a>
 	<h2><?php echo($foto->titulo); ?></h2>
 </div>
-<br/>
-<br/>
-<div style="overflow: hidden; margin:10px 0 0 0; top: 0px; transition: 0ms linear; text-align: center; display: inline-block;" class="row hidden-phone" id="componente">
+<div style="overflow: hidden; margin:10px 0 0 0; top: 0px; transition: 0ms linear; text-align: center; display: inline-block;    width: 100%;" class="row hidden-phone" id="componente">
 	<div class="col col-xs-1 col-sm-1 col-md-2 col-lg-1 text-center" style="vertical-align: middle;height: 150px;"><a href="JavaScript: componente.left();" class="setaEsquerda setas left carousel-control"><span class="glyphicon glyphicon-chevron-left" ></span>
 	<span class="sr-only">Voltar</span></a></div>
 	<div class=" col col-xs-10 col-sm-10 col-md-8 col-lg-10 text-center" style="overflow: hidden;">
@@ -369,6 +367,8 @@ endif;
 	vertical-align: baseline;
 	vertical-align: middle;
 	opacity: 0.7;
+	transition: display 1s;
+	visibility: hidden;
 }
 #navegador 	img {
 	max-height: 150px;
