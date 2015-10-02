@@ -36,8 +36,9 @@ class StatusDado {
 
 class StatusMensagem {
 	const NOVO = 'NOVO';
-	const LIDO = 'LIDO';
 	const RASCUNHO = 'RASCUNHO';
+	const ENVIADO = 'ENVIADO';
+	const LIXEIRA = 'LIXEIRA';
 }
 
 
@@ -487,8 +488,11 @@ class AngelgirlsController extends JControllerLegacy{
 				->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
 				->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
 				->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-				->where ( $db->quoteName ( 'u.id' ) . " =  " . $id );
+				->where ( $db->quoteName ( 'f.id' ) . " =  " . $id );
 		$db->setQuery ( $query );
+		
+
+		
 		return $db->loadObject();
 	}
 	
@@ -680,7 +684,63 @@ class AngelgirlsController extends JControllerLegacy{
 					$query->where ( $db->quoteName ( 'f.tipo' ) . ' =  ' . $db->quote($tipo) );
 				}
 		$db->setQuery ( $query );
-		return $db->loadObject();
+		$perfil = $db->loadObject();
+			
+			
+		if(isset($perfil->enderecos)){	
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
+					end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
+					end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
+								->from ('#__angelgirls_endereco AS end')
+								->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
+								->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
+								->where ( $db->quoteName ('id_usuario').' = ' . $perfil->id_usuario)
+								->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+								->order('ordem');
+			$db->setQuery ( $query );
+			
+			$perfil->enderecos = $db->loadObjectList();
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+								->from ('#__angelgirls_email')
+								->where ( $db->quoteName ('id_usuario').' = ' . $perfil->id_usuario)
+								->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+								->order('ordem');
+			$db->setQuery($query);
+			$perfil->emails = $db->loadObjectList();
+				
+				
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+								->from ('#__angelgirls_telefone')
+								->where ( $db->quoteName ('id_usuario').' = ' . $perfil->id_usuario)
+								->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+								->order('ordem');
+			$db->setQuery ( $query );
+			$perfil->telefones = $db->loadObjectList();
+				
+				
+			$query = $db->getQuery ( true );
+			$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+					`id_usuario_alterador`,`data_criado`,`data_alterado`')
+								->from ('#__angelgirls_redesocial')
+								->where ( $db->quoteName ('id_usuario').' = ' . $perfil->id_usuario)
+								->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+								->order('ordem');
+			$db->setQuery ( $query );
+			$perfil->redesSociaos = $db->loadObjectList();
+			$session->set('perfil', $perfil);
+			
+		}
+		
+		return $perfil;
 	}
 	
 	private function getPerfilModeloById($id){
@@ -1212,7 +1272,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public function reprovarSessao(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		
 		$id = JRequest::getString('id',0);
 		$descricao = JRequest::getString('descricao','');
@@ -1343,7 +1403,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public function aprovarSessao(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		
 		$id = JRequest::getString('id',0);
 		$sessao = $this->getSessaoById($id);
@@ -1821,7 +1881,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		$user = JFactory::getUser();
 		
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		
 		if(!isset($perfil)){
 			$this->nologado();
@@ -1837,7 +1897,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		
 		
-		JRequest::setVar ('perfil', $this->getPerfilLogado() );
+		JRequest::setVar ('perfil', $this::getPerfilLogado() );
 		
 		$sessao = $this->getSessaoById($id);
 
@@ -1932,7 +1992,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$dataRealizadoSessao =null;
 		$dataFormatadaBanco = null;
 		$imagem = $_FILES ['imagem'];
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		$token = $this->GerarToken($titulo,'',true,false);
 
 		if(!isset($perfil) || !isset($user) || $user->id == 0){
@@ -2192,7 +2252,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
 		$id  = JRequest::getInt('id',null,'POST');
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		$sessao = $this->getSessaoById($id);
 		
 		
@@ -3264,7 +3324,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		JRequest::setVar ( 'fotos', $this->runFotoSessao($user, 0, $id, $this::LIMIT_DEFAULT) );
 		
-		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+		JRequest::setVar ( 'perfil', $this::getPerfilLogado() );
 		
 		JRequest::setVar ( 'view', 'sessoes' );
 		JRequest::setVar ( 'layout', 'sessao' );
@@ -3545,7 +3605,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 //				TODO CONTROLE IMAGEM DA &aacute;REA VIP
 // 				if($logado && $result->area_vip='S'){
-// 					$perfil = $this->getPerfilLogado();
+// 					$perfil = $this::getPerfilLogado();
 // 					if($perfil->vip!='S' || intval(DateTime::createFromFormat('Y-m-d H:i:s', $perfil->vencimento_vip)->format('Ymd')) < intval( date('Ymd'))){
 // 						$arquivo = $AreaVIP;
 // 					}
@@ -3902,7 +3962,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		JRequest::setVar ( 'fotografos', $this->getAllFotografos() );
 		
-		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+		JRequest::setVar ( 'perfil', $this::getPerfilLogado() );
 		
 		
 		JRequest::setVar ( 'view', 'sessoes' );
@@ -3930,7 +3990,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		JRequest::setVar ( 'fotografos', $this->getAllFotografos() );
 	
-		JRequest::setVar ( 'perfil', $this->getPerfilLogado() );
+		JRequest::setVar ( 'perfil', $this::getPerfilLogado() );
 	
 	
 		JRequest::setVar ( 'view', 'sessoes' );
@@ -4050,7 +4110,12 @@ class AngelgirlsController extends JControllerLegacy{
 						`m`.`tipo`,
 						`m`.`status_dado`,
 						`m`.`id_usuario_remetente`, 
-						`m`.`status_mensagem`,
+						`m`.`status_remetente`,
+						`m`.`status_destinatario`,
+						`m`.`lido_remetente`,
+						`m`.`lido_destinatario`,
+						`m`.`flag_remetente`,
+						`m`.`flag_destinatario`,
 				 		`m`.`data_criado`,
 				 		`m`.`data_lida`,
 						CASE ISNULL(`respondido`.`id`) WHEN 1 THEN \'NAO\'  ELSE \'SIM\' END AS `respondido`,
@@ -4063,14 +4128,15 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		if($caixa == 'INBOX'){
 			$query->where($db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id)
-			->where($db->quoteName ( 'm.status_dado' ) . ' <> ' . $db->quote(StatusDado::REMOVIDO));
+			->where($db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::NOVO));
 		}
 		elseif($caixa == 'SENTBOX'){
-			$query->where($db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id)
-			->where($db->quoteName ( 'm.status_dado' ) . ' <> ' . $db->quote(StatusDado::REMOVIDO) );
+			$query->where($db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id)
+			->where($db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::ENVIADO) );
 		}
 		elseif($caixa == 'LIXEIRA'){
-			$query->where($db->quoteName ( 'm.status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO));
+			$query->where('((' . $db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id . ' AND  ' . $db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA) .
+					 ') OR ( ' . $db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id . ' AND  ' . $db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA) .' ))' );
 		}
 		$query->order('m.data_criado DESC');
 		
@@ -6454,7 +6520,7 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$db = JFactory::getDbo();
 			
-			$perfil = $this->getPerfilLogado();
+			$perfil = $this::getPerfilLogado();
 			
 			if(!isset($perfil)){
 				$this->nologado();
@@ -6484,22 +6550,80 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
-	private function getPerfilLogado(){
+	public static function getPerfilLogado(){
 		try{
-			$user = JFactory::getUser();
-			$db = JFactory::getDbo ();
-			$query = $db->getQuery ( true );
-			$query->select('`id`,`tipo`,`usuario`,`nome_completo`,`email_principal`,`id_usuario`,`apelido`,`descricao`,`meta_descricao`,`foto_perfil`,
-						`foto_adicional1`,`foto_adicional2`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,`pele`,`etinia`,`cabelo`,`token`,
-						`tamanho_cabelo`,`cor_cabelo`,`outra_cor_cabelo`,`profissao`,`nascionalidade`,`id_cidade_nasceu`,`uf_nasceu`,`data_nascimento`,`site`,
-						`sexo`,`cpf`,`banco`,`agencia`,	`conta`,`custo_medio_diaria`,`outro_status`,`qualificao_equipe`,`audiencia_gostou`,
-						`audiencia_ngostou`,`audiencia_view`,`id_cidade`,`uf`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,
-						`data_criado`,`data_alterado`')
-								->from ('#__angelgirls_perfil')
-								->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
-								->setLimit(1);
-			$db->setQuery ( $query );
-			return $db->loadObject();
+			$session = JFactory::getSession();
+			$perfil  = $session->set('perfil', 'NO' );
+			if($perfil==='NO'){
+				$user = JFactory::getUser();
+				$db = JFactory::getDbo ();
+				$query = $db->getQuery ( true );
+				$query->select('`id`,`tipo`,`usuario`,`nome_completo`,`email_principal`,`id_usuario`,`apelido`,`descricao`,`meta_descricao`,`foto_perfil`,
+							`foto_adicional1`,`foto_adicional2`,`altura`,`peso`,`busto`,`calsa`,`calsado`,`olhos`,`pele`,`etinia`,`cabelo`,`token`,
+							`tamanho_cabelo`,`cor_cabelo`,`outra_cor_cabelo`,`profissao`,`nascionalidade`,`id_cidade_nasceu`,`uf_nasceu`,`data_nascimento`,`site`,
+							`sexo`,`cpf`,`banco`,`agencia`,	`conta`,`custo_medio_diaria`,`outro_status`,`qualificao_equipe`,`audiencia_gostou`,
+							`audiencia_ngostou`,`audiencia_view`,`id_cidade`,`uf`,`status_dado`,`id_usuario_criador`,`id_usuario_alterador`,
+							`data_criado`,`data_alterado`')
+									->from ('#__angelgirls_perfil')
+									->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+									->setLimit(1);
+				$db->setQuery ( $query );
+				$perfil = $db->loadObject();
+				
+				
+				if(isset($perfil->enderecos)){
+					$query = $db->getQuery ( true );
+					$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
+						end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
+						end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
+										->from ('#__angelgirls_endereco AS end')
+										->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
+										->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
+										->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+										->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+										->order('ordem');
+					$db->setQuery ( $query );
+					
+					$perfil->enderecos = $db->loadObjectList();
+					
+					
+					$query = $db->getQuery ( true );
+					$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+										->from ('#__angelgirls_email')
+										->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+										->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+										->order('ordem');
+					$db->setQuery($query);
+	 				$perfil->emails = $db->loadObjectList();
+	 				
+	 				
+	 				$query = $db->getQuery ( true );
+	 				$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+	 									->from ('#__angelgirls_telefone')
+	 									->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+	 									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+	 									->order('ordem');
+	 				$db->setQuery ( $query );
+	 				$perfil->telefones = $db->loadObjectList();
+	 				
+	 				
+	 				$query = $db->getQuery ( true );
+	 				$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+	 									->from ('#__angelgirls_redesocial')
+	 									->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+	 									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+	 									->order('ordem');
+	 				$db->setQuery ( $query );
+	 				$perfil->redesSociaos = $db->loadObjectList();
+					$session->set('perfil', $perfil);
+				}
+			}
+			
+
+			return $perfil;
 		}catch(Exception $e) {
 			JLog::add($e->getMessage(), JLog::WARNING);
 			JError::raiseWarning(100, $e->getMessage());
@@ -6522,7 +6646,63 @@ class AngelgirlsController extends JControllerLegacy{
 							->where ( $db->quoteName ('id_usuario').' = ' .$idUsuario )
 							->setLimit(1);
 			$db->setQuery ( $query );
-			return $db->loadObject();
+			$perfil = $db->loadObject();
+			
+			
+			if(isset($perfil->enderecos)){
+			
+				
+				$query = $db->getQuery ( true );
+				$query->select('end.`id`,end.`tipo`,end.`principal`,end.`endereco`,end.`numero`,end.`bairro`,end.`complemento`,
+						end.`cep`,end.`id_cidade`,end.`id_usuario`,end.`ordem`,end.`status_dado`,end.`id_usuario_criador`,
+						end.`id_usuario_alterador`,end.`data_criado`,end.`data_alterado`,c.nome as cidade,c.uf,uf.ds_uf_nome as estado')
+									->from ('#__angelgirls_endereco AS end')
+									->join ( 'INNER', '#__cidade AS c ON ' . $db->quoteName ( 'end.id_cidade' ) . ' = ' . $db->quoteName('c.id'))
+									->join ( 'INNER', '#__uf AS uf ON ' . $db->quoteName ( 'c.uf' ) . ' = ' . $db->quoteName('uf.ds_uf_sigla'))
+									->where ( $db->quoteName ('id_usuario').' = ' . $idUsuario)
+									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+									->order('ordem');
+				$db->setQuery ( $query );
+				
+				$perfil->enderecos = $db->loadObjectList();
+				
+				
+				$query = $db->getQuery ( true );
+				$query->select('`id`,`principal`,`email`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+									->from ('#__angelgirls_email')
+									->where ( $db->quoteName ('id_usuario').' = ' . $idUsuario)
+									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+									->order('ordem');
+				$db->setQuery($query);
+				$perfil->emails = $db->loadObjectList();
+					
+					
+				$query = $db->getQuery ( true );
+				$query->select('`id`,`principal`,`tipo`,`operadora`,`ddi`,`telefone`,`ddd`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+									->from ('#__angelgirls_telefone')
+									->where ( $db->quoteName ('id_usuario').' = ' . $idUsuario)
+									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+									->order('ordem');
+				$db->setQuery ( $query );
+				$perfil->telefones = $db->loadObjectList();
+					
+					
+				$query = $db->getQuery ( true );
+				$query->select('`id`,`principal`,`publico`,`rede_social`,`url_usuario`,`id_usuario`,`ordem`,`status_dado`,`id_usuario_criador`,
+						`id_usuario_alterador`,`data_criado`,`data_alterado`')
+									->from ('#__angelgirls_redesocial')
+									->where ( $db->quoteName ('id_usuario').' = ' . $idUsuario)
+									->where ( $db->quoteName ('status_dado').' <> ' . $db->quote(StatusDado::REMOVIDO))
+									->order('ordem');
+				$db->setQuery ( $query );
+				$perfil->redesSociaos = $db->loadObjectList();
+				$session->set('perfil', $perfil);
+				
+			}
+			
+			return $perfil;
 		}catch(Exception $e) {
 			JLog::add($e->getMessage(), JLog::WARNING);
 			JError::raiseWarning(100, $e->getMessage());
@@ -6638,7 +6818,7 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			
 	
-			$perfil = $this->getPerfilLogado();
+			$perfil = $this::getPerfilLogado();
 			
 			if(!isset($perfil) || $perfil->id <= 0){
 				$this->RegistroNaoEncontado();
@@ -6791,7 +6971,11 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ( 'layout', 'default' );
 		parent::display (true, false);
 	}
+
 	
+	public static function GetMenuLateral(){
+		require_once 'menu/menu.php';
+	}
 	
 	public function trocarSenha(){
 		$db = JFactory::getDbo();
@@ -6859,7 +7043,7 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'host_ip' ),
 					$db->quoteName ( 'data' )))
 			->values(implode(',', array (
-					(!isset($idUsuario) || $idUsuario==0? $user->id:$idUsuario), 
+					(!isset($idUsuario) || $idUsuario==0? $user->id : $idUsuario), 
 					$db->quote($queryLog), 
 					$db->quote($db->quote($this->getRemoteHostIp())),
 					'NOW()')));
@@ -6945,36 +7129,43 @@ class AngelgirlsController extends JControllerLegacy{
 	public function checarDados(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
-		$perfil = $this->getPerfilLogado();
+		$perfil = $this::getPerfilLogado();
 		
-		$query = $db->getQuery ( true );
-		$query->select(" count(1) AS TOTAL")
-		->from ('#__angelgirls_mensagens')
-		->where ('id_usuario_remetente = ' . $user->id)
-		->where ('status_dado = \'NOVO\'')
-		->where ('status_mensagem = \'NOVO\'');
-		$db->setQuery( $query );
-		$mensagens = $db->loadObject();
 		
-		$query = $db->getQuery ( true );
-		$query->select(" count(1) AS TOTAL")
-		->from ('#__angelgirls_sessao')
-		->where ('status_dado = ' . $db->quote(StatusDado::ANALIZE) );
-		if($perfil->tipo=='FOTOGRAFO'){
-			$query->where (  '((' . $db->quoteName ('id_fotografo_principal') . ' = ' . $perfil->id . ' AND status_fotografo_principal = 0 ) OR (' . $db->quoteName ('id_fotografo_secundario') . ' = ' . $perfil->id . ' AND status_fotografo_secundario = 0))');
-		}
-		elseif($perfil->tipo=='MODELO'){
-			$query->where ('(( ' . $db->quoteName ('id_modelo_principal') . ' = ' . $perfil->id . ' AND status_modelo_principal = 0) OR (' . $db->quoteName ('id_modelo_secundaria') . ' = ' . $perfil->id . ' AND  status_modelo_secundaria = 0 ))');
+		if(isset($perfil)){
+			
+			$query = $db->getQuery ( true );
+			$query->select(" count(1) AS TOTAL")
+			->from ('#__angelgirls_mensagens')
+			->where ('id_usuario_destino = ' . $user->id)
+			->where ('status_dado = \'NOVO\'')
+			->where ('status_destinatario = \'NOVO\'')
+			->where ('lido_destinatario = 0');
+			$db->setQuery( $query );
+			$mensagens = $db->loadObject();
+			
+			$query = $db->getQuery ( true );
+			$query->select(" count(1) AS TOTAL")
+			->from ('#__angelgirls_sessao')
+			->where ('status_dado = ' . $db->quote(StatusDado::ANALIZE) );
+			if($perfil->tipo=='FOTOGRAFO'){
+				$query->where (  '((' . $db->quoteName ('id_fotografo_principal') . ' = ' . $perfil->id . ' AND status_fotografo_principal = 0 ) OR (' . $db->quoteName ('id_fotografo_secundario') . ' = ' . $perfil->id . ' AND status_fotografo_secundario = 0))');
+			}
+			elseif($perfil->tipo=='MODELO'){
+				$query->where ('(( ' . $db->quoteName ('id_modelo_principal') . ' = ' . $perfil->id . ' AND status_modelo_principal = 0) OR (' . $db->quoteName ('id_modelo_secundaria') . ' = ' . $perfil->id . ' AND  status_modelo_secundaria = 0 ))');
+			}
+			else{
+				$query->where ('1=0');
+			}
+			$db->setQuery( $query );
+			$sessoes = $db->loadObject();
+			
+			
+			$json = '{"logado":"SIM", "mensagens":"'. $mensagens->TOTAL .'", "aprovar":"'.$sessoes->TOTAL.'"}';
 		}
 		else{
-			$query->where ('1=0');
+			$json = '{"logado":"NAO"}';
 		}
-		$db->setQuery( $query );
-		$sessoes = $db->loadObject();
-		
-
-		
-		$json = '{"mensagens":"'. $mensagens->TOTAL .'", "aprovar":"'.$sessoes->TOTAL.'"}';
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($json));
 		echo $json;
@@ -6995,7 +7186,12 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'token' ),
 				$db->quoteName ( 'id_resposta' ),
 				$db->quoteName ( 'status_dado' ),
-				$db->quoteName ( 'status_mensagem' ),
+				$db->quoteName ( 'status_destinatario' ),
+				$db->quoteName ( 'status_remetente' ),
+				$db->quoteName ( 'flag_remetente' ),
+				$db->quoteName ( 'flag_destinatario' ),
+				$db->quoteName ( 'lido_remetente' ),
+				$db->quoteName ( 'lido_destinatario' ),
 				$db->quoteName ( 'id_usuario_remetente' ),
 				$db->quoteName ( 'data_criado' ),
 				$db->quoteName ( 'host_ip_criador' )))
@@ -7006,7 +7202,7 @@ class AngelgirlsController extends JControllerLegacy{
 						$tipo,
 						'UUID()',
 						(!isset($repostaMensagemId) || $repostaMensagemId===0?' null ':$repostaMensagemId),
-						$db->quote('NOVO'),$db->quote('NOVO'), $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()) 
+						$db->quote('NOVO'),$db->quote('NOVO'),$db->quote('NOVO'),'0','0','1','0', $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()) 
 				)));
 		$db->setQuery( $query );
 		$db->execute();
@@ -7048,7 +7244,7 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$user = JFactory::getUser();
 			$db = JFactory::getDbo ();
-			$perfil = $this->getPerfilLogado();
+			$perfil = $this::getPerfilLogado();
 			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 				
@@ -7086,7 +7282,7 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$user = JFactory::getUser();
 			$db = JFactory::getDbo ();
-			$perfil = $this->getPerfilLogado();
+			$perfil = $this::getPerfilLogado();
 			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 			
@@ -7126,7 +7322,7 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$user = JFactory::getUser();
 			$db = JFactory::getDbo ();
-			$perfil = $this->getPerfilLogado();
+			$perfil = $this::getPerfilLogado();
 			$idSolicitacao = JRequest::getInt('id', 0, 'POST' );
 			
 				

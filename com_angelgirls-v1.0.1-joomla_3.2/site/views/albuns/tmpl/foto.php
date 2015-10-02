@@ -353,7 +353,7 @@ $urlSessao = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carreg
 	width: 150px;
 	display: inline-block;
 	outline: none;
-	position: relative;
+	position: relative; 
 	outline: none;
 	vertical-align: baseline;
 	vertical-align: middle;
@@ -485,4 +485,4 @@ jQuery(document).ready(function (){
 });
 
 </script>
-<script src="components/com_angelgirls/assets/js/lightbox.js" type="text/javascript" ></script>
+<script src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/assets/js/lightbox.js" type="text/javascript" ></script>

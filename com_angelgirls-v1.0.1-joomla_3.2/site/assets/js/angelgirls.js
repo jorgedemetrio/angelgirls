@@ -165,35 +165,55 @@ AngelGirls.ResetConfig = function(){
 }; 
 
 
+AngelGirls.ProcessandoMensagens = false;
+
+AngelGirls.ProcessandoMensagensInterval = null;
+
 AngelGirls.CarregarDadosInformativos = function(){
-	jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
-		var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
-		if(dado.mensagens>0){
-			jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
-		}
-		else{
-			jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
-		}
-		if(dado.aprovar>0){
-			jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
-		}
-		else{
-			jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
-		}
-		
-		
-	},'json');
+	if(!AngelGirls.ProcessandoMensagens){
+		AngelGirls.ProcessandoMensagens=true;
+		jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
+			if(dado.logado=='SIM'){
+
+				console.log(dado);
+				
+				if(jQuery('#MenuCaixaMensagensTopo').length<=0){
+					var menuLat =  '<li class="caixaMensagens" id="MenuCaixaMensagensTopo"></li>';
+					jQuery('.menu').append(menuLat);
+				}
+				if(jQuery('#MenuAprovacaoTopo').length<=0){
+					var menuLat =  '<li class="sessoesAprovar" id="MenuAprovacaoTopo"></li>';
+					jQuery('.menu').append(menuLat);
+				}
+				
+				
+				
+				
+				var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
+				if(dado.mensagens>0)
+					jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
+				else
+					jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
+				
+				if(dado.aprovar>0)
+					jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Sess&otilde;es"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
+				else
+					jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Sess&otilde;es" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
+			
+			}
+			else{
+				clearInterval(AngelGirls.ProcessandoMensagensInterval);				
+			}
+		},'json');
+		AngelGirls.ProcessandoMensagens = false;
+	}
 }
 
 
 jQuery(document).ready(function(){
 	//jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
-	jQuery('.caixaMensagens').removeClass('nav-header');
-	jQuery('.caixaMensagens').removeClass('sr-only');
-	jQuery('.sessoesAprovar').removeClass('nav-header');
-	jQuery('.sessoesAprovar').removeClass('sr-only');
-	
-	setInterval(function(){
+
+	AngelGirls.ProcessandoMensagensInterval = setInterval(function(){
 		AngelGirls.CarregarDadosInformativos();
 	}, 30000);
 	

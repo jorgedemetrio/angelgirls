@@ -485,4 +485,4 @@ jQuery(document).ready(function (){
 });
 
 </script>
-<script src="components/com_angelgirls/assets/js/lightbox.js" type="text/javascript" ></script>
+<script src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/assets/js/lightbox.js" type="text/javascript" ></script>

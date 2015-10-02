@@ -24,19 +24,26 @@ jQuery(document).ready(function() {
 	
 	jQuery(document).scroll(function(){
 
-		if(jQuery(this).scrollTop() >= jQuery("#BtnBotoesAcao").position().top+(jQuery("#BtnBotoesAcao").height()/2)){
-			jQuery("#TotaisHide").addClass('in');
-			jQuery("#TotaisHide").css('top', jQuery(this).scrollTop());
-			jQuery("#TotaisHide").css('left', jQuery("#detalhesSessao").position().left);
-			jQuery("#TotaisHide").width( jQuery("#detalhesSessao").width());
-			jQuery("#TotaisHide").css('display','');
-		}
-		else{
-			jQuery("#TotaisHide").removeClass('in');
-			jQuery("#TotaisHide").css('display','none');
+		if(jQuery("#BtnBotoesAcao").length>0){
+			
+			
+			
+			if(jQuery(this).scrollTop() >=  (jQuery("#BtnBotoesAcao").position().top+jQuery('#content').position().top+(jQuery("#BtnBotoesAcao").height()/2))){
+				jQuery("#TotaisHide").addClass('in');
+				jQuery("#TotaisHide").css('top', jQuery(document).scrollTop()-jQuery('#content').position().top);
+				jQuery("#TotaisHide").css('left', jQuery("#detalhesSessao").position().left);
+				jQuery("#TotaisHide").width( jQuery("#detalhesSessao").width());
+				jQuery("#TotaisHide").css('display','');
+			}
+			else{
+				jQuery("#TotaisHide").removeClass('in');
+				jQuery("#TotaisHide").css('display','none');
+			}
+			
+			
 		}
 		
-		if( (jQuery(window).height()+jQuery(this).scrollTop()) >= jQuery("#carregando").position().top && !carregando && temMais){
+		if( (jQuery(window).height()+jQuery(this).scrollTop()) >= jQuery("#carregando").position().top+jQuery('#content').position().top && !carregando && temMais){
 			carregando = true;
 			jQuery.post(SessaoView.ImagensURL,
 					{posicao: lidos}, function(dado){

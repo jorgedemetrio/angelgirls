@@ -64,6 +64,46 @@ UPDATE #__angelgirls_fotografo SET token = UUID() WHERE token IS NULL;
 UPDATE #__angelgirls_visitante SET token = UUID() WHERE token IS NULL; 
 
 
-ALTER TABLE `joomla`.`test2_angelgirls_sessao` 
-CHANGE COLUMN `token` `token` VARCHAR(250) NOT NULL ,
-ADD UNIQUE INDEX `token_UNIQUE` (`token` ASC);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER TABLE `#__angelgirls_mensagens`
+CHANGE COLUMN `status_mensagem` `status_remetente` VARCHAR(25) NULL DEFAULT 'NOVO' ,
+ADD COLUMN `status_destinatario` VARCHAR(25) NULL DEFAULT 'NOVO' AFTER `status_remetente`,
+ADD COLUMN `flag_remetente` INT NULL DEFAULT 0 AFTER `status_destinatario`,
+ADD COLUMN `flag_destinatario` INT NULL DEFAULT 0 AFTER `flag_remetente`
+ADD COLUMN `lido_remetente` INT NULL DEFAULT 0,
+ADD COLUMN `lido_destinatario` INT NULL DEFAULT 0;
+
+
+ALTER TABLE `ag_angelgirls_mensagens` ADD COLUMN `lido_remetente` INT DEFAULT 0;
+ALTER TABLE `ag_angelgirls_mensagens` ADD COLUMN `lido_destinatario` INT DEFAULT 0;
+
+update ag_angelgirls_mensagens SET status_remetente = 'NOVO' , status_destinatario = 'NOVO', 
+lido_remetente=0,  lido_destinatario = 0, flag_remetente=0, flag_destinatario=0  WHERE ID > 0;
