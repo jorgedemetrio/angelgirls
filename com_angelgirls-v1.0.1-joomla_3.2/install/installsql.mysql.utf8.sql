@@ -525,6 +525,7 @@ CREATE TABLE `#__angelgirls_mensagens` (
 		 `flag_destinatario` INT NULL DEFAULT 0 AFTER `flag_remetente`,
 		`lido_remetente` INT NULL DEFAULT 0,
 		`lido_destinatario` INT NULL DEFAULT 0,
+		`enviado` INT NULL DEFAULT 0,
 		`id_usuario_remetente` INT NOT NULL , 
  		`data_criado` DATETIME NOT NULL,
  		`data_lida` DATETIME NULL,

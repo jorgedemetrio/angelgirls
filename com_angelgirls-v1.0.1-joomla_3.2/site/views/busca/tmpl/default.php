@@ -3,4 +3,13 @@
 
 
 
-<gcse:searchresults-only webSearchResultSetSize="large" enableOrderBy="true"></gcse:searchresults-only>
+
+<gcse:search></gcse:search>
+
+<script>
+	jQuery(document).ready(function(){
+		setTimeout(function(){
+		jQuery('.gsc-search-button').click();
+		}, 500);
+	});
+</script>

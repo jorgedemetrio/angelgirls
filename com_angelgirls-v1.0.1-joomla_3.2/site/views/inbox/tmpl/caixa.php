@@ -26,7 +26,7 @@ $perfil = JRequest::getVar('perfil');
 				</thead>
 				<tbody>
 <?php 	foreach($mensagens as $conteudo): ?>
-					<tr class="editavel leituraLinnha" data-id="<?php echo($conteudo->id); ?>" <?php if($conteudo->status_mensagem=='NOVO'){ echo('style="font-weight:bold;"');}?>>
+					<tr class="editavel leituraLinnha" onclick="javaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>')" data-id="<?php echo($conteudo->token); ?>" <?php if($conteudo->lido_destinatario==0){ echo('style="font-weight:bold;"');}?>>
 		<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
 <?php switch ($conteudo->status_dado) :	
 		 case StatusDado::REMOVIDO : ?>

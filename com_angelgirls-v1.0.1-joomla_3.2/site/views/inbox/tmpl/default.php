@@ -30,10 +30,53 @@ $perfil = JRequest::getVar('perfil');
 $para = JRequest::getVar('para');
 ?>
 <script>
-function ativarConteudo(id){
-	//if()
+
+INBOX.AtivarConteudoURL = '<?php echo(JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=inboxMensagensHTML', false ));?>';
+INBOX.MensagemURL = '<?php echo(JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=getMessageToReadJson', false ));?>';
+
+
+INBOX.Answer = function(id, remetente, mensagem){
 	
 }
+
+INBOX.ReadMessage = function(id){
+	//AngelGirls.Processando().show();
+	jQuery('#corpoMensagem').fadeOut(500);
+	var tipo = null;
+	jQuery('.tiposCaixas').each(function(){
+	    var $this = jQuery(this);
+	    if($this.hasClass('active')){
+	    	tipo=$this.attr('id').replace('-OPTION','');
+	    }
+	})
+	jQuery.post(INBOX.MensagemURL, {caixa: tipo, token:id },function(dado){
+
+		AngelGirls.CarregarDadosInformativos();
+		
+		var dataEnvaido = new Date(dado.data_criado);
+		var botataoResponde = '	<div class="btn-toolbar pull-right" role="group"><div class="btn-group" role="group"><button onclick="JavsScript: INBOX.Answer(\''+dado.token+'\', )" class="btn btn-primary" type="buttom">Responder <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button></div></div>';
+		var mensagem = "";
+		mensagem +=  "<div class='bg-info' style='padding:10px; border-radius:10px;'><p class='text-left text-capitalize pull-right text-info'><strong>Enviado: </strong>"+
+		dataEnvaido.getDate()+'/'+(dataEnvaido.getMonth()+1)+'/'+dataEnvaido.getFullYear()+' '+dataEnvaido.getHours()+':'+dataEnvaido.getMinutes()+'</p>';
+		mensagem += "<p class='text-left text-capitalize text-info'><strong>Remetente:</strong> "+dado.nome_remetente+"</p>";
+		mensagem += botataoResponde+"<p class='text-left text-capitalize text-info'><strong>Para:</strong> "+dado.nome_destinatario+"</p>";
+		mensagem += "<p class='text-left text-capitalize'><strong>"+dado.titulo+"</strong></p></div><br/><br/>";
+		mensagem += "<p class='text-left text-muted'>"+dado.mensagem+"</p>";
+		
+
+		
+		
+
+		jQuery("tr[data-id='"+id+"']").css('font-weight','normal');
+		
+		
+		jQuery('#corpoMensagem').html(mensagem);
+		jQuery('#corpoMensagem').fadeIn(1000);
+		//AngelGirls.Processando().hide();		
+	},'json');
+}
+
+
 </script>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
@@ -51,19 +94,21 @@ function ativarConteudo(id){
 		
 		
 		<div class="tab-content" style="overflow: auto;">
-			<div id="corpoMensagem" class="fade">
-			</div>		
 			<div class="row tab-pane fade in active" id="caixaEntrada">
-				<div id="caixas" class="col col-xs-2 col-sm-3 col-md-3 col-lg-2 hidden-phone">
+				<div id="caixasMenu" class="col col-xs-2 col-sm-3 col-md-3 col-lg-2 hidden-phone">
 					<ul class="nav nav-pills  nav-stacked">
-					  	<li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-inbox"></span> Caixa de entrada</a></li>
-					  	<li role="presentation"><a href="#"><span class="glyphicon glyphicon-log-in"></span> Rascunhos</a></li>
-					  	<li role="presentation"><a href="#"><span class="glyphicon glyphicon-share"></span> Enviados</a></li>
-					  	<li role="presentation"><a href="#"><span class="glyphicon glyphicon-trash"></span><span class="hidden-phone"> Lixeira</span> </a></li>
+					  	<li role="presentation" class="tiposCaixas active " id="INBOX-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('INBOX');" title="Caixa de entrada"><span class="glyphicon glyphicon-log-in"></span> Caixa de entrada</a></li>
+					  	<li role="presentation" class="tiposCaixas" id="DRAF-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('DRAF');" title="Rascunhos"><span class="glyphicon glyphicon-edit"></span> Rascunhos</a></li>
+					  	<li role="presentation" class="tiposCaixas" id="SENT-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('SENT');" title="Enviados"><span class="glyphicon glyphicon-share"></span> Enviados</a></li>
+					  	<li role="presentation" class="tiposCaixas" id="TRASH-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('TRASH');" title="Lixeira"><span class="glyphicon glyphicon-trash"></span><span class="hidden-phone"> Lixeira</span> </a></li>
 					</ul>
 				</div>
-				<div id="caixas" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
+				<div class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
+					<div id="corpoMensagem"  style="display:none; padding: 20px; border: 1 scrollbar #000; margin: 10px; overflow: scroll; transition: height 2s; -webkit-transition: height 2s;">
+					</div>
+					<div id="caixas">
 <?php require_once 'caixa.php'; ?>
+					</div>
 				</div>
 			</div>
 			<div class="row fade tab-pane" id="novaMensagem">

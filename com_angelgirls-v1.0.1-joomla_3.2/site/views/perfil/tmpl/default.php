@@ -115,8 +115,9 @@ ____noz-index: -1;
 					</button>
 				</div>
 			</div>
-			<h1><?php echo JText::_('Formul&aacute;rio de cadastro para novas modelos'); ?></h1>
-					
+			<div class="page-header">
+				<h1><?php echo JText::_('Edite suas informa&ccedil&otilde;es'); ?></h1>
+			</div>	
 		
 		
 			<br/>

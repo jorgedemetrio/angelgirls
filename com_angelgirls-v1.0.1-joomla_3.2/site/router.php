@@ -131,6 +131,20 @@ function AngelgirlsParseRoute($segments)
 			JRequest::setVar('id',$vars['id']);
 			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;
+		case 'perfil':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'cadastro';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
+		case 'inbox':
+			$id = explode(':', $segments[$count-1]);
+			$vars['id'] = (int) $id[0];
+			$vars['view'] = 'cadastro';
+			JRequest::setVar('id',$vars['id']);
+			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
+			break;
 		default:
 			$id = explode(':', $segments[$count-1]);
 			if($count!=1 ){

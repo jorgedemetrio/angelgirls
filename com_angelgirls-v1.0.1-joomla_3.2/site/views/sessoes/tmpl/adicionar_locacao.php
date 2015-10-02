@@ -27,7 +27,7 @@ $ufs = JRequest::getVar('ufs');
 	</div>
 	<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<label class="control-label"  for="complemento"><?php echo JText::_('Complemento'); ?></label>
-		<input class="form-control" style="width: 90%;" type="text" required name="complemento"  id="complemento" value="<?php echo(JRequest::getVar('complemento')); ?>" maxlength="10" title="<?php echo JText::_('Complemento da loca&ccedil&atilde;o da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Complemento da loca&ccedil&atilde;o da sess&atilde;o'); ?>"/>
+		<input class="form-control" style="width: 90%;" type="text" name="complemento"  id="complemento" value="<?php echo(JRequest::getVar('complemento')); ?>" maxlength="10" title="<?php echo JText::_('Complemento da loca&ccedil&atilde;o da sess&atilde;o'); ?>" placeholder="<?php echo JText::_('Complemento da loca&ccedil&atilde;o da sess&atilde;o'); ?>"/>
 	</div>
 	<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<label class="control-label"  for="cep"><?php echo JText::_('CEP'); ?> *</label>

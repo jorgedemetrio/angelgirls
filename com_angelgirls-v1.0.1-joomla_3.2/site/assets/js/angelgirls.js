@@ -2,6 +2,22 @@
  * Processando
  */
 
+
+//BUSCA
+
+  (function() {
+    var cx = '003094212550420491412:esufx1ar20m';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+
+
 function TestaCPF(strCPF) {
 	var Soma; 
 	var Resto; 
@@ -174,31 +190,26 @@ AngelGirls.CarregarDadosInformativos = function(){
 		AngelGirls.ProcessandoMensagens=true;
 		jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
 			if(dado.logado=='SIM'){
-
-				console.log(dado);
-				
-				if(jQuery('#MenuCaixaMensagensTopo').length<=0){
-					var menuLat =  '<li class="caixaMensagens" id="MenuCaixaMensagensTopo"></li>';
-					jQuery('.menu').append(menuLat);
-				}
 				if(jQuery('#MenuAprovacaoTopo').length<=0){
-					var menuLat =  '<li class="sessoesAprovar" id="MenuAprovacaoTopo"></li>';
+					var menuLat =  '<li class="sessoesAprovar" style="float: right;" id="MenuAprovacaoTopo"></li>';
 					jQuery('.menu').append(menuLat);
 				}
-				
-				
-				
-				
+				if(jQuery('#MenuCaixaMensagensTopo').length<=0){
+					var menuLat =  '<li class="caixaMensagens" style="float: right;" id="MenuCaixaMensagensTopo"></li>';
+					jQuery('.menu').append(menuLat);
+				}
+
 				var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
+				var sessoesURL = "index.php?option=com_angelgirls&task=carregarMinhasSessoes";
 				if(dado.mensagens>0)
 					jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
 				else
 					jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
 				
 				if(dado.aprovar>0)
-					jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Sess&otilde;es"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
+					jQuery('.sessoesAprovar').html('<a href="'+sessoesURL+'"><span class="badge" title="Sess&otilde;es"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
 				else
-					jQuery('.sessoesAprovar').html('<a href="'+inboxURL+'"><span class="badge" title="Sess&otilde;es" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
+					jQuery('.sessoesAprovar').html('<a href="'+sessoesURL+'"><span class="badge" title="Sess&otilde;es" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
 			
 			}
 			else{

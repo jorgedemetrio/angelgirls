@@ -7,7 +7,7 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
-	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=homepage&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
+	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&view=home&task=homepage&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
  	//JRequest::setVar('task','homepage');
  	//$controller = JControllerLegacy::getInstance('Angelgirls');
  	//$controller->execute('homepage');

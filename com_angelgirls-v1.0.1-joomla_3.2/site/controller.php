@@ -25,6 +25,76 @@ jimport( 'joomla.mail.mail' );
 
 jimport('joomla.log.log');
 
+class ConfirguacaoImagens {
+	
+	const TYPE_THUMB = 'thumb';
+	const TYPE_THUMB_CUBE = 'cube';
+	const TYPE_ICONE = 'ico';
+	const TYPE_ICONE_CUBE = 'icocube';
+	const TYPE_FULL = 'full';
+	const TYPE_FULL_CUBE = 'fullcube';
+	const TYPE_BACKUP = 'fullcube';
+	
+	var $THUMB = array(name=>TYPE_THUMB,prefix=>'thumb_', width=>300,height=>300, able=>TRUE, cube=>TRUE, logo=>TRUE, quality=>50);
+	var $THUMB_CUBE = array(name=>TYPE_THUMB_CUBE,prefix=>'cube_', width=>300,height=>300, able=>TRUE, cube=>TRUE, logo=>TRUE, quality=>50);
+	var $ICONE = array(name=>TYPE_ICONE,prefix=>'ico_', width=>150,height=>150, able=>TRUE, cube=>TRUE, logo=>TRUE, quality=>70);
+	var $ICONE_CUBE = array(name=>TYPE_ICONE_CUBE,prefix=>'icocube_', width=>150,height=>150, able=>FALSE, cube=>TRUE, logo=>TRUE, quality=>70);
+	var $FULL = array(name=>TYPE_FULL,prefix=>'', width=>2000,height=>2000, able=>TRUE, cube=>FALSE, logo=>TRUE, quality=>100);
+	var $FULL_CUBE = array(name=>TYPE_FULL_CUBE,prefix=>'fullcube_', width=>2000,height=>2000, able=>FALSE, cube=>TRUE, logo=>TRUE, quality=>100);
+	var $BACKUP = array(name=>TYPE_BACKUP,prefix=>'bk_', width=>null,height=>null, able=>FALSE, cube=>FALSE, logo=>FALSE, quality=>100);
+
+	var $tipo=null;
+	var $tipos =null;
+	
+	public static function getInstance(){
+		if(!isset($tipo))
+			$tipo = new ConfirguacaoImagens();
+		return $tipo;
+	}
+	
+	public static function getTipo($name){
+		$retorno = null;
+		switch ($name){
+			case TYPE_THUMB:
+				$retorno = $THUMB;
+				break;
+			case TYPE_THUMB_CUBE:
+				$retorno = $THUMB_CUBE;
+				break;
+			case TYPE_ICONE:
+				$retorno = $ICONE;
+				break;
+			case TYPE_ICONE_CUBE:
+				$retorno = $ICONE_CUBE;
+				break;
+			case TYPE_FULL:
+				$retorno = $FULL;
+				break;
+			case TYPE_FULL_CUBE:
+				$retorno = $FULL_CUBE;
+				break;
+			case TYPE_BACKUP:
+				$retorno = $BACKUP;
+				break;
+		}
+		return $retorno;
+	}
+	
+	public static function getTipos(){
+		
+		if(!isset($tipos))
+			$tipos = array(ConfirguacaoImagens::getInstance()->THUMB,
+				ConfirguacaoImagens::getInstance()->THUMB_CUBE,
+				ConfirguacaoImagens::getInstance()->ICONE,
+				ConfirguacaoImagens::getInstance()->ICONE_CUBE,
+				ConfirguacaoImagens::getInstance()->FULL,
+				ConfirguacaoImagens::getInstance()->FULL_CUBE,
+				ConfirguacaoImagens::getInstance()->BACKUP);
+		
+		return $tipos;
+	}
+}
+
 class StatusDado {
 	const PUBLICADO = 'PUBLICADO';
 	const ATIVO = 'ATIVO';
@@ -142,6 +212,8 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	function display($cachable = false, $urlparams = false) {
+		
+		
 		// set default view if not set
 		JRequest::setVar ( 'view', JRequest::getCmd ( 'view', 'Angelgirls' ) );
 	
@@ -1105,7 +1177,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	private function validaCPF($cpf = null) {
 	
-		// Verifica se um número foi informado
+		// Verifica se um n&uacute;mero foi informado
 		if(empty($cpf)) {
 			return false;
 		}
@@ -1306,8 +1378,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		//Montando o texto da mensgem.
-		$titulo = 'Sessão reprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
-		$texto = ' sua sessão "' . $sessao->titulo . '" acaba de ser reprovada por um integrante.<br> ';
+		$titulo = 'Sess&atilde;o reprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
+		$texto = ' sua sess&atilde;o "' . $sessao->titulo . '" acaba de ser reprovada por um integrante.<br> ';
 		
 
 		
@@ -1435,28 +1507,28 @@ class AngelgirlsController extends JControllerLegacy{
 
 		
 		//Montando o texto da mensgem.
-		$titulo = 'Sessão aprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
-		$texto = 'Parab&eacute;ns a sua sessão "' . $sessao->titulo . '" acaba de ser apravada por mais um integrante.<br> ';
+		$titulo = 'Sess&atilde;o aprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
+		$texto = 'Parab&eacute;ns a sua sess&atilde;o "' . $sessao->titulo . '" acaba de ser apravada por mais um integrante.<br> ';
 		
 		if($todosAprovaram){ 
 			if( $sessao->tipo == TipoSessao::VENDA){
 				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram anaizar tecnicamente para ver se possuem interesse de compra.';
 			}
 			elseif( $sessao->tipo == TipoSessao::LEILAO){
-				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação para que outros usuários possam comprar o seu set ou iram entrar em contato.';
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sess&atilde;o, e logo agendaram a publica&ccedil;&atilde;o para que outros usu&aacute;rios possam comprar o seu set ou iram entrar em contato.';
 			}
 			elseif( $sessao->tipo == TipoSessao::PATROCINIO){
-				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação para  ou iram entrar em contato.';
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sess&atilde;o, e logo agendaram a publica&ccedil;&atilde;o para  ou iram entrar em contato.';
 			}
 			elseif( $sessao->tipo == TipoSessao::PONTOS){
-				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sessão, e logo agendaram a publicação ou iram entrar em contato.';
+				$texto = $texto . 'Agora a sua sess&atilde;o vai para analize da equipe interna da Angel Girls, eles iram analizar tecnicamente e ver se atende a todos os criterios do tipo de sess&atilde;o, e logo agendaram a publica&ccedil;&atilde;o ou iram entrar em contato.';
 			}
 		}
 		else{
-			$texto = $texto . 'Estamos aguardando todos integrantes aprovarem, falta pouco já já estará aprovado.';
+			$texto = $texto . 'Estamos aguardando todos integrantes aprovarem, falta pouco j&aacute; j&aacute; estar&aacute; aprovado.';
 		}
 
-		$texto = $texto . '<br/>Continue participando. <br/>Não deixe de ler os termos e condições no site e acompanhe as dicas para ter maior resultado em seus trabalhos. <br/>Boa sorte.';
+		$texto = $texto . '<br/>Continue participando. <br/>N&atilde;o deixe de ler os termos e condi&ccedil;&otilde;es no site e acompanhe as dicas para ter maior resultado em seus trabalhos. <br/>Boa sorte.';
 		
 		
 		$criador = $this->getPerfilById($sessao->id_usuario_criador);
@@ -2010,7 +2082,7 @@ class AngelgirlsController extends JControllerLegacy{
 		//Valida&ccedil;&atilde;o
 		if((!isset($id) || $id == 0 || strlen(trim($id)) <=0 ) &&
 				strlen(trim($termos)) <= 0){
-			JError::raiseWarning(100,JText::_('Cadastro de uma sess&atilde;o nova &eacute; obrigat&oacute;rio que leia os termos e condi&ccedil;ões e confirme que est&aacute; de acordo.'));
+			JError::raiseWarning(100,JText::_('Cadastro de uma sess&atilde;o nova &eacute; obrigat&oacute;rio que leia os termos e condi&ccedil;&otilde;es e confirme que est&aacute; de acordo.'));
 			$erros = true;
 		}
 		
@@ -2323,9 +2395,9 @@ class AngelgirlsController extends JControllerLegacy{
 		->set (array(
 				$db->quoteName ( 'data_alterado' ) . ' = NOW()',
 				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
-				$db->quoteName ( 'status_modelo_principal' ). ' = 0 ' ,
+				$db->quoteName ( 'status_modelo_principal' ). ' = ' . ($perfil->tipo=='MODELO' && $sessao->id_modelo_principal == $perfil->id?'1':'0'),
 				$db->quoteName ( 'status_modelo_secundaria' ). ' = 0 ' ,
-				$db->quoteName ( 'status_fotografo_principal' ). ' = 0 ' ,
+				$db->quoteName ( 'status_fotografo_principal' ). ' =  ' . ($perfil->tipo=='FOTORGAFO' && $sessao->id_fotografo_principal == $perfil->id?'1':'0') ,
 				$db->quoteName ( 'status_fotografo_secundario' ). ' = 0 ' ,
 				$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::ANALIZE),
 				$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
@@ -2351,25 +2423,36 @@ class AngelgirlsController extends JControllerLegacy{
 
 		try{
 		
+			
+			
 			$base = JUri::root(true) ;
-			$url = $base . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarAprovarSessao&id='.$sessao->id);
+			//$url = $_SERVER['SERVER_ADDR'] . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarAprovarSessao&id='.$sessao->id);
+			$url = 'http://'.$_SERVER['HTTP_HOST']. JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id);
 			
-			$titulo = 'Publicação de SET aguardando aprovação.';
+			$titulo = 'Publica&ccedil;&atilde;o de SET aguardando aprova&ccedil;&atilde;o.';
 			
-			$texto = "<img src='$base/images/angelgirls.png'/><br/>Ola %NOME%, <br/>Foi cadastrado uma sess&atilde;o de fotos no site Angel Girls onde voc&ecirc;s marcado(a) como %TIPO%.<br/>Para aprovar ou repovar acesse o link <a href='$url'>$url</a> ."  ;
-			if($perfil->tipo != 'MODELO'){
+			$texto = "<img src='$base/components/com_angelgirls/angelgirls.png' style='width: 150px; float: left; height: auto; margin: 10px;'/><p>Ola %NOME%, <br/>"
+					. ($peril->sexo=='F'?'A ':'O ') . $peril->nome ." cadastrou uma sess&atilde;o de fotos no site Angel Girls onde voc&ecirc; foi marcado(a) como %TIPO%.</p>
+					<p><a href='$url'>Para aprovar ou repovar clique aqui</a> ou acesse o link <i><u>$url</u></i>.</p> 
+					<p>Ser&aacute; necess&aacute;rio ter cadastro no site.</p>"  ;
+			if($perfil->tipo == 'MODELO'){
 				if(isset($sessao->id_fotografo_principal) && $sessao->id_fotografo_principal>0){
 					
 					$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_principal);
+					$texto = str_replace('%NOME%', $fotografo->nome, $texto);
+					$texto = str_replace('%TIPO%', '"FOTOGRAFO PRINCIPAL"', $texto);
 					
 					$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 					$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_principal.')', $texto, 1);
 				}
 			}
-			if($perfil->tipo != 'FOTOGRAFO'){
+			if($perfil->tipo == 'FOTOGRAFO'){
 				if(isset($sessao->id_modelo_principal) && $sessao->id_modelo_principal>0){
 					
 					$modelo = $this->getPerfilModeloById($sessao->id_modelo_principal);
+					
+					$texto = str_replace('%NOME%', $modelo->nome, $texto);
+					$texto = str_replace('%TIPO%', '"MODELO"', $texto);
 					
 					$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 					$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_principal.')', $texto, 1);
@@ -2380,11 +2463,17 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				$modelo = $this->getPerfilModeloById($sessao->id_modelo_secundaria);
 				
+				$texto = str_replace('%NOME%', $modelo->nome, $texto);
+				$texto = str_replace('%TIPO%', '"MODELO"', $texto);
+				
 				$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_modelo WHERE id = '.$sessao->id_modelo_secundaria.')', $texto, 1);
 			}
 			if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
 				$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_secundario);
+				
+				$texto = str_replace('%NOME%', $fotografo->nome, $texto);
+				$texto = str_replace('%TIPO%', '"FOTOGRAFO/EQUIPE"', $texto);
 				
 				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
 				$this->EnviarMensagemInbox($titulo, '(SELECT id_usuario FROM  #__angelgirls_fotografo WHERE id = '.$sessao->id_fotografo_secundario.')', $texto, 1);
@@ -2538,7 +2627,10 @@ class AngelgirlsController extends JControllerLegacy{
 			if($gerarImagens){
 				//Cria backup
 				JFile::copy($newfile, $dest . DS  .'bk_'. $arquivo);
-				
+//TODO USAR ESSE COMPONENTE
+// 				$tipos = ConfirguacaoImagens::getTipos();
+// 				foreach($tipos as $tipo){
+// 				}
 				$img = null;
 				// Obter dados do arquivo de imagem
 				$dados = getimagesize($newfile);
@@ -2610,7 +2702,7 @@ class AngelgirlsController extends JControllerLegacy{
 					imagecopyresampled($cube, $logo, 175, 250, 0, 0, 120, 58, $widthlogo, $heightlogo );// FATO 1,9
 					imagecopyresampled($full, $logo, $fullwidth - 510, $fullheight - 300, 0, 0, 500, 243, $widthlogo, $heightlogo );// FATOR 0,456
 				}
-				//FOTOR DO LOGO é 228x111  
+				//FOTOR DO LOGO &eacute; 228x111  
 	
 				
 				
@@ -3075,7 +3167,7 @@ class AngelgirlsController extends JControllerLegacy{
 							
 							
 								
-							$this->SalvarUploadVideo($video, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo, "Sessão  \"$titulo\" ID $idSessao ID-VIDEO $idVideo");
+							$this->SalvarUploadVideo($video, PATH_IMAGEM_SESSOES . $result->token . DS, $arquivo, "Sess&atilde;o  \"$titulo\" ID $idSessao ID-VIDEO $idVideo");
 			
 		
 		//					echo($arquivo);exit();
@@ -4087,70 +4179,126 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function inboxMensagens(){ 
+		$caixa = JRequest::getString('caixa','INBOX');
+		JRequest::setVar('mensagens', $this->getMessagesInbox($caixa));
+		JRequest::setVar('view', 'inbox');
+		JRequest::setVar('layout', 'default');
+		parent::display();
+	}
+	
+	public function inboxMensagensHTML(){
+		$caixa = JRequest::getString('caixa','INBOX');
+		JRequest::setVar('mensagens', $this->getMessagesInbox($caixa));
+
+
+		
+		require_once 'views/inbox/tmpl/caixa.php';
+		exit();
+	}
+	
+	
+	
+	public function getMessageToReadJson(){
+		$caixa = JRequest::getString('caixa','INBOX');
+		$token = JRequest::getString('token',null);
+		$mensage = $this->getMessagesInbox($caixa, $token);
+		$jsonRetorno = json_encode($mensage);
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
+	
+	
+	private function getMessagesInbox($caixa = 'INBOX', $token = null){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
-		$id = JRequest::getString('id',0);
-		$caixa = JRequest::getString('caixa','INBOX');
-		
-		if(!(strpos($id,':')===false)){
-			$var =explode(':',$id);
-			$id = $var[0];
-		}
 		
 
 		$query = $db->getQuery ( true );
 		$query->select('`remetente`.`name` as `nome_remetente`,
 						`destinatario`.`name` as `nome_destinatario`,
-						`m`.`id`, 
-						`m`.`id_resposta`, 
-						`m`.`titulo`, 
-						`m`.`id_usuario_destino`,
-						`m`.`mensagem`,
-						`m`.`token`,
-						`m`.`tipo`,
-						`m`.`status_dado`,
-						`m`.`id_usuario_remetente`, 
-						`m`.`status_remetente`,
-						`m`.`status_destinatario`,
-						`m`.`lido_remetente`,
-						`m`.`lido_destinatario`,
-						`m`.`flag_remetente`,
-						`m`.`flag_destinatario`,
-				 		`m`.`data_criado`,
-				 		`m`.`data_lida`,
-						CASE ISNULL(`respondido`.`id`) WHEN 1 THEN \'NAO\'  ELSE \'SIM\' END AS `respondido`,
-						`m`.`host_ip_criador`,
-						`m`.`host_ip_alterador`')
-		->from($db->quoteName ( '#__angelgirls_mensagens','m'))
-		->join('INNER', $db->quoteName ( '#__users', 'remetente' ) . ' ON ' . $db->quoteName ( 'remetente.id' ) . ' = ' . $db->quoteName ( 'm.id_usuario_remetente' ))
-		->join('INNER', $db->quoteName ( '#__users', 'destinatario' ) . ' ON ' . $db->quoteName ( 'destinatario.id' ) . ' = ' . $db->quoteName ( 'm.id_usuario_destino' ))
-		->join('LEFT', $db->quoteName ( '#__angelgirls_mensagens', 'respondido' ) . ' ON ' . $db->quoteName ( 'respondido.id_resposta' ) . ' = ' . $db->quoteName ( 'm.id' ));
-		
+			`m`.`id`,
+			`m`.`id_resposta`,
+			`m`.`titulo`,
+			`m`.`id_usuario_destino`,
+			`m`.`mensagem`,
+			`m`.`token`,
+			`m`.`tipo`,
+			`m`.`status_dado`,
+			`m`.`id_usuario_remetente`,
+			`m`.`status_remetente`,
+			`m`.`status_destinatario`,
+			`m`.`lido_remetente`,
+			`m`.`lido_destinatario`,
+			`m`.`flag_remetente`,
+			`m`.`flag_destinatario`,
+	 		`m`.`data_criado`,
+			`m`.`enviado`,
+	 		`m`.`data_lida`,
+			\''. $caixa . '\' AS `caixa`,
+			CASE ISNULL(`respondido`.`id`) WHEN 1 THEN \'NAO\'  ELSE \'SIM\' END AS `respondido`,
+			`m`.`host_ip_criador`,
+			`m`.`host_ip_alterador`')
+					->from($db->quoteName ( '#__angelgirls_mensagens','m'))
+					->join('INNER', $db->quoteName ( '#__users', 'remetente' ) . ' ON ' . $db->quoteName ( 'remetente.id' ) . ' = ' . $db->quoteName ( 'm.id_usuario_remetente' ))
+					->join('INNER', $db->quoteName ( '#__users', 'destinatario' ) . ' ON ' . $db->quoteName ( 'destinatario.id' ) . ' = ' . $db->quoteName ( 'm.id_usuario_destino' ))
+					->join('LEFT', $db->quoteName ( '#__angelgirls_mensagens', 'respondido' ) . ' ON ' . $db->quoteName ( 'respondido.id_resposta' ) . ' = ' . $db->quoteName ( 'm.id' ));
 		if($caixa == 'INBOX'){
 			$query->where($db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id)
-			->where($db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::NOVO));
+			->where($db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::NOVO))
+			->where($db->quoteName ( 'm.status_remetente' ) . ' NOT IN (' . $db->quote(StatusMensagem::RASCUNHO) . ')')
+			->where($db->quoteName ( 'm.enviado' ) . ' = 1 ');
 		}
-		elseif($caixa == 'SENTBOX'){
+		elseif($caixa == 'SENT'){
 			$query->where($db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id)
 			->where($db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::ENVIADO) );
 		}
-		elseif($caixa == 'LIXEIRA'){
+		elseif($caixa == 'DRAF'){
+			$query->where($db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id)
+			->where($db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::RASCUNHO) );
+		}
+		elseif($caixa == 'TRASH'){
 			$query->where('((' . $db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id . ' AND  ' . $db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA) .
-					 ') OR ( ' . $db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id . ' AND  ' . $db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA) .' ))' );
+					') OR ( ' . $db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id . ' AND  ' . $db->quoteName ( 'm.status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA) .' ))' );
+		}
+		$query->where($db->quoteName ( 'm.status_dado' ) . ' <> ' . $db->quote(StatusDado::REMOVIDO));
+		if(isset($token)){
+			$query->where($db->quoteName ( 'm.token' ) . ' = ' . $db->quote($token));
 		}
 		$query->order('m.data_criado DESC');
-		
-		
 		$db->setQuery ( $query );
-		$result = $db->loadObjectList();
 		
-		JRequest::setVar('mensagens', $result);
-		
-		
-		JRequest::setVar('view', 'inbox');
-		JRequest::setVar('layout', 'default');
-		parent::display();
+		if(isset($token)){
+			$mensagem = $db->loadObject();
+			if(isset($mensagem)){
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_mensagens'));
+				if($mensagem->id_usuario_destino==$user->id){
+					$query->set(array(
+							$db->quoteName ( 'data_lida' ) . ' = NOW() ',
+							$db->quoteName ( 'lido_destinatario') . ' = 1 ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+					));
+				}
+				elseif($mensagem->id_usuario_remetente==$user->id){
+					$query->set(array(
+							$db->quoteName ( 'data_lida' ) . ' = NOW() ',
+							$db->quoteName ( 'lido_remetente' ) . ' = 1 ',
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+					));
+				}
+				$query->where ($db->quoteName ( 'id' ) . ' = ' . $mensagem->id);
+				$db->setQuery ( $query );
+				$db->execute ();
+			}
+			return $mensagem;
+		}
+		else{
+			return $db->loadObjectList();
+		}
 	}
+	
 	
 	
 	public function sendMessage(){
@@ -7140,6 +7288,7 @@ class AngelgirlsController extends JControllerLegacy{
 			->where ('id_usuario_destino = ' . $user->id)
 			->where ('status_dado = \'NOVO\'')
 			->where ('status_destinatario = \'NOVO\'')
+			->where ('enviado = 1 ')
 			->where ('lido_destinatario = 0');
 			$db->setQuery( $query );
 			$mensagens = $db->loadObject();
@@ -7192,6 +7341,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$db->quoteName ( 'flag_destinatario' ),
 				$db->quoteName ( 'lido_remetente' ),
 				$db->quoteName ( 'lido_destinatario' ),
+				$db->quoteName ( 'enviado' ),
 				$db->quoteName ( 'id_usuario_remetente' ),
 				$db->quoteName ( 'data_criado' ),
 				$db->quoteName ( 'host_ip_criador' )))
@@ -7202,7 +7352,7 @@ class AngelgirlsController extends JControllerLegacy{
 						$tipo,
 						'UUID()',
 						(!isset($repostaMensagemId) || $repostaMensagemId===0?' null ':$repostaMensagemId),
-						$db->quote('NOVO'),$db->quote('NOVO'),$db->quote('NOVO'),'0','0','1','0', $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()) 
+						$db->quote('NOVO'),$db->quote('NOVO'),$db->quote('NOVO'),'0','0','1','0','1', $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()) 
 				)));
 		$db->setQuery( $query );
 		$db->execute();
@@ -7305,7 +7455,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 			
 			
-			$this->EnviarMensagemInbox('Solicitação de amizade', $queryUsuario, 'O usuário '.$perfil->nome.' enviou uma solicitação de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
+			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' enviou uma solicita&ccedil;&atilde;o de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
 		}
 		catch(Exception $e){
 			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
@@ -7364,7 +7514,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 				
 				
-			$this->EnviarMensagemInbox('Solicitação de amizade', $queryUsuario, 'O usuário '.$perfil->nome.' aceitou sua solicitação de amizade.', TipoMensagens::ACEITOU_AMIZADE);
+			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' aceitou sua solicita&ccedil;&atilde;o de amizade.', TipoMensagens::ACEITOU_AMIZADE);
 		}
 		catch(Exception $e){
 			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
