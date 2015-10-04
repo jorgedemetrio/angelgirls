@@ -7615,7 +7615,29 @@ class AngelgirlsController extends JControllerLegacy{
 		$id = JRequest::getInt('id', null, 'POST' );
 		
 		$json= "";
-	
+		$query = $db->getQuery ( true );
+		$query->update($db->quoteName('#__angelgirls_post'))
+		->set(array(
+				$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
+				$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
+		))
+		->where(' id_usuario = ' . $user->id)
+		->where(' id = ' . $id);
+			
+		$db->setQuery( $query );
+		if($db->execute()){
+			$json='{"ok":"ok"}';
+		}
+		else{
+			$json='{"ok":"nok"}';
+		}
+		$this->LogQuery($query);
+		
+		
+		
+		
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($json));
 		echo $json;
