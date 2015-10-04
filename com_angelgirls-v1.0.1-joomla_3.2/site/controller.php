@@ -7528,56 +7528,99 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 		
+/**************************************************************************************************************/
+/************************************************      POST    ************************************************/
+/**************************************************************************************************************/
+	public function salvarPost(){
+		$json= "";
+		//json_encode($mensage);
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$perfil = $this::getPerfilLogado();
+		$texto = JRequest::getInt('texto', '', 'POST' );
+		$id = JRequest::getInt('id', null, 'POST' );
 		
-		
-
-// 		CREATE TABLE `#__angelgirls_amizade` (
-// 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-// 		`id_usuario_solicidante` INT NOT NULL ,
-// 		`id_usuario_solicitado` INT NOT NULL ,
-// 		`data_solicitada` DATETIME NOT NULL,
-// 		`data_aceita` DATETIME NULL,
-// 		`host_ip_solicitante` varchar(20) NOT NULL,
-// 		`host_ip_aceitou` varchar(20) NULL,
-// 		FOREIGN KEY (`id_usuario_solicidante`) REFERENCES `#__users` (`id`),
-// 		FOREIGN KEY (`id_usuario_solicitado`) REFERENCES `#__users` (`id`)
-// 		) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
-
-// 		CREATE TABLE `#__angelgirls_amizade_lista_contato` (
-// 		`id_lista` INT NOT NULL,
-// 		`id_usuario` INT NOT NULL,
-// 		`data_alterado` DATETIME NOT NULL,
-// 		`host_ip_criador` varchar(20) NOT NULL,
-// 		PRIMARY KEY(id_lista, id_usuario),
-// 		FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
-// 		FOREIGN KEY (`id_lista`) REFERENCES `#__angelgirls_amizade_lista` (`id`)
-// 		)
-
-// 		CREATE TABLE `#__angelgirls_amizade_lista` (
-// 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-// 		`nome` varchar(255) NOT NULL DEFAULT 'AMIGOS',
-// 		`status_dado` VARCHAR(25) DEFAULT 'NOVO',
-// 		`id_usuario_criador` INT NOT NULL ,
-// 		`id_usuario_alterador` INT NOT NULL ,
-// 		`sistema` enum('S','N') DEFAULT 'N',
-// 		`data_criado` DATETIME NOT NULL,
-// 		`data_alterado` DATETIME NOT NULL,
-// 		`host_ip_criador` varchar(20) NOT NULL,
-// 		`host_ip_alterador` varchar(20) NULL,
-// 		FOREIGN KEY (`id_usuario_criador`) REFERENCES `#__users` (`id`),
-// 		FOREIGN KEY (`id_usuario_alterador`) REFERENCES `#__users` (`id`)
-// 		) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
-		
-// 		CREATE TABLE `#__angelgirls_seguindo` (
-// 		`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-// 		`id_usuario_seguidor` INT NOT NULL ,
-// 		`id_usuario_seguido` INT NOT NULL ,
-// 		`data` DATETIME NOT NULL,
-// 		`host_ip` varchar(20) NULL,
-// 		FOREIGN KEY (`id_usuario_seguidor`) REFERENCES `#__users` (`id`),
-// 		FOREIGN KEY (`id_usuario_seguido`) REFERENCES `#__users` (`id`)
-// 		) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+		if(!isset($id)){
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ( '#__angelgirls_post' ) )
+			->columns (array (
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'texto' ),
+					$db->quoteName ( 'audiencia_gostou' ),
+					$db->quoteName ( 'audiencia_ngostou' ),
+					$db->quoteName ( 'audiencia_view' ),
+					$db->quoteName ( 'status_dado' ),
+					$db->quoteName ( 'id_usuario_criador' ),
+					$db->quoteName ( 'id_usuario_alterador' ),
+					$db->quoteName ( 'data_criado' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'host_ip_criador' ),
+					$db->quoteName ( 'host_ip_alterador' ),
+					))
+					->values(implode(',', array(
+							$user->id,
+							$db->quote($texto),
+							0,0,0,
+							$db->quote(StatusDado::NOVO),
+							$user->id,
+							$user->id,
+							'NOW()',
+							'NOW()',
+							$db->quote($this->getRemoteHostIp()),
+							$db->quote($this->getRemoteHostIp())
+							
+					)));
+			$db->setQuery( $query );
+			if($db->execute()){
+				$json='{"ok":"ok"}';
+			}
+			else{
+				$json='{"ok":"nok"}';
+			}
+			$this->LogQuery($query);
+		}
+		else{
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName('#__angelgirls_post'))
+			->set(array(
+				$db->quoteName ( 'texto' ) . ' = ' . $db->quote($texto),
+				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+				$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
+				$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
+			))
+			->where(' id_usuario = ' . $user->id) 
+			->where(' id = ' . $id);
+			
+			$db->setQuery( $query );
+			if($db->execute()){
+				$json='{"ok":"ok"}';
+			}
+			else{
+				$json='{"ok":"nok"}';
+			}
+			$this->LogQuery($query);
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+	}
 	
+	public function excluirPost(){
+		//json_encode($mensage);
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$perfil = $this::getPerfilLogado();
+		$texto = JRequest::getInt('texto', '', 'POST' );
+		$id = JRequest::getInt('id', null, 'POST' );
+		
+		$json= "";
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+	}
 	
 	
 }
