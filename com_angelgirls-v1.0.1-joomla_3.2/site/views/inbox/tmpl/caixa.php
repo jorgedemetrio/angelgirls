@@ -11,8 +11,8 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 
 $mensagens = JRequest::getVar('mensagens');
 $perfil = JRequest::getVar('perfil');
-
-
+$caixa = JRequest::getString('caixa','INBOX');
+$user = JFactory::getUser();
 ?>
 <div class="table-responsive face active in tab-pane" id="entrada">
 			<table class="table table-hover display" id='tabelaInbox' cellspacing="0" width="100%">
@@ -25,34 +25,41 @@ $perfil = JRequest::getVar('perfil');
 					</tr>
 				</thead>
 				<tbody>
-<?php 	foreach($mensagens as $conteudo): ?>
-					<tr class="editavel leituraLinnha" onclick="javaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>')" data-id="<?php echo($conteudo->token); ?>" <?php if($conteudo->lido_destinatario==0){ echo('style="font-weight:bold;"');}?>>
-		<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
-<?php switch ($conteudo->status_dado) :	
-		 case StatusDado::REMOVIDO : ?>
+<?php 	foreach($mensagens as $conteudo): 
+$lido =null;
+if(($conteudo->lido_remetente ==0 &&  $conteudo->id_usuario_remetente == $user->id) ||
+		($conteudo->lido_destinatario ==0 &&  $conteudo->id_usuario_destino == $user->id)) :
+	$lido = false;
+else :
+	$lido = true;
+endif;
+
+?>
+					<tr class="editavel leituraLinnha"  data-id="<?php echo($conteudo->token); ?>"  <?php if(!$lido){ echo('style="font-weight:bold;"');}?>>
+						<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
+<?php switch ($caixa) :	
+		 case StatusMensagem::LIXEIRA : ?>
 		
 <?php
 		break; 
 	default:  ?>
-				<a href="<?php echo($url);?>" title="Ver"><span class="glyphicon glyphicon-remove" style="color: red;"></span></a>&nbsp;
-<?php endswitch;
-		switch ($conteudo->status_mensagem) :	
-			case StatusMensagem::NOVO : ?>
-				<span class="glyphicon glyphicon-eye-close" title="N&atilde;o lido"></span>&nbsp;
+				<a href="JavaScript: INBOX.moverLixeira('<?php echo($conteudo->token); ?>');" title="Mover para lixeira"><span class="glyphicon glyphicon-remove" style="color: red;"></span></a>&nbsp;
+<?php 
+	endswitch;
+	if(!$lido) : ?>	
+			<a href="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');"></a><span class="glyphicon glyphicon-eye-close" title="N&atilde;o lido"></span>&nbsp;</a>
 <?php
-		break; 
-	default:  ?>
+	else: ?>
 		<span class="glyphicon glyphicon-eye-open" title="Lido"></span>&nbsp;
-<?php endswitch;
-		if($conteudo->respondido=='SIM'){ ?>
+<?php endif;
+if($conteudo->respondido=='SIM'): ?>
 			<span class="glyphicon glyphicon-share-alt" title="Respondido" style="color: blue;"></span>&nbsp;
-		<?php 
-		}
-		?>
-		</td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->titulo); ?></td>
-				<td class="editavel" style="vertical-align: middle;width: 250px; overflow: hidden; text-overflow: ellipsis;"><?php echo($conteudo->nome_remetente); ?></td>
-				<td class="editavel" style="vertical-align: middle;width: 102px;"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
+<?php 
+endif;
+?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;"><?php echo($conteudo->titulo); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 250px; overflow: hidden; text-overflow: ellipsis;"><?php echo($conteudo->nome_remetente); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 102px;"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
 			</tr>
 <?php
 	endforeach;?>

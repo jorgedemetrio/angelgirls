@@ -1507,7 +1507,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		
 		//Montando o texto da mensgem.
-		$titulo = 'Sess&atilde;o aprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome;
+		$titulo = 'Sess&atilde;o aprovada pel' . ($perfil->sexo=='M'?'o':'a') . ' ' . $perfil->nome_completo;
 		$texto = 'Parab&eacute;ns a sua sess&atilde;o "' . $sessao->titulo . '" acaba de ser apravada por mais um integrante.<br> ';
 		
 		if($todosAprovaram){ 
@@ -2439,7 +2439,7 @@ class AngelgirlsController extends JControllerLegacy{
 				if(isset($sessao->id_fotografo_principal) && $sessao->id_fotografo_principal>0){
 					
 					$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_principal);
-					$texto = str_replace('%NOME%', $fotografo->nome, $texto);
+					$texto = str_replace('%NOME%', $fotografo->nome_completo, $texto);
 					$texto = str_replace('%TIPO%', '"FOTOGRAFO PRINCIPAL"', $texto);
 					
 					$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
@@ -2451,7 +2451,7 @@ class AngelgirlsController extends JControllerLegacy{
 					
 					$modelo = $this->getPerfilModeloById($sessao->id_modelo_principal);
 					
-					$texto = str_replace('%NOME%', $modelo->nome, $texto);
+					$texto = str_replace('%NOME%', $modelo->nome_completo, $texto);
 					$texto = str_replace('%TIPO%', '"MODELO"', $texto);
 					
 					$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
@@ -2463,7 +2463,7 @@ class AngelgirlsController extends JControllerLegacy{
 				
 				$modelo = $this->getPerfilModeloById($sessao->id_modelo_secundaria);
 				
-				$texto = str_replace('%NOME%', $modelo->nome, $texto);
+				$texto = str_replace('%NOME%', $modelo->nome_completo, $texto);
 				$texto = str_replace('%TIPO%', '"MODELO"', $texto);
 				
 				$this->EnviarMensagemEmail($modelo->email, $modelo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
@@ -2472,7 +2472,7 @@ class AngelgirlsController extends JControllerLegacy{
 			if(isset($sessao->id_fotografo_secundario) && $sessao->id_fotografo_secundario>0){
 				$fotografo = $this->getPerfilFotografoById($sessao->id_fotografo_secundario);
 				
-				$texto = str_replace('%NOME%', $fotografo->nome, $texto);
+				$texto = str_replace('%NOME%', $fotografo->nome_completo, $texto);
 				$texto = str_replace('%TIPO%', '"FOTOGRAFO/EQUIPE"', $texto);
 				
 				$this->EnviarMensagemEmail($fotografo->email, $fotografo->nome, TipoMensagens::ENVIO_SESSAO_ANALIZE, $titulo, $texto);
@@ -4181,6 +4181,10 @@ class AngelgirlsController extends JControllerLegacy{
 	public function inboxMensagens(){ 
 		$caixa = JRequest::getString('caixa','INBOX');
 		JRequest::setVar('mensagens', $this->getMessagesInbox($caixa));
+		
+		
+		
+		
 		JRequest::setVar('view', 'inbox');
 		JRequest::setVar('layout', 'default');
 		parent::display();
@@ -4196,8 +4200,10 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	
-	
+// ****************************************************************************************************************************************
+// ************************************************           MENSAGENS          **********************************************************
+// ****************************************************************************************************************************************
+
 	public function getMessageToReadJson(){
 		$caixa = JRequest::getString('caixa','INBOX');
 		$token = JRequest::getString('token',null);
@@ -4213,8 +4219,6 @@ class AngelgirlsController extends JControllerLegacy{
 	private function getMessagesInbox($caixa = 'INBOX', $token = null){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
-		
-
 		$query = $db->getQuery ( true );
 		$query->select('`remetente`.`name` as `nome_remetente`,
 						`destinatario`.`name` as `nome_destinatario`,
@@ -4317,7 +4321,79 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
+	public function moverParaLixeiraMessage(){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		$token = JRequest::getString('token',null);
+		
+		
+		
+		
+		$query = $db->getQuery ( true );
+		$query->select('
+			`m`.`id`,
+			`m`.`id_usuario_destino`,
+			`m`.`id_usuario_remetente`')
+			->from($db->quoteName ( '#__angelgirls_mensagens','m'))
+
+		->where('('.$db->quoteName ( 'm.id_usuario_destino' ) . ' = ' . $user->id . ' OR ' . $db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id.')')
+		->where($db->quoteName ( 'm.status_dado' ) . ' <> ' . $db->quote(StatusDado::REMOVIDO))
+		->where($db->quoteName ( 'm.token' ) . ' = ' . $db->quote($token));
+		$db->setQuery ( $query );
+		$mensagem = $db->loadObject();
+		if(isset($mensagem)){
+			if($mensagem->id_usuario_destino==$user->id){
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_mensagens'))
+				->set(array(
+							$db->quoteName ( 'status_destinatario' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA),
+							$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id' ) . ' = ' . $mensagem->id)
+				->where ($db->quoteName ( 'id_usuario_destino' ) . ' = ' . $user->id);
+				$db->setQuery ( $query );
+				if($db->execute ()){
+					$jsonRetorno = '{"ok":"ok"}';
+				}
+				else{
+					$jsonRetorno = '{"nok":"ok", "mensagem":"Mensagem n&atilde;o encontranda."}';					
+				}
+			}
+			elseif($mensagem->id_usuario_remetente==$user->id){
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_mensagens'))
+				->set(array(
+						$db->quoteName ( 'status_remetente' ) . ' = ' . $db->quote(StatusMensagem::LIXEIRA),
+						$db->quoteName ( 'host_ip_alterador' ) . ' = ' . $db->quote($this->getRemoteHostIp())
+				))
+				->where ($db->quoteName ( 'id' ) . ' = ' . $mensagem->id)
+				->where ($db->quoteName ( 'id_usuario_remetente' ) . ' = ' . $user->id);
+				$db->setQuery ( $query );
+				if($db->execute ()){
+					$jsonRetorno = '{"ok":"ok"}';
+				}
+				else{
+					$jsonRetorno = '{"nok":"ok", "mensagem":"Mensagem n&atilde;o encontranda."}';					
+				}
+			}
+			else{
+				$jsonRetorno = '{"nok":"ok", "mensagem":"Mensagem n&atilde;o encontranda."}';
+			}
+			$this->LogQuery($query);
+		}
+		else{
+			$jsonRetorno = '{"ok":"nok", "mensagem":"Mensagem n&atilde;o encontranda."}';			
+		}
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($jsonRetorno));
+		echo $jsonRetorno;
+		exit();
+	}
 	
+	
+/***********************************************************************************************************************/
+/************************************         ALBUM DE FOTOS     *******************************************************/
+/***********************************************************************************************************************/
 
 
 	/**
@@ -7438,8 +7514,6 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			
 			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
-			
-			
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_amizade'))
 			->columns (array (
@@ -7453,6 +7527,20 @@ class AngelgirlsController extends JControllerLegacy{
 				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
 			}
 			$this->LogQuery($query);
+
+			
+			$query = $db->getQuery ( true );
+			$query->select("`id`")
+			->from ('#__angelgirls_amizade_lista')
+			->where ('`nome` = \'AMIGOS\'' )
+			->where ('`sistema` = \'S\'' )
+			->where ('`id_usuario_criador` =  '.$user->id )
+			->setLimit(1);
+			$db->setQuery ( $query );
+			$listaID = $db->loadObject();
+			if(!isset($listaID)){
+				$listaID = $this->criarListaDefaultAmigos($user->id);
+			}
 			
 			
 			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' enviou uma solicita&ccedil;&atilde;o de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
@@ -7490,23 +7578,26 @@ class AngelgirlsController extends JControllerLegacy{
 			
 			$query = $db->getQuery ( true );
 			$query->select("`id`")
-			->from ('#__angelgirls_amizade_lista')
-			->where ('`nome` = \'AMIGOS\'' )
-			->where ('`sistema` = \'S\'' )
-			->where ('`id_usuario_criador` = (SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.') ' )
-			->setLimit(1);
+				->from ('#__angelgirls_amizade_lista')
+				->where ('`nome` = \'AMIGOS\'' )
+				->where ('`sistema` = \'S\'' )
+				->where ('`id_usuario_criador` = (SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.') ' )
+				->setLimit(1);
 			$db->setQuery ( $query );
-			$listaID = $db->loadObject();
+			$listaID = $db->loadObject()->id;
+			if(!isset($listaID) || $listaID <= 0){
+				$listaID = $this->criarListaDefaultAmigos('(SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.')');
+			}
 			
 			
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_amizade_lista_contato'))
 			->columns (array (
 					$db->quoteName ( 'id_lista' ),
-					$db->quoteName ( 'id_usuario_solicitado' ),
-					$db->quoteName ( 'data_solicitada' ),
-					$db->quoteName ( 'host_ip_solicitante' )))
-					->values(implode(',', array ($idSolicitacao, $user->id, 'NOW()', $db->quote($this->getRemoteHostIp()))));
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'host_ip_criador' )))
+					->values(implode(',', array ($listaID, $user->id, 'NOW()', $db->quote($this->getRemoteHostIp()))));
 			$db->setQuery( $query );
 			if(!$db->execute()){
 				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
@@ -7526,6 +7617,73 @@ class AngelgirlsController extends JControllerLegacy{
 		header("Content-Length: " . strlen($json));
 		echo $json;
 		exit();
+	}
+	
+	
+	private function getContatos($name=null){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select("`CONTATOS`.`ID` as `id`, `USER`.`name`")
+		->from ('((SELECT contato.id_usuario  AS ID, LISTA.id_usuario_criador AS ID_USER FROM
+		#__angelgirls_amizade_lista_contato AS contato INNER JOIN
+		#__angelgirls_amizade_lista AS LISTA ON LISTA.id = contato.id_lista)
+		UNION
+		(SELECT id_usuario_solicidante AS ID, id_usuario_solicitado AS ID_USER FROM #__angelgirls_amizade)
+		UNION
+		(SELECT id_usuario_solicitado AS ID, id_usuario_solicidante AS ID_USER FROM #__angelgirls_amizade)
+		UNION
+		(SELECT id_usuario_seguido AS ID, id_usuario_seguidor AS ID_USER FROM #__angelgirls_seguindo)
+		UNION
+		(SELECT id_usuario_seguidor AS ID, id_usuario_seguido AS ID_USER FROM #__angelgirls_seguindo)) AS CONTATOS')
+		->join('INNER', '#__users AS  USER ON USER.id = CONTATOS.ID')
+		->join('INNER', '#__angelgirls_perfil AS perfil ON USER.id = perfil.id_usuario')
+		->where ('`CONTATOS`.`ID_USER` = '. $user->id );
+		if(isset($name)){
+			$query->where ('(upper(trim(`USER`.`name`))  like '.  $db->quote(strtoupper(trim($name)) .'%' ).'
+					 OR upper(trim(`USER`.`email`))  like '.  $db->quote(strtoupper(trim($name)) .'%' ).'
+					 OR upper(trim(`perfil`.`apelido`))  like '.  $db->quote(strtoupper(trim($name)) .'%' ).')');
+		}
+		$query->group ('CONTATOS.ID, USER.name, CONTATOS.ID_USER' )
+		->order('USER.name' )
+		->limit(10);
+		$db->setQuery ( $query );
+		return $db->loadObjectList();
+	}
+	
+	
+	public function getContatosJson(){
+		$name = JRequest::getString('q', null);
+		
+		$json = json_encode($this->getContatos($name));
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+	}
+	
+	private function criarListaDefaultAmigos($idNodoLista){
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->insert( $db->quoteName ('#__angelgirls_amizade_lista'))
+		->columns (array (
+				$db->quoteName ( 'nome' ),
+				$db->quoteName ( 'sistema' ),
+				$db->quoteName ( 'status_dado' ),
+				$db->quoteName ( 'data_criado' ),
+				$db->quoteName ( 'data_alterado' ),
+				$db->quoteName ( 'id_usuario_criador' ),
+				$db->quoteName ( 'id_usuario_alterador' ),
+				$db->quoteName ( 'host_ip_criador' ),
+				$db->quoteName ( 'host_ip_alterador' )))
+				->values(implode(',', array ('AMIGOS', 'S', $db->quote(StatusDado::NOVO), 'NOW()', 'NOW()', $idNodoLista, $idNodoLista,
+						$db->quote($this->getRemoteHostIp()), $db->quote($this->getRemoteHostIp())
+				)));
+		$db->setQuery( $query );
+		$db->execute();
+		$id = $db->insertid();
+		$this->LogQuery($query);
+		return $id;
 	}
 		
 /**************************************************************************************************************/
