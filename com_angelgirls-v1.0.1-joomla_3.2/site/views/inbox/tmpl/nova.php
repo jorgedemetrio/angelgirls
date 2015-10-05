@@ -43,7 +43,7 @@ role="form" data-toggle="validator" enctype="multipart/form-data">
 				maxlength="250" value="<?php echo $para;?>"
 				title="<?php echo JText::_('Para quem deseja mandar a mensagem?'); ?>"
 				placeholder="<?php echo JText::_('Para quem deseja mandar a mensagem? Escreva o nome e exibir&aacute; uma lista baseada bo seus amigos.'); ?>" />
-			<div class="input-group-addon"><button  class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+			<div class="input-group-addon"><button  class="btn btn-default" type="button" onclick="JavaScript: INBOX.BuscarPerfil('para');"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 			</button></div>
 		</div>
 

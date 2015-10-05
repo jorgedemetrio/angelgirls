@@ -4308,15 +4308,17 @@ class AngelgirlsController extends JControllerLegacy{
 	public function sendMessage(){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
-		$id = JRequest::getString('id_mensagem',0);
-		$destinario = JRequest::getString('destinario',0);
+		$id = JRequest::getString('id_mensagem',null);
+		$destinario = JRequest::getString('para',0);
 		$titulo = JRequest::getString('titulo','');
 		$mensagem = JRequest::getString('mensagem','');
 		
+		$destinatarios = explode(',',$destinario);
 		
-		$this->EnviarMensagemInbox($titulo, $destinario, $mensagem, TipoMensagens::MENSAGEM_SIMPLES, $id);
-		JFactory::getApplication()->enqueueMessage(JText::_('Mensagem enviada com sucesso.'));		
-		
+		foreach($destinatarios as $para){
+			$this->EnviarMensagemInbox($titulo, $para, $mensagem, TipoMensagens::MENSAGEM_SIMPLES, $id);
+		}
+		JFactory::getApplication()->enqueueMessage(JText::_('Mensagem enviada com sucesso.'));
 		$this->inboxMensagens();
 	}
 	
@@ -4889,6 +4891,56 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 		require_once 'views/fotografo/tmpl/selecionar_fotografo.php';
+		exit();
+	}
+	
+	
+	public function buscarPerfilToken(){
+		$nome = JRequest::getString('nome',null);
+		$idCidade  = JRequest::getInt('id_cidade',null);
+		$estado  = JRequest::getInt('estado',null);
+		
+		$campo  = JRequest::getString('campo',null);
+	
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		
+		$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
+						`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
+						`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
+						`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
+						`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
+						`data_criado`,`data_alterado`,
+						`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+						`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
+		->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
+		->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+		->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
+		if(isset($nome) && strlen(trim($nome))>=3 ){
+			$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
+			if(isset($idCidade) && $idCidade!="" && $idCidade>0){
+				$query->where ( 'cvive.id =  ' . $idCidade);
+			}
+			if(isset($estado) && $estado!="" ){
+				$query->where ( 'cvive.uf =  ' . $db->quote(trim($estado)));
+			}
+			$query->where('(upper(trim(p.apelido)) like ' .$nomeFormatado .' OR upper(trim(p.nome_completo)) like ' .$nomeFormatado .')');
+	
+		}
+		else{
+			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos 3 letras do nome.');
+		}
+		$query->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->order('p.apelido')
+		->limit(100);
+		$db->setQuery ( $query );
+	
+		$result = $db->loadObjectList();
+		JRequest::setVar('perfils',$result);
+		JRequest::setVar('ufs',$this->getUFs());
+	
+	
+		require_once 'views/perfil/tmpl/selecionar_perfil_token.php';
 		exit();
 	}
 	
