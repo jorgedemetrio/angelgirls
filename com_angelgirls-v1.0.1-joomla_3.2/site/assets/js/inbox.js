@@ -119,6 +119,7 @@ INBOX.Answer = function(id, remetente, idRemetente,titulo){
 	jQuery('a[href="#novaMensagem"]').click();
 	jQuery('#btnNovo').removeClass('disabled');
 	jQuery('#btnSalvar').removeClass('disabled');
+	tinymce.activeEditor.focus();
 }
 
 INBOX.NovaMensagemControle = function(){
