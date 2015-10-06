@@ -27,7 +27,7 @@ $perfil = JRequest::getVar('perfil');
 
 
 
-$para = JRequest::getVar('para');
+$para = JRequest::getVar('para',null);
 ?>
 <script>
 
@@ -37,9 +37,7 @@ INBOX.lixeiraURL = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=i
 INBOX.pesquisarContatosURL = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=inbox&task=getContatosJson', false ));?>';
 INBOX.BuscarPerfilURL  = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilToken', false ));?>';
 
-INBOX.Answer = function(id, remetente, mensagem){
-	
-}
+
 
 
 </script>
@@ -49,10 +47,10 @@ INBOX.Answer = function(id, remetente, mensagem){
 	
 	
 		<ul class="nav nav-tabs nav-justified" id="myTabTabs" role="tablist" style="margin-bottom: 0;">
-			<li class="active" role="presentation">
+			<li <?php echo(isset($para)?'':'class="active" ')?>role="presentation">
 				<a href="#caixaEntrada" data-toggle="tab" aria-controls="profile" role="tab"><span class="glyphicon glyphicon-inbox"></span> Caixas</a>
 			</li>
-			<li role="presentation">
+			<li <?php echo(!isset($para)?'':'class="active" ')?>role="presentation">
 				<a href="#novaMensagem" data-toggle="tab" aria-controls="profile" role="tab"><span class="glyphicon glyphicon-envelope"></span> Nova mensagem</a>
 			</li>
 		</ul>
@@ -63,7 +61,7 @@ INBOX.Answer = function(id, remetente, mensagem){
 				<div id="caixasMenu" class="col col-xs-2 col-sm-3 col-md-3 col-lg-2 hidden-phone">
 					<ul class="nav nav-pills  nav-stacked">
 					  	<li role="presentation" class="tiposCaixas active " id="INBOX-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('INBOX');" title="Caixa de entrada"><span class="glyphicon glyphicon-log-in"></span> Caixa de entrada</a></li>
-					  	<li role="presentation" class="tiposCaixas" id="DRAF-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('DRAF');" title="Rascunhos"><span class="glyphicon glyphicon-edit"></span> Rascunhos</a></li>
+					  	<!-- li role="presentation" class="tiposCaixas" id="DRAF-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('DRAF');" title="Rascunhos"><span class="glyphicon glyphicon-edit"></span> Rascunhos</a></li-->
 					  	<li role="presentation" class="tiposCaixas" id="SENT-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('SENT');" title="Enviados"><span class="glyphicon glyphicon-share"></span> Enviados</a></li>
 					  	<li role="presentation" class="tiposCaixas" id="TRASH-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('TRASH');" title="Lixeira"><span class="glyphicon glyphicon-trash"></span><span class="hidden-phone"> Lixeira</span> </a></li>
 					</ul>

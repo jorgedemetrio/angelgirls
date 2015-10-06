@@ -1,6 +1,7 @@
 <?php require_once 'ligthbox/header.php' ;
 $perfils = JRequest::getVar('perfils');
 $ufs = JRequest::getVar('ufs');
+$nome = JRequest::getString('nome','');
 ?>
 <form  action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilToken')); ?>" method="post" name="dadosFormBuscarPerfil" id="dadosFormBuscarPerfil" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 <h3>Localizar fotografos <small>M&aacute;ximo de 100 resultados para busca.</small></h3>
@@ -11,6 +12,7 @@ $ufs = JRequest::getVar('ufs');
 	<div class="form-group col-xs-12 col-sm-12 col-md-3 col-lg-6">
 		<label class="control-label"  for="estado_endereco"><?php echo JText::_('Estado'); ?> *</label>
 		<select name="estado" id="estado" data-validation="required" class="form-control estado" data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione um estado'); ?>">
+			<option></option>
 			<?php
 			$estado = JRequest::getVar('estado');
 			foreach ($ufs as $f){ 
@@ -36,7 +38,7 @@ $ufs = JRequest::getVar('ufs');
 				<thead>
 					<tr>
 						<th></th>
-						<th>Nome</th>
+						<th>Nome/Apelido</th>
 						<th>Cidade</th>
 					</tr>
 				</thead>
@@ -50,7 +52,7 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view='.strtolower($perfil->
 ?>
 					<tr>
 						<td style="vertical-align: middle; margin: 0px; padding: 0px;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><img src="<?php echo($urlImg);?>" title="<?php echo($perfil->apelido);?>" alt="<?php echo($perfil->apelido);?>" style="width: 40px; margin: 0px; padding: 0px"/></a></td>
-						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><?php echo($perfil->apelido);?></a></td>
+						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><?php echo(str_ireplace($nome, '<b>' .strtoupper($nome).'</b>', $perfil->apelido));?></a></td>
 						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><?php echo($perfil->estado_mora . ' / ' . $perfil->cidade_mora);?></a></td>
 					</tr>
 <?php 	endforeach;?>

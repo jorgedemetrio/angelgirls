@@ -258,7 +258,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 		<div class="row">
 		<?php
 		 foreach($ultimas as $sessao):?>
-		 	<div class="thumbnail col col-xs-12 col-sm-2 col-md-2 col-lg-2" style="overflow: hidden;">
+		 	<div class="thumbnail col col-xs-12 col-sm-6 col-md-4 col-lg-4" style="overflow: hidden;">
 		 <?php 
 		 	$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false);
 		 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->id.':ico'); 	
@@ -282,7 +282,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 		<div class="row">
 		<?php
 		 foreach($gostaram as $sessao):?>
-		 	<div class="thumbnail col col-xs-12 col-sm-2 col-md-2 col-lg-2" style="overflow: hidden;">
+		 	<div class="thumbnail col col-xs-12 col-sm-6 col-md-4 col-lg-4" style="overflow: hidden;">
 		 <?php 
 		 	$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false);
 		 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->id.':ico'); 	
@@ -307,7 +307,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 		<div class="row">
 		<?php
 		 foreach($vistas as $sessao):?>
-		 	<div class="thumbnail col col-xs-12 col-sm-2 col-md-2 col-lg-2" style="overflow: hidden;">
+		 	<div class="thumbnail col col-xs-12 col-sm-6 col-md-4 col-lg-4" style="overflow: hidden;">
 		 <?php 
 		 	$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false);
 		 	$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$sessao->id.':ico'); 	

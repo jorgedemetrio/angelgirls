@@ -11,6 +11,9 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+//define('TRADUZIR_CHAR_DE','аимсзщюхлрыбйнтшцуяг ');
+//define('TRADUZIR_CHAR_POR','AEIOUYAEIOUAEIOUAONC-');
+
 // Added for Joomla 3.0
 if(!defined('DS')){
 	define('DS',DIRECTORY_SEPARATOR);

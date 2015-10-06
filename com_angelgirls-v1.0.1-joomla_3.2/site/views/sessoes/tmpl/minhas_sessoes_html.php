@@ -5,7 +5,7 @@ $perfil = JRequest::getVar('perfil');
 if(isset($sessoes) && sizeof($sessoes)>0):
 ?>
 <div class="table-responsive">
-	<table class="table table-hover display" id='tabelaComSessoes' cellspacing="0" width="100%">
+	<table class="table table-hover display" id='tabelaComSessoes' data-order='[[ 6, "desc" ]]' cellspacing="0" width="100%">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -78,9 +78,9 @@ if(isset($sessoes) && sizeof($sessoes)>0):
 </td>
 				<td style="width: 30px"><img alt="<?php echo($conteudo->nome); ?>" src="<?php echo($urlImg);?>" class="img-responsive" style="width: 30px; height: 30px;"/></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->nome); ?></td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->modelo1); ?> <img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo($conteudo->fotografo1); ?> <img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
-				<td class="editavel" style="vertical-align: middle;"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></td>
+				<td class="editavel" style="vertical-align: middle;" data-order="<?php echo($conteudo->modelo1); ?>" data-search="<?php echo($conteudo->modelo1); ?>"><?php echo($conteudo->modelo1); ?> <img alt="<?php echo($conteudo->modelo1); ?>" src="<?php echo($urlImgModelo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
+				<td class="editavel" style="vertical-align: middle;" data-order="<?php echo($conteudo->fotografo1); ?>" data-search="<?php echo($conteudo->fotografo1); ?>"><?php echo($conteudo->fotografo1); ?> <img alt="<?php echo($conteudo->fotografo1); ?>" src="<?php echo($urlImgFotografo);?>" class="img-responsive" style="width: 30px; height: 30px; float: left; margin: 2px;"/></td>
+				<td class="editavel" style="vertical-align: middle;" data-order="<?php echo(JDate::getInstance($conteudo->executada)->format('Ymd')); ?>" data-search="<?php echo(JDate::getInstance($conteudo->executada)->format('Ymd')); ?>"><?php echo(JDate::getInstance($conteudo->executada)->format('d/m/Y')); ?></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo(isset($conteudo->publicar) && strlen(trim($conteudo->publicar))>5 ?JDate::getInstance($conteudo->publicar)->format('d/m/Y'):'N/D'); ?></td>
 				<td class="editavel" style="vertical-align: middle;"><?php echo(strtolower( $conteudo->status_dado)); ?></td>
 			</tr>

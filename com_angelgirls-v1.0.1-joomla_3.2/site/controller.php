@@ -4256,7 +4256,7 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		elseif($caixa == 'SENT'){
 			$query->where($db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id)
-			->where($db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::ENVIADO) );
+			->where($db->quoteName ( 'm.status_remetente' ) . ' = ' . $db->quote(StatusMensagem::NOVO) );
 		}
 		elseif($caixa == 'DRAF'){
 			$query->where($db->quoteName ( 'm.id_usuario_remetente' ) . ' = ' . $user->id)
@@ -4899,44 +4899,50 @@ class AngelgirlsController extends JControllerLegacy{
 		$nome = JRequest::getString('nome',null);
 		$idCidade  = JRequest::getInt('id_cidade',null);
 		$estado  = JRequest::getInt('estado',null);
-		
+		$user = JFactory::getUser();
 		$campo  = JRequest::getString('campo',null);
-	
-		$db = JFactory::getDbo ();
-		$query = $db->getQuery ( true );
+		if(isset($nome) && strlen(trim($nome))>=3 
+				|| isset($idCidade) || isset($estado)){
+			$db = JFactory::getDbo ();
+			$query = $db->getQuery ( true );
+			$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
+							`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
+							`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
+							`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
+							`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
+							`data_criado`,`data_alterado`,
+							`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+							`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
+			->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
+			->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+			->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
 		
-		$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
-						`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
-						`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
-						`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
-						`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
-						`data_criado`,`data_alterado`,
-						`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
-						`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
-		->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
-		->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
-		->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
-		if(isset($nome) && strlen(trim($nome))>=3 ){
 			$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
 			if(isset($idCidade) && $idCidade!="" && $idCidade>0){
-				$query->where ( 'cvive.id =  ' . $idCidade);
+				$query->where ( '( cvive.id =  ' . $idCidade . ' OR cnasceu.id =  ' . $idCidade . ' )');
 			}
 			if(isset($estado) && $estado!="" ){
-				$query->where ( 'cvive.uf =  ' . $db->quote(trim($estado)));
+				$query->where ( '( cvive.uf =  ' . $db->quote(trim($estado)) . ' OR  cnasceu.uf =  ' . $db->quote(trim($estado)) . ')');
 			}
-			$query->where('(upper(trim(p.apelido)) like ' .$nomeFormatado .' OR upper(trim(p.nome_completo)) like ' .$nomeFormatado .')');
-	
+			$query->where('(upper(trim(p.apelido)) like ' . $nomeFormatado .' OR upper(trim(p.nome_completo)) like ' . $nomeFormatado .'
+					OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
+			
+			->where ( ' p.id_usuario <> ' . $user->id)
+			->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+			->order('p.apelido')
+			->limit(100);
+			$db->setQuery ( $query );
+			$result = $db->loadObjectList();
+			JRequest::setVar('perfils',$result);
 		}
 		else{
 			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos 3 letras do nome.');
+			JRequest::setVar('perfils',array());
 		}
-		$query->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-		->order('p.apelido')
-		->limit(100);
-		$db->setQuery ( $query );
+
 	
-		$result = $db->loadObjectList();
-		JRequest::setVar('perfils',$result);
+		
+		
 		JRequest::setVar('ufs',$this->getUFs());
 	
 	
@@ -7479,7 +7485,7 @@ class AngelgirlsController extends JControllerLegacy{
 						$db->quote($mensagem),
 						$tipo,
 						'UUID()',
-						(!isset($repostaMensagemId) || $repostaMensagemId===0?' null ':$repostaMensagemId),
+						(!isset($repostaMensagemId) || $repostaMensagemId ==0?' null ':$repostaMensagemId),
 						$db->quote('NOVO'),$db->quote('NOVO'),$db->quote('NOVO'),'0','0','1','0','1', $user->id, 'NOW()',$db->quote($this->getRemoteHostIp()) 
 				)));
 		$db->setQuery( $query );
@@ -7627,7 +7633,9 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->execute();
 			$this->LogQuery($query);
 			
+
 			
+			//Adicionar na lista do solicitante
 			$query = $db->getQuery ( true );
 			$query->select("`id`")
 				->from ('#__angelgirls_amizade_lista')
@@ -7640,8 +7648,6 @@ class AngelgirlsController extends JControllerLegacy{
 			if(!isset($listaID) || $listaID <= 0){
 				$listaID = $this->criarListaDefaultAmigos('(SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.')');
 			}
-			
-			
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_amizade_lista_contato'))
 			->columns (array (
@@ -7655,6 +7661,38 @@ class AngelgirlsController extends JControllerLegacy{
 				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
 			}
 			$this->LogQuery($query);
+			
+			
+			
+			
+			
+			$query = $db->getQuery ( true );
+			$query->select("`id`")
+			->from ('#__angelgirls_amizade_lista')
+			->where ('`nome` = \'AMIGOS\'' )
+			->where ('`sistema` = \'S\'' )
+			->where ('`id_usuario_criador` = ' . $user->id)
+			->setLimit(1);
+			$db->setQuery ( $query );
+			$listaID = $db->loadObject()->id;
+			if(!isset($listaID) || $listaID <= 0){
+				$listaID = $this->criarListaDefaultAmigos( $user->id);
+			}
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ('#__angelgirls_amizade_lista_contato'))
+			->columns (array (
+					$db->quoteName ( 'id_lista' ),
+					$db->quoteName ( 'id_usuario' ),
+					$db->quoteName ( 'data_alterado' ),
+					$db->quoteName ( 'host_ip_criador' )))
+					->values(implode(',', array ($listaID, '(SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.')', 'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
+			}
+			$this->LogQuery($query);
+			
+			
 				
 				
 			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' aceitou sua solicita&ccedil;&atilde;o de amizade.', TipoMensagens::ACEITOU_AMIZADE);
@@ -7690,7 +7728,8 @@ class AngelgirlsController extends JControllerLegacy{
 		(SELECT id_usuario_seguidor AS ID, id_usuario_seguido AS ID_USER FROM #__angelgirls_seguindo)) AS CONTATOS')
 		->join('INNER', '#__users AS  USER ON USER.id = CONTATOS.ID')
 		->join('INNER', '#__angelgirls_perfil AS perfil ON USER.id = perfil.id_usuario')
-		->where ('`CONTATOS`.`ID_USER` = '. $user->id );
+		->where ('`CONTATOS`.`ID_USER` = '. $user->id )
+		->where ('`CONTATOS`.`ID` <> '. $user->id );
 		if(isset($name)){
 			$query->where ('(upper(trim(`USER`.`name`))  like '.  $db->quote(strtoupper(trim($name)) .'%' ).'
 					 OR upper(trim(`USER`.`email`))  like '.  $db->quote(strtoupper(trim($name)) .'%' ).'

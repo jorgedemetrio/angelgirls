@@ -15,13 +15,13 @@ $caixa = JRequest::getString('caixa','INBOX');
 $user = JFactory::getUser();
 ?>
 <div class="table-responsive face active in tab-pane" id="entrada">
-			<table class="table table-hover display" id='tabelaInbox' cellspacing="0" width="100%">
+			<table class="table table-hover display" id='tabelaInbox' cellspacing="0" width="100%" >
 				<thead>
 					<tr>
-						<th style="width: 65px;">&nbsp;</th>
+						<th style="width: 65px;" data-sort="no">&nbsp;</th>
 						<th>Titulo</th>
 						<th style="width: 250px;">Remetente</th>
-						<th style="width: 102px;">Data</th>
+						<th style="width: 102px;" data-class-name="priority">Data</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -36,9 +36,9 @@ endif;
 
 ?>
 					<tr class="editavel leituraLinnha"  data-id="<?php echo($conteudo->token); ?>"  <?php if(!$lido){ echo('style="font-weight:bold;"');}?>>
-						<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;">
+						<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;" data-sort="no">
 <?php switch ($caixa) :	
-		 case StatusMensagem::LIXEIRA : ?>
+		 case 'TRASH' : ?>
 		
 <?php
 		break; 
@@ -59,7 +59,7 @@ endif;
 ?></td>
 				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;"><?php echo($conteudo->titulo); ?></td>
 				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 250px; overflow: hidden; text-overflow: ellipsis;"><?php echo($conteudo->nome_remetente); ?></td>
-				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 102px;"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 102px;" data-order="<?php echo(JDate::getInstance($conteudo->data_criado)->format('YmdHis')); ?>"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
 			</tr>
 <?php
 	endforeach;?>
