@@ -4310,6 +4310,8 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		$id = JRequest::getString('id_mensagem',null);
 		$destinario = JRequest::getString('para',0);
+		//limpa
+		JRequest::setVar('para',null);
 		$titulo = JRequest::getString('titulo','');
 		$mensagem = JRequest::getString('mensagem','');
 		

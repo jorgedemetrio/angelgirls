@@ -112,10 +112,11 @@ AngelGirls.Processando = function () {
 document.AngelGirls = AngelGirls;
 
 
-
 AngelGirls.ResetConfig = function(){
 	jQuery('.gostar').each(function(){
 		$objetoRef = jQuery(this);
+		
+
 
 		if(!$objetoRef.attr('data-checado') && $objetoRef.attr('data-checado')!='SIM'){
 			if($objetoRef.attr('data-gostei')=='SIM'){
@@ -182,8 +183,24 @@ AngelGirls.ResetConfig = function(){
 
 
 AngelGirls.ProcessandoMensagens = false;
-
 AngelGirls.ProcessandoMensagensInterval = null;
+
+AngelGirls.QuantidadeMensagens = null;
+AngelGirls.QuantidadeSets =null;
+
+AngelGirls.Notificar = function (titulo, mensagem, url){
+	Notification.requestPermission(function(dado){
+		if(dado=='granted'){
+			var notification = new Notification("Angel Girls: "+titulo, {
+			    icon: 'http://www.angelgirls.com.br/components/com_angelgirls/angelgirls.png',
+			    body: mensagem
+			});
+	        notification.onclick = function() {
+	            window.location=url;
+	        }
+		}
+	});
+}
 
 AngelGirls.CarregarDadosInformativos = function(){
 	if(!AngelGirls.ProcessandoMensagens){
@@ -199,6 +216,7 @@ AngelGirls.CarregarDadosInformativos = function(){
 					jQuery('.menu').append(menuLat);
 				}
 
+
 				var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
 				var sessoesURL = "index.php?option=com_angelgirls&task=carregarMinhasSessoes";
 				if(dado.mensagens>0)
@@ -210,13 +228,23 @@ AngelGirls.CarregarDadosInformativos = function(){
 					jQuery('.sessoesAprovar').html('<a href="'+sessoesURL+'"><span class="badge" title="Sess&otilde;es"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.aprovar>99?'+99':dado.aprovar)+'</span></a>');	
 				else
 					jQuery('.sessoesAprovar').html('<a href="'+sessoesURL+'"><span class="badge" title="Sess&otilde;es" style="color: #CACACA;"><span class="glyphicon glyphicon-camera" aria-hidden="true" title="Mensagens"></span></span></a>');
-			
+				
+				if(AngelGirls.QuantidadeMensagens != null && AngelGirls.QuantidadeMensagens<dado.mensagens && dado.mensagens > 0){
+					AngelGirls.Notificar('Novas mensagens','Você tem ' + dado.mensagens + ' mensagens não lidas.', inboxURL);
+				}	
+				AngelGirls.QuantidadeMensagens = dado.mensagens;
+
+				if(AngelGirls.QuantidadeSets != null && AngelGirls.QuantidadeSets<dado.aprovar && dado.aprovar>0){
+					AngelGirls.Notificar('Novas sessões','Você tem ' + dado.aprovar + ' sessões aguardando aprovação.', sessoesURL);
+				}	
+				AngelGirls.QuantidadeSets = dado.aprovar;				
+				AngelGirls.ProcessandoMensagens = false;
 			}
 			else{
 				clearInterval(AngelGirls.ProcessandoMensagensInterval);				
 			}
 		},'json');
-		AngelGirls.ProcessandoMensagens = false;
+		
 	}
 }
 
