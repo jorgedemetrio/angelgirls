@@ -4578,12 +4578,12 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$user = JFactory::getUser();
 			$usuario = trim(strtolower( JRequest::getString( 'username', '', 'POST' )));
-			$senha = trim(JRequest::getString( 'password', '', 'POST' ));
+			$senha = trim(JRequest::getString( 'password', null, 'POST' ));
 			$senha2 = trim(JRequest::getString( 'password1', null, 'POST' ));		
 			$nome = trim(JRequest::getString( 'name', null, 'POST' ));
 			
-			
-			if(!isset($user) || !isset($user->id) || $user->id==0){
+			//print_r($user);exit();
+			if(isset($senha) && isset($senha2) && isset($user) && isset($nome)){
 				$user = JFactory::getUser(0);
 	
 				$usersParams = JComponentHelper::getParams('com_users');
