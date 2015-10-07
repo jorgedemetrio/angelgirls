@@ -6992,6 +6992,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	background: url(../images/fundo0.jpg) no-repeat top left;
     background-size: contain;
+	min-height: 100%;
 }
 body.site {
 	noborder-top: 3px solid #9F0096;
