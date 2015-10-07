@@ -137,7 +137,7 @@ input[type=\'file\']{
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="data_nascimento"><?php echo JText::_('Data de Nascimento'); ?></label>
-					<?php echo JHtml::calendar(JRequest::getVar('data_nascimento'), 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control required validate-data"');?>
+					<?php echo JHtml::calendar(JRequest::getVar('dataAniversarioConvertida',null)!=null? JRequest::getVar('dataAniversarioConvertida')->format('Y-m-d'):'', 'data_nascimento', 'data_nascimento', '%d/%m/%Y', 'class="form-control required validate-data"');?>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="nascionalidade"><?php echo JText::_('Nascionalidade'); ?></label>

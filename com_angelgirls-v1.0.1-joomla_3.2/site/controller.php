@@ -4830,7 +4830,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query = $db->getQuery ( true );
 			$query->select('nome_foto ')
 			->from ('#__angelgirls_visitante')
-			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id_usuario').' = ' . $usuario->id )
 			->where ( $db->quoteName ('id').' = ' . $id);
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
@@ -5192,7 +5192,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query = $db->getQuery ( true );
 			$query->select('nome_foto ')
 			->from ('#__angelgirls_fotografo')
-			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id_usuario').' = ' . $usuario->id )
 			->where ( $db->quoteName ('id').' = ' . $id);
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
@@ -5269,6 +5269,8 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo ();
 		$dataObjetoNascimento =null;
 
+		
+		
 		if($dataNascimento != null && strlen($dataNascimento) > 8){
 			$dataObjetoNascimento = DateTime::createFromFormat('d/m/Y H:i:s', $dataNascimento.' 00:00:00');
 			JRequest::setVar('dataAniversarioConvertida', $dataObjetoNascimento);
@@ -5455,16 +5457,31 @@ class AngelgirlsController extends JControllerLegacy{
 				$this->cadastroModelo();
 				return;
 			}
+			else{
+				JFactory::getApplication()->enqueueMessage(JText::_('Cadastro realizado com sucesso!<br/>Aguardando o e-mail de confirma&ccedil;&atilde;o!'));
+				$this->homepage();
+				return;
+			}
 		}
 		elseif($tipo=='FOTOGRAFO'){
 			if(!$this->salvarFotografo($usuario)){
 				$this->cadastroFotografo();
 				return;
 			}
+			else{
+				JFactory::getApplication()->enqueueMessage(JText::_('Cadastro realizado com sucesso!<br/>Aguardando o e-mail de confirma&ccedil;&atilde;o!'));
+				$this->homepage();
+				return;
+			}
 		}
 		else{
 			if(!$this->salvarVisitante($usuario)){
 				$this->cadastroVisitante();
+				return;
+			}
+			else{
+				JFactory::getApplication()->enqueueMessage(JText::_('Cadastro realizado com sucesso!<br/>Aguardando o e-mail de confirma&ccedil;&atilde;o!'));
+				$this->homepage();
 				return;
 			}
 		}
@@ -5775,7 +5792,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$query = $db->getQuery ( true );
 			$query->select('foto_perfil, foto_inteira, foto_inteira_horizontal ')
 			->from ('#__angelgirls_modelo')
-			->where ( $db->quoteName ('id_usuario').' = ' . $user->id )
+			->where ( $db->quoteName ('id_usuario').' = ' . $usuario->id )
 			->where ( $db->quoteName ('id').' = ' . $id);
 			$db->setQuery ( $query );
 			$result = $db->loadObject();
