@@ -57,9 +57,9 @@ if($conteudo->respondido=='SIM'): ?>
 <?php 
 endif;
 ?></td>
-				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;"><?php echo($conteudo->titulo); ?></td>
-				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 250px; overflow: hidden; text-overflow: ellipsis;"><?php echo($conteudo->nome_remetente); ?></td>
-				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" class="editavel" style="vertical-align: middle;width: 102px;" data-order="<?php echo(JDate::getInstance($conteudo->data_criado)->format('YmdHis')); ?>"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" ><?php echo($conteudo->titulo); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" style="width: 250px; overflow: hidden; text-overflow: ellipsis;"><?php echo($conteudo->nome_remetente); ?></td>
+				<td onclick="JavaScript: INBOX.ReadMessage('<?php echo($conteudo->token); ?>');" style="width: 102px;" data-order="<?php echo(JDate::getInstance($conteudo->data_criado)->format('YmdHis')); ?>"><?php echo(isset($conteudo->data_criado) && strlen(trim($conteudo->data_criado))>5 ?JDate::getInstance($conteudo->data_criado)->format('d/m/Y H:i'):'N/D'); ?></td>
 			</tr>
 <?php
 	endforeach;?>

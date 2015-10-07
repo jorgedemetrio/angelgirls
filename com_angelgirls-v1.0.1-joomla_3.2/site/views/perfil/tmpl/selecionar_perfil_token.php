@@ -51,9 +51,9 @@ $urlImg = JRoute::_('index.php?option=com_angelgirls&view='.strtolower($perfil->
 
 ?>
 					<tr>
-						<td style="vertical-align: middle; margin: 0px; padding: 0px;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><img src="<?php echo($urlImg);?>" title="<?php echo($perfil->apelido);?>" alt="<?php echo($perfil->apelido);?>" style="width: 40px; margin: 0px; padding: 0px"/></a></td>
-						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><?php echo(str_ireplace($nome, '<b>' .strtoupper($nome).'</b>', $perfil->apelido));?></a></td>
-						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id);?>);"><?php echo($perfil->estado_mora . ' / ' . $perfil->cidade_mora);?></a></td>
+						<td style="vertical-align: middle; margin: 0px; padding: 0px;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id_usuario);?>);"><img src="<?php echo($urlImg);?>" title="<?php echo($perfil->apelido);?>" alt="<?php echo($perfil->apelido);?>" style="width: 40px; margin: 0px; padding: 0px"/></a></td>
+						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id_usuario);?>);"><?php echo(str_ireplace($nome, '<b>' .strtoupper($nome).'</b>', $perfil->apelido));?></a></td>
+						<td style="vertical-align: middle;"><a href="JavaScript: SelecionarPerfil('<?php echo($perfil->apelido);?>', <?php echo($perfil->id_usuario);?>);"><?php echo($perfil->estado_mora . ' / ' . $perfil->cidade_mora);?></a></td>
 					</tr>
 <?php 	endforeach;?>
 				</tbody>

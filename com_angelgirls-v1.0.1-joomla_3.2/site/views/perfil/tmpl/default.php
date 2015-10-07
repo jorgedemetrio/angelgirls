@@ -21,7 +21,7 @@ JHTML::_('behavior.calendar');
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
-	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
+	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&view=perfil&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ), false ), "" );
 	exit ();
 }
 
@@ -41,7 +41,7 @@ $focoOn = JRequest::getVar('focoOn');
 if(!isset($focoOn)){
 	$focoOn='BASICO';
 }
-$urlCarregar = JRoute::_ ( 'index.php?option=com_angelgirls&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ), false ).'&focoOn=';
+//$urlCarregar = JRoute::_ ( 'index.php?option=com_angelgirls&view=perfil&task=carregarPerfil&Itemid='.JRequest::getVar ( 'Itemid' ), false ).'&focoOn=';
 
 
 $imagemRosto = "";

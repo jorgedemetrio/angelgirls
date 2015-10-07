@@ -4306,6 +4306,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 	public function sendMessage(){
+		if(!JSession::checkToken('post')) die ('Restricted access');
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo();
 		$id = JRequest::getString('id_mensagem',null);
@@ -4909,7 +4910,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		if(isset($nome) && strlen(trim($nome))>=3 
 				|| isset($idCidade) || isset($estado)){
-			JRequest::setVar('perfils', $this->findPerfilToken($nome, $estado, $idCidade, $tipo));
+			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo));
 		}
 		else{
 			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos 3 letras do nome.');
@@ -4920,41 +4921,46 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
-	
-	public function buscarPerfil(){
-		$nome = JRequest::getString('nome',null);
-		$idCidade  = JRequest::getInt('id_cidade',null);
-		$estado  = JRequest::getInt('estado',null);
-		$tipo  = JRequest::getInt('tipo',null);
-	
-		if(isset($nome) && strlen(trim($nome))>=3
-				|| isset($idCidade) || isset($estado) || isset($tipo)){
-			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo, 0));
-		}
-		JRequest::setVar('ufs',$this->getUFs());
-		require_once 'views/perfil/tmpl/selecionar_perfil_token.php';
-		exit();
+
+	public function amigos(){
+
+		
+		JRequest::setVar ( 'view', 'amigos' );
+		JRequest::setVar ( 'layout', 'default' );
+		parent::display ();
 	}
 	
 	
-	public function buscarPerfilJSon(){
+	public function buscarPerfilHtml(){
 		$nome = JRequest::getString('nome',null);
 		$idCidade  = JRequest::getInt('id_cidade',null);
 		$estado  = JRequest::getInt('estado',null);
 		$tipo  = JRequest::getInt('tipo',null);
-		$nivel  = JRequest::getInt('nivel',null);
-		$posicao = JRequest::getInt( 'posicao', null);
+		$nivel  = JRequest::getInt('nivel',0);
+		$alturaInicial  = JRequest::getString('alturaInicial',null);
+		$alturaFinal  = JRequest::getString('alturaFinal',null);
+		$pesoInicial  = JRequest::getString('pesoInicial',null);
+		$pesoFinal  = JRequest::getString('pesoFinal',null);
+		$olhos  = JRequest::geVar('olhos',array());
+		$pele  = JRequest::geVar('pele',array());
+		$etinia  = JRequest::geVar('etinia',array());
+		$tipoCabelo  = JRequest::geVar('tipoCabelo',array());
+		$corCabelo  = JRequest::geVar('corCabelo',array());
+		$tamanhoCabelo  = JRequest::geVar('tamanhoCabelo',array());
+		$sexo  = JRequest::geString('sexo',null);
+		
+		
 		
 	
 		if(isset($nome) && strlen(trim($nome))>=3
 				|| isset($idCidade) || isset($estado)){
-			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo, $posicao));
+			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo ));
 		}
 		JRequest::setVar('ufs',$this->getUFs());
 	}
 	
 	
-	private function findPerfil($nome, $estado, $idCidade, $tipo=null, $nivel=null, $posicao=null ,$ordem=null){
+	private function findPerfil($nome, $estado, $idCidade, $tipo=null, $nivel=null ){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
@@ -4981,24 +4987,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$query->where('(upper(trim(p.apelido)) like ' . $nomeFormatado .' OR upper(trim(p.nome_completo)) like ' . $nomeFormatado .'
 				OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
 		->where ( ' p.id_usuario <> ' . $user->id)
-		->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' );
-		if(isset($ordem)){
-			if($ordem==1){
-				$query->order('p.apelido DESC ');
-			}
-			else{
-				$query->order('p.apelido');
-			}
-		}
-		else{
-			$query->order('p.apelido');
-		}
-		if(isset($posicao) ){
-			$query->limit(AngelgirlsController::LIMIT_DEFAULT, $posicao);
-		}
-		else{
-			$query->limit(100);
-		}
+		->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+		->order('p.apelido');
+
+		$query->limit(100);
 		
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
@@ -7505,9 +7497,12 @@ class AngelgirlsController extends JControllerLegacy{
 		else{
 			$json = '{"logado":"NAO"}';
 		}
+		//header('Content-Type: text/event-stream');
+		header('Cache-Control: no-cache');
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($json));
 		echo $json;
+		flush();
 		exit();
 		
 	}

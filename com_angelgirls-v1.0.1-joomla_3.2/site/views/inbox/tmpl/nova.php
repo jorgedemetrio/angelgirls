@@ -21,7 +21,7 @@ $para = JRequest::getVar('para');
 	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=sendMessage')); ?>"
 	method="post" name="dadosFormMensage" id="dadosFormMensage" class="form-validate"
 	role="form" data-toggle="validator" enctype="multipart/form-data">
-
+	<?php echo JHtml::_('form.token'); ?>
 	<input type="hidden" value="E" name="ACAO" id="ACAO"/>
 	
 

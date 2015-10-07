@@ -197,6 +197,7 @@ AngelGirls.Notificar = function (titulo, mensagem, url){
 			});
 	        notification.onclick = function() {
 	            window.location=url;
+	            window.focus();
 	        }
 		}
 	});
@@ -205,7 +206,7 @@ AngelGirls.Notificar = function (titulo, mensagem, url){
 AngelGirls.CarregarDadosInformativos = function(){
 	if(!AngelGirls.ProcessandoMensagens){
 		AngelGirls.ProcessandoMensagens=true;
-		jQuery.post('index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
+		jQuery.post(document.PathBase+'index.php?option=com_angelgirls&view=sessoes&task=checarDados',{}, function(dado){
 			if(dado.logado=='SIM'){
 				if(jQuery('#MenuAprovacaoTopo').length<=0){
 					var menuLat =  '<li class="sessoesAprovar" style="float: right;" id="MenuAprovacaoTopo"></li>';
@@ -217,8 +218,8 @@ AngelGirls.CarregarDadosInformativos = function(){
 				}
 
 
-				var inboxURL ="index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
-				var sessoesURL = "index.php?option=com_angelgirls&task=carregarMinhasSessoes";
+				var inboxURL =document.PathBase+"index.php?option=com_angelgirls&view=inbox&task=inboxMensagens";
+				var sessoesURL = document.PathBase+"index.php?option=com_angelgirls&task=carregarMinhasSessoes";
 				if(dado.mensagens>0)
 					jQuery('.caixaMensagens').html('<a href="'+inboxURL+'"><span class="badge" title="Mensagens"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span><span class="valorInformacao">'+(dado.mensagens>99?'+99':dado.mensagens)+'</span></a>');	
 				else
@@ -231,6 +232,9 @@ AngelGirls.CarregarDadosInformativos = function(){
 				
 				if(AngelGirls.QuantidadeMensagens != null && AngelGirls.QuantidadeMensagens<dado.mensagens && dado.mensagens > 0){
 					AngelGirls.Notificar('Novas mensagens','Você tem ' + dado.mensagens + ' mensagens não lidas.', inboxURL);
+					if(jQuery('#INBOX-OPTION').length>=1){
+						INBOX.AtivarConteudo('INBOX');
+					}
 				}	
 				AngelGirls.QuantidadeMensagens = dado.mensagens;
 
@@ -255,6 +259,12 @@ jQuery(document).ready(function(){
 	AngelGirls.ProcessandoMensagensInterval = setInterval(function(){
 		AngelGirls.CarregarDadosInformativos();
 	}, 30000);
+	
+//	var source = new EventSource(document.PathBase+'index.php?option=com_angelgirls&view=sessoes&task=checarDados');
+//	source.onmessage = function(event) {
+//		console.log('DADO');
+//	    console.log(event);
+//	};
 	
 	AngelGirls.CarregarDadosInformativos();
 	
