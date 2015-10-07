@@ -27,6 +27,9 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 
 
 
+$amigos = JRequest::getVar('amigos');
+$perfil = JRequest::getVar('perfil');
+$perfil = JRequest::getVar('perfil');
 $perfil = JRequest::getVar('perfil');
 
 $this->item = $perfil; 
@@ -57,6 +60,63 @@ JFactory::getDocument()->addStyleDeclaration('
 
 
  ?>
+<script>
+
+var lidos = 0;
+var carregando=false;
+var Amigos = new Object();
+
+Amigos.LoadAmigosURL = '<?php echo( JRoute::_('index.php?option=com_angelgirls&view=amigos&task=AmigosHTML',false));?>';
+jQuery(document).scroll(function(){
+	
+	if(jQuery('#amigos').hasClass('active')){
+		if( (jQuery(window).height()+jQuery(document).scrollTop()) >= (jQuery("#carregandoAmigos").position().top+jQuery('#content').position().top) && !carregando && temMais){
+			
+			carregando = true;
+			jQuery.post(Amigos.LoadAmigosURL,
+					{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
+				jQuery("#carregandoAmigos").css("display","none");
+				if(dado.length<=0){
+					jQuery("#carregandoAmigos").css("display","none");
+					temMais=false;
+				}
+				else{
+					jQuery('#carregandoAmigos').css('display','');
+					jQuery('#linha').append(dado);
+				}		
+				
+				jQuery('.thumbnail').each(function(){
+					$this = jQuery(this);
+					$img = jQuery($this.find('img'));
+					$img.ready(function(){
+						if(!$this.hasClass('in')){
+							$this.addClass('in');
+						}
+					});
+				});
+				carregando=false;					
+			},'html');
+		 }
+	}
+});
+
+
+jQuery(document).ready(function(){
+	
+
+		jQuery('.thumbnail').each(function(){
+			$this = jQuery(this);
+			$img = jQuery($this.find('img'));
+			$img.ready(function(){
+				if(!$this.hasClass('in')){
+					$this.addClass('in');
+				}
+			});
+		});
+
+});
+
+</script>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
@@ -91,7 +151,14 @@ JFactory::getDocument()->addStyleDeclaration('
 			<div class="tab-content" style="overflow: auto;">
 				<div id="amigos" class="tab-pane fade in active">
 					<h3><?php echo JText::_('Meus amigos'); ?></h3>
-					
+					<div class="row" id="listaAmigos">
+<?php require_once 'lista_amigos.php';?>	
+					</div>
+					<div class="row" id="carregandoAmigos" style="display: none">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
+							<img src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/loading_img.gif" alt="carregando" title="Carregando" style="width: 450px"/>
+						</div>
+					</div>
 				</div>
 				<div id="buscar" class="tab-pane fade">
 					<h3><?php echo JText::_('Buscar amigos'); ?></h3>
@@ -110,8 +177,4 @@ JFactory::getDocument()->addStyleDeclaration('
 	</div>
 </div>
 
-<script>
 
-
-
-</script>
