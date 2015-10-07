@@ -213,7 +213,8 @@ a {
 }
 a:hover,
 a:focus {
-	color: #005580;
+	nocolor: #005580;
+	color:#97638D;
 	text-decoration: underline;
 }
 .img-rounded {
@@ -528,11 +529,15 @@ a:focus {
 	clear: both;
 }
 .container-fluid {
+	background: url(../images/fundo1.png) no-repeat top right fixed; 
+	-moz-background-size: contain;
+	-webkit-background-size: contain;
+	background-size: contain;
 	padding-right: 20px;
 	padding-left: 20px;
-    border: 1px solid #BBA3A3;
-    border-radius: 10px;
-    background-color: #E8DCDC;
+    noborder: 1px solid #BBA3A3;
+    noborder-radius: 10px;
+    nobackground-color: #E8DCDC;
 	*zoom: 1;
 }
 .container-fluid:before,
@@ -6985,9 +6990,11 @@ div.modal.fade.in {
 body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	background: url(../images/fundo0.jpg) no-repeat top left;
+    background-size: contain;
 }
 body.site {
-	noborder-top: 3px solid #0088cc;
+	noborder-top: 3px solid #9F0096;
 	padding: 20px;
 	background-color: #f4f6f7;
 }
@@ -7018,6 +7025,8 @@ body.site.fluid {
 }
 .header {
 	margin-bottom: 10px;
+	height: 120px
+    novertical-align: middle;
 }
 .header .finder {
 	margin-top: 14px;
@@ -7457,7 +7466,7 @@ dl.tabs dt.tabs h3 {
 	font-weight: normal;
 }
 dl.tabs dt.tabs h3 a {
-	color: #0088CC;
+	color: #9F0096;
 }
 dl.tabs dt.tabs h3 a:hover {
 	color: #005580;

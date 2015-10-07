@@ -135,7 +135,7 @@ CREATE TABLE `#__angelgirls_modelo` (
 		`status_documento` VARCHAR(20),
 		`status_comp_residencia` VARCHAR(20),
 		`token` VARCHAR(250) UNIQUE NOT NULL,
-		
+		`nivel` INT NULL DEFAULT 0,
 		`foto_perfil` VARCHAR(100), 
 		`foto_inteira` VARCHAR(100),
 		`foto_inteira_horizontal` VARCHAR(100), 
@@ -207,7 +207,7 @@ CREATE TABLE `#__angelgirls_fotografo` (
 		`profissao` VARCHAR(25),
 		`id_cidade` INT NOT NULL,
 		`token` VARCHAR(250) UNIQUE NOT NULL,
-
+		`nivel` INT NULL DEFAULT 0,
 		`foto_documento` VARCHAR(100),
 		`foto_comp_residencia` VARCHAR(100),
 		`status_documento` VARCHAR(20),
@@ -253,6 +253,7 @@ CREATE TABLE `#__angelgirls_visitante` (
 		`site` VARCHAR(250),
 		`profissao` VARCHAR(25),
 		`token` VARCHAR(250) UNIQUE NOT NULL,
+		`nivel` INT NULL DEFAULT 0,
 		`nascionalidade` VARCHAR(25),
 		`id_cidade_nasceu` INT,
 		`id_cidade` INT NOT NULL,

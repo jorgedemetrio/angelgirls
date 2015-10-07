@@ -4897,60 +4897,114 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	
+/*************************************************************************************************************************************/
+/**************************************************   PERFIL    **********************************************************************/
+/*************************************************************************************************************************************/
 	public function buscarPerfilToken(){
 		$nome = JRequest::getString('nome',null);
 		$idCidade  = JRequest::getInt('id_cidade',null);
 		$estado  = JRequest::getInt('estado',null);
-		$user = JFactory::getUser();
-		$campo  = JRequest::getString('campo',null);
+		$tipo  = JRequest::getInt('tipo',null);
+
+
 		if(isset($nome) && strlen(trim($nome))>=3 
 				|| isset($idCidade) || isset($estado)){
-			$db = JFactory::getDbo ();
-			$query = $db->getQuery ( true );
-			$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
-							`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
-							`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
-							`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
-							`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
-							`data_criado`,`data_alterado`,
-							`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
-							`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
-			->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
-			->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
-			->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
-		
-			$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
-			if(isset($idCidade) && $idCidade!="" && $idCidade>0){
-				$query->where ( '( cvive.id =  ' . $idCidade . ' OR cnasceu.id =  ' . $idCidade . ' )');
-			}
-			if(isset($estado) && $estado!="" ){
-				$query->where ( '( cvive.uf =  ' . $db->quote(trim($estado)) . ' OR  cnasceu.uf =  ' . $db->quote(trim($estado)) . ')');
-			}
-			$query->where('(upper(trim(p.apelido)) like ' . $nomeFormatado .' OR upper(trim(p.nome_completo)) like ' . $nomeFormatado .'
-					OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
-			
-			->where ( ' p.id_usuario <> ' . $user->id)
-			->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-			->order('p.apelido')
-			->limit(100);
-			$db->setQuery ( $query );
-			$result = $db->loadObjectList();
-			JRequest::setVar('perfils',$result);
+			JRequest::setVar('perfils', $this->findPerfilToken($nome, $estado, $idCidade, $tipo));
 		}
 		else{
 			JRequest::setVar('mensagens','Para realizar a busca deve digita pelo menos 3 letras do nome.');
 			JRequest::setVar('perfils',array());
 		}
-
-	
-		
-		
 		JRequest::setVar('ufs',$this->getUFs());
-	
-	
 		require_once 'views/perfil/tmpl/selecionar_perfil_token.php';
 		exit();
 	}
+	
+	
+	public function buscarPerfil(){
+		$nome = JRequest::getString('nome',null);
+		$idCidade  = JRequest::getInt('id_cidade',null);
+		$estado  = JRequest::getInt('estado',null);
+		$tipo  = JRequest::getInt('tipo',null);
+	
+		if(isset($nome) && strlen(trim($nome))>=3
+				|| isset($idCidade) || isset($estado) || isset($tipo)){
+			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo, 0));
+		}
+		JRequest::setVar('ufs',$this->getUFs());
+		require_once 'views/perfil/tmpl/selecionar_perfil_token.php';
+		exit();
+	}
+	
+	
+	public function buscarPerfilJSon(){
+		$nome = JRequest::getString('nome',null);
+		$idCidade  = JRequest::getInt('id_cidade',null);
+		$estado  = JRequest::getInt('estado',null);
+		$tipo  = JRequest::getInt('tipo',null);
+		$nivel  = JRequest::getInt('nivel',null);
+		$posicao = JRequest::getInt( 'posicao', null);
+		
+	
+		if(isset($nome) && strlen(trim($nome))>=3
+				|| isset($idCidade) || isset($estado)){
+			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo, $posicao));
+		}
+		JRequest::setVar('ufs',$this->getUFs());
+	}
+	
+	
+	private function findPerfil($nome, $estado, $idCidade, $tipo=null, $nivel=null, $posicao=null ,$ordem=null){
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		$query = $db->getQuery ( true );
+		$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
+						`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
+						`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
+						`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
+						`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
+						`data_criado`,`data_alterado`,
+						`cnasceu`.`uf` as `estado_nasceu`, `cnasceu`.`nome` as `cidade_nasceu`,
+						`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`')
+			->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
+			->join ( 'INNER', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+			->join ( 'INNER', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'));
+
+		$nomeFormatado = $db->quote(trim(strtoupper($nome)).'%');
+		
+		if(isset($idCidade) && $idCidade!="" && $idCidade>0){
+			$query->where ( '( cvive.id =  ' . $idCidade . ' OR cnasceu.id =  ' . $idCidade . ' )');
+		}
+		if(isset($estado) && $estado!="" ){
+			$query->where ( '( cvive.uf =  ' . $db->quote(trim($estado)) . ' OR  cnasceu.uf =  ' . $db->quote(trim($estado)) . ')');
+		}
+		$query->where('(upper(trim(p.apelido)) like ' . $nomeFormatado .' OR upper(trim(p.nome_completo)) like ' . $nomeFormatado .'
+				OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
+		->where ( ' p.id_usuario <> ' . $user->id)
+		->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' );
+		if(isset($ordem)){
+			if($ordem==1){
+				$query->order('p.apelido DESC ');
+			}
+			else{
+				$query->order('p.apelido');
+			}
+		}
+		else{
+			$query->order('p.apelido');
+		}
+		if(isset($posicao) ){
+			$query->limit(AngelgirlsController::LIMIT_DEFAULT, $posicao);
+		}
+		else{
+			$query->limit(100);
+		}
+		
+		$db->setQuery ( $query );
+		$result = $db->loadObjectList();
+		return $result;
+	}
+	
 	
 	private function salvarFotografo($usuario){
 		try{

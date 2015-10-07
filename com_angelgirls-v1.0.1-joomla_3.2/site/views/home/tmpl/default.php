@@ -37,7 +37,8 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 </div>
 <div class="well hidden-phone hidden-tablet">Bem vindo ao site de com as modelos mais lindas e
 	angelicais.</div>
-<div class="row  hidden-phone" style="margin-bottom: 10px;">
+<?php 
+/*<div class="row  hidden-phone" style="margin-bottom: 10px;">
 	<div class="col col-xs-12 col-sm-12 col-md-8 col-lg-9" style="height: 450px; padding: 0px; margin: 0px;">
 		<div id="displayCarrossel" class="carousel slide" data-ride="carousel" style="height: 450px;">
 			<!-- Indicators -->
@@ -114,7 +115,8 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarPromocao&id='.$promocao->id.':promocao-'.strtolower(str_replace(" ","-",$promocao->alias)),false)); ?>"><?php echo($promocao->descricao);?></a></p>			
 		</div>
 	</div>
-</div>
+</div>*/
+?>
 <!-- <span class="badge">42</span> -->
 <div class="row bloco-conteudo">
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">

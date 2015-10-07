@@ -103,7 +103,9 @@ else
 		}
 		a
 		{
-			color: <?php echo $this->params->get('templateColor'); ?>;
+			color: #9F0096<?php 
+			//echo $this->params->get('templateColor'); 
+			?>;
 		}
 		.navbar-inner, .nav-list > .active > a, .nav-list > .active > a:hover, .dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover, .nav-pills > .active > a, .nav-pills > .active > a:hover,
 		.btn-primary
@@ -133,13 +135,13 @@ else
 	. ($itemid ? ' itemid-' . $itemid : '')
 	. ($params->get('fluidContainer') ? ' fluid' : '');
 	echo ($this->direction == 'rtl' ? ' rtl' : '');
-?>" style="padding: 0px;">
+?>" style="padding: 0px;<?php echo(JRequest::getVar('task')=='homepage'?' background: url('.$this->baseurl . '/templates/' . $this->template . '/images/fundo2.jpg) no-repeat top left; background-size: 100% 510px;':'');?>">
 
 	<!-- Body -->
 	<div class="body">
 		<div class="container<?php echo ($params->get('fluidContainer') ? '-fluid' : ''); ?>">
 			<!-- Header -->
-			<header class="header" role="banner">
+			<header class="header" role="banner"<?php echo(JRequest::getVar('task')=='homepage'?' style="height: 500px;"':'');?>>
 				<div class="header-inner clearfix">
 					<a class="brand pull-left" href="<?php echo $this->baseurl; ?>/">
 						<?php echo $logo; ?>
@@ -220,5 +222,6 @@ else
 		</div>
 	</footer>
 	<jdoc:include type="modules" name="debug" style="none" />
+
 </body>
 </html>
