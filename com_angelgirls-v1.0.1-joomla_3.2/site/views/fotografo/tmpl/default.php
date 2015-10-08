@@ -30,7 +30,7 @@ if(isset($conteudo->sexo)) :
 	endif;
 endif;
 
-$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':full');
+$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->token.':thumb');
 ?>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
@@ -146,7 +146,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 								<td title="Modelo que mais tem trabalhos" style="text-transform: capitalize;">
 									<?php
 									foreach($preferidos as $preferido):
-										$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$preferido->id.':modelo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
+										$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$preferido->token.':modelo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
 										echo('<a href="'.$url.'">'.strtolower($preferido->nome).'</a><br/>');
 									endforeach;
 									?>

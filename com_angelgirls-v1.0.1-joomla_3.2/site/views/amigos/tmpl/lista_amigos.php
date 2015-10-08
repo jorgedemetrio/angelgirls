@@ -32,15 +32,15 @@ foreach($amigos as $amigo):
 	$urlFoto = '';
 	switch ($amigo->tipo):
 		case 'FOTOGRAFO':
-			$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=carregarFotografo&id='.$amigo->id.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
+			$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=carregarFotografo&id='.$amigo->token.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
 			$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$amigo->token.':cube');
 		break;
 		case 'MODELO':
-			$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=carregarModelo&id='.$amigo->id.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
+			$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=carregarModelo&id='.$amigo->token.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
 			$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$amigo->token.':cube');
 		break;
 		default:
-			$url = JRoute::_('index.php?option=com_angelgirls&view=visitante&task=carregarVisitante&id='.$amigo->id.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
+			$url = JRoute::_('index.php?option=com_angelgirls&view=visitante&task=carregarVisitante&id='.$amigo->token.':'.strtolower(str_replace(" ","-",$amigo->apelido)));
 			$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=visitante&task=loadImage&id='.$amigo->token.':cube');
 			break;		
 	endswitch;

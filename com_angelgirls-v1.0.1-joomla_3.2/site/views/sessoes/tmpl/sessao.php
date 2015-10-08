@@ -205,8 +205,8 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				<div class="row">
 					<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
 					<?php 
-					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
-					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->token_mod1.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
+					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token_mod1.':ico');
 					 ?>
 						<a href="<?php echo($url); ?>" href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
 							<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo1);?>" alt="Modelo <?php echo($conteudo->modelo1);?>" class="img-circle">
@@ -245,8 +245,8 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 					<?php if(isset($conteudo->modelo2)) : ?>
 					<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
 					<?php 
-						$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
-						$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_secundaria.':ico');
+						$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->token_mod2.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
+						$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token_mod2.':ico');
 						?>
 						<a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
 							<img src="<?php echo($urlImg);?>" title="Modelo <?php echo($conteudo->modelo2);?>" alt="Modelo <?php echo($conteudo->modelo2);?>" class="img-circle">
@@ -291,8 +291,8 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 				<div class="row">
 					<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
 					<?php 
-					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
-					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->token_fot1.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
+					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->token_fot1.':ico');
 					?>
 						<a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
 							<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo1);?>" class="img-circle">
@@ -332,8 +332,8 @@ JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirl
 					<?php if(isset($conteudo->fotografo2)) : ?>
 					<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
 					<?php 
-					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
-					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_secundaria.':ico');
+					$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->token_fot2.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
+					$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->token_fot2.':ico');
 					?>
 						<a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">
 							<img src="<?php echo($urlImg);?>" title="Fotografo(a) <?php echo($conteudo->fotografo2);?>" alt="Fotografo(a) <?php echo($conteudo->fotografo2);?>" class="img-circle">
