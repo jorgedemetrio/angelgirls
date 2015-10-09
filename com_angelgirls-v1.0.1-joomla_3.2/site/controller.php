@@ -761,26 +761,27 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
 		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`token`,
-						`f`.`data_nascimento`,`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`,
-						`f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,`u`.`email`, `f`.`altura`,  `f`.`peso`,
-					    `f`.`busto`,  `f`.`calsa`,  `f`.`calsado`, `f`.`olhos`,  `f`.`pele`,  `f`.`etinia`,  `f`.`cabelo`,
-						`f`.`tamanho_cabelo`, `f`.`cor_cabelo`,  `f`.`outra_cor_cabelo`,`cnasceu`.`uf` as `estado_nasceu`,
+		$query->select('`p`.`id`,`p`.`tipo`,`p`.`usuario`,`p`.`nome_completo`,`p`.`email_principal`,`p`.`id_usuario`,`p`.`apelido`,`p`.`descricao`,`p`.`meta_descricao`,`p`.`foto_perfil`,
+						`p`.`foto_adicional1`,`p`.`foto_adicional2`,`p`.`altura`,`p`.`peso`,`p`.`busto`,`p`.`calsa`,`p`.`calsado`,`p`.`olhos`,`p`.`pele`,`p`.`etinia`,`p`.`cabelo`,`p`.`token`,
+						`p`.`tamanho_cabelo`,`p`.`cor_cabelo`,`p`.`outra_cor_cabelo`,`p`.`profissao`,`p`.`nascionalidade`,`p`.`id_cidade_nasceu`,`p`.`uf_nasceu`,`p`.`data_nascimento`,`p`.`site`,
+						`p`.`sexo`,`p`.`cpf`,`p`.`banco`,`p`.`agencia`,	`p`.`conta`,`p`.`custo_medio_diaria`,`p`.`outro_status`,`p`.`qualificao_equipe`,`p`.`audiencia_gostou`,
+						`p`.`audiencia_ngostou`,`p`.`audiencia_view`,`p`.`id_cidade`,`p`.`uf`,`p`.`status_dado`,`p`.`id_usuario_criador`,`p`.`id_usuario_alterador`,
+						`p`.`data_criado`,`p`.`data_alterado`,
 						`cnasceu`.`nome` as `cidade_nasceu`,`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`,
 						CASE isnull(`vt_f`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei`')
-							->from ( $db->quoteName ( '#__angelgirls_modelo', 'f' ) )
-							->join ( 'LEFT', '#__users AS u ON ' . $db->quoteName ( 'f.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
-							->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_f ON ' . $db->quoteName ( 'f.id' ) . ' = ' . $db->quoteName('vt_f.id_modelo'))
-							->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'f.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
-							->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'f.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
-							->where ( $db->quoteName ( 'f.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-							->where ( $db->quoteName ( 'f.token' ) . ' =  ' . $db->quote($token) );
+							->from ( $db->quoteName ( '#__angelgirls_perfil', 'p' ) )
+							->join ( 'LEFT', '#__users AS u ON ' . $db->quoteName ( 'p.id_usuario' ) . ' = ' . $db->quoteName('u.id'))
+							->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_f ON ' . $db->quoteName ( 'p.id' ) . ' = ' . $db->quoteName('vt_f.id_modelo'))
+							->join ( 'LEFT', '#__cidade AS cnasceu ON ' . $db->quoteName ( 'p.id_cidade_nasceu' ) . ' = ' . $db->quoteName('cnasceu.id'))
+							->join ( 'LEFT', '#__cidade AS cvive ON ' . $db->quoteName ( 'p.id_cidade' ) . ' = ' . $db->quoteName('cvive.id'))
+							->where ( $db->quoteName ( 'p.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ') ' )
+							->where ( $db->quoteName ( 'p.token' ) . ' =  ' . $db->quote($token) );
 				if(isset($tipo)){
-					$query->where ( $db->quoteName ( 'f.tipo' ) . ' =  ' . $db->quote($tipo) );
+					$query->where ( $db->quoteName ( 'p.tipo' ) . ' =  ' . $db->quote($tipo) );
 				}
 		$db->setQuery ( $query );
 		$perfil = $db->loadObject();
-			
+
 			
 		if(isset($perfil)){	
 			
@@ -4373,6 +4374,54 @@ class AngelgirlsController extends JControllerLegacy{
 		}
 		JFactory::getApplication()->enqueueMessage(JText::_('Mensagem enviada com sucesso.'));
 		$this->inboxMensagens();
+	}
+	
+	public function sendMessageModal(){
+		if(!JSession::checkToken('post')) die ('Restricted access');
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo();
+		$token = JRequest::getString('token','');
+		$tipo = JRequest::getString('tipo','VISITANTE');
+		
+		
+		
+		//limpa
+		$titulo = JRequest::getString('titulo','');
+		$mensagem = JRequest::getString('mensagem','');
+		
+		$mensagens=array();
+		
+		if(strlen(trim($titulo)) < 5){
+			$mensagens[] = 'Titulo um campo obrigat&oacute;rio e deve conter 5 caracteres no minimo.' ;
+		}
+		if(!isset($mensagem) || strlen(trim($mensagem))<1){
+			$mensagens[] = 'Mensagem um campo obrigat&oacute;rio.' ;
+		}
+		if(sizeof($mensagens)>0){
+			JRequest::setVar('mensagens',$mensagens );
+			$this->openSendMessageModal();
+			return;
+		}
+
+		$perfil = $this->getPerfilByToken($token, $tipo);
+		
+		$this->EnviarMensagemInbox($titulo, $perfil->id_usuario, $mensagem, TipoMensagens::MENSAGEM_SIMPLES, null);
+
+		require_once 'views/inbox/tmpl/fast_sender.php';
+		echo("<script>parent.document.AngelGirls.FrameModalHide();</script>");
+		exit();
+	}
+	
+	public function openSendMessageModal(){
+// 		$user = JFactory::getUser();
+// 		$db = JFactory::getDbo();
+	
+// 		$token = JRequest::getString('token','');
+// 		$tipo = JRequest::getString('tipo','VISITANTE');
+	
+
+		require_once 'views/inbox/tmpl/fast_sender.php';
+		exit();
 	}
 	
 	

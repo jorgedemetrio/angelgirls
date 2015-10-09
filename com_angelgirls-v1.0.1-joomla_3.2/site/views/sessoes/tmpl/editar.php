@@ -94,7 +94,7 @@ JFactory::getDocument()->addScriptDeclaration('
 		EditarSessao.SessaoID = "'.$id.'";
 		EditarSessao.TemaURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarTema',false) .'";
 		EditarSessao.LocacaoURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarLocacao',false) .'";
-		EditarSessao.FigurinoURL = "' .JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarCadastrarFigurino',false).'";
+		EditarSessao.FigurinoURL = "' .JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=openSendMessageModal',false).'";
 		EditarSessao.LoadImagensURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarFotosContinuaHtml&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false).'";
 		EditarSessao.RemoverImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=removerFotoSessaoJson',false).'";
 		EditarSessao.EditarTextoImagemURL = "' . JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarFoto',false).'";

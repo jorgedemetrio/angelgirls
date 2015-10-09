@@ -74,8 +74,8 @@ jQuery(document).ready(function() {
 		<input class="form-control" data-validation="required" required
 			style="width: 100%;" type="text" name="titulo" id="titulo"
 			maxlength="250" value="<?php echo $titulo;?>"
-			title="<?php echo JText::_('Para quem deseja mandar a mensagem?'); ?>"
-			placeholder="<?php echo JText::_('Para quem deseja mandar a mensagem? Escreva o nome e exibir&aacute; uma lista baseada bo seus amigos.'); ?>" />
+			title="<?php echo JText::_('Qual o titulo da mensagem? Minimo de 5 caracteres.'); ?>"
+			placeholder="<?php echo JText::_('Qual o titulo da mensagem? Minimo de 5 caracteres.'); ?>" />
 	</div>
 	<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<label for="mensagem" class="control-label">Mensagem</label>

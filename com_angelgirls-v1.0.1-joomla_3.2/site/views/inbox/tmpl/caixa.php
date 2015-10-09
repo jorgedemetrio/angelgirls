@@ -33,7 +33,6 @@ if(($conteudo->lido_remetente ==0 &&  $conteudo->id_usuario_remetente == $user->
 else :
 	$lido = true;
 endif;
-
 ?>
 					<tr class="editavel leituraLinnha"  data-id="<?php echo($conteudo->token); ?>"  <?php if(!$lido){ echo('style="font-weight:bold;"');}?>>
 						<td class="editavel" style="vertical-align: middle; text-align: center; width: 65px;" data-sort="no">

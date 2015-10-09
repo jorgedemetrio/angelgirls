@@ -26,7 +26,7 @@ Amigos.AmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos
 Amigos.DesaAmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=cancelarAmizade', false ) . '";
 Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
 Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
-Amigos.InboxURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=inboxMensagens', false ) . '";
+Amigos.InboxURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=openSendMessageModal', false ) . '";
 Amigos.Seguindo = '.(isset($seguindo)?'true':'false').';
 Amigos.Amigos = '.(isset($amizade) &&  isset($amizade->data_aceita) ?'true':'false').';
 Amigos.AmizadeSolicitada = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante == $user->id ?'true':'false').';
@@ -73,7 +73,7 @@ jQuery(document).ready(function(){
 		}
 		else{
 			jQuery.post(Amigos.AmigarURL,
-					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+					{token: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 				Amigos.Amigos = !Amigos.Amigos;
 				jQuery('#btnAmigos').html(Amigos.TextoAmigos);
 			});			
@@ -81,8 +81,9 @@ jQuery(document).ready(function(){
 	});
 
 	jQuery('#btnEnviarMensagem').click(function(){
-		var url = Amigos.InboxURL+(Amigos.InboxURL.indexOf('?')>0?'&':'?')+'para='+Amigos.Id+':'+Amigos.Nome;
-		window.location = Amigos.InboxURL=url;
+		var url = Amigos.InboxURL;
+		url = url +  (url.indexOf('?')>0?'&campo=id_figurino_principal':'?campo=id_figurino_principal');
+		AngelGirls.FrameModal("Enviar mensagem r&aacute;pida", url, "Enviar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormMensage').submit();",270);
 	});
 	
 	
