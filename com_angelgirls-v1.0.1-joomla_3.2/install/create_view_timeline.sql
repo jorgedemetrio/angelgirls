@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW #__timeline (id, toke, tipo,  titulo, descricao, prioridade, data_publicado, 
+CREATE OR REPLACE VIEW #__timeline (id, token, tipo,  titulo, descricao, prioridade, data_publicado, 
 	audiencia, acessos, rnd, opt1, opt2, opt3, opt4) AS
 (SELECT 
 	s.id as id, 

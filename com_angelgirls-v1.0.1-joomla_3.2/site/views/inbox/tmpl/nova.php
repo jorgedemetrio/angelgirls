@@ -15,7 +15,29 @@ $params = array('images'=> '0','smilies'=> '0', 'html' => '1', 'style'  => '0', 
 
 $perfil = JRequest::getVar('perfil');
 $para = JRequest::getVar('para');
-
+if(isset($para)){
+	$var =explode(':',$para);
+	
+JFactory::getDocument()->addScriptDeclaration('
+jQuery(document).ready(function() {
+	$("#para").tokenInput(INBOX.pesquisarContatosURL,{
+		hintText: "Para quem vai mandar a mensagem?",
+		noResultsText: "N&atilde;o encontrado.",
+		searchingText: "Buscando...",
+		prePopulate: [{id: '.$var[0].', name: "'.$var[1].'"}]
+		});
+});');
+}
+else{
+	JFactory::getDocument()->addScriptDeclaration('
+jQuery(document).ready(function() {
+	$("#para").tokenInput(INBOX.pesquisarContatosURL,{
+		hintText: "Para quem vai mandar a mensagem?",
+		noResultsText: "N&atilde;o encontrado.",
+		searchingText: "Buscando..."});
+});');
+	
+}
 ?>
 <form 	
 	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=sendMessage')); ?>"
@@ -40,7 +62,7 @@ $para = JRequest::getVar('para');
 			<div class="input-group-addon"><label class="control-label" for="para"><?php echo JText::_('Para'); ?></label></div>
 			<input class="form-control"
 				style="width: 100%; height: 42px;" type="text" name="para" id="para"
-				maxlength="250" value="<?php echo $para;?>"
+				maxlength="250" value=""
 				title="<?php echo JText::_('Para quem deseja mandar a mensagem?'); ?>"
 				placeholder="<?php echo JText::_('Para quem deseja mandar a mensagem? Escreva o nome e exibir&aacute; uma lista baseada bo seus amigos.'); ?>" />
 			<div class="input-group-addon"><button  class="btn btn-default" type="button" onclick="JavaScript: INBOX.BuscarPerfil('para');"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>

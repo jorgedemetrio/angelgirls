@@ -16,25 +16,31 @@ $seguindo = JRequest::getVar('seguindo');
 $amizade = JRequest::getVar('amizade');
 $token = JRequest::getVar('token');
 $tipo = JRequest::getVar('tipo');
+$id = JRequest::getVar('id');
+$nome = JRequest::getVar('nome');
 
 JFactory::getDocument()->addScriptDeclaration('
 Amigos.SeguirURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=seguirUsuario', false ) . '";
+Amigos.ParaDeSeguirURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=seguirUsuario', false ) . '";
 Amigos.AmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
+Amigos.DesaAmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=cancelarAmizade', false ) . '";
+Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
+Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
+Amigos.InboxURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=inboxMensagens', false ) . '";
 Amigos.Seguindo = '.(isset($seguindo)?'true':'false').';
 Amigos.Amigos = '.(isset($amizade) &&  isset($amizade->data_aceita) ?'true':'false').';
-
 Amigos.AmizadeSolicitada = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante == $user->id ?'true':'false').';
 Amigos.AmizadeAprovar = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id ?'true':'false').';
-
-		
 Amigos.IdAmigo = "'.$token.'";
 Amigos.TipoAmigo = "'.$tipo.'";
+Amigos.Id = "'.$id.'";
+Amigos.Nome = "'.$nome.'";
 ');
 ?>
 <script>
 Amigos.TextoAmigos = 'Desfazer Amizade <span class="glyphicon glyphicon-scissors"></span>';
 Amigos.TextoNaoAmigos = 'Solicitar Amizade <span class="glyphicon glyphicon-gift"></span>';
-Amigos.TextoAguardandoAmigos = 'Aguardando aceita&ccedil;&atilde;o <span class="glyphicon glyphicon-hourglass"></span>';
+Amigos.TextoAguardandoAmigos = 'Cancelar solicita&ccedil;&atilde;o amizade <span class="glyphicon glyphicon-hourglass"></span>';
 
 Amigos.AprovarAmigos = '';
 
@@ -58,10 +64,27 @@ jQuery(document).ready(function(){
 	}
 
 	jQuery('#btnAmigos').click(function(){
-		jQuery.post(EditarSessao.LoadImagensURL,
-				{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
-		});
+		if(Amigos.Amigos){
+			jQuery.post(Amigos.DesaAmigarURL ,
+					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+				Amigos.Amigos = !Amigos.Amigos;
+				jQuery('#btnAmigos').html(Amigos.TextoAmigos);
+			});
+		}
+		else{
+			jQuery.post(Amigos.AmigarURL,
+					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+				Amigos.Amigos = !Amigos.Amigos;
+				jQuery('#btnAmigos').html(Amigos.TextoAmigos);
+			});			
+		}
 	});
+
+	jQuery('#btnEnviarMensagem').click(function(){
+		var url = Amigos.InboxURL+(Amigos.InboxURL.indexOf('?')>0?'&':'?')+'para='+Amigos.Id+':'+Amigos.Nome;
+		window.location = Amigos.InboxURL=url;
+	});
+	
 	
 });
 </script>
@@ -72,6 +95,9 @@ jQuery(document).ready(function(){
 		</button>
 		<button class="btn" type="button" id="btnAmigos">
 			
+		</button>
+		<button class="btn" type="button" id="btnEnviarMensagem">
+			Enviar Mensagem <span class="glyphicon glyphicon-envelope"></span>
 		</button>
 	</div>
 <?php 

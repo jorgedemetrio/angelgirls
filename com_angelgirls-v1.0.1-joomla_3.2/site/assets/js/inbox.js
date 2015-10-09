@@ -140,12 +140,7 @@ INBOX.NovaMensagemControle = function(){
 
 jQuery(document).ready(function() {
 
-    $("#para").tokenInput(INBOX.pesquisarContatosURL,{
-        hintText: "Para quem vai mandar a mensagem?",
-        noResultsText: "N&atilde;o encontrado.",
-        searchingText: "Buscando..."
-    });
-	
+
 
     jQuery('#dadosFormMensage').submit(function(){
     	tinyMCE.triggerSave();

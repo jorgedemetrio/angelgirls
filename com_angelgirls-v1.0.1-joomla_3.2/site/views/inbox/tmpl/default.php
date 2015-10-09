@@ -53,7 +53,7 @@ INBOX.BuscarPerfilURL  = "' . JRoute::_('index.php?option=com_angelgirls&view=pe
 		
 		
 		<div class="tab-content" style="overflow: auto;">
-			<div class="row tab-pane fade in active" id="caixaEntrada">
+			<div class="row tab-pane fade<?php echo(isset($para)?'':' in active')?>" id="caixaEntrada">
 				<div id="caixasMenu" class="col col-xs-2 col-sm-3 col-md-3 col-lg-2 hidden-phone">
 					<ul class="nav nav-pills  nav-stacked">
 					  	<li role="presentation" class="tiposCaixas active " id="INBOX-OPTION"><a href="JavaScript: INBOX.AtivarConteudo('INBOX');" title="Caixa de entrada"><span class="glyphicon glyphicon-log-in"></span> Caixa de entrada</a></li>
@@ -70,7 +70,7 @@ INBOX.BuscarPerfilURL  = "' . JRoute::_('index.php?option=com_angelgirls&view=pe
 					</div>
 				</div>
 			</div>
-			<div class="row fade tab-pane" id="novaMensagem">
+			<div class="row fade tab-pane<?php echo(!isset($para)?'':' in active')?>" id="novaMensagem">
 <?php require_once 'nova.php'; ?>
 			</div>
 		</div>

@@ -4226,13 +4226,19 @@ class AngelgirlsController extends JControllerLegacy{
 		parent::display (true, false);
 	}
 	
-	public function inboxMensagens(){ 
+
+	
+// ****************************************************************************************************************************************
+// ************************************************           MENSAGENS          **********************************************************
+// ****************************************************************************************************************************************
+
+	public function inboxMensagens(){
 		$caixa = JRequest::getString('caixa','INBOX');
 		JRequest::setVar('mensagens', $this->getMessagesInbox($caixa));
-		
-		
-		
-		
+	
+	
+	
+	
 		JRequest::setVar('view', 'inbox');
 		JRequest::setVar('layout', 'default');
 		parent::display();
@@ -4241,17 +4247,13 @@ class AngelgirlsController extends JControllerLegacy{
 	public function inboxMensagensHTML(){
 		$caixa = JRequest::getString('caixa','INBOX');
 		JRequest::setVar('mensagens', $this->getMessagesInbox($caixa));
-
-
-		
+	
+	
+	
 		require_once 'views/inbox/tmpl/caixa.php';
 		exit();
 	}
 	
-// ****************************************************************************************************************************************
-// ************************************************           MENSAGENS          **********************************************************
-// ****************************************************************************************************************************************
-
 	public function getMessageToReadJson(){
 		$caixa = JRequest::getString('caixa','INBOX');
 		$token = JRequest::getString('token',null);
@@ -7717,12 +7719,14 @@ class AngelgirlsController extends JControllerLegacy{
 /*********************************          AMIZADE               ******************************************/ 
 /***********************************************************************************************************/
 	
-	public static function getBotoesPerfil($id,$tipo,$token){
+	public static function getBotoesPerfil($id,$tipo,$token,$nome){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		
+		JRequest::setVar('id',$id);
 		JRequest::setVar('tipo',$tipo);
 		JRequest::setVar('token',$tipo);
+		JRequest::setVar('nome',$nome);
 	
 		if(isset($user) && $user->id > 0  && $user->id != $id){
 	// 		$query = $db->getQuery ( true );
@@ -7776,19 +7780,8 @@ class AngelgirlsController extends JControllerLegacy{
 			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
 				
 				
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
-			->columns (array (
-					$db->quoteName ( 'id_usuario_seguidor' ),
-					$db->quoteName ( 'id_usuario_seguido' ),
-					$db->quoteName ( 'data' ),
-					$db->quoteName ( 'host_ip' )))
-					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
-			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
-			}
-			$this->LogQuery($query);
+			$this->seguirPessoa($queryUsuario);
+			$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
 
 		}
 		catch(Exception $e){
@@ -7805,6 +7798,50 @@ class AngelgirlsController extends JControllerLegacy{
 		//TODO
 	}
 	
+	public function rejeitarSolicitacaoAmizade(){
+		$json = '{"ok":"ok"}';
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$perfil = $this::getPerfilLogado();
+			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
+			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
+	
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$query = $db->getQuery ( true );
+			$query->delete( $db->quoteName ('#__angelgirls_amizade') )
+			->where ($db->quoteName ( 'id_usuario_solicidante' ).'in  ' . $queryUsuario  )
+			->where (' id_usuario_solicitado  = ' .$user->id);
+			$db->setQuery( $query );
+			$db->execute();
+	
+			$query = $db->getQuery ( true );
+			$query->delete( $db->quoteName ('#__angelgirls_seguindo') )
+			->where ($db->quoteName ( 'id_usuario_seguidor' ).' = ' .$user->id )
+			->where (' id_usuario_seguido  in ' . $queryUsuario );
+			$db->setQuery( $query );
+			$db->execute();
+				
+				
+			$query = $db->getQuery ( true );
+			$query->delete( $db->quoteName ('#__angelgirls_amizade_lista_contato') )
+			->where ($db->quoteName ( 'id_lista' ).' in (SELECT id from #__angelgirls_amizade_lista WHERE id_usuario_criador = ' . $user->id . ')'  )
+			->where (' id_usuario  in ' . $queryUsuario );
+			$db->setQuery( $query );
+			$db->execute();
+			$json = '{"ok":"no", "mensagem":""}';
+	
+		}
+		catch(Exception $e){
+			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+		}
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+	}
+	
 	public function cancelarAmizade(){
 		$json = '{"ok":"ok"}';
 		try{
@@ -7814,55 +7851,30 @@ class AngelgirlsController extends JControllerLegacy{
 			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 				
-				
 			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
 			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ('#__angelgirls_amizade'))
-			->columns (array (
-					$db->quoteName ( 'id_usuario_solicidante' ),
-					$db->quoteName ( 'id_usuario_solicitado' ),
-					$db->quoteName ( 'data_solicitada' ),
-					$db->quoteName ( 'host_ip_solicitante' )))
-					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$query->delete( $db->quoteName ('#__angelgirls_amizade') )
+			->where ($db->quoteName ( 'id_usuario_solicidante' ).' = ' .$user->id )
+			->where (' id_usuario_solicitado in  ' . $queryUsuario );
 			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
-			}
-			$this->LogQuery($query);
-				
-				
-	
-				
+			$db->execute();
+
 			$query = $db->getQuery ( true );
-			$query->delete( $db->quoteName ('#__angelgirls_seguindo'))
-			->columns (array (
-					$db->quoteName ( 'id_usuario_seguidor' ),
-					$db->quoteName ( 'id_usuario_seguido' ),
-					$db->quoteName ( 'data' ),
-					$db->quoteName ( 'host_ip' )))
-					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$query->delete( $db->quoteName ('#__angelgirls_seguindo') )
+			->where ($db->quoteName ( 'id_usuario_seguidor' ).' = ' .$user->id )
+			->where (' id_usuario_seguido  in ' . $queryUsuario );
 			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
-			}
-			$this->LogQuery($query);
-	
-				
+			$db->execute();
+			
+			
 			$query = $db->getQuery ( true );
-			$query->select("`id`")
-			->from ('#__angelgirls_amizade_lista')
-			->where ('`nome` = \'AMIGOS\'' )
-			->where ('`sistema` = \'S\'' )
-			->where ('`id_usuario_criador` =  '.$user->id )
-			->setLimit(1);
-			$db->setQuery ( $query );
-			$listaID = $db->loadObject();
-			if(!isset($listaID)){
-				$listaID = $this->criarListaDefaultAmigos($user->id);
-			}
-				
-				
-			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' enviou uma solicita&ccedil;&atilde;o de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
+			$query->delete( $db->quoteName ('#__angelgirls_amizade_lista_contato') )
+			->where ($db->quoteName ( 'id_lista' ).' in (SELECT id from #__angelgirls_amizade_lista WHERE id_usuario_criador = ' . $user->id . ')'  )
+			->where (' id_usuario  in ' . $queryUsuario );
+			$db->setQuery( $query );
+			$db->execute();
+			$json = '{"ok":"no", "mensagem":""}';
+
 		}
 		catch(Exception $e){
 			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
@@ -7900,21 +7912,9 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 			
 			
-						
+			$this->seguirPessoa($queryUsuario);
 			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
-			->columns (array (
-					$db->quoteName ( 'id_usuario_seguidor' ),
-					$db->quoteName ( 'id_usuario_seguido' ),
-					$db->quoteName ( 'data' ),
-					$db->quoteName ( 'host_ip' )))
-					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
-			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
-			}
-			$this->LogQuery($query);
+
 
 			
 			$query = $db->getQuery ( true );
@@ -7941,6 +7941,36 @@ class AngelgirlsController extends JControllerLegacy{
 		header("Content-Length: " . strlen($json));
 		echo $json;
 		exit();
+	}
+	
+	private function seguirPessoa($id){
+		
+		$user = JFactory::getUser();
+		$db = JFactory::getDbo ();
+		
+		$query = $db->getQuery ( true );
+		$query->select("`id`")
+		->from ('#__angelgirls_seguindo')
+		->where ('`id_usuario_seguidor` =  ' . $user->id )
+		->where ('`id_usuario_seguido` in ( ' . $id . ')')
+		->setLimit(1);
+		$db->setQuery ( $query );
+		$seguindo = $db->loadObject();
+		if(!isset($seguindo)){
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
+			->columns (array (
+					$db->quoteName ( 'id_usuario_seguidor' ),
+					$db->quoteName ( 'id_usuario_seguido' ),
+					$db->quoteName ( 'data' ),
+					$db->quoteName ( 'host_ip' )))
+					->values(implode(',', array ($user->id, $id,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
+			}
+			$this->LogQuery($query);
+		}
 	}
 	
 	public function aceitarAmizade(){
@@ -7996,19 +8026,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 			
 			
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
-			->columns (array (
-					$db->quoteName ( 'id_usuario_seguidor' ),
-					$db->quoteName ( 'id_usuario_seguido' ),
-					$db->quoteName ( 'data' ),
-					$db->quoteName ( 'host_ip' )))
-					->values(implode(',', array ($user->id, $querySolicitante,'NOW()', $db->quote($this->getRemoteHostIp()))));
-			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
-			}
-			$this->LogQuery($query);
+			$this->seguirPessoa($querySolicitante);
 			
 			
 			$query = $db->getQuery ( true );

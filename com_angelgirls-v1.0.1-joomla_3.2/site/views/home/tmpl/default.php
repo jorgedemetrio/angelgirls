@@ -254,24 +254,26 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 	<div class="col col-xs-12 col-sm-4 col-md-3 col-lg-3">
 	<h2 class="makingof">Making Ofs <span class="glyphicon glyphicon-facetime-video"></span></h2>
 	<?php
-	foreach($makingofs as $conteudo){ ?>
-		<div class="makingof">
-			<?php 
-				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $conteudo->catid, $conteudo->language));
-				if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
-					<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+	if(isset($makingofs)){
+		foreach($makingofs as $conteudo){ ?>
+			<div class="makingof">
 				<?php 
-				}?>
-			<div class="caption">
-				<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
-				<p><?php echo($conteudo->descricao);?></p>
-				<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-danger" role="button">Assistir: <?php echo($conteudo->nome);?></a></p>
-        			
-        			
+					$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->slug, $conteudo->catid, $conteudo->language));
+					if(isset($conteudo->foto) && isset($conteudo->foto)!=""){?>
+						<a href="<?php echo($url); ?>"><img src="<?php echo(JURI::base( true ) . '/' . $conteudo->foto);?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>"/></a>
+					<?php 
+					}?>
+				<div class="caption">
+					<h4><a href="<?php echo($url);?>"><?php echo($conteudo->nome);?></a>	</h4>
+					<p><?php echo($conteudo->descricao);?></p>
+					<p class="text-center"><a href="<?php echo($url); ?>" class="btn btn-danger" role="button">Assistir: <?php echo($conteudo->nome);?></a></p>
+	        			
+	        			
+				</div>
 			</div>
-		</div>
-	<?php
-	} 
+		<?php
+		} 
+	}
 	?>
 	</div>
 </div>

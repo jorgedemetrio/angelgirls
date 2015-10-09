@@ -33,7 +33,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
-<?php AngelgirlsController::getBotoesPerfil($conteudo->id_usuario, 'MODELO', $conteudo->token);?>	
+<?php AngelgirlsController::getBotoesPerfil($conteudo->id_usuario, 'MODELO', $conteudo->token, $conteudo->nome);?>	
 	
 		<div class="page-header">
 			<h1><small>Modelo</small> <?php echo($conteudo->nome);?> 
