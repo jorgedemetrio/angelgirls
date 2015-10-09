@@ -575,7 +575,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`token`,
+		$query->select(' `f`.`id`, `f`.`id_usuario`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`token`,
 						`f`.`data_nascimento`,`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`,
 						`f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,`u`.`email`,`cnasceu`.`uf` as `estado_nasceu`,
 						`cnasceu`.`nome` as `cidade_nasceu`,`cvive`.`uf` as `estado_mora`, `cvive`.`nome` as `cidade_mora`,
@@ -865,7 +865,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
 		$query = $db->getQuery ( true );
-		$query->select('`f`.`id`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`token`,
+		$query->select('`f`.`id`, `f`.`id_usuario`, `f`.`nome_artistico` AS `nome`,`f`.`audiencia_gostou`, `f`.`meta_descricao`, `f`.`descricao`, `f`.`token`,
 						`f`.`data_nascimento`,`f`.`sexo`, `f`.`nascionalidade`, `f`.`site`, `f`.`profissao`, `f`.`id_cidade_nasceu`,
 						`f`.`id_cidade`, `f`.`audiencia_view`, `u`.`name` as `nome_completo`,`u`.`email`, `f`.`altura`,  `f`.`peso`,
 					    `f`.`busto`,  `f`.`calsa`,  `f`.`calsado`, `f`.`olhos`,  `f`.`pele`,  `f`.`etinia`,  `f`.`cabelo`,
@@ -3844,7 +3844,7 @@ class AngelgirlsController extends JControllerLegacy{
 				$nomeArquivo = $result->nome;
 			}
 		}
-		
+		//echo($arquivo);exit();
 		//header("Cache-Control: public ");
 		if(JFile::exists( $arquivo )){
 			$imageInfo = getimagesize($arquivo);
@@ -7004,7 +7004,7 @@ class AngelgirlsController extends JControllerLegacy{
 			JRequest::setVar ( 'perfil', $perfil );
 			
 			$query = $db->getQuery ( true );
-			$query->select('id,  tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
+			$query->select('id, token, tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
 					->from ('#__timeline')
 					->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
 							( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
@@ -7326,7 +7326,7 @@ class AngelgirlsController extends JControllerLegacy{
 		try{
 			$db = JFactory::getDbo ();
 			$query = $db->getQuery ( true );
-			$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico'),
+			$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico','token'),
 					array('id','nome','descricao','foto', 'alias')))
 					->from ('#__angelgirls_modelo')
 					->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
@@ -7717,34 +7717,50 @@ class AngelgirlsController extends JControllerLegacy{
 /*********************************          AMIZADE               ******************************************/ 
 /***********************************************************************************************************/
 	
-	public static function getBotoesPerfil($id){
+	public static function getBotoesPerfil($id,$tipo,$token){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
+		
+		JRequest::setVar('tipo',$tipo);
+		JRequest::setVar('token',$tipo);
 	
+		if(isset($user) && $user->id > 0  && $user->id != $id){
+	// 		$query = $db->getQuery ( true );
+	// 		$query->select(' `c`.`data_alterado`, `c`.`data_alterado`, `l`.`nome` ')
+	// 		->from ( $db->quoteName ( '#__angelgirls_amizade_lista', 'l' ) )
+	// 		->join ( 'INNER', '#__angelgirls_amizade_lista_contato AS c ON ' . $db->quoteName ( 'c.id_lista' ) . ' = ' . $db->quoteName('l.id'))
+	// 		->where ( $db->quoteName ( 'l.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
+	// 		->where ( $db->quoteName ( 'l.id_usuario_criador' ) . ' =  ' . $user->id )
+	// 		->where ( $db->quoteName ( 'c.id_usuario' ) . ' =  ' . $id );
+	// 		$db->setQuery ( $query );
+	// 		JRequest::setVar ( 'amizade', $db->loadObject() );
 	
+			
+			$query = $db->getQuery ( true );
+			$query->select(' data_aceita, id_usuario_solicidante ')
+			->from ( $db->quoteName ( '#__angelgirls_amizade' ) )
+			->where ('((id_usuario_solicidante =  ' . $user->id .' AND id_usuario_solicitado = ' . $id .
+					 ') OR (id_usuario_solicidante =  ' . $id .' AND id_usuario_solicitado = ' . $user->id. ') )' );
+			$db->setQuery ( $query );
+			JRequest::setVar ( 'amizade', $db->loadObject() );
 	
-		$query = $db->getQuery ( true );
-		$query->select(' `c`.`data_alterado`, `c`.`data_alterado`, `l`.`nome` ')
-		->from ( $db->quoteName ( '#__angelgirls_amizade_lista', 'l' ) )
-		->join ( 'INNER', '#__angelgirls_amizade_lista_contato AS c ON ' . $db->quoteName ( 'c.id_lista' ) . ' = ' . $db->quoteName('l.id'))
-		->where ( $db->quoteName ( 'l.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-		->where ( $db->quoteName ( 'l.id_usuario_criador' ) . ' =  ' . $user->id )
-		->where ( $db->quoteName ( 'c.id_usuario' ) . ' =  ' . $id );
-		$db->setQuery ( $query );
-		JRequest::setVar ( 'amizade', $db->loadObject() );
+			
 	
-	
-		$query = $db->getQuery ( true );
-		$query->select(' `l`.`data`')
-		->from ( $db->quoteName ( '#__angelgirls_seguindo', 'l' ) )
-		->where ( $db->quoteName ( 'l.id_usuario_seguidor' ) . ' =  ' . $user->id )
-		->where ( $db->quoteName ( 'l.id_usuario_seguido' ) . ' =  ' . $id );
-		$db->setQuery ( $query );
-		JRequest::setVar ( 'amizade', $db->loadObject() );
-	
-	
-		require 'views/amigos/botoes.php';
-		exit();
+		
+			
+		
+			$query = $db->getQuery ( true );
+			$query->select(' `l`.`data`')
+			->from ( $db->quoteName ( '#__angelgirls_seguindo', 'l' ) )
+			->where ( $db->quoteName ( 'l.id_usuario_seguidor' ) . ' =  ' . $user->id )
+			->where ( $db->quoteName ( 'l.id_usuario_seguido' ) . ' =  ' . $id );
+			$db->setQuery ( $query );
+			JRequest::setVar ( 'seguindo', $db->loadObject() );
+		
+		
+			require 'views/amigos/tmpl/botoes.php';
+		}
+		
 	}
 	
 	public function seguirUsuario(){
@@ -7785,6 +7801,79 @@ class AngelgirlsController extends JControllerLegacy{
 		exit();
 	}
 	
+	public function bloquearPerfil(){
+		//TODO
+	}
+	
+	public function cancelarAmizade(){
+		$json = '{"ok":"ok"}';
+		try{
+			$user = JFactory::getUser();
+			$db = JFactory::getDbo ();
+			$perfil = $this::getPerfilLogado();
+			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
+			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
+				
+				
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ('#__angelgirls_amizade'))
+			->columns (array (
+					$db->quoteName ( 'id_usuario_solicidante' ),
+					$db->quoteName ( 'id_usuario_solicitado' ),
+					$db->quoteName ( 'data_solicitada' ),
+					$db->quoteName ( 'host_ip_solicitante' )))
+					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
+			}
+			$this->LogQuery($query);
+				
+				
+	
+				
+			$query = $db->getQuery ( true );
+			$query->delete( $db->quoteName ('#__angelgirls_seguindo'))
+			->columns (array (
+					$db->quoteName ( 'id_usuario_seguidor' ),
+					$db->quoteName ( 'id_usuario_seguido' ),
+					$db->quoteName ( 'data' ),
+					$db->quoteName ( 'host_ip' )))
+					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
+			}
+			$this->LogQuery($query);
+	
+				
+			$query = $db->getQuery ( true );
+			$query->select("`id`")
+			->from ('#__angelgirls_amizade_lista')
+			->where ('`nome` = \'AMIGOS\'' )
+			->where ('`sistema` = \'S\'' )
+			->where ('`id_usuario_criador` =  '.$user->id )
+			->setLimit(1);
+			$db->setQuery ( $query );
+			$listaID = $db->loadObject();
+			if(!isset($listaID)){
+				$listaID = $this->criarListaDefaultAmigos($user->id);
+			}
+				
+				
+			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' enviou uma solicita&ccedil;&atilde;o de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
+		}
+		catch(Exception $e){
+			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+		}
+	
+		header('Content-Type: application/json; charset=utf8');
+		header("Content-Length: " . strlen($json));
+		echo $json;
+		exit();
+	}
+	
 	public function solicitarAmizade(){
 		$json = '{"ok":"ok"}';
 		try{
@@ -7807,6 +7896,23 @@ class AngelgirlsController extends JControllerLegacy{
 			$db->setQuery( $query );
 			if(!$db->execute()){
 				$json = '{"ok":"nok", "mensagem":"Falha ao enviar a solicita&ccedil;o!"}';
+			}
+			$this->LogQuery($query);
+			
+			
+						
+			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
+			->columns (array (
+					$db->quoteName ( 'id_usuario_seguidor' ),
+					$db->quoteName ( 'id_usuario_seguido' ),
+					$db->quoteName ( 'data' ),
+					$db->quoteName ( 'host_ip' )))
+					->values(implode(',', array ($user->id, $queryUsuario,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
 			}
 			$this->LogQuery($query);
 
@@ -7858,6 +7964,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 			
 
+			$querySolicitante  = '(SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.')'; 
 			
 			//Adicionar na lista do solicitante
 			$query = $db->getQuery ( true );
@@ -7865,13 +7972,15 @@ class AngelgirlsController extends JControllerLegacy{
 				->from ('#__angelgirls_amizade_lista')
 				->where ('`nome` = \'AMIGOS\'' )
 				->where ('`sistema` = \'S\'' )
-				->where ('`id_usuario_criador` = (SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.') ' )
+				->where ('`id_usuario_criador` =  ' . $querySolicitante )
 				->setLimit(1);
 			$db->setQuery ( $query );
 			$listaID = $db->loadObject()->id;
 			if(!isset($listaID) || $listaID <= 0){
-				$listaID = $this->criarListaDefaultAmigos('(SELECT id_usuario_solicidante FROM #__angelgirls_amizade WHERE id = '.$idSolicitacao.')');
+				$listaID = $this->criarListaDefaultAmigos($querySolicitante);
 			}
+			
+			
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_amizade_lista_contato'))
 			->columns (array (
@@ -7887,7 +7996,19 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->LogQuery($query);
 			
 			
-			
+			$query = $db->getQuery ( true );
+			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
+			->columns (array (
+					$db->quoteName ( 'id_usuario_seguidor' ),
+					$db->quoteName ( 'id_usuario_seguido' ),
+					$db->quoteName ( 'data' ),
+					$db->quoteName ( 'host_ip' )))
+					->values(implode(',', array ($user->id, $querySolicitante,'NOW()', $db->quote($this->getRemoteHostIp()))));
+			$db->setQuery( $query );
+			if(!$db->execute()){
+				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
+			}
+			$this->LogQuery($query);
 			
 			
 			$query = $db->getQuery ( true );

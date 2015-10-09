@@ -1,8 +1,8 @@
-
-CREATE OR REPLACE VIEW #__timeline (id,  tipo,  titulo, descricao, prioridade, data_publicado, 
+CREATE OR REPLACE VIEW #__timeline (id, toke, tipo,  titulo, descricao, prioridade, data_publicado, 
 	audiencia, acessos, rnd, opt1, opt2, opt3, opt4) AS
 (SELECT 
 	s.id as id, 
+	s.token as token, 
     'SESSOES' as tipo, 
     s.titulo as titulo,
     s.descricao as descricao, 
@@ -25,6 +25,7 @@ ORDER BY
 UNION 
 (SELECT 
 	s.id as id, 
+	s.alias as token, 
     'CONTENT' as tipo, 
     s.title as titulo, 
     s.introtext as descricao,
@@ -45,10 +46,11 @@ WHERE
     s.images IS NOT NULL AND
     LENGTH(s.images) > 5
 ORDER BY 
-	s.s.publish_up DESC)
+	s.publish_up DESC)
 UNION
 (SELECT 
 	s.id, 
+	s.token as token, 
     'MODELO' as tipo, 
     s.nome_artistico as titulo, 
     s.meta_descricao as descricao,
@@ -70,10 +72,11 @@ WHERE
     s.foto_perfil is not null AND 
     s.id IN (SELECT id_modelo_principal as id FROM #__angelgirls_sessao)
 ORDER BY 
-	s.s.data_alterado DESC)
+	s.data_alterado DESC)
 UNION 
  (SELECT 
 	s.id, 
+	s.token as token, 
     'POST' as tipo, 
     '' as titulo, 
     s.texto as descricao,
@@ -93,10 +96,11 @@ WHERE
 	s.status_dado NOT IN  ('REMOVIDO','REPROVADO') AND
     u.block <> 1
 ORDER BY 
-	s.s.data_alterado DESC)   
+	s.data_alterado DESC)   
 UNION 
  (SELECT 
 	s.id, 
+	s.token as token, 
     'ALBUM' as tipo, 
     s.titulo as titulo, 
     s.meta_descricao as descricao,
@@ -118,6 +122,7 @@ ORDER BY
 UNION 
  (SELECT 
 	s.id, 
+	s.token as token, 
     'PROMOCAO' as tipo, 
     s.titulo as titulo, 
     s.meta_descricao as descricao,
@@ -141,6 +146,7 @@ ORDER BY
 UNION
 (SELECT 
 	s.id, 
+	s.id as token, 
     'BANNER' as tipo, 
     s.custombannercode as titulo, 
     s.description as descricao,

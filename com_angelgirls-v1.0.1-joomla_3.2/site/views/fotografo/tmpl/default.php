@@ -35,6 +35,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadIm
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
+	<?php AngelgirlsController::getBotoesPerfil($conteudo->id_usuario, 'MODELO', $conteudo->token);?>
 		<div class="page-header">
 			<h1><small>Fotograf<?php echo($letraSexo);	?></small> <?php echo($conteudo->nome);?> 
 			<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='fotografo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>

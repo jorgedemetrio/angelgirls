@@ -8,6 +8,7 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes->redirect ( JRoute::_ ( 'index.php?option=com_angelgirls&task=listTema', false ), "" );
 	exit ();
 }
+
 // Nova Modelo
 // Ultima Sessao
 // Torne-se modelo, fotografo ou vistor
@@ -49,14 +50,14 @@ $perfil = JRequest::getVar ( 'perfil' );
 				break;
 			case 'SESSOES';
 				$url = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$conteudo->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->opt1.':thumb');
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=loadImage&id='.$conteudo->token.':thumb');
 				$titulo = $conteudo->titulo;
 				$botao = '';
 				$tipoGostar=null;
 				break;
 			case 'MODELO';
-				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id.':modelo-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
-				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':thumb');
+				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->token.':modelo-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
+				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token.':thumb');
 				$titulo = 'Voc&ecirc; j&aacute; conhece a modelo ' . $conteudo->titulo . '?';
 				$botao = '<p class="text-center"><a href="'. $url .'" class="btn">Conhe&ccedil;a os trabalhos dessa musa.</a></p>';
 				$tipoGostar=null;

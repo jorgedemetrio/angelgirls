@@ -28,19 +28,15 @@ $perfil = JRequest::getVar('perfil');
 
 
 $para = JRequest::getVar('para',null);
+
+JFactory::getDocument()->addScriptDeclaration('
+INBOX.AtivarConteudoURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=inboxMensagensHTML', false ) . '";
+INBOX.MensagemURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=getMessageToReadJson', false ) . '";
+INBOX.lixeiraURL = "' . JRoute::_('index.php?option=com_angelgirls&view=inbox&task=moverParaLixeiraMessage', false ) . '";
+INBOX.pesquisarContatosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=inbox&task=getContatosJson', false ) . '";
+INBOX.BuscarPerfilURL  = "' . JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilToken', false ) . '";
+');
 ?>
-<script>
-
-INBOX.AtivarConteudoURL = '<?php echo(JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=inboxMensagensHTML', false ));?>';
-INBOX.MensagemURL = '<?php echo(JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=getMessageToReadJson', false ));?>';
-INBOX.lixeiraURL = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=inbox&task=moverParaLixeiraMessage', false ));?>';
-INBOX.pesquisarContatosURL = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=inbox&task=getContatosJson', false ));?>';
-INBOX.BuscarPerfilURL  = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilToken', false ));?>';
-
-
-
-
-</script>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
