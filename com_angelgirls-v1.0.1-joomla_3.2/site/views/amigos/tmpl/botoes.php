@@ -33,8 +33,6 @@ Amigos.AmizadeSolicitada = '.(isset($amizade) &&  isset($amizade->data_aceita) &
 Amigos.AmizadeAprovar = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id ?'true':'false').';
 Amigos.IdAmigo = "'.$token.'";
 Amigos.TipoAmigo = "'.$tipo.'";
-Amigos.Id = "'.$id.'";
-Amigos.Nome = "'.$nome.'";
 ');
 ?>
 <script>
@@ -82,7 +80,7 @@ jQuery(document).ready(function(){
 
 	jQuery('#btnEnviarMensagem').click(function(){
 		var url = Amigos.InboxURL;
-		url = url +  (url.indexOf('?')>0?'&campo=id_figurino_principal':'?campo=id_figurino_principal');
+		url = url +  (url.indexOf('?')>0?'&token='+Amigos.IdAmigo+'&tipo='+Amigos.TipoAmigo);
 		AngelGirls.FrameModal("Enviar mensagem r&aacute;pida", url, "Enviar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormMensage').submit();",270);
 	});
 	
