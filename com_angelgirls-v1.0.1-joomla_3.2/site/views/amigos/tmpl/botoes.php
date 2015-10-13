@@ -63,16 +63,17 @@ jQuery(document).ready(function(){
 		if(Amigos.Amigos || Amigos.AmizadeSolicitada){// Desafazer amizade
 			jQuery.post(Amigos.DesaAmigarURL ,
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Amigos = !Amigos.Amigos;
+				Amigos.Amigos = false;
 				jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
-			});
+			},'html');
 		}
 		else{ //Solicitar amizade
 			jQuery.post(Amigos.AmigarURL,
 					{token: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Amigos = !Amigos.Amigos;
+				Amigos.Amigos = false;
+				Amigos.AmizadeSolicitada= true;
 				jQuery('#btnAmigos').html(Amigos.TextoAguardandoAmigos);
-			});			
+			},'html');			
 		}
 	});
 
@@ -82,20 +83,20 @@ jQuery(document).ready(function(){
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 				Amigos.Seguindo = true;
 				jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
-			});
+			},'html');
 		}
 		else{
 			jQuery.post(Amigos.SeguirURL,
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 				Amigos.Seguindo = false;
 				jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
-			});
+			},'html');
 		}
 	});
 
 	jQuery('#btnEnviarMensagem').click(function(){
 		var url = Amigos.InboxURL;
-		url = url +  (url.indexOf('?')>0?'&token='+Amigos.IdAmigo+'&tipo='+Amigos.TipoAmigo);
+		url = url +  (url.indexOf('?')>0? '&':'?') + '&token=' +Amigos.IdAmigo + '&tipo=' + Amigos.TipoAmigo;
 		AngelGirls.FrameModal("Enviar mensagem r&aacute;pida", url, "Enviar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormMensage').submit();",270);
 	});
 	
@@ -106,6 +107,9 @@ jQuery(document).ready(function(){
 				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 			jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
 			jQuery('#btnAmigos').html(Amigos.TextoAmigos);
+			Amigos.AmizadeSolicitada= true;
+			Amigos.Amigos = true;
+			Amigos.Seguindo = true;
 		});
 	});
 
@@ -113,6 +117,9 @@ jQuery(document).ready(function(){
 		jQuery('#groupBtnAProvacao').css('display','none');
 		jQuery.post(Amigos.RejeitarAmizadeURL,
 				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+			Amigos.AmizadeSolicitada= false;
+			Amigos.Amigos = false;
+			Amigos.Seguindo = false;
 			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
 			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
 		});

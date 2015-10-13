@@ -832,8 +832,6 @@ class AngelgirlsController extends JControllerLegacy{
 								->order('ordem');
 			$db->setQuery ( $query );
 			$perfil->redesSociaos = $db->loadObjectList();
-			$session->set('perfil', $perfil);
-			
 		}
 		
 		return $perfil;
@@ -4383,7 +4381,7 @@ class AngelgirlsController extends JControllerLegacy{
 		$token = JRequest::getString('token','');
 		$tipo = JRequest::getString('tipo','VISITANTE');
 		
-		
+		//echo('AQUI');exit();
 		
 		//limpa
 		$titulo = JRequest::getString('titulo','');
@@ -4405,10 +4403,12 @@ class AngelgirlsController extends JControllerLegacy{
 
 		$perfil = $this->getPerfilByToken($token, $tipo);
 		
+		//print_r($perfil);exit();
+		
 		$this->EnviarMensagemInbox($titulo, $perfil->id_usuario, $mensagem, TipoMensagens::MENSAGEM_SIMPLES, null);
-
+		echo("<script>parent.AngelGirls.FrameModalHide();</script>");
 		require_once 'views/inbox/tmpl/fast_sender.php';
-		echo("<script>parent.document.AngelGirls.FrameModalHide();</script>");
+		
 		exit();
 	}
 	
@@ -7077,7 +7077,7 @@ class AngelgirlsController extends JControllerLegacy{
 	public static function getPerfilLogado(){
 		try{
 			$session = JFactory::getSession();
-			$perfil  = $session->set('perfil', 'NO' );
+			$perfil  = $session->get('perfil', 'NO' );
 			if($perfil==='NO'){
 				$user = JFactory::getUser();
 				$db = JFactory::getDbo ();
@@ -7378,7 +7378,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$db = JFactory::getDbo ();
 			$query = $db->getQuery ( true );
 			$query->select($db->quoteName(array('id','nome_artistico','meta_descricao','foto_perfil','nome_artistico','token'),
-					array('id','nome','descricao','foto', 'alias')))
+					array('id','nome','descricao','foto', 'alias','token')))
 					->from ('#__angelgirls_modelo')
 					->where ( $db->quoteName ( 'status_modelo' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ') ' )
 					->where ( $db->quoteName ( 'status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . ',' . $db->quote(StatusDado::REPROVADO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
@@ -7735,6 +7735,7 @@ class AngelgirlsController extends JControllerLegacy{
 				)));
 		$db->setQuery( $query );
 		$db->execute();
+		
 		$this->LogQuery($query);
 	}
 	
@@ -7772,10 +7773,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		
-		JRequest::setVar('id',$id);
+		
 		JRequest::setVar('tipo',$tipo);
-		JRequest::setVar('token',$tipo);
-		JRequest::setVar('nome',$nome);
+		JRequest::setVar('token',$token);
+		
 	
 		if(isset($user) && $user->id > 0  && $user->id != $id){
 	// 		$query = $db->getQuery ( true );
@@ -7826,7 +7827,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 				
 				
-			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = $token AND tipo= $tipo)";
 				
 				
 			$this->seguirPessoa($queryUsuario);
@@ -7834,7 +7835,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		}
 		catch(Exception $e){
-			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+			$json = '{"ok":"nok", "mensagem":"' . $e->getMessage() . '"}';
 		}
 	
 		header('Content-Type: application/json; charset=utf8');
@@ -8005,6 +8006,7 @@ class AngelgirlsController extends JControllerLegacy{
 		->setLimit(1);
 		$db->setQuery ( $query );
 		$seguindo = $db->loadObject();
+		//echo($query."________\n");
 		if(!isset($seguindo)){
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_seguindo'))
@@ -8015,9 +8017,7 @@ class AngelgirlsController extends JControllerLegacy{
 					$db->quoteName ( 'host_ip' )))
 					->values(implode(',', array ($user->id, $id,'NOW()', $db->quote($this->getRemoteHostIp()))));
 			$db->setQuery( $query );
-			if(!$db->execute()){
-				$json = '{"ok":"nok", "mensagem":"Falha no processo!"}';
-			}
+			$db->execute();
 			$this->LogQuery($query);
 		}
 	}

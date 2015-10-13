@@ -16,7 +16,7 @@ $params = array('images'=> '0','smilies'=> '0', 'html' => '1', 'style'  => '0', 
 
 
 
-$token = JRequest::getVar('para');
+$token = JRequest::getVar('token');
 $tipo = JRequest::getVar('tipo');
 $mensagem = JRequest::getVar('mensagem');
 $titulo = JRequest::getVar('titulo');
@@ -30,7 +30,7 @@ $mensagens = JRequest::getVar('mensagens');
 
 ?>
 <form 	
-	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=sendMessageModal')); ?>"
+	action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=sendMessageModal',false)); ?>"
 	method="post" name="dadosFormMensage" id="dadosFormMensage" class="form-validate"
 	role="form" data-toggle="validator" enctype="multipart/form-data">
 	<?php echo JHtml::_('form.token'); ?>

@@ -854,8 +854,10 @@ CREATE TABLE `#__angelgirls_seguindo` (
 	`data` DATETIME NOT NULL, 
 	`host_ip` varchar(20) NULL,
 	FOREIGN KEY (`id_usuario_seguidor`) REFERENCES `#__users` (`id`),
-	FOREIGN KEY (`id_usuario_seguido`) REFERENCES `#__users` (`id`)
+	FOREIGN KEY (`id_usuario_seguido`) REFERENCES `#__users` (`id`),
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
+
+ALTER TABLE `#__angelgirls_seguindo` ADD UNIQUE INDEX (`id_usuario_seguidor`, `id_usuario_seguido`);
 
 
 CREATE  INDEX album_foto_usuario_criador_idx ON `#__angelgirls_foto_album`(`id_usuario_criador`,`id_album` );
