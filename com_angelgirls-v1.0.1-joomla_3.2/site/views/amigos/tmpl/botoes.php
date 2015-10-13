@@ -25,11 +25,12 @@ Amigos.InboxURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&t
 		
 Amigos.Seguindo = '.(isset($seguindo)?'true':'false').';
 Amigos.Amigos = '.(isset($amizade) &&  isset($amizade->data_aceita) ?'true':'false').';
-Amigos.AmizadeSolicitada = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante == $user->id ?'true':'false').';
-Amigos.AmizadeAprovar = '.(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id ?'true':'false').';
+Amigos.AmizadeSolicitada = '.(isset($amizade) &&  !isset($amizade->data_aceita) && $amizade->id_usuario_solicidante == $user->id ?'true':'false').';
+Amigos.AmizadeAprovar = '.(isset($amizade) &&  !isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id ?'true':'false').';
 Amigos.IdAmigo = "'.$token.'";
 Amigos.TipoAmigo = "'.$tipo.'";
 ');
+
 ?>
 <script>
 Amigos.TextoAmigos = 'Desfazer Amizade <span class="glyphicon glyphicon-scissors"></span>';
@@ -55,6 +56,9 @@ jQuery(document).ready(function(){
 		if(Amigos.AmizadeSolicitada){
 			jQuery('#btnAmigos').html(Amigos.TextoAguardandoAmigos);
 		}
+		else if(Amigos.AmizadeAprovar){
+			// NO NOTHING	
+		}
 		else{
 			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
 		}
@@ -64,12 +68,13 @@ jQuery(document).ready(function(){
 			jQuery.post(Amigos.DesaAmigarURL ,
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 				Amigos.Amigos = false;
+				Amigos.AmizadeSolicitada= false;
 				jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
 			},'html');
 		}
 		else{ //Solicitar amizade
 			jQuery.post(Amigos.AmigarURL,
-					{token: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 				Amigos.Amigos = false;
 				Amigos.AmizadeSolicitada= true;
 				jQuery('#btnAmigos').html(Amigos.TextoAguardandoAmigos);
@@ -81,14 +86,14 @@ jQuery(document).ready(function(){
 		if(Amigos.Seguindo){
 			jQuery.post(Amigos.ParaDeSeguirURL ,
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Seguindo = true;
+				Amigos.Seguindo = false;
 				jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
 			},'html');
 		}
 		else{
 			jQuery.post(Amigos.SeguirURL,
 					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Seguindo = false;
+				Amigos.Seguindo = true;
 				jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
 			},'html');
 		}
@@ -107,9 +112,12 @@ jQuery(document).ready(function(){
 				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
 			jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
 			jQuery('#btnAmigos').html(Amigos.TextoAmigos);
+			jQuery('#btnAmigos').css('display',null);
 			Amigos.AmizadeSolicitada= true;
 			Amigos.Amigos = true;
 			Amigos.Seguindo = true;
+			jQuery('#btnAmigos').html(Amigos.TextoAmigos);
+			jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
 		});
 	});
 
@@ -117,11 +125,14 @@ jQuery(document).ready(function(){
 		jQuery('#groupBtnAProvacao').css('display','none');
 		jQuery.post(Amigos.RejeitarAmizadeURL,
 				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
+			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
+			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
+			jQuery('#btnAmigos').css('display',null);
 			Amigos.AmizadeSolicitada= false;
 			Amigos.Amigos = false;
 			Amigos.Seguindo = false;
-			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
 			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
+			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
 		});
 	});
 	
@@ -132,7 +143,9 @@ jQuery(document).ready(function(){
 		<button class="btn" type="button" id="btnSeguir">
 			
 		</button>
-		<button class="btn" type="button" id="btnAmigos">
+		<button class="btn" type="button" id="btnAmigos"<?php 
+if(isset($amizade) &&  !isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id):
+?> style="display:none"<?php endif;?>>
 			
 		</button>
 		<button class="btn" type="button" id="btnEnviarMensagem">
@@ -140,7 +153,7 @@ jQuery(document).ready(function(){
 		</button>
 	</div>
 <?php 
-if(isset($amizade) &&  isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id):
+if(isset($amizade) &&  !isset($amizade->data_aceita) && $amizade->id_usuario_solicidante != $user->id):
 ?>
 	<div class="btn-group" role="group" id="groupBtnAProvacao">
 		<button class="btn" type="button" id="btnAprovarAmizade">

@@ -7857,7 +7857,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 	
-			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = $token AND tipo= $tipo)";
 			$query = $db->getQuery ( true );
 			$query->delete( $db->quoteName ('#__angelgirls_amizade') )
 			->where ($db->quoteName ( 'id_usuario_solicidante' ).'in  ' . $queryUsuario  )
@@ -7883,7 +7883,7 @@ class AngelgirlsController extends JControllerLegacy{
 	
 		}
 		catch(Exception $e){
-			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+			$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
 		}
 	
 		header('Content-Type: application/json; charset=utf8');
@@ -7901,7 +7901,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
 			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
 				
-			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = $token AND tipo= $tipo)";
 			$query = $db->getQuery ( true );
 			$query->delete( $db->quoteName ('#__angelgirls_amizade') )
 			->where ($db->quoteName ( 'id_usuario_solicidante' ).' = ' .$user->id )
@@ -7927,7 +7927,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 		}
 		catch(Exception $e){
-			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+			$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
 		}
 	
 		header('Content-Type: application/json; charset=utf8');
@@ -7942,11 +7942,13 @@ class AngelgirlsController extends JControllerLegacy{
 			$user = JFactory::getUser();
 			$db = JFactory::getDbo ();
 			$perfil = $this::getPerfilLogado();
-			$token = $db->quote(trim(JRequest::getString('id', '', 'POST' )));
-			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo', '', 'POST' ))));
+			$token = $db->quote(trim(JRequest::getString('id')));
+			$tipo = $db->quote(trim(strtoupper(JRequest::getString('tipo'))));
 			
 			
-			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = '$token' AND tipo= '$tipo')";
+			$queryUsuario = "(SELECT id_usuario FROM #__angelgirls_perfil WHERE token = $token AND tipo= $tipo)";
+			
+			
 			$query = $db->getQuery ( true );
 			$query->insert( $db->quoteName ('#__angelgirls_amizade'))
 			->columns (array (
@@ -7984,7 +7986,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' enviou uma solicita&ccedil;&atilde;o de amizade para você.', TipoMensagens::SOLICITACAO_AMIZADE);
 		}
 		catch(Exception $e){
-			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+			$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
 		}
 		
 		header('Content-Type: application/json; charset=utf8');
@@ -8110,7 +8112,7 @@ class AngelgirlsController extends JControllerLegacy{
 			$this->EnviarMensagemInbox('Solicita&ccedil;&atilde;o de amizade', $queryUsuario, 'O usu&aacute;rio '.$perfil->nome.' aceitou sua solicita&ccedil;&atilde;o de amizade.', TipoMensagens::ACEITOU_AMIZADE);
 		}
 		catch(Exception $e){
-			$json = '{"ok":"nok", "mensagem":"'.$e->message.'"}';
+			$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
 		}
 		
 		

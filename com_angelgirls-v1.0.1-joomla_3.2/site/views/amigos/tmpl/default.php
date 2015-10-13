@@ -152,7 +152,7 @@ jQuery(document).ready(function(){
 				<div id="amigos" class="tab-pane fade in active">
 					<h3><?php echo JText::_('Meus amigos'); ?></h3>
 					<div class="row" id="listaAmigos">
-<?php require_once 'lista_amigos.php';?>	
+<?php require_once 'lista_amigos.php';?>
 					</div>
 					<div class="row" id="carregandoAmigos" style="display: none">
 						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
@@ -168,7 +168,13 @@ jQuery(document).ready(function(){
 				</div>
 			    <div id="solicitacoes" class="tab-pane fade">
 			    	<h3><?php echo JText::_('Solicita&ccedil;&otilde;es de amizade'); ?></h3>
-			    	
+<?php require_once 'lista_solicitacoes.php';?>
+					</div>
+					<div class="row" id="carregandoAmigos" style="display: none">
+						<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 300px; vertical-align: middle; text-align: center;" class="text-center">
+							<img src="<?php echo(JURI::base( true ))?>/components/com_angelgirls/loading_img.gif" alt="carregando" title="Carregando" style="width: 450px"/>
+						</div>
+					</div>
 			    </div>
 			    <div id="convidar" class="tab-pane fade">
 			    	<h3><?php echo JText::_('Convidar para entrar no Angel Girls'); ?></h3>
