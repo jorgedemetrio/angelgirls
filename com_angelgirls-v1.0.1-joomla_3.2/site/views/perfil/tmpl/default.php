@@ -79,13 +79,7 @@ JFactory::getDocument()->addStyleDeclaration('
 .validate-inteiro{
 	text-align: right;
 }
-input[type="file"]{ 	
-____noopacity: 0;
-____no-moz-opacity: 0;
-____nofilter: alpha(opacity = 0);
-____noposition: absolute;
-____noz-index: -1; 
-}');
+');
 
 
  ?>
@@ -203,7 +197,7 @@ ____noz-index: -1;
 								<?php
 								foreach ($ufs as $f){ 
 								?>
-								<option value="<?php echo($f->uf) ?>"<?php echo($f->uf==$this->item->uf?" selected":"");?>><?php echo($f->uf) ?></option>
+								<option value="<?php echo($f->uf) ?>"<?php echo($f->uf==$this->item->uf?" selected":"");?>><?php echo($f->nome) ?></option>
 								<?php 
 								}
 								?>

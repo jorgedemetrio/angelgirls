@@ -117,9 +117,62 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 				</div>
 				<div id="buscar" class="tab-pane fade">
 					<h3><?php echo JText::_('Buscar amigos'); ?></h3>
-					<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=salvarPerfil')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
+					<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilHtml')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 						<?php echo JHtml::_('form.token'); ?>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="busca"><?php echo JText::_('Procura por:'); ?></label>
+							<input class="form-control" style="width: 90%;" type="text" readonly name="busca"  id="busca" size="32" maxlength="25" title="<?php echo JText::_('Nome de quem deseja localizar'); ?>" placeholder="<?php echo JText::_('Nome de quem deseja localizar'); ?>" />
+						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="tipo"><?php echo JText::_('Tipo Perfil:'); ?></label>
+							<select class="form-control"  name="tipo" id="tipo">
+								<option>Todos</option>
+								<option value="FOTOGRAFO">Fotografo</option>
+								<option value="MODELO">Modelo</option>
+								<option value="VISITANTE">Outro</option>
+							</select>	
+						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="estado"><?php echo JText::_('Estado Que Reside'); ?></label>
+							<select name="estado" id="estado" class="form-control estado" data-validation="required" required data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que reside'); ?>">
+								<option></option>
+								<?php
+								foreach ($ufs as $f){ 
+								?>
+								<option value="<?php echo($f->uf) ?>"><?php echo($f->nome) ?></option>
+								<?php 
+								}
+								?>
+							</select>
+						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
+							<select name="id_cidade" id="id_cidade" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" data-validation="required" required style="width: 90%;">
+								<option></option>
+							</select>
+						</div>
+						<div class="btn-toolbar pull-right" role="group">
+							<div class="btn-group" role="group">
+								<button  class="btn btn-default ajuda"  type="button">
+									Dicas e Sujest&otilde;es <span class="glyphicon glyphicon-question-sign"></span>
+								</button>
+								<button  class="btn btn-default"  type="button">
+									Termos e Condi&ccedil;&otilde;es <span class="glyphicon glyphicon-paperclip"></span>
+								</button>
+							</div>
+						
+							<div class="btn-group" role="group">
+								<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
+								</button>
+								<button  class="btn btn-success" type="submit"><span class="hidden-phone">Salvar<span class="hidden-tablet"> Cadastro</span></span>
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
 					</form>
+					<div class="row" id="listaResultado">
+
+					</div>
 				</div>
 			    <div id="solicitacoes" class="tab-pane fade">
 			    	<h3><?php echo JText::_('Solicita&ccedil;&otilde;es de amizade'); ?></h3>
