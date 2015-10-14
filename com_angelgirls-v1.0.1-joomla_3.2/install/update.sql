@@ -1,5 +1,4 @@
-ALTER TABLE `#__angelgirls_mensagens` ADD COLUMN `enviado` INT NULL DEFAULT 0 AFTER `lido_destinatario`;
-update test2_angelgirls_mensagens SET enviado = 1 WHERE id>0;
 
-
-ALTER TABLE `#__angelgirls_seguindo` ADD UNIQUE INDEX (`id_usuario_seguidor` ASC, `id_usuario_seguido` ASC);
+ALTER TABLE `ag_angelgirls_amizade` DROP FOREIGN KEY `ag_angelgirls_amizade_ibfk_1`;
+ALTER TABLE `ag_angelgirls_amizade` CHANGE COLUMN `id_usuario_solicidante` `id_usuario_solicitante` INT(11) NOT NULL ;
+ALTER TABLE `ag_angelgirls_amizade` ADD CONSTRAINT `ag_angelgirls_amizade_ibfk_1`  FOREIGN KEY (`id_usuario_solicitante`)  REFERENCES `ag_users` (`id`);

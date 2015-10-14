@@ -19,8 +19,8 @@ Amigos.SeguirURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos
 Amigos.ParaDeSeguirURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=seguirUsuario', false ) . '";
 Amigos.AmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
 Amigos.DesaAmigarURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=cancelarAmizade', false ) . '";
-Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
-Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=solicitarAmizade', false ) . '";
+Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=aceitarAmizade', false ) . '";
+Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=rejeitarSolicitacaoAmizade', false ) . '";
 Amigos.InboxURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=inbox&task=openSendMessageModal', false ) . '";
 		
 Amigos.Seguindo = '.(isset($seguindo)?'true':'false').';
@@ -33,110 +33,7 @@ Amigos.TipoAmigo = "'.$tipo.'";
 
 ?>
 <script>
-Amigos.TextoAmigos = 'Desfazer Amizade <span class="glyphicon glyphicon-scissors"></span>';
-Amigos.TextoNaoAmigos = 'Solicitar Amizade <span class="glyphicon glyphicon-gift"></span>';
-Amigos.TextoAguardandoAmigos = 'Cancelar solicita&ccedil;&atilde;o amizade <span class="glyphicon glyphicon-hourglass"></span>';
 
-
-Amigos.TextoSeguindo = 'Para de seguir <span class="glyphicon glyphicon-thumbs-down"></span>';
-Amigos.TextoNaoSeguindo = 'Seguir <span class="glyphicon glyphicon-thumbs-up"></span>';
-
-jQuery(document).ready(function(){
-	if(Amigos.Seguindo){
-		jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
-	}
-	else{
-		jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
-	}
-	
-	if(Amigos.Amigos){
-		jQuery('#btnAmigos').html(Amigos.TextoAmigos);
-	}
-	else{
-		if(Amigos.AmizadeSolicitada){
-			jQuery('#btnAmigos').html(Amigos.TextoAguardandoAmigos);
-		}
-		else if(Amigos.AmizadeAprovar){
-			// NO NOTHING	
-		}
-		else{
-			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
-		}
-	}
-	jQuery('#btnAmigos').click(function(){
-		if(Amigos.Amigos || Amigos.AmizadeSolicitada){// Desafazer amizade
-			jQuery.post(Amigos.DesaAmigarURL ,
-					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Amigos = false;
-				Amigos.AmizadeSolicitada= false;
-				jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
-			},'html');
-		}
-		else{ //Solicitar amizade
-			jQuery.post(Amigos.AmigarURL,
-					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Amigos = false;
-				Amigos.AmizadeSolicitada= true;
-				jQuery('#btnAmigos').html(Amigos.TextoAguardandoAmigos);
-			},'html');			
-		}
-	});
-
-	jQuery('#btnSeguir').click(function(){
-		if(Amigos.Seguindo){
-			jQuery.post(Amigos.ParaDeSeguirURL ,
-					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Seguindo = false;
-				jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
-			},'html');
-		}
-		else{
-			jQuery.post(Amigos.SeguirURL,
-					{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-				Amigos.Seguindo = true;
-				jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
-			},'html');
-		}
-	});
-
-	jQuery('#btnEnviarMensagem').click(function(){
-		var url = Amigos.InboxURL;
-		url = url +  (url.indexOf('?')>0? '&':'?') + '&token=' +Amigos.IdAmigo + '&tipo=' + Amigos.TipoAmigo;
-		AngelGirls.FrameModal("Enviar mensagem r&aacute;pida", url, "Enviar", "JavaScript: $('#iFrameModal').contents().find('#dadosFormMensage').submit();",270);
-	});
-	
-
-	jQuery('#btnAprovarAmizade').click(function(){
-		jQuery('#groupBtnAProvacao').css('display','none');
-		jQuery.post(Amigos.AceitarAmizadeURL,
-				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-			jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
-			jQuery('#btnAmigos').html(Amigos.TextoAmigos);
-			jQuery('#btnAmigos').css('display',null);
-			Amigos.AmizadeSolicitada= true;
-			Amigos.Amigos = true;
-			Amigos.Seguindo = true;
-			jQuery('#btnAmigos').html(Amigos.TextoAmigos);
-			jQuery('#btnSeguir').html(Amigos.TextoSeguindo);
-		});
-	});
-
-	jQuery('#btnReprovarAmizade').click(function(){
-		jQuery('#groupBtnAProvacao').css('display','none');
-		jQuery.post(Amigos.RejeitarAmizadeURL,
-				{id: Amigos.IdAmigo, tipo: Amigos.TipoAmigo}, function(dado){
-			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
-			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
-			jQuery('#btnAmigos').css('display',null);
-			Amigos.AmizadeSolicitada= false;
-			Amigos.Amigos = false;
-			Amigos.Seguindo = false;
-			jQuery('#btnAmigos').html(Amigos.TextoNaoAmigos);
-			jQuery('#btnSeguir').html(Amigos.TextoNaoSeguindo);
-		});
-	});
-	
-});
 </script>
 <div class="btn-toolbar pull-right" role="toolbar">
 	<div class="btn-group" role="group">

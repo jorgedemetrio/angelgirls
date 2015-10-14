@@ -45,13 +45,27 @@ foreach($amigos as $amigo):
 			break;		
 	endswitch;
 ?>
-<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade" id="amigo<?php echo($amigo->id);?>">
+<div class="col col-xs-12 col-sm-3 col-md-3 col-lg-2 thumbnail fade" id="amigo<?php echo($amigo->token);?>">
 	<a href="<?php echo($url); ?>" title="<?php echo($urlFoto);?>">
 		<img src="<?php echo($urlFoto);?>" />
 	</a>
 	<div class="caption">
 	<h4 class="list-group-item-heading"><a href="<?php echo($url);?>"><?php echo($amigo->apelido);?></a></h4>
 	<p><a href="<?php echo($url);?>"><?php echo($amigo->meta_descricao);?></a></p>
+	
+		<div class="btn-toolbar pull-right" role="toolbar">
+			<div class="btn-group" role="group" id="groupBtnAProvacao">
+				<button class="btn btn-success aceitar" type="button" id="btnAprovarAmizade" title="Aceitar Amizade" data-id="<?php echo($amigo->token);?>"
+				data-tipo="<?php echo($amigo->tipo);?>" onclick="JavaScript: Amigos.Aceitar(this);">
+					<span class="glyphicon glyphicon-ok"></span>
+				</button>
+				<button class="btn  btn-danger recusar" type="button" id="btnReprovarAmizade"  title="Recusar Amizade" data-id="<?php echo($amigo->token);?>"
+				data-tipo="<?php echo($amigo->tipo);?>" onclick="JavaScript: Amigos.Recusar(this);">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+		</div>
+	
 	</div>
 </div>
 <?php 

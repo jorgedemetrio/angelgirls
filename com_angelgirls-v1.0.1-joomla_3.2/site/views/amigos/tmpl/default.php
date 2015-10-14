@@ -45,7 +45,8 @@ JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angel
 JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css');
 
 
-JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/perfil.js?v='.VERSAO_ANGELGIRLS);
+JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/amigos.js?v='.VERSAO_ANGELGIRLS);
+
 
 //Mais informações da API em http://formvalidator.net/
 JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js');
@@ -57,64 +58,18 @@ JFactory::getDocument()->addStyleDeclaration('
 	text-align: right;
 }
 ');
-
-
- ?>
-<script>
+JFactory::getDocument()->addScriptDeclaration('
 
 var lidos = 0;
 var carregando=false;
-var Amigos = new Object();
+		
+Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=aceitarAmizade', false ) . '";
+Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=rejeitarSolicitacaoAmizade', false ) . '";
+Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amigos&task=AmigosHTML',false).'";
+');
 
-Amigos.LoadAmigosURL = '<?php echo( JRoute::_('index.php?option=com_angelgirls&view=amigos&task=AmigosHTML',false));?>';
-jQuery(document).scroll(function(){
-	
-	if(jQuery('#amigos').hasClass('active')){
-		if( (jQuery(window).height()+jQuery(document).scrollTop()) >= (jQuery("#carregandoAmigos").position().top+jQuery('#content').position().top) && !carregando && temMais){
-			
-			carregando = true;
-			jQuery.post(Amigos.LoadAmigosURL,
-					{posicao: lidos, id: EditarSessao.SessaoID}, function(dado){
-				jQuery("#carregandoAmigos").css("display","none");
-				if(dado.length<=0){
-					jQuery("#carregandoAmigos").css("display","none");
-					temMais=false;
-				}
-				else{
-					jQuery('#carregandoAmigos').css('display','');
-					jQuery('#linha').append(dado);
-				}		
-				
-				jQuery('.thumbnail').each(function(){
-					$this = jQuery(this);
-					$img = jQuery($this.find('img'));
-					$img.ready(function(){
-						if(!$this.hasClass('in')){
-							$this.addClass('in');
-						}
-					});
-				});
-				carregando=false;					
-			},'html');
-		 }
-	}
-});
-
-
-jQuery(document).ready(function(){
-	
-
-		jQuery('.thumbnail').each(function(){
-			$this = jQuery(this);
-			$img = jQuery($this.find('img'));
-			$img.ready(function(){
-				if(!$this.hasClass('in')){
-					$this.addClass('in');
-				}
-			});
-		});
-
-});
+ ?>
+<script>
 
 </script>
 <div class="row">

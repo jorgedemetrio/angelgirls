@@ -812,13 +812,13 @@ CREATE TABLE `#__query_logs` (
 
 CREATE TABLE `#__angelgirls_amizade` ( 
 	`id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-	`id_usuario_solicidante` INT NOT NULL , 
+	`id_usuario_solicitante` INT NOT NULL , 
 	`id_usuario_solicitado` INT NOT NULL , 
 	`data_solicitada` DATETIME NOT NULL, 
 	`data_aceita` DATETIME NULL,
 	`host_ip_solicitante` varchar(20) NOT NULL,
 	`host_ip_aceitou` varchar(20) NULL,
-	FOREIGN KEY (`id_usuario_solicidante`) REFERENCES `#__users` (`id`),
+	FOREIGN KEY (`id_usuario_solicitante`) REFERENCES `#__users` (`id`),
 	FOREIGN KEY (`id_usuario_solicitado`) REFERENCES `#__users` (`id`)
 ) ENGINE = InnoDB   DEFAULT CHARSET=utf8;
 
