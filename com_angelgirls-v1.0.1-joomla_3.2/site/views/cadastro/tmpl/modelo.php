@@ -101,6 +101,7 @@ input[type=\'file\']{
 		<div id="general" class="tab-pane fade in active">
 			<h2><?php echo JText::_('Dados da Modelo'); ?></h2>
 			<div>
+				<div class="g-recaptcha" data-sitekey="6Lf50Q4TAAAAAKIhh6cBgZjzDmnHSZh1yh4xCcfQ"></div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label"  for="termos"><?php echo JText::_('Declaro que li e concordo com todos os termos e condi&ccedil;&otilde;es para realizar o cadastro.'); ?><a href="#"><small>Clique aqui para ler os termos e condi&ccedil;&otilde;es.</small></a></label>
 					<input type="checkbox" value="S" name="termos" id="termos" class="form-control required"/>

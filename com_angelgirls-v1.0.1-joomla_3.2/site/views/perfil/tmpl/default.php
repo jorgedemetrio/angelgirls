@@ -285,19 +285,19 @@ JFactory::getDocument()->addStyleDeclaration('
 					</div>
 					<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<label class="control-label"  for="peso"><?php echo JText::_('Peso'); ?></label>
-						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="peso" id="peso" size="32" maxlength="3" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
+						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="number" min="10" max="300" name="peso" id="peso" size="32" maxlength="3" value="<?php echo $this->item->peso;?>"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
 					</div>
 					<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<label class="control-label"  for="busto"><?php echo JText::_('Busto'); ?></label>
-						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="busto" id="busto" size="32" maxlength="2" value="<?php echo $this->item->busto;?>" placeholder="<?php echo JText::_('O tamanho do seu busto ou numero da camisa'); ?>"/>
+						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="number" min="1" max="500"  name="busto" id="busto" size="32" maxlength="2" value="<?php echo $this->item->busto;?>" placeholder="<?php echo JText::_('O tamanho do seu busto ou numero da camisa'); ?>"/>
 					</div>
 					<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<label class="control-label"  for="calsa"><?php echo JText::_('Calsa'); ?></label>
-						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="text" name="calsa" id="calsa" size="32" maxlength="2" value="<?php echo $this->item->calsa;?>" placeholder="<?php echo JText::_('O numero da calsa que usa'); ?>"/>
+						<input class="validate-inteiro form-control" data-validation="required" required style="width: 90%;" type="number" min="10" max="500"  name="calsa" id="calsa" size="32" maxlength="2" value="<?php echo $this->item->calsa;?>" placeholder="<?php echo JText::_('O numero da calsa que usa'); ?>"/>
 					</div>
 					<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<label class="control-label"  for="calsado"> <?php echo JText::_('Tamanho dos Calsados'); ?></label>
-						<input class="validate-inteiro" data-validation="required" required style="width: 90%;" type="text" name="calsado" id="calsado" size="32" maxlength="2" value="<?php echo $this->item->calsado;?>" placeholder="<?php echo JText::_('Tamanho do calsado (Tenis/Sapato).'); ?>"/>
+						<input class="validate-inteiro" data-validation="required" required style="width: 90%;" type="number" min="10" max="100"  name="calsado" id="calsado" size="32" maxlength="2" value="<?php echo $this->item->calsado;?>" placeholder="<?php echo JText::_('Tamanho do calsado (Tenis/Sapato).'); ?>"/>
 					</div>
 					<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<label class="control-label"  for="olhos"> <?php echo JText::_('Olhos'); ?></label>
@@ -502,7 +502,7 @@ JFactory::getDocument()->addStyleDeclaration('
 									</div>
 									<div class="form-group col-xs-12 col-sm-3 col-md-3 col-lg-3">
 										<label class="control-label" for="ddd"><?php echo JText::_('DDD'); ?></label>
-										<input class="form-control validate-inteiro" style="width: 90%;" type="text" name="ddd"  id="ddd" maxlength="2" title="<?php echo JText::_('DDD'); ?>"/>
+										<input class="form-control validate-inteiro" style="width: 90%;" type="number" min="1" max="99"  name="ddd"  id="ddd" maxlength="2" title="<?php echo JText::_('DDD'); ?>"/>
 									</div>
 									<div class="form-group col-xs-12 col-sm-9 col-md-9 col-lg-9">
 										<label class="control-label" for="telefone"><?php echo JText::_('Telefone'); ?></label>

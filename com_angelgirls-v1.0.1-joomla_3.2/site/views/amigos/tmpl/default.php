@@ -70,7 +70,36 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 
  ?>
 <script>
+jQuery(document).ready(function(){
 
+	jQuery('#nivel').change(function(){
+		jQuery('#nivelVal').html(
+				jQuery('#nivel').val()==0?'Todos':jQuery('#nivel').val()); 
+	});
+
+	jQuery('#tipo').change(function(){
+		if(jQuery('#tipo').val()=='MODELO'){
+			jQuery('#extraModeloFiltros').css('display','none');
+			jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
+			jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
+			jQuery('#extraModelo').fadeIn(500);
+		}
+	});
+});
+
+Amigos.ExibirModeloDetalhes = function (){	
+	if(jQuery('#iconeFiltroModelo').hasClass('glyphicon-plus')){
+		jQuery('#extraModeloFiltros').fadeIn(500);
+		
+		jQuery('#iconeFiltroModelo').removeClass('glyphicon-plus');
+		jQuery('#iconeFiltroModelo').addClass('glyphicon glyphicon-minus');
+	}
+	else{
+		jQuery('#extraModeloFiltros').fadeOut(500);
+		jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
+		jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
+	}
+};
 </script>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
@@ -88,7 +117,7 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 					</a>
 				</li>
 				<li role="presentation">
-					<a href="#buscar" data-toggle="tab" aria-controls="profile" role="tab">Buscar
+					<a href="#buscar" data-toggle="tab" aria-controls="profile" role="tab">Procurar
 					<span class="glyphicon glyphicon-search" aria-hidden="true" title="Fotos"></span>
 					</a>
 				</li>
@@ -116,12 +145,12 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 					</div>
 				</div>
 				<div id="buscar" class="tab-pane fade">
-					<h3><?php echo JText::_('Buscar amigos'); ?></h3>
+					<h3><?php echo JText::_('Buscar'); ?></h3>
 					<form action="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilHtml')); ?> " method="post" name="dadosForm" id="dadosForm" class="form-validate" role="form" data-toggle="validator" enctype="multipart/form-data" >
 						<?php echo JHtml::_('form.token'); ?>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 							<label class="control-label"  for="busca"><?php echo JText::_('Procura por:'); ?></label>
-							<input class="form-control" style="width: 90%;" type="text" readonly name="busca"  id="busca" size="32" maxlength="25" title="<?php echo JText::_('Nome de quem deseja localizar'); ?>" placeholder="<?php echo JText::_('Nome de quem deseja localizar'); ?>" />
+							<input class="form-control" style="width: 90%;" type="text" name="busca"  id="busca" size="32" maxlength="25" title="<?php echo JText::_('Nome de quem deseja localizar'); ?>" placeholder="<?php echo JText::_('Nome de quem deseja localizar'); ?>" />
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 							<label class="control-label"  for="tipo"><?php echo JText::_('Tipo Perfil:'); ?></label>
@@ -133,8 +162,8 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 							</select>	
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-							<label class="control-label"  for="estado"><?php echo JText::_('Estado Que Reside'); ?></label>
-							<select name="estado" id="estado" class="form-control estado" data-validation="required" required data-carregar="id_cidade" style="width: 90%;" placeholder="<?php echo JText::_('Selecione o estado que reside'); ?>">
+							<label class="control-label"  for="estado"><?php echo JText::_('Estado'); ?></label>
+							<select name="estado" id="estado" class="form-control estado" data-carregar="id_cidade" style="width: 99%;">
 								<option></option>
 								<?php
 								foreach ($ufs as $f){ 
@@ -146,26 +175,137 @@ Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amig
 							</select>
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-							<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
-							<select name="id_cidade" id="id_cidade" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" data-validation="required" required style="width: 90%;">
+							<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade'); ?></label>
+							<select name="id_cidade" id="id_cidade" class="form-control" style="width: 99%;">
 								<option></option>
 							</select>
 						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="busca"><?php echo JText::_('N&iacute;vel de experi&ecirc;ncia:'); ?> <span id="nivelVal">Todos</span> </label>
+							<input class="form-control" style="width: 99%;" type="range" name="nivel"  id="nivel" value="0" min="0" max="10" title="<?php echo JText::_('N&iacute;vel do usu&aacute;rio'); ?>" placeholder="<?php echo JText::_('N&iacute;vel do usu&aacute;rio'); ?>" />
+						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="busca"><?php echo JText::_('Idade:'); ?> </label>
+							<input class="form-control" style="width: 49%;" type="number" name="idade_init" value="18" id="idade_init" min="18" max="100" title="<?php echo JText::_('Idade inicial'); ?>" placeholder="<?php echo JText::_('Idade inicial'); ?>" />
+							<input class="form-control" style="width: 49%;" type="number" name="idade_fim"  id="idade_fim" min="18" max="100" title="<?php echo JText::_('Idade final'); ?>" placeholder="<?php echo JText::_('Idade final'); ?>" />
+						</div>
+						
+						
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="busca"><?php echo JText::_('Pontos:'); ?> </label>
+							<input class="form-control" style="width: 49%;" type="number" name="pontos_init" id="pontos_init" title="<?php echo JText::_('Pontos'); ?>" placeholder="<?php echo JText::_('0'); ?>" />
+							<input class="form-control" style="width: 49%;" type="number" name="pontos_fim"  id="pontos_fim" title="<?php echo JText::_('Pontos'); ?>" placeholder="<?php echo JText::_('M&aacute;ximo'); ?>" />
+						</div>
+						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+							<label class="control-label"  for="sexo"><?php echo JText::_('Sexo'); ?></label>
+							<select name="sexo" id="sexo" class="form-control" style="width: 90%;">
+								<option></option>
+								<option value="M">Masculino</option>
+								<option value="F">Feminino</option>
+							</select>
+						</div>
+						
+						
+						<div id="extraModelo" style="display:none">
+						<h4><a href="JavaScript: Amigos.ExibirModeloDetalhes(); "><?php echo JText::_('Filtrar avan&ccedil;ado para modelo'); ?> <span class="glyphicon glyphicon-plus" id="iconeFiltroModelo"></span></a></h4>
+							<div id="extraModeloFiltros" style="display:none">
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="altura"><?php echo JText::_('Altura'); ?></label>
+									<input class="validate-numeric form-control" style="width: 90%;" type="number" name="altura" id="altura" size="32" maxlength="4" placeholder="<?php echo JText::_('Sua altura em Metros com ","'); ?>"/>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="peso"><?php echo JText::_('Peso'); ?></label>
+									<input class="validate-inteiro form-control" style="width: 90%;" type="number" name="peso" id="peso" size="32" maxlength="3"  placeholder="<?php echo JText::_('Seu peso em Kg com ","'); ?>"/>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="calsado"> <?php echo JText::_('Tamanho dos Calsados'); ?></label>
+									<input class="validate-inteiro" style="width: 90%;" type="number" name="calsado" id="calsado" size="32" maxlength="2" placeholder="<?php echo JText::_('Tamanho do calsado (Tenis/Sapato).'); ?>"/>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="olhos"> <?php echo JText::_('Olhos'); ?></label>
+									<select name="olhos" id="olhos" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="NEGROS" class="text-transform: capitalize;">NEGROS</option>
+										<option value="AZUIS" class="text-transform: capitalize;">AZUIS</option>
+										<option value="VERDES" class="text-transform: capitalize;">VERDES</option>
+										<option value="CASTANHOS" class="text-transform: capitalize;">CASTANHOS</option>
+										<option value="MEL" class="text-transform: capitalize;">MEL</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+									</select>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="pele"> <?php echo JText::_('Pele'); ?></label>
+									<select name="pele" id="pele" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="CALCASIANA" class="text-transform: capitalize;">CALCASIANA</option>
+										<option value="BRANCA" class="text-transform: capitalize;">BRANCA</option>
+										<option value="PARDA" class="text-transform: capitalize;">PARDA</option>
+										<option value="MORENA" class="text-transform: capitalize;">MORENA</option>
+										<option value="NEGRA" class="text-transform: capitalize;">NEGRA</option>
+										<option value="AMARELA" class="text-transform: capitalize;">AMARELA</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+									</select>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="etinia"> <?php echo JText::_('Etinia'); ?></label>
+									<select name="etinia" id="etinia" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="AZIATICA" class="text-transform: capitalize;">AZIATICA</option>
+										<option value="AFRO" class="text-transform: capitalize;">AFRO</option>
+										<option value="EURPEIA" class="text-transform: capitalize;">EURPEIA</option>
+										<option value="ORIENTAL" class="text-transform: capitalize;">ORIENTAL</option>
+										<option value="LATINA" class="text-transform: capitalize;">LATINA</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+									</select>
+								</div>
+					
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="cabelo"> <?php echo JText::_('Tipo de Cabelo'); ?></label>
+									<select name="cabelo" id="cabelo" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="LIZO" class="text-transform: capitalize;">LIZO</option>
+										<option value="ENCARACOLADO" class="text-transform: capitalize;">ENCARACOLADO</option>
+										<option value="CACHIADO" class="text-transform: capitalize;">CACHIADO</option>
+										<option value="ONDULADOS" class="text-transform: capitalize;">ONDULADOS</option>
+										<option value="CRESPO" class="text-transform: capitalize;">CRESPO</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+										<option value="SEM" class="text-transform: capitalize;">SEM</option>
+									</select>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label"  for="tamanho_cabelo"> <?php echo JText::_('Tamanho do Cabelo'); ?></label>
+									<select name="tamanho_cabelo" id="tamanho_cabelo" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="MUITO CURTO" class="text-transform: capitalize;">MUITO CURTO</option>
+										<option value="CURTO" class="text-transform: capitalize;">CURTO</option>
+										<option value="MEDIO" class="text-transform: capitalize;">MEDIO</option>
+										<option value="LONGO"< class="text-transform: capitalize;">LONGO</option>
+										<option value="MUITO LONGO" class="text-transform: capitalize;">MUITO LONGO</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+										<option value="SEM" class="text-transform: capitalize;">SEM</option>
+									</select>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+									<label class="control-label" for="cor_cabelo"> <?php echo JText::_('Cor do Cabelo'); ?></label>
+									<select name="cor_cabelo" id="cor_cabelo" class="form-control" style="width: 90%;">
+										<option></option>
+										<option value="BRANCO" class="text-transform: capitalize;">BRANCO</option>
+										<option value="LOIRA CLARA" class="text-transform: capitalize;">LOIRA CLARA</option>
+										<option value="LOIRA" class="text-transform: capitalize;">LOIRA</option>
+										<option value="LOIRO ESCURO" class="text-transform: capitalize;">LOIRO ESCURO</option>
+										<option value="COLORIDO" class="text-transform: capitalize;">COLORIDO</option>
+										<option value="RUIVA" class="text-transform: capitalize;">RUIVA</option>
+										<option value="CASTANHO" class="text-transform: capitalize;">CASTANHO</option>
+										<option value="NEGRO" class="text-transform: capitalize;">NEGRO</option>
+										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
+									</select>
+								</div>
+							</div>
+						</div>
 						<div class="btn-toolbar pull-right" role="group">
 							<div class="btn-group" role="group">
-								<button  class="btn btn-default ajuda"  type="button">
-									Dicas e Sujest&otilde;es <span class="glyphicon glyphicon-question-sign"></span>
-								</button>
-								<button  class="btn btn-default"  type="button">
-									Termos e Condi&ccedil;&otilde;es <span class="glyphicon glyphicon-paperclip"></span>
-								</button>
-							</div>
-						
-							<div class="btn-group" role="group">
-								<button  class="btn" type="button" onclick="JavaScript:window.history.back(-1);"><span class="hidden-phone"><?php echo JText::_('Cancelar'); ?></span>
-								</button>
-								<button  class="btn btn-success" type="submit"><span class="hidden-phone">Salvar<span class="hidden-tablet"> Cadastro</span></span>
-									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								<button  class="btn btn-success" type="submit"><span class="hidden-phone">Buscar</span>
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 								</button>
 							</div>
 						</div>

@@ -9,6 +9,8 @@
 			
 		//jQuery(".form-control").tooltip();
 		
+
+		
 				
 		document.formvalidator.setHandler("telefone", function(value) {
 	      regex=/^\(\d{2}\)\s\d{5}\-\d{3,4}$/;

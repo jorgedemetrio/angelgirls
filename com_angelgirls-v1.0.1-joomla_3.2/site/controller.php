@@ -5406,6 +5406,9 @@ class AngelgirlsController extends JControllerLegacy{
 			$id = $var[0];
 		}
 		
+		
+
+		
 		$email = JRequest::getString ( 'email', null, 'POST' );
 		$username = JRequest::getString ( 'username', null, 'POST' );
 		$password = JRequest::getString ( 'password', null, 'POST' );
@@ -5478,8 +5481,46 @@ class AngelgirlsController extends JControllerLegacy{
 			JError::raiseWarning( 100, 'CPF j&aacute; cadastrado.' );
 		}
 		
+		
+		
+		
+		$url = 'https://www.google.com/recaptcha/api/siteverify';
+		$fields = array(
+				'secret' => '6Lf50Q4TAAAAAGn-4YBXRJUKlAKpPjqICBsaqsCs',
+				'response' => JRequest::getString ( 'g-recaptcha-response')
+		);
+		$fields_string="";
+		foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+		rtrim($fields_string, '&');
+			
+		//open connection
+		$ch = curl_init();
+			
+		//set the url, number of POST vars, POST data
+		curl_setopt($ch,CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_POST, count($fields));
+		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+			
+		//execute post
+		$result = curl_exec($ch);
+			
+		//close connection
+		curl_close($ch);
+		//print_r($result);
+			
+		$resultado = json_decode($result);
+		//print_r($resultado);exit();
+			
 	
 		if(!isset($user) || $user->id==0){
+			
+
+			if($resultado->success!=true && $resultado->success!='true'){
+				$erro =true;
+				JError::raiseWarning( 100, 'Faça a v&aacute;lida&ccedil;&aacute;o do "CAPTCH" no inicio do formu&aacute;rio.' );
+			}
+			
+			
 			if(!isset($email)){
 				$erro =true;
 				JError::raiseWarning( 100, 'E-mail &eacute; um campo obrigat&oacute;rio.' );

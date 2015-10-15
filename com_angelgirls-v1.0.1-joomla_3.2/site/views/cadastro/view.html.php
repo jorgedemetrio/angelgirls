@@ -16,6 +16,11 @@ jimport('joomla.application.component.view');
 JHTML::_('behavior.formvalidation');
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
+JFactory::getDocument()->addScript('https://www.google.com/recaptcha/api.js');
+//<div class="g-recaptcha" data-sitekey="6Lf50Q4TAAAAAKIhh6cBgZjzDmnHSZh1yh4xCcfQ"></div>
+// SITE KEY 6Lf50Q4TAAAAAKIhh6cBgZjzDmnHSZh1yh4xCcfQ
+//Secret key 6Lf50Q4TAAAAAGn-4YBXRJUKlAKpPjqICBsaqsCs
+
 /**
  * Modelos View
  */

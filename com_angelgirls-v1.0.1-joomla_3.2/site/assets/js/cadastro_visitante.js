@@ -3,7 +3,9 @@
 	
 	var cpfModeloValido=true;
 	jQuery(document).ready(function(){
-	   
+		
+		
+
 		document.formvalidator.setHandler("telefone", function(value) {
 	      regex=/^\(\d{2}\)\s\d{5}\-\d{3,4}$/;
 	      return regex.test(value);
