@@ -5127,13 +5127,10 @@ class AngelgirlsController extends JControllerLegacy{
 		$sexo  = JRequest::geString('sexo',null);
 		
 		
+		JRequest::setVar('amigos', $this->findPerfil($nome, $estado, $idCidade, $tipo ));
 		
-	
-		if(isset($nome) && strlen(trim($nome))>=3
-				|| isset($idCidade) || isset($estado)){
-			JRequest::setVar('perfils', $this->findPerfil($nome, $estado, $idCidade, $tipo ));
-		}
-		JRequest::setVar('ufs',$this->getUFs());
+		require_once 'views/amigos/tmpl/lista_amigos.php';
+		exit();
 	}
 	
 	
