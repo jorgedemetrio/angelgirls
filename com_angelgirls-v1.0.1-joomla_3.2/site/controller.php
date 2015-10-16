@@ -498,6 +498,7 @@ class AngelgirlsController extends JControllerLegacy{
 	 */
 	public function cadastroVisitante(){
 		$this->carregarCadastro();
+
 		
 		JRequest::setVar ( 'view', 'cadastro' );
 		JRequest::setVar ( 'layout', 'visitante' );
@@ -5482,31 +5483,38 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		$url = 'https://www.google.com/recaptcha/api/siteverify';
-		$fields = array(
-				'secret' => '6Lf50Q4TAAAAAGn-4YBXRJUKlAKpPjqICBsaqsCs',
-				'response' => JRequest::getString ( 'g-recaptcha-response')
-		);
-		$fields_string="";
-		foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
-		rtrim($fields_string, '&');
+		$fields_string='secret=6Lf50Q4TAAAAAGn-4YBXRJUKlAKpPjqICBsaqsCs&response='. JRequest::getString('g-recaptcha-response');
 			
 		//open connection
 		$ch = curl_init();
 			
 		//set the url, number of POST vars, POST data
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_POST, count($fields));
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-			
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_SSLVERSION,3);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_HEADER, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
+		
+		
+
 		//execute post
 		$result = curl_exec($ch);
-			
+		
+		$result = substr($result, strpos($result,'{'));
+				
+
+		
+		
 		//close connection
 		curl_close($ch);
-		//print_r($result);
+		
 			
 		$resultado = json_decode($result);
-		//print_r($resultado);exit();
+		
 			
 	
 		if(!isset($user) || $user->id==0){
@@ -5514,7 +5522,7 @@ class AngelgirlsController extends JControllerLegacy{
 
 			if($resultado->success!=true && $resultado->success!='true'){
 				$erro =true;
-				JError::raiseWarning( 100, 'Faça a v&aacute;lida&ccedil;&aacute;o do "CAPTCH" no inicio do formu&aacute;rio.' );
+				JError::raiseWarning( 100, 'Fa&ccedil;a a v&aacute;lida&ccedil;&atilde;o do "CAPTCH" no inicio do formul&aacute;rio.' );
 			}
 			
 			
@@ -7023,6 +7031,8 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function carregarCadastro(){
+		$app = JFactory::getApplication(); 
+		$app->logout();
 		JRequest::setVar ( 'ufs', $this->getUFs());
 	}
 	
