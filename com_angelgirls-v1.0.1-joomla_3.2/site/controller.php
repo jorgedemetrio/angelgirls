@@ -7099,8 +7099,33 @@ class AngelgirlsController extends JControllerLegacy{
 				return;
 			}
 				
-				
+				 
 			JRequest::setVar ( 'perfil', $perfil );
+			
+			if(!$perfil->popads){
+				JFactory::getDocument()->addScriptDeclaration("
+				var _pop = _pop || [];
+				_pop.push(['siteId', 903837]);
+				_pop.push(['minBid', 0.000000]);
+				_pop.push(['popundersPerIP', 0]);
+				_pop.push(['delayBetween', 0]);
+				_pop.push(['default', false]);
+				_pop.push(['defaultPerDay', 0]);
+				_pop.push(['topmostLayer', false]);
+				(function() {
+					var pa = document.createElement('script'); pa.type = 'text/javascript'; pa.async = true;
+					var s = document.getElementsByTagName('script')[0];
+					pa.src = '//c1.popads.net/pop.js';
+					pa.onerror = function() {
+						var sa = document.createElement('script'); sa.type = 'text/javascript'; sa.async = true;
+						sa.src = '//c2.popads.net/pop.js';
+						s.parentNode.insertBefore(sa, s);
+					};
+					s.parentNode.insertBefore(pa, s);
+				})();");
+				$perfil->popads=true;
+				JFactory::getSession()->set('perfil', $perfil);
+			}
 			
 			$query = $db->getQuery ( true );
 			$query->select('id, token, tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
