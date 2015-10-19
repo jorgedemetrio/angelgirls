@@ -5110,32 +5110,44 @@ class AngelgirlsController extends JControllerLegacy{
 	}
 	
 	public function buscarPerfilHtml(){
-		$nome = JRequest::getString('nome',null);
-		$idCidade  = JRequest::getInt('id_cidade',null);
-		$estado  = JRequest::getInt('estado',null);
-		$tipo  = JRequest::getInt('tipo',null);
-		$nivel  = JRequest::getInt('nivel',0);
-		$alturaInicial  = JRequest::getString('alturaInicial',null);
-		$alturaFinal  = JRequest::getString('alturaFinal',null);
-		$pesoInicial  = JRequest::getString('pesoInicial',null);
-		$pesoFinal  = JRequest::getString('pesoFinal',null);
-		$olhos  = JRequest::geVar('olhos',array());
-		$pele  = JRequest::geVar('pele',array());
-		$etinia  = JRequest::geVar('etinia',array());
-		$tipoCabelo  = JRequest::geVar('tipoCabelo',array());
-		$corCabelo  = JRequest::geVar('corCabelo',array());
-		$tamanhoCabelo  = JRequest::geVar('tamanhoCabelo',array());
-		$sexo  = JRequest::geString('sexo',null);
+		$busca = JRequest::getString('busca',null);
+		$tipo = JRequest::getString('tipo',null);
+		$estado = JRequest::getString('tipo',null);
+		$id_cidade = JRequest::getInt('id_cidade',null);
+		$nivel = JRequest::getInt('nivel',null);
+		$idade_init = JRequest::getInt('idade_init',null);
+		$idade_fim = JRequest::getInt('idade_fim',null);
+		$pontos_init = JRequest::getInt('pontos_init',null);
+		$pontos_fim = JRequest::getInt('pontos_fim',null);
+		$sexo = JRequest::getString('sexo',null);
+		$altura_inicial = JRequest::getString('altura_inicial',null);
+		$altura_final = JRequest::getString('altura_final',null);
+		$peso_inicial = JRequest::getInt('peso_inicial',null);
+		$peso_final = JRequest::getInt('peso_final',null);
+		$calsado_inicial = JRequest::getInt('calsado_inicial',null);
+		$calsado_final = JRequest::getInt('calsado_final',null);
+		$olhos = JRequest::getString('olhos',null);
+		$pele = JRequest::getString('pele',null);
+		$etinia = JRequest::getString('etinia',null);
+		$cabelo = JRequest::getString('cabelo',null);
+		$tamanho_cabelo = JRequest::getString('tamanho_cabelo',null);
+		$cor_cabelo = JRequest::getString('cor_cabelo',null);
 		
 		
-		JRequest::setVar('amigos', $this->findPerfil($nome, $estado, $idCidade, $tipo ));
+		
+		
+		JRequest::setVar('amigos', $this->findPerfil($busca,  $estado, $id_cidade, $tipo, $nivel, $idade_init, $idade_fim, $pontos_init, $pontos_fim, $sexo
+, $altura_inicial, $altura_final, $peso_inicial, $peso_final, $calsado_inicial, $calsado_final, $olhos
+, $pele, $etinia, $cabelo, $tamanho_cabelo, $cor_cabelo));
 		
 		require_once 'views/amigos/tmpl/lista_amigos.php';
 		exit();
 	}
 	
 	
-	private function findPerfil($nome, $estado, $idCidade, $tipo=null, $nivel=null ){
+	private function findPerfil($nome, $estado, $idCidade, $tipo = null, $nivel = null, $idade_init = null, $idade_fim = null, $pontos_init = null, 
+			$pontos_fim = null, $sexo = null, $altura_inicial = null, $altura_final = null, $peso_inicial = null, $peso_final = null, $calsado_inicial = null, 
+			$calsado_final = null, $olhos = null, $pele = null, $etinia = null, $cabelo = null, $tamanho_cabelo = null, $cor_cabelo = null ){
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$query = $db->getQuery ( true );
@@ -5159,6 +5171,75 @@ class AngelgirlsController extends JControllerLegacy{
 		if(isset($estado) && $estado!="" ){
 			$query->where ( '( cvive.uf =  ' . $db->quote(trim($estado)) . ' OR  cnasceu.uf =  ' . $db->quote(trim($estado)) . ')');
 		}
+		
+		if(isset($tipo) && $tipo!="" ){
+			$query->where ( 'p.tipo =  ' . $db->quote(trim($tipo)) );
+		}
+		if(isset($nivel) && $nivel!="" ){
+			$query->where ( ' p.nivel >=  ' . $nivel );
+		}
+		if(isset($idade_init) && $idade_init!="" && $idade_init!=0){
+			$anoInicio = intval(date('Ymd'))-(intval($idade_init)*10000);
+			$query->where ( ' p.data_nascimento >=  STR_TO_DATE(' . $db->quote(trim($anoInicio)) . ', \'%Y%m%d\')');
+		}
+		if(isset($idade_fim) && $idade_fim!="" && $idade_fim!=0){
+			$anoInicio = intval(date('Ymd'))-(intval($idade_fim)*10000);
+			$query->where ( ' p.data_nascimento <=  STR_TO_DATE(' . $db->quote(trim($anoInicio)) . ', \'%Y%m%d\')');
+		}		
+		
+		if(isset($pontos_init) && $pontos_init!="" && $pontos_init>0){
+			$query->where ( ' p.pontos >=  ' .$pontos_init);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		
+
+		
+		
+		
+		if(isset($sexo) && $sexo!="" ){
+			$query->where ( ' p.sexo = ' .  $db->quote($sexo));
+		}
+		if(isset($altura_inicial) && $altura_inicial!="" && $altura_inicial>0){
+			$query->where ( ' p.altura <=  ' .$altura_inicial);
+		}
+		if(isset($altura_final) && $altura_final!="" && $altura_final>0){
+			$query->where ( ' p.altura >=  ' .$altura_final);
+		}
+		if(isset($peso_inicial) && $peso_inicial!="" && $peso_inicial>0){
+			$query->where ( ' p.peso <=  ' .$peso_inicial);
+		}
+		if(isset($calsado_inicial) && $calsado_inicial!="" && $calsado_inicial>0){
+			$query->where ( ' p.peso <=  ' .$calsado_inicial);
+		}
+		if(isset($calsado_final) && $calsado_final!="" && $calsado_final>0){
+			$query->where ( ' p.calsado <=  ' .$calsado_final);
+		}
+		if(isset($pontos_fim) && $pontos_fim != "" && $pontos_fim>0){
+			$query->where ( ' p.calsado <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
+			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		}
+		
+		
+		
 		$query->where('(upper(trim(p.apelido)) like ' . $nomeFormatado .' OR upper(trim(p.nome_completo)) like ' . $nomeFormatado .'
 				OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
 		->where ( ' p.id_usuario <> ' . $user->id)

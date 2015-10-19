@@ -181,18 +181,18 @@ Amigos.ExibirModeloDetalhes = function (){
 							</select>
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-							<label class="control-label"  for="busca"><?php echo JText::_('N&iacute;vel de experi&ecirc;ncia:'); ?> <span id="nivelVal">Todos</span> </label>
+							<label class="control-label"  for="nivel"><?php echo JText::_('N&iacute;vel de experi&ecirc;ncia:'); ?> <span id="nivelVal">Todos</span> </label>
 							<input class="form-control" style="width: 99%;" type="range" name="nivel"  id="nivel" value="0" min="0" max="10" title="<?php echo JText::_('N&iacute;vel do usu&aacute;rio'); ?>" placeholder="<?php echo JText::_('N&iacute;vel do usu&aacute;rio'); ?>" />
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-							<label class="control-label"  for="busca"><?php echo JText::_('Idade:'); ?> </label>
+							<label class="control-label"  for="idade_init"><?php echo JText::_('Idade:'); ?> </label>
 							<input class="form-control" style="width: 49%;" type="number" name="idade_init" value="18" id="idade_init" min="18" max="100" title="<?php echo JText::_('Idade inicial'); ?>" placeholder="<?php echo JText::_('18'); ?>" />
 							<input class="form-control" style="width: 49%;" type="number" name="idade_fim"  id="idade_fim" min="18" max="100" title="<?php echo JText::_('Idade final'); ?>" placeholder="<?php echo JText::_('M&aacute;xima'); ?>" />
 						</div>
 						
 						
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-							<label class="control-label"  for="busca"><?php echo JText::_('Pontos:'); ?> </label>
+							<label class="control-label"  for="pontos_init"><?php echo JText::_('Pontos:'); ?> </label>
 							<input class="form-control" style="width: 49%;" type="number" name="pontos_init" id="pontos_init" title="<?php echo JText::_('Pontos'); ?>" placeholder="<?php echo JText::_('0'); ?>" />
 							<input class="form-control" style="width: 49%;" type="number" name="pontos_fim"  id="pontos_fim" title="<?php echo JText::_('Pontos'); ?>" placeholder="<?php echo JText::_('M&aacute;ximo'); ?>" />
 						</div>
@@ -210,14 +210,14 @@ Amigos.ExibirModeloDetalhes = function (){
 						<h4><a href="JavaScript: Amigos.ExibirModeloDetalhes(); "><?php echo JText::_('Filtros avan&ccedil;ado para modelo'); ?> <span class="glyphicon glyphicon-plus" id="iconeFiltroModelo"></span></a></h4>
 							<div id="extraModeloFiltros" style="display:none">
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="altura"><?php echo JText::_('Altura'); ?></label>
+									<label class="control-label"  for="altura_inicial"><?php echo JText::_('Altura'); ?></label>
 									<input class="validate-numeric form-control" style="width: 45%;" type="text" name="altura_inicial" id="altura_inicial" maxlength="4" placeholder="<?php echo JText::_('0,0'); ?>"/>
 									<input class="validate-numeric form-control" style="width: 45%;" type="text" name="altura_final" id="altura_final"  maxlength="4" placeholder="<?php echo JText::_('M&aacute;xima'); ?>"/>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="peso"><?php echo JText::_('Peso'); ?></label>
-									<input class="validate-inteiro form-control" style="width: 45%;" type="text" name="peso_inicial" id="peso_inicial" size="32" maxlength="3"  placeholder="<?php echo JText::_('0,0'); ?>"/>
-									<input class="validate-inteiro form-control" style="width: 45%;" type="text" name="peso_final" id="peso_final" size="32" maxlength="3"  placeholder="<?php echo JText::_('M&aacute;ximo');?>"/>
+									<label class="control-label"  for="peso_inicial"><?php echo JText::_('Peso'); ?></label>
+									<input class="validate-inteiro form-control" style="width: 45%;" type="number" name="peso_inicial" id="peso_inicial" size="32" maxlength="3"  placeholder="<?php echo JText::_('0,0'); ?>"/>
+									<input class="validate-inteiro form-control" style="width: 45%;" type="number" name="peso_final" id="peso_final" size="32" maxlength="3"  placeholder="<?php echo JText::_('M&aacute;ximo');?>"/>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"  for="calsado"> <?php echo JText::_('Tamanho dos Calsados'); ?></label>
