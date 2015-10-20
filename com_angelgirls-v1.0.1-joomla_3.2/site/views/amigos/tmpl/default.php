@@ -85,6 +85,53 @@ jQuery(document).ready(function(){
 			jQuery('#extraModelo').fadeIn(500);
 		}
 	});
+
+	jQuery('#dadosForm').submit(function(){
+		AngelGirls.Processando().show();
+		jQuery('#listaResultado').html('');
+		jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilHtml',false));?>', 
+				{busca: jQuery('#busca').val(),
+					tipo: jQuery('#tipo').val(),
+					estado: jQuery('#estado').val(),
+					id_cidade: jQuery('#id_cidade').val(),
+					nivel: jQuery('#nivel').val(),
+					idade_init: jQuery('#idade_init').val(),
+					idade_fim: jQuery('#idade_fim').val(),
+					pontos_init: jQuery('#pontos_init').val(),
+					pontos_fim: jQuery('#pontos_fim').val(),
+					sexo: jQuery('#sexo').val(),
+					altura_inicial: jQuery('#altura_inicial').val(),
+					altura_final: jQuery('#altura_final').val(),
+					peso_inicial: jQuery('#peso_inicial').val(),
+					peso_final: jQuery('#peso_final').val(),
+					calsado_inicial: jQuery('#calsado_inicial').val(),
+					calsado_final: jQuery('#calsado_final').val(),
+					olhos: jQuery('#olhos').val(),
+					pele: jQuery('#pele').val(),
+					etinia: jQuery('#etinia').val(),
+					cabelo: jQuery('#cabelo').val(),
+					tamanho_cabelo: jQuery('#tamanho_cabelo').val(),
+					cor_cabelo: jQuery('#cor_cabelo').val()}, 
+			function(html){
+					AngelGirls.Processando().hide();
+					if(html.trim().length>0){
+						jQuery('#listaResultado').html(html);
+						setTimeout(function(){
+							jQuery('.thumbnail').each(function(){
+								var $this = jQuery(this);
+								if($this.hasClass('fade') && !$this.hasClass('in')){
+									$this.addClass('in');
+								}
+							});
+						},500); 
+					}
+					else{
+						alert('N&atilde;o encontramos registros!');
+					}
+
+		},'html');
+		return false;
+	});
 });
 
 Amigos.ExibirModeloDetalhes = function (){	
@@ -100,6 +147,8 @@ Amigos.ExibirModeloDetalhes = function (){
 		jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
 	}
 };
+
+
 </script>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
@@ -150,7 +199,7 @@ Amigos.ExibirModeloDetalhes = function (){
 						<?php echo JHtml::_('form.token'); ?>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 							<label class="control-label"  for="busca"><?php echo JText::_('Procura por:'); ?></label>
-							<input class="form-control" style="width: 90%;" type="text" name="busca"  id="busca" size="32" maxlength="25" title="<?php echo JText::_('Nome de quem deseja localizar'); ?>" placeholder="<?php echo JText::_('Nome de quem deseja localizar'); ?>" />
+							<input class="form-control required" required="required" minlength="3"  data-validation="required length" data-validation-length="min3" style="width: 90%;" type="text" name="busca"  id="busca" size="32" maxlength="250" title="<?php echo JText::_('Nome de quem deseja localizar'); ?>" placeholder="<?php echo JText::_('Nome de quem deseja localizar'); ?>" />
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 							<label class="control-label"  for="tipo"><?php echo JText::_('Tipo Perfil:'); ?></label>
@@ -307,7 +356,7 @@ Amigos.ExibirModeloDetalhes = function (){
 						</div>
 						<div class="btn-toolbar pull-right" role="group">
 							<div class="btn-group" role="group">
-								<button  class="btn btn-success" type="submit"><span class="hidden-phone">Buscar</span>
+								<button  class="btn btn-success" type="submit" id="BuscarAmigos"><span class="hidden-phone">Buscar</span>
 									<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 								</button>
 							</div>

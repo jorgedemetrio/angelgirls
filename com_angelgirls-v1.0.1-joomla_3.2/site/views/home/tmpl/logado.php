@@ -43,7 +43,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 		switch( $conteudo->tipo){
 			case 'CONTENT';
 				$url = JRoute::_(ContentHelperRoute::getArticleRoute($conteudo->opt1, $conteudo->opt2, $conteudo->opt3));
-				$urlImg = $conteudo->op4!=''? JURI::base( true ) . '/' . $conteudo->op4:null;
+				$urlImg = $conteudo->opt4 != ''? JURI::base( true ) . '/' . $conteudo->opt4:null;
 				$titulo = $conteudo->titulo;
 				$botao = '';
 				$tipoGostar=null;

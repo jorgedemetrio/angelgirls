@@ -5136,9 +5136,8 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		
-		JRequest::setVar('amigos', $this->findPerfil($busca,  $estado, $id_cidade, $tipo, $nivel, $idade_init, $idade_fim, $pontos_init, $pontos_fim, $sexo
-, $altura_inicial, $altura_final, $peso_inicial, $peso_final, $calsado_inicial, $calsado_final, $olhos
-, $pele, $etinia, $cabelo, $tamanho_cabelo, $cor_cabelo));
+		JRequest::setVar('amigos', $this->findPerfil($busca,  $estado, $id_cidade, $tipo, $nivel, $idade_init, $idade_fim, $pontos_init, $pontos_fim, $sexo, 
+				$altura_inicial, $altura_final, $peso_inicial, $peso_final, $calsado_inicial, $calsado_final, $olhos, $pele, $etinia, $cabelo, $tamanho_cabelo, $cor_cabelo));
 		
 		require_once 'views/amigos/tmpl/lista_amigos.php';
 		exit();
@@ -5210,32 +5209,34 @@ class AngelgirlsController extends JControllerLegacy{
 		if(isset($peso_inicial) && $peso_inicial!="" && $peso_inicial>0){
 			$query->where ( ' p.peso <=  ' .$peso_inicial);
 		}
-		if(isset($calsado_inicial) && $calsado_inicial!="" && $calsado_inicial>0){
-			$query->where ( ' p.peso <=  ' .$calsado_inicial);
+		if(isset($peso_final) && $peso_final!="" && $peso_final>0){
+			$query->where ( ' p.peso <=  ' .$peso_final);
 		}
-		if(isset($calsado_final) && $calsado_final!="" && $calsado_final>0){
+		if(isset($calsado_inicial) && $calsado_inicial!="" && $calsado_inicial>0){
+			$query->where ( ' p.calsado <=  ' .$calsado_inicial);
+		}
+		if(isset($calsado_final) && $calsado_final != "" && $calsado_final>0){
 			$query->where ( ' p.calsado <=  ' .$calsado_final);
 		}
-		if(isset($pontos_fim) && $pontos_fim != "" && $pontos_fim>0){
-			$query->where ( ' p.calsado <=  ' .$pontos_fim);
+		
+		
+		if(isset($olhos) && $olhos!=""){
+			$query->where ( ' p.olhos =  ' .$db->quote($olhos));
 		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		if(isset($pele) && $pele!=""){
+			$query->where ( ' p.pele =  ' .$db->quote($pele));
 		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		if(isset($etinia) && $etinia!=""){
+			$query->where ( ' p.etinia =  ' .$db->quote($etinia));
 		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		if(isset($cabelo) && $cabelo!=""){
+			$query->where ( ' p.cabelo =  ' .$db->quote($cabelo));
 		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		if(isset($tamanho_cabelo) && $tamanho_cabelo!=""){
+			$query->where ( ' p.tamanho_cabelo =  ' .$db->quote($tamanho_cabelo));
 		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
-		}
-		if(isset($pontos_fim) && $pontos_fim!="" && $pontos_fim>0){
-			$query->where ( ' p.pontos <=  ' .$pontos_fim);
+		if(isset($cor_cabelo) && $cor_cabelo!=""){
+			$query->where ( ' p.cor_cabelo =  ' .$db->quote($cor_cabelo));
 		}
 		
 		
@@ -5244,12 +5245,13 @@ class AngelgirlsController extends JControllerLegacy{
 				OR upper(trim(p.email_principal)) like ' . $nomeFormatado .' OR upper(trim(p.usuario)) like ' . $nomeFormatado .')')
 		->where ( ' p.id_usuario <> ' . $user->id)
 		->where ( $db->quoteName ( 'p.status_dado' ) . ' IN (' . $db->quote(StatusDado::ATIVO) . ',' . $db->quote(StatusDado::NOVO) . ') ' )
-		->order('p.apelido');
+		->order('p.apelido, p.data_alterado DESC');
 
 		$query->limit(1000);
 		
 		$db->setQuery ( $query );
 		$result = $db->loadObjectList();
+		
 		return $result;
 	}
 	
