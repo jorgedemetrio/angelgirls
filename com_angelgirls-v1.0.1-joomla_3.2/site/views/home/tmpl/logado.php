@@ -56,7 +56,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 				$tipoGostar=null;
 				break;
 			case 'MODELO';
-				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->token.':modelo-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
+				$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$conteudo->token.':modelo-'.strtolower(str_replace(" ","-",$conteudo->titulo)),false);
 				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token.':thumb');
 				$titulo = 'Voc&ecirc; j&aacute; conhece a modelo ' . $conteudo->titulo . '?';
 				$botao = '<p class="text-center"><a href="'. $url .'" class="btn">Conhe&ccedil;a os trabalhos dessa musa.</a></p>';

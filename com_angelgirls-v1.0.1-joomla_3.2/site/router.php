@@ -12,15 +12,17 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+
+
 function AngelgirlsBuildRoute(&$query)
 {
 
-
+	
 	
 	$segments = array();
 
 	if(isset($query['task'])){
-		$segments[] = 'sex-'.$query['task'];
+		$segments[] = 'ag-'.$query['task'];
 		unset($query['task']);
 	};
 	
@@ -47,7 +49,7 @@ function AngelgirlsParseRoute($segments)
 	$vars = array();
 	// Count segments
 	$count = count($segments);
-	if(!(strpos($segments[0],'sex:')===false)){
+	if(!(strpos($segments[0],'ag:')===false)){
 
 		$vars['task'] = substr($segments[0],4);
 		//JRequest::setVar('task', $vars['task'] );
@@ -111,16 +113,11 @@ function AngelgirlsParseRoute($segments)
 			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;
 		case 'fotografo':
-			$id = explode(':', $segments[$count-1]);
-			$vars['id'] = (int) $id[0];
-			$vars['view'] = 'fotografo';
-			JRequest::setVar('id',$vars['id']);
-			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
-			break;
 		case 'modelo':
+		case 'visitante':
 			$id = explode(':', $segments[$count-1]);
 			$vars['id'] = (int) $id[0];
-			$vars['view'] = 'modelo';
+			$vars['view'] = $segments[0];
 			JRequest::setVar('id',$vars['id']);
 			JRequest::setVar('descricao',str_replace('-',' ',$id[1]));
 			break;

@@ -62,7 +62,7 @@ class AngelgirlsViewmodelo extends JViewLegacy
 		$pathway->addItem($descricao,'');
 		$document->setTitle($descricao );
 		$document->setDescription($objeto->meta_descricao);
-		$document->setMetadata('Keywords', 'modelo,'.$objeto->nome.','.str_replace(' ', ',',$sessao->nome));
+		$document->setMetadata('Keywords', 'modelo,'.$objeto->nome.','.str_replace(' ', ',',$objeto->nome));
 
 	}
 

@@ -125,7 +125,7 @@ $id = JRequest::getInt('id');
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
 			<?php 
-			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
+			$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$conteudo->id_modelo_principal.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo1)),false);
 			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_principal.':ico');
 			 ?>
 				<a href="<?php echo($url); ?>" href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo1);?>">
@@ -165,7 +165,7 @@ $id = JRequest::getInt('id');
 			<?php if(isset($conteudo->modelo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
 			<?php 
-				$url = JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
+				$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$conteudo->id_modelo_secundaria.':modelo-'.strtolower(str_replace(" ","-",$conteudo->modelo2)),false);
 				$urlImg = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id_modelo_secundaria.':ico');
 				?>
 				<a href="<?php echo($url); ?>" title="Modelo <?php echo($conteudo->modelo2);?>">
@@ -211,7 +211,7 @@ $id = JRequest::getInt('id');
 		<div class="row">
 			<div class="col col-xs-12 col-sm-2 col-md-2 col-lg-1 text-center">
 			<?php 
-			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
+			$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=fotografo&id='.$conteudo->id_fotografo_principal.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo1)),false);
 			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_principal.':ico');
 			?>
 				<a href="<?php echo($url); ?>" title="Fotografo(a) <?php echo($conteudo->fotografo1);?>">
@@ -252,7 +252,7 @@ $id = JRequest::getInt('id');
 			<?php if(isset($conteudo->fotografo2)) : ?>
 			<div class="col col-xs-12 col-sm-4 col-md-4 col-lg-1 text-center">
 			<?php 
-			$url = JRoute::_('index.php?option=com_angelgirls&task=carregarFotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
+			$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=fotografo&id='.$conteudo->id_fotografo_secundaria.':fotografo-'.strtolower(str_replace(" ","-",$conteudo->fotografo2)),false); 
 			$urlImg = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id_fotografo_secundaria.':ico');
 			?>
 				<a href="<?php echo($url); ?>"  title="Fotografo(a) <?php echo($conteudo->fotografo2);?>">

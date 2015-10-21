@@ -66,13 +66,32 @@ class AngelgirlsViewperfil extends JViewLegacy
 			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo)
 					.$sessao->meta_descricao.','.str_replace(' ', ',',$sessao->meta_descricao));
 		}
-		if($layout=='foto'){
+		elseif($layout=='foto'){
 			$sessao = JRequest::getVar('foto');
 			$descricao = $sessao->titulo;
 			$pathway->addItem('Foto: ' . $sessao->titulo,'');
 			$document->setTitle($sessao->titulo );
 			$document->setDescription($sessao->titulo);
 			$document->setMetadata('Keywords', 'young, baby, novinha, safafinha, fotos, gostosas, gatas, bonitas, gostosas, musas, divas, musa, diva,foto'.$sessao->titulo.','.str_replace(' ', ',',$sessao->titulo));
+		}
+		elseif($layout=='perfil'){
+			$layout = JRequest::getVar('layout');
+			$document = JFactory::getDocument();
+			$pathway = JFactory::getApplication()->getPathway();
+			
+			
+			$document->setMetadata('APPLICATION-NAME','Angel Girls');
+			
+			
+			$objeto = JRequest::getVar('perfil');
+
+			
+			$descricao = ucwords(strtolower($objeto->tipo)) . ' ' . ucwords(strtolower($objeto->apelido));
+			$pathway->addItem($descricao,'');
+			$document->setTitle($descricao);
+			$document->setDescription($objeto->meta_descricao);
+			$document->setMetadata('Keywords',  ucwords(strtolower($objeto->tipo)) . ' '. $objeto->apelido.','.ucwords(strtolower($objeto->tipo)) . ',' . 
+						$objeto->apelido.','.str_replace(' ', ',',$objeto->apelido).','.str_replace(' ', ',',$objeto->nome_completo));
 		}
 		else{
 			$document->setTitle(JText::_('Sessões / SETs de fotos sensuais com as modelos mais gatas, bonitas e gostosas - Musas AngelGirls'));

@@ -12,10 +12,16 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 }
 JFactory::getDocument()->addStyleSheet('components/com_angelgirls/assets/css/lightbox.css');
 
-$conteudo = JRequest::getVar('usuario');
+
+$posts = JRequest::getVar('posts');
+$conteudo = JRequest::getVar('perfil');
+//print_r($conteudo);exit();
+
 $ultimas = JRequest::getVar('ultimas');
 $vistas = JRequest::getVar('vistas');
 $gostaram = JRequest::getVar('gostaram');
+
+$tipo = ucwords(strtolower($conteudo->tipo));
 
 $total = JRequest::getVar('total');
 $preferidos = JRequest::getVar('preferidos');
@@ -24,27 +30,42 @@ $locacao = JRequest::getVar('locacao');
 $letraSexo = 'a';
 if(isset($conteudo->sexo)) :
 	if($conteudo->sexo == 'M'):
-		$letraSenhao='o';
+		$letraSexo='o';
 	endif;
 endif;
 
-$urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token.':thumb');
+$urlFoto ="";
+$urlFotoFull ="";
+if($conteudo->tipo=='MODELO'){ 
+	$urlFoto=JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token.':thumb',false);
+	$urlFotoFull =JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->token.':full',false);
+}
+elseif($conteudo->tipo=='FOTOGRAFO'){ 
+	$urlFoto=JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->token.':thumb',false);
+	$urlFotoFull =JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->token.':full',false);
+}
+else{
+	$urlFoto=JRoute::_('index.php?option=com_angelgirls&view=visitanb&task=loadImage&id='.$conteudo->token.':thumb',false);
+	$urlFotoFull =JRoute::_('index.php?option=com_angelgirls&view=visitanb&task=loadImage&id='.$conteudo->token.':full',false);
+}
+
+
 ?>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
-<?php AngelgirlsController::getBotoesPerfil($conteudo->id_usuario, 'MODELO', $conteudo->token, $conteudo->nome);?>	
+<?php AngelgirlsController::getBotoesPerfil($conteudo->id_usuario, $conteudo->tipo, $conteudo->token);?>	
 	
 		<div class="page-header">
-			<h1><small>Modelo</small> <?php echo($conteudo->nome);?> 
-			<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='modelo' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
+			<h1><small><?php echo($tipo); ?></small> <?php echo($conteudo->apelido);?> 
+			<div class="gostar" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='<?php echo(strtolower($tipo)); ?>' data-gostaram='<?php echo($conteudo->audiencia_gostou);?>'></div>
 		</h1>
 		</div>
-		<h3>Dados d<?php echo($letraSexo);?> modelo</h3>
+		<h3>Dados d<?php echo($letraSexo);?> <?php echo(strtolower($tipo)); ?></h3>
 		<div class="row">
 			<div class="col col-xs-12 col-sm-12 col-md-2 col-lg-2">	
-				<a class="example-image-link" href="<?php echo($urlFoto);?>" data-lightbox="example-set" data-title="<?php echo($conteudo->nome); ?>">
-					<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->nome);?>" alt="<?php echo($conteudo->nome);?>" class="img-responsive"/>
+				<a class="example-image-link" href="<?php echo($urlFotoFull);?>" data-lightbox="example-set" data-title="<?php echo($conteudo->apelido); ?>">
+					<img src="<?php echo($urlFoto );?>" title="<?php echo($conteudo->apelido);?>" alt="<?php echo($conteudo->apelido);?>" class="img-responsive"/>
 				</a>
 			</div>
 			<div class="col col-xs-12 col-sm-12 col-md-10 col-lg-10">
@@ -55,18 +76,6 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 					</div>
 				</div>
 				<?php endif;?>
-				<!-- 
-				`peso` NUMERIC(3) , 
-		
-				`calsa` NUMERIC(3) , 
-				`calsado` NUMERIC(3) , 
-				 
-				`pele` ENUM('CALCASIANA','BRANCA','PARDA','MORENA','NEGRA','AMARELA','OUTRO') , 
-				`etinia` ENUM('AZIATICA','AFRO','EURPEIA','ORIENTAL','LATINA','OUTRO'), 
-				`cabelo` ENUM('LIZO','ENCARACOLADO','CACHIADO','ONDULADOS','CRESPO','OUTRO','SEM'), 
-		
-				
-				 -->
 				<div class="table-responsive">
 					<table class="table table-hover" >
 						<thead>
@@ -83,6 +92,14 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 								<th>
 									Nascionalidade
 								</td>
+								<?php if(isset($conteudo->data_nascimento)):?>
+								<th>
+									Idade
+								</th>	
+								<?php endif;?>
+								<th>
+									Acessos
+								</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -110,6 +127,16 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 								<td style="text-transform: capitalize;">
 									<?php echo($conteudo->nascionalidade);?>
 								</td>
+								<?php if(isset($conteudo->data_nascimento)):?>
+								<td style="text-transform: capitalize;">
+									<?php 
+										echo( substr(intval(date('Ymd'))-intval( JFactory::getDate($conteudo->data_nascimento)->format('Ymd')),0,2) );
+									?>
+								</td>	
+								<?php endif;?>
+								<td>
+									<?php echo($conteudo->audiencia_view);?>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -128,7 +155,11 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 									Trabalhos
 								</th>
 								<th title="Fotografo que mais tem trabalhos">
+								<?php if($conteudo->tipo=='MODELO'):?>
 									Fotografo Fav.
+								<?php else:?>
+									Modelo Fav.
+								<?php endif;?>
 								</th>
 								<th title="Temas que mais usou em suas sess&otilde;es">
 									Tema Fav.
@@ -142,8 +173,8 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 							<tr>
 								<td style="text-transform: capitalize;">
 									<?php 
-									if(isset($conteudo->estado_nasceu) || isset($conteudo->cidade_nasceu)){
-									echo($conteudo->estado_nasceu .'/'. strtolower($conteudo->cidade_nasceu));
+									if(isset($conteudo->uf_nasceu) || isset($conteudo->cidade_nasceu)){
+									echo($conteudo->uf_nasceu .'/'. strtolower($conteudo->cidade_nasceu));
 									}?>
 								</td>
 								<td style="text-transform: capitalize;">
@@ -158,30 +189,39 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 								<td title="Fotografo que mais tem trabalhos" style="text-transform: capitalize;">
 									<?php
 									foreach($preferidos as $preferido):
-										$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=fotografo&id='.$preferido->token.':fotografo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
-										echo('<a href="'.$url.'">'.strtolower($preferido->nome).'</a><br/>');
+										if($conteudo->tipo=='MODELO'):
+											$url = JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=fotografo&id='.$preferido->token.':fotografo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
+											echo('<a href="'.$url.'">'.strtolower($preferido->nome).'</a><br/>');
+										else:
+											$url = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$preferido->token.':modelo-'.strtolower(str_replace(" ","-",$preferido->nome)),false);
+											echo('<a href="'.$url.'">'.strtolower($preferido->nome).'</a><br/>');
+										endif;
 									endforeach;
 									?>
 								</td>
 								<td title="Temas que mais usou em suas sess&otilde;es" style="text-transform: capitalize;">
-									<?php echo(strtolower($tema->nome));?>
+									<?php 
+									if(isset($tema) && isset($tema->nome)){
+										echo(strtolower($tema->nome));
+									}
+									?>
 								</td>
 								<td title="Loca&ccedil&atilde;o preferida " style="text-transform: capitalize;">
-									<?php echo(strtolower($locacao->nome));?>
+									<?php
+										if(isset($locacao) && isset($locacao->nome)){
+											echo(strtolower($locacao->nome));
+										}
+									?>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
+				<?php if($conteudo->tipo=='MODELO'): ?>
 				<div class="table-responsive">
 					<table class="table table-hover" >
 						<thead>
 							<tr>
-								<?php if(isset($conteudo->data_nascimento)):?>
-								<th>
-									Idade
-								</th>	
-								<?php endif;?>
 								<th>
 									Altura
 								</th>
@@ -204,13 +244,6 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 						</thead>
 						<tbody>
 							<tr>
-								<?php if(isset($conteudo->data_nascimento)):?>
-								<td style="text-transform: capitalize;">
-									<?php 
-										echo( substr(intval(date(Ymd))-intval( JFactory::getDate($conteudo->data_nascimento)->format('Ymd')),0,2) );
-									?>
-								</td>	
-								<?php endif;?>
 								</td>
 								<td style="text-transform: capitalize;">
 									<?php echo($conteudo->altura);?>
@@ -234,6 +267,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 						</tbody>
 					</table>
 				</div>
+				<?php endif;?>
 				<div class="row hidden-phone" style="margin-top: 15px;">
 					<div class="col col-xs-12 col-sm-4 col-md-2 col-lg-2 text-center" style="vertical-align: middle; height: 100%">
 						<div class="dropdown">
@@ -256,6 +290,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 				</div>	
 			</div>
 		</div>
+		<?php if($conteudo->tipo=='MODELO' || $conteudo->tipo=='FOTOGRAFO') : ?>
 		<h3>Ultimas sess&otilde;es</h3>
 		<div class="row">
 		<?php
@@ -330,6 +365,7 @@ $urlFoto = JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage
 		 endforeach;
 		?>
 		</div>
+		<?php endif;?>
 		<h3>Coment&aacute;rios</h3>
 		<div class="fb-comments" data-href="http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" data-width="100%" style="margin: 0 auto;"></div>
 	</div>

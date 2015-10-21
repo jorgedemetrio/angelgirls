@@ -1,4 +1,8 @@
-
-ALTER TABLE `ag_angelgirls_amizade` DROP FOREIGN KEY `ag_angelgirls_amizade_ibfk_1`;
-ALTER TABLE `ag_angelgirls_amizade` CHANGE COLUMN `id_usuario_solicidante` `id_usuario_solicitante` INT(11) NOT NULL ;
-ALTER TABLE `ag_angelgirls_amizade` ADD CONSTRAINT `ag_angelgirls_amizade_ibfk_1`  FOREIGN KEY (`id_usuario_solicitante`)  REFERENCES `ag_users` (`id`);
+CREATE TABLE `#__angelgirls_vt_visitante` ( 
+	`id_visitante` INT NOT NULL, 
+	`id_usuario` INT NOT NULL, 
+	`data_criado` DATETIME NOT NULL,
+	`host_ip` varchar(20) NOT NULL,
+	FOREIGN KEY (`id_usuario`) REFERENCES `#__users` (`id`),
+	PRIMARY KEY(`id_visitante`,`id_usuario`)
+) ENGINE = InnoDB   DEFAULT CHARSET=utf8;

@@ -56,8 +56,8 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 				?>
 					<img src="<?php echo($urlImg);?>" alt="<?php echo($modelo->nome);?>" style="width:100%">
 					<div class="carousel-caption">
-						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h3>
-						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>
+						<h3><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h3>
+						<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>
 					</div>
 				</div>
 				<div class="item item-carrossel" data-id-ver="3">
@@ -99,8 +99,8 @@ JFactory::getDocument()->addStyleDeclaration('.col-lg-1,.col-lg-10,.col-lg-11,.c
 	</div>
 	<div id="itensLateraisCarrossel" class="col col-xs-12 col-sm-12 col-md-4 col-lg-3 hidden-tablet" style="padding: 0; margin: 0;">
 		<div id="itemCarrossel1" class="itemCarroussel alert alert-danger" style="padding: 10px; margin: 0; border: 1px solid #000;">
-			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
-			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarModelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
+			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->nome);?></a></h5>
+			<p><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=modelo&task=modelo&id='.$modelo->token.':modelo-'.strtolower(str_replace(" ","-",$modelo->alias)),false)); ?>"><?php echo($modelo->descricao);?></a></p>			
 		</div>
 		<div id="itemCarrossel2" class="itemCarroussel alert alert-info" style="padding: 10px; margin: 0; border: 1px solid #000;">
 			<h5><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessao&id='.$sessao->id.':sessao-fotografica-'.strtolower(str_replace(" ","-",$sessao->alias)),false)); ?>"><?php echo($sessao->nome);?></a></h5>
