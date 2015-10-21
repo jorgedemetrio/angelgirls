@@ -64,7 +64,7 @@ class AngelgirlsViewsessoes extends JViewLegacy
 		
 		if($layout=='sessao'){
 			$sessao = JRequest::getVar('sessao');
-			$descricao = $sessao->meta_descrica . ' Data: ' . JFactory::getDate($sessao->publicar)->format('d/m/Y');
+			$descricao = $sessao->meta_descricao . ' Data: ' . JFactory::getDate($sessao->publicar)->format('d/m/Y');
 			$pathway->addItem($sessao->titulo,'');
 			$document->setTitle($sessao->titulo);
 			$document->setDescription($descricao);
