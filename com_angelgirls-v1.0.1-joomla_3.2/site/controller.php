@@ -1015,6 +1015,11 @@ class AngelgirlsController extends JControllerLegacy{
 					$tabelaVotoId='#__angelgirls_vt_album';
 					$tabelaRegistroId='#__angelgirls_album';
 				}
+				elseif($view=='post'){
+					$campoId='id_post';
+					$tabelaVotoId='#__angelgirls_vt_post';
+					$tabelaRegistroId='#__angelgirls_post';
+				}
 				if(isset($campoId) && isset($tabelaVotoId) &&	isset($tabelaRegistroId)){
 					$query = $db->getQuery ( true );
 					$query->select('`f`.`data_criado` as `data`')
@@ -7121,14 +7126,59 @@ class AngelgirlsController extends JControllerLegacy{
 			}
 			
 			$query = $db->getQuery ( true );
-			$query->select('id, token, tipo,  titulo, descricao, prioridade, data_publicado, audiencia, acessos, rnd, opt1, opt2, opt3, opt4')
-					->from ('#__timeline')
-					->where ( '(tipo=\'CONTENT\' AND  ' . $db->quoteName ( 'audiencia' ) . ' IN (' . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
+			$query->select("t.id, t.token, t.tipo,  t.titulo, t.descricao, t.prioridade, t.data_publicado, t.audiencia, t.acessos, t.rnd, 
+						t.opt1, t.opt2, t.opt3, t.opt4,
+					CASE t.tipo  
+						WHEN 'MODELO'  THEN
+							CASE isnull(`vt_m`.`data_criado` ) 
+								WHEN 1 THEN 
+									'NAO' 
+								ELSE 
+									'SIM' 
+							END 
+						WHEN  'SESSOES'  THEN
+							CASE isnull(`vt_s`.`data_criado` ) 
+								WHEN 1 THEN 
+									'NAO' 
+								ELSE 
+									'SIM' 
+							END 
+						WHEN  'POST'  THEN
+							CASE isnull(`vt_p`.`data_criado` ) 
+								WHEN 1 THEN 
+									'NAO' 
+								ELSE 
+									'SIM' 
+							END 
+						WHEN  'ALBUM'  THEN
+							CASE isnull(`vt_a`.`data_criado` ) 
+								WHEN 1 THEN 
+									'NAO' 
+								ELSE 
+									'SIM' 
+							END 
+						ELSE
+							'NAO'
+						END 
+					AS `gostei`")
+					->from ('#__timeline as t')
+					->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$perfil->id_usuario.') vt_m ON t.id = vt_m.id_modelo ')
+					->join ( 'LEFT', '(SELECT data_criado, id_sessao FROM #__angelgirls_vt_sessao WHERE id_usuario='.$perfil->id_usuario.') vt_s ON t.id = vt_s.id_sessao ')
+					->join ( 'LEFT', '(SELECT data_criado, id_post FROM #__angelgirls_vt_post WHERE id_usuario='.$perfil->id_usuario.') vt_p ON t.id = vt_p.id_post ')
+					->join ( 'LEFT', '(SELECT data_criado, id_album FROM #__angelgirls_vt_album WHERE id_usuario='.$perfil->id_usuario.') vt_a ON t.id = vt_a.id_album ')
+					->where ( "((t.tipo='CONTENT' AND  t.audiencia IN (" . NivelAcesso::ACESSO_PUBLICO . ', ' . NivelAcesso::ACESSO_GUEST . 
 							( $perfil->tipo=='MODELO' ? ',' . NivelAcesso::ACESSO_MODELO : $perfil->tipo=='FOTOGRAFO'?','.NivelAcesso::ACESSO_FOTOGRAFO:'')
-							. ') OR (tipo<>\'CONTENT\'))' )
-					->setLimit(15);
+							. ')) OR (t.tipo<>\'CONTENT\'))' )
+					->where ( "((t.tipo='POST' AND (t.opt1 = ".$perfil->id_usuario." OR t.opt1 in (select id_usuario_seguido as opt1 FROM #__angelgirls_seguindo WHERE id_usuario_seguidor = ".$perfil->id_usuario.") )) OR (tipo<>'POST'))")
+					->setLimit(24);
 			$db->setQuery ( $query );
 			$result = $db->loadObjectList();
+			
+			
+			
+
+			
+			
 			JRequest::setVar ( 'conteudos', $result );
 		}catch(Exception $e) {
 			JLog::add($e->getMessage(), JLog::WARNING);
@@ -8294,111 +8344,143 @@ class AngelgirlsController extends JControllerLegacy{
 /**************************************************************************************************************/
 /************************************************      POST    ************************************************/
 /**************************************************************************************************************/
-	public function salvarPost(){
+	public function salvarPostJson(){
 		$json= "";
-		//json_encode($mensage);
+
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$perfil = $this::getPerfilLogado();
-		$texto = JRequest::getInt('texto', '', 'POST' );
-		$id = JRequest::getInt('id', null, 'POST' );
+		$texto = trim(JRequest::getString('texto', '', 'POST' ));
+		$id = JRequest::getString('id', null, 'POST' );
 		
-		if(!isset($id)){
-			$query = $db->getQuery ( true );
-			$query->insert( $db->quoteName ( '#__angelgirls_post' ) )
-			->columns (array (
-					$db->quoteName ( 'id_usuario' ),
-					$db->quoteName ( 'texto' ),
-					$db->quoteName ( 'audiencia_gostou' ),
-					$db->quoteName ( 'audiencia_ngostou' ),
-					$db->quoteName ( 'audiencia_view' ),
-					$db->quoteName ( 'status_dado' ),
-					$db->quoteName ( 'id_usuario_criador' ),
-					$db->quoteName ( 'id_usuario_alterador' ),
-					$db->quoteName ( 'data_criado' ),
-					$db->quoteName ( 'data_alterado' ),
-					$db->quoteName ( 'host_ip_criador' ),
-					$db->quoteName ( 'host_ip_alterador' ),
-					))
-					->values(implode(',', array(
-							$user->id,
-							$db->quote($texto),
-							0,0,0,
-							$db->quote(StatusDado::NOVO),
-							$user->id,
-							$user->id,
-							'NOW()',
-							'NOW()',
-							$db->quote($this->getRemoteHostIp()),
-							$db->quote($this->getRemoteHostIp())
-							
-					)));
-			$db->setQuery( $query );
-			if($db->execute()){
-				$json='{"ok":"ok"}';
+		$erro = false;
+		
+		if($texto=='' || !isset($texto)){
+			$json='{"ok":"nok", "mensagem":"Mensgaem obrigat&aacute;rio!"}';
+		}
+		
+		if($json==''){
+			if(!isset($id) || $id <=0){
+				$query = $db->getQuery ( true );
+				$query->insert( $db->quoteName ( '#__angelgirls_post' ) )
+				->columns (array (
+						$db->quoteName ( 'id_usuario' ),
+						$db->quoteName ( 'texto' ),
+						$db->quoteName ( 'audiencia_gostou' ),
+						$db->quoteName ( 'audiencia_ngostou' ),
+						$db->quoteName ( 'audiencia_view' ),
+						$db->quoteName ( 'status_dado' ),
+						$db->quoteName ( 'id_usuario_criador' ),
+						$db->quoteName ( 'id_usuario_alterador' ),
+						$db->quoteName ( 'data_criado' ),
+						$db->quoteName ( 'data_alterado' ),
+						$db->quoteName ( 'token' ),
+						$db->quoteName ( 'host_ip_criador' ),
+						$db->quoteName ( 'host_ip_alterador' ),
+						))
+						->values(implode(',', array(
+								$user->id,
+								$db->quote($texto),
+								0,0,0,
+								$db->quote(StatusDado::NOVO),
+								$user->id,
+								$user->id,
+								'NOW()',
+								'NOW()',
+								"REPLACE(UUID(),'-','')",
+								$db->quote($this->getRemoteHostIp()),
+								$db->quote($this->getRemoteHostIp())
+								
+						)));
+				$db->setQuery( $query );
+				try{
+					if($db->execute()){
+						$id = $db->insertid();
+						$query->select("token")
+						->from ('#__angelgirls_post')
+						->where ($db->quoteName ( 'id' ) . ' =  ' .$id)
+						->setLimit(1);
+						$db->setQuery ( $query );
+						$objeto = $db->loadObjectList();
+						
+						$json='{"ok":"ok","id1":"'.$id.'","id2":"'.$objeto->token.'"}';
+					}
+					else{
+						$json='{"ok":"nok", "mensagem":"Problema ao tentar salvar o Post"}';
+					}
+				}
+				catch(Exception $e){
+					JLog::add($e->getMessage(), JLog::WARNING);
+					$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
+				}
+				$this->LogQuery($query);
 			}
 			else{
-				$json='{"ok":"nok"}';
+				$query = $db->getQuery ( true );
+				$query->update($db->quoteName('#__angelgirls_post'))
+				->set(array(
+					$db->quoteName ( 'texto' ) . ' = ' . $db->quote($texto),
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+					$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
+					$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
+				))
+				->where(' id_usuario = ' . $user->id) 
+				->where(' token = ' . $db->quote($id));
+				
+				$db->setQuery( $query );
+				try{
+					if($db->execute()){
+						$json='{"ok":"ok","id":"'.$id.'"}';
+					}
+					else{
+						$json='{"ok":"nok", "mensagem":"Problema ao tentar salvar o Post"}';
+					}
+				}
+				catch(Exception $e){
+					JLog::add($e->getMessage(), JLog::WARNING);
+					$json = '{"ok":"nok", "mensagem":"'.$e->getMessage().'"}';
+				}
+				$this->LogQuery($query);
 			}
-			$this->LogQuery($query);
 		}
-		else{
-			$query = $db->getQuery ( true );
-			$query->update($db->quoteName('#__angelgirls_post'))
-			->set(array(
-				$db->quoteName ( 'texto' ) . ' = ' . $db->quote($texto),
-				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
-				$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
-				$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
-			))
-			->where(' id_usuario = ' . $user->id) 
-			->where(' id = ' . $id);
-			
-			$db->setQuery( $query );
-			if($db->execute()){
-				$json='{"ok":"ok"}';
-			}
-			else{
-				$json='{"ok":"nok"}';
-			}
-			$this->LogQuery($query);
-		}
+		//json_encode($mensage);
 		header('Content-Type: application/json; charset=utf8');
 		header("Content-Length: " . strlen($json));
 		echo $json;
 		exit();
 	}
 	
-	public function excluirPost(){
+	public function excluirPostJson(){
 		//json_encode($mensage);
 		$user = JFactory::getUser();
 		$db = JFactory::getDbo ();
 		$perfil = $this::getPerfilLogado();
-		$texto = JRequest::getInt('texto', '', 'POST' );
-		$id = JRequest::getInt('id', null, 'POST' );
-		
-		$json= "";
-		$query = $db->getQuery ( true );
-		$query->update($db->quoteName('#__angelgirls_post'))
-		->set(array(
-				$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
-				$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
-				$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
-				$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
-		))
-		->where(' id_usuario = ' . $user->id)
-		->where(' id = ' . $id);
-			
-		$db->setQuery( $query );
-		if($db->execute()){
-			$json='{"ok":"ok"}';
+		$id = JRequest::getString('id', null, 'POST' );
+		if(isset($id)){
+			$json= "";
+			$query = $db->getQuery ( true );
+			$query->update($db->quoteName('#__angelgirls_post'))
+			->set(array(
+					$db->quoteName ( 'status_dado' ) . ' = ' . $db->quote(StatusDado::REMOVIDO),
+					$db->quoteName ( 'id_usuario_alterador' ) . ' = ' . $user->id,
+					$db->quoteName ( 'data_alterado' ) . ' =  NOW() ',
+					$db->quoteName ( 'host_ip_alterador' ) .' = ' . $db->quote($this->getRemoteHostIp())
+			))
+			->where(' id_usuario = ' . $user->id)
+			->where(' token = ' . $db->quote($id));
+				
+			$db->setQuery( $query );
+			if($db->execute()){
+				$json='{"ok":"ok"}';
+			}
+			else{
+				$json='{"ok":"nok"}';
+			}
+			$this->LogQuery($query);
 		}
 		else{
 			$json='{"ok":"nok"}';
 		}
-		$this->LogQuery($query);
-		
-		
 		
 		
 		header('Content-Type: application/json; charset=utf8');
@@ -8406,6 +8488,8 @@ class AngelgirlsController extends JControllerLegacy{
 		echo $json;
 		exit();
 	}
+	
+	
 	
 	
 }

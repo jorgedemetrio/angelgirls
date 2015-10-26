@@ -112,12 +112,9 @@ AngelGirls.Processando = function () {
 document.AngelGirls = AngelGirls;
 
 
-AngelGirls.ResetConfig = function(){
+AngelGirls.ResetGostar = function(){
 	jQuery('.gostar').each(function(){
 		$objetoRef = jQuery(this);
-		
-
-
 		if(!$objetoRef.attr('data-checado') && $objetoRef.attr('data-checado')!='SIM'){
 			if($objetoRef.attr('data-gostei')=='SIM'){
 				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
@@ -128,7 +125,6 @@ AngelGirls.ResetConfig = function(){
 			$objetoRef.attr('data-checado','SIM');
 			$objetoRef.click(function(){
 				$objeto = jQuery(this);
-
 				jQuery.post(document.PathBase+"index.php?option=com_angelgirls&view="+$objeto.attr('data-area')+"&task=gostarJson&id="+$objeto.attr('data-id')+":voto", {},function(dado){
 					if(dado.status=="ok"){
 						if($objeto.attr('data-gostei')=='SIM'){
@@ -153,6 +149,10 @@ AngelGirls.ResetConfig = function(){
 			});
 		}
 	});	
+};
+
+AngelGirls.ResetConfig = function(){
+	AngelGirls.ResetGostar();
 	jQuery('.checkbox-iten').each(function(){
 		$objetoRef = jQuery(this);
 		$hiddenRef = jQuery('#'+$objetoRef.attr('data-hidden-id'))
