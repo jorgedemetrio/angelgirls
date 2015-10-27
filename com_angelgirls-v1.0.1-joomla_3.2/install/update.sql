@@ -36,4 +36,15 @@ ALTER TABLE `#__angelgirls_foto_album`
 ADD UNIQUE INDEX `token_UNIQUE` (`token` ASC);
 
 
+ALTER TABLE `#__angelgirls_modelo` 
+ADD COLUMN `nivel` INT NULL DEFAULT 0 AFTER `token`;
+
+ALTER TABLE `#__angelgirls_fotografo` 
+ADD COLUMN `nivel` INT NULL DEFAULT 0 AFTER `token`;
+
+ALTER TABLE `#__angelgirls_visitante` 
+ADD COLUMN `nivel` INT NULL DEFAULT 0 AFTER `token`;
+
+
+
 

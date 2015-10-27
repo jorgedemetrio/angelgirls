@@ -16,8 +16,6 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
 JHTML::_('behavior.calendar');
-//JHtml::_('dropdown.init');
-//JHtml::_('behavior.keepalive');
 
 if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	$mainframes = JFactory::getApplication ();
@@ -25,28 +23,15 @@ if (JRequest::getVar ( 'task' ) == null || JRequest::getVar ( 'task' ) == '') {
 	exit ();
 }
 
-
-
 $amigos = JRequest::getVar('amigos');
-$perfil = JRequest::getVar('perfil');
-$perfil = JRequest::getVar('perfil');
 $perfil = JRequest::getVar('perfil');
 
 $this->item = $perfil; 
-
 $ufs = JRequest::getVar('ufs');
-
-
-
-
-
 
 JFactory::getDocument()->addStyleSheet(JURI::base( true ).'/components/com_angelgirls/assets/css/form.css');
 JFactory::getDocument()->addStyleSheet('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/theme-default.min.css');
-
-
 JFactory::getDocument()->addScript(JURI::base( true ).'/components/com_angelgirls/assets/js/amigos.js?v='.VERSAO_ANGELGIRLS);
-
 
 //Mais informações da API em http://formvalidator.net/
 JFactory::getDocument()->addScript('//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.2.43/jquery.form-validator.min.js');
@@ -59,97 +44,12 @@ JFactory::getDocument()->addStyleDeclaration('
 }
 ');
 JFactory::getDocument()->addScriptDeclaration('
-
 var lidos = 0;
 var carregando=false;
-		
 Amigos.AceitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=aceitarAmizade', false ) . '";
 Amigos.RejeitarAmizadeURL = "' . JRoute::_ ( 'index.php?option=com_angelgirls&view=amigos&task=rejeitarSolicitacaoAmizade', false ) . '";
 Amigos.LoadAmigosURL = "' . JRoute::_('index.php?option=com_angelgirls&view=amigos&task=AmigosHTML',false).'";
-');
-
- ?>
-<script>
-jQuery(document).ready(function(){
-
-	jQuery('#nivel').change(function(){
-		jQuery('#nivelVal').html(
-				jQuery('#nivel').val()==0?'Todos':jQuery('#nivel').val()); 
-	});
-
-	jQuery('#tipo').change(function(){
-		if(jQuery('#tipo').val()=='MODELO'){
-			jQuery('#extraModeloFiltros').css('display','none');
-			jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
-			jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
-			jQuery('#extraModelo').fadeIn(500);
-		}
-	});
-
-	jQuery('#dadosForm').submit(function(){
-		AngelGirls.Processando().show();
-		jQuery('#listaResultado').html('');
-		jQuery.post('<?php echo(JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilHtml',false));?>', 
-				{busca: jQuery('#busca').val(),
-					tipo: jQuery('#tipo').val(),
-					estado: jQuery('#estado').val(),
-					id_cidade: jQuery('#id_cidade').val(),
-					nivel: jQuery('#nivel').val(),
-					idade_init: jQuery('#idade_init').val(),
-					idade_fim: jQuery('#idade_fim').val(),
-					pontos_init: jQuery('#pontos_init').val(),
-					pontos_fim: jQuery('#pontos_fim').val(),
-					sexo: jQuery('#sexo').val(),
-					altura_inicial: jQuery('#altura_inicial').val(),
-					altura_final: jQuery('#altura_final').val(),
-					peso_inicial: jQuery('#peso_inicial').val(),
-					peso_final: jQuery('#peso_final').val(),
-					calsado_inicial: jQuery('#calsado_inicial').val(),
-					calsado_final: jQuery('#calsado_final').val(),
-					olhos: jQuery('#olhos').val(),
-					pele: jQuery('#pele').val(),
-					etinia: jQuery('#etinia').val(),
-					cabelo: jQuery('#cabelo').val(),
-					tamanho_cabelo: jQuery('#tamanho_cabelo').val(),
-					cor_cabelo: jQuery('#cor_cabelo').val()}, 
-			function(html){
-					AngelGirls.Processando().hide();
-					if(html.trim().length>0){
-						jQuery('#listaResultado').html(html);
-						setTimeout(function(){
-							jQuery('.thumbnail').each(function(){
-								var $this = jQuery(this);
-								if($this.hasClass('fade') && !$this.hasClass('in')){
-									$this.addClass('in');
-								}
-							});
-						},500); 
-					}
-					else{
-						alert('N&atilde;o encontramos registros!');
-					}
-
-		},'html');
-		return false;
-	});
-});
-
-Amigos.ExibirModeloDetalhes = function (){	
-	if(jQuery('#iconeFiltroModelo').hasClass('glyphicon-plus')){
-		jQuery('#extraModeloFiltros').fadeIn(500);
-		
-		jQuery('#iconeFiltroModelo').removeClass('glyphicon-plus');
-		jQuery('#iconeFiltroModelo').addClass('glyphicon glyphicon-minus');
-	}
-	else{
-		jQuery('#extraModeloFiltros').fadeOut(500);
-		jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
-		jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
-	}
-};
-
-
-</script>
+Amigos.URLBuscaPerfil = "'.JRoute::_('index.php?option=com_angelgirls&view=perfil&task=buscarPerfilHtml',false).'";');?>
 <div class="row">
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">

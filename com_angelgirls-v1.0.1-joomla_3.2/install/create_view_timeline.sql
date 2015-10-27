@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW #__timeline (id, token, tipo,  titulo, descricao, prioridade, data_publicado, 
-	audiencia, acessos, rnd, opt1, opt2, opt3, opt4) AS
+	audiencia, acessos, autor1, autorid1, autor2, autorid2, rnd, opt1, opt2, opt3, opt4) AS
 (SELECT 
 	s.id as id, 
 	s.token as token, 
@@ -10,13 +10,19 @@ CREATE OR REPLACE VIEW #__timeline (id, token, tipo,  titulo, descricao, priorid
     s.publicar as data_publicado, 
 	s.audiencia_gostou as audiencia,
     s.audiencia_view as acessos,
+	f.nome_artistico autor1, 
+	f.token autorid1, 
+	m.nome_artistico autor2, 
+	m.token	autorid2,
     RAND() as rnd,
-    token AS opt1,
+    '' AS opt1,
     '' AS opt2,
     '' AS opt3,
     '' AS opt4
 FROM 
-	#__angelgirls_sessao as s
+	#__angelgirls_sessao as s inner join
+	#__angelgirls_modelo as m on s.id_modelo_principal = m.id inner join
+	#__angelgirls_fotografo as f on s.id_fotografo_principal = f.id
 WHERE
 	s.status_dado =  'PUBLICADO' AND
     s.publicar <= NOW() 
@@ -33,13 +39,18 @@ UNION
     s.publish_up as data_publicado, 
 	s.access as audiencia,
     s.hits as acessos,
+	u.name autor1, 
+	u.id autorid1, 
+	s.created_by_alias autor2, 
+	null autorid2,
 	RAND() as rnd,
-    concat(id , ':' , alias) AS opt1,
-    catid AS opt2,
+    concat(s.id , ':' , s.alias) AS opt1,
+    s.catid AS opt2,
     language AS opt3,
-	MID(`images`,LOCATE(':',`images`)+2, LOCATE(',',`images`)-LOCATE(':',`images`)-2) AS opt4
+	MID(`images`,LOCATE(':',s.`images`)+2, LOCATE(',',s.`images`)-LOCATE(':',s.`images`)-2) AS opt4
 FROM 
-	#__content as s
+	#__content as s inner join
+	#__users u on s.created_by = u.id 
 WHERE
 	s.state =  1 AND
     s.publish_up <= NOW()   AND 
@@ -58,6 +69,10 @@ UNION
     s.data_criado as data_publicado, 
 	s.audiencia_gostou as audiencia,
     s.audiencia_view as acessos,
+	null autor1, 
+	null autorid1, 
+	null autor2, 
+	null autorid2,
 	RAND() as rnd,
     '' AS opt1,
     '' AS opt2,
@@ -84,17 +99,21 @@ UNION
     s.data_criado as data_publicado, 
 	s.audiencia_gostou as audiencia,
     s.audiencia_view as acessos,
+	p.apelido autor1, 
+	p.token autorid1, 
+	p.tipo autor2, 
+	p.id autorid2,
 	RAND() as rnd,
-    u.id AS opt1,
-    u.name AS opt2,
+    p.id_usuario AS opt1,
+    '' AS opt2,
     '' AS opt3,
     '' AS opt4
 FROM 
 	#__angelgirls_post as s INNER JOIN 
-    #__users as u ON s.id_usuario = u.id
+    #__angelgirls_perfil as p on s.id_usuario = p.id_usuario
 WHERE
 	s.status_dado NOT IN  ('REMOVIDO','REPROVADO') AND
-    u.block <> 1
+    p.status_dado NOT IN  ('REMOVIDO','REPROVADO') 
 ORDER BY 
 	s.data_alterado DESC)   
 UNION 
@@ -108,15 +127,21 @@ UNION
     s.data_criado as data_publicado, 
 	s.audiencia_gostou as audiencia,
     s.audiencia_view as acessos,
+	p.apelido autor1, 
+	p.token autorid1, 
+	p.tipo autor2, 
+	p.id autorid2,
 	RAND() as rnd,
-    '' AS opt1,
+    p.id_usuario AS opt1,
     '' AS opt2,
     '' AS opt3,
     '' AS opt4
 FROM 
-	#__angelgirls_album as s 
+	#__angelgirls_album as s INNER JOIN 
+    #__angelgirls_perfil as p on s.id_usuario_criador = p.id_usuario
 WHERE
-	s.status_dado NOT IN  ('REMOVIDO','REPROVADO') 
+	s.status_dado NOT IN  ('REMOVIDO','REPROVADO') AND
+	p.status_dado NOT IN  ('REMOVIDO','REPROVADO')
 ORDER BY 
 	s.s.data_alterado DESC)  
 UNION 
@@ -130,6 +155,10 @@ UNION
     s.inicio as data_publicado, 
 	0 as audiencia,
     0 as acessos,
+	null autor1, 
+	null autorid1, 
+	null autor2, 
+	null autorid2,
 	RAND() as rnd,
     '' AS opt1,
     '' AS opt2,
@@ -154,6 +183,10 @@ UNION
     IF( FLOOR((RAND() * 5)) >3, NOW(), s.publish_up) as data_publicado, 
 	s.clicks as audiencia,
     s.track_impressions as acessos,
+	null autor1, 
+	null autorid1, 
+	null autor2, 
+	null autorid2,
 	RAND() as rnd,
     s.clickurl AS opt1,
     s.alias AS opt2,
