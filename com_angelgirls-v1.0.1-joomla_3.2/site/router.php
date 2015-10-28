@@ -24,7 +24,7 @@ function AngelgirlsBuildRoute(&$query)
 		array_push($segments, 'ag-'.$query['task']);
 		unset($query['task']);
 	};
-	if(!isset($query['view']) && $query['view']=='home' && isset($query['task'])){
+	if(isset($query['view']) && $query['view']=='home' && isset($query['task'])){
 		array_push($segments,  'ag-homepage');	
 	}
 	
