@@ -17,23 +17,24 @@ defined('_JEXEC') or die('Restricted access');
 function AngelgirlsBuildRoute(&$query)
 {
 
-	
-	
+
 	$segments = array();
 
 	if(isset($query['task'])){
-		$segments[] = 'ag-'.$query['task'];
+		array_push($segments, 'ag-'.$query['task']);
 		unset($query['task']);
 	};
-	
+	if(!isset($query['view']) && $query['view']=='home' && isset($query['task'])){
+		array_push($segments,  'ag-homepage');	
+	}
 	
 	if(isset($query['view'])){
-		$segments[] = $query['view'];
+		array_push($segments,  $query['view']);
 		unset($query['view']);
 	};
 
 	if(isset($query['id'])){
-		$segments[] = $query['id'];
+		array_push($segments,  $query['id']);
 		unset($query['id']);
 	};
 
@@ -49,11 +50,13 @@ function AngelgirlsParseRoute($segments)
 	$vars = array();
 	// Count segments
 	$count = count($segments);
+	
+	
 	if(!(strpos($segments[0],'ag:')===false)){
 
-		$vars['task'] = substr($segments[0],4);
+		$vars['task'] = substr($segments[0],3);
 		//JRequest::setVar('task', $vars['task'] );
-		
+		//print_r($vars);exit();
 		//unset($segments[0]);
 		$valor = array();
 		foreach($segments as $val){
