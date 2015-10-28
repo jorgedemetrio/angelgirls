@@ -32,7 +32,10 @@ $perfil = JRequest::getVar ( 'perfil' );
 		function(dado){
 			AngelGirls.Processando().hide();
 			if(dado.ok=='ok'){
-				jQuery('.content').first().before('<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="'+dado.id1+'" data-tipo="POST" data-data="'+(new Date())+'"><div class="thumbnail"><div class="caption" style="display:inline-block;"><h4><div class="gostar pull-right" data-gostei="NAO" data-id="'+dado.id2+'" data-area="POST" data-gostaram="0"></div></h4><p>'+jQuery('#texto').val()+'</p></div></div></div>');
+				var $combo = '<div class="dropdown pull-right"><button class="btn btn-default dropdown-toggle" type="button" id="opcoesPost" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ' +
+					  	' title="Op&ccedil;&otile;es de edi&ccedil;&atile;o"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button> <ul class="dropdown-menu" aria-labelledby="opcoesPost"> ' +
+					    '<li><a href="JavaScript: removerPost(\''+dado.id2+'\')"><span class="glyphicon glyphicon-remove-circle" style="color:red"></span> Remover</a></li></ul></div>';
+				jQuery('.content').first().before('<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="'+dado.id2+'" data-tipo="POST" data-data="'+(new Date())+'"><div class="thumbnail">'+$combo+'<div class="caption" style="display:inline-block;"><h4><div class="gostar pull-right" data-gostei="NAO" data-id="'+dado.id2+'" data-area="POST" data-gostaram="0"></div></h4><p>'+jQuery('#texto').val()+'</p></div></div></div>');
 				AngelGirls.ResetGostar();
 				jQuery('#texto').val('');
 			}

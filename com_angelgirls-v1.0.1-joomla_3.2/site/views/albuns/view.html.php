@@ -19,7 +19,7 @@ JHtml::_('jquery.ui');
 /**
  * Temas View
  */
-class AngelgirlsViewalbum extends JViewLegacy
+class AngelgirlsViewalbuns extends JViewLegacy
 {
 	/**
 	 * Temas view display method

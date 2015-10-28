@@ -36,18 +36,18 @@ if(!isset($perfil)){
 		<li role="presentation"<?php echo($view=='sessoes'?'  class="active"':'');?>>
 		  	<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="sessoesAprovar"></span><span class="hidden-phone"> Sess&otilde;es</span></a>
 		    <ul class="dropdown-menu">
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarEditarSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Nova Sess&atilde;o</a></li>
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarMinhasSessoes'));?>">Minhas Sess&otilde;es</a></li>
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarSessoes'));?>">Todas</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Nova Sess&atilde;o</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarMinhasSessoes'));?>">Minhas Sess&otilde;es</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarSessoes'));?>">Todas</a></li>
 	    	</ul>
 	  	</li>
 	<?php endif;?>
 		<li role="presentation">
 		  	<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge"><span class="glyphicon glyphicon-picture"></span></span><span class="hidden-phone"> Albuns</span></a>
 		    <ul class="dropdown-menu">
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=novaSessao'));?>"><span class="glyphicon glyphicon-plus"></span> Novo Album</a></li>
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarAlbuns&somente_minha=SIM'));?>">Meus Albuns</a></li>
-      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&task=carregarAlbuns'));?>">Todos</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=album&task=carregarEditarAlbum'));?>"><span class="glyphicon glyphicon-plus"></span> Novo Album</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=album&task=carregarMeusAlbuns'));?>">Meus Albuns</a></li>
+      			<li><a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=album&task=carregarAlbuns'));?>">Todos</a></li>
 	    	</ul>
 		</li>
 	</ul>
