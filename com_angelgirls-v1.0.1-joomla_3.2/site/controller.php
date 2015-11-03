@@ -5649,12 +5649,12 @@ class AngelgirlsController extends JControllerLegacy{
 		$peso_final = JRequest::getInt('peso_final',null);
 		$calsado_inicial = JRequest::getInt('calsado_inicial',null);
 		$calsado_final = JRequest::getInt('calsado_final',null);
-		$olhos = JRequest::getString('olhos',null);
-		$pele = JRequest::getString('pele',null);
-		$etinia = JRequest::getString('etinia',null);
-		$cabelo = JRequest::getString('cabelo',null);
-		$tamanho_cabelo = JRequest::getString('tamanho_cabelo',null);
-		$cor_cabelo = JRequest::getString('cor_cabelo',null);
+		$olhos = JRequest::getVar('olhos',null);
+		$pele = JRequest::getVar('pele',null);
+		$etinia = JRequest::getVar('etinia',null);
+		$cabelo = JRequest::getVar('cabelo',null);
+		$tamanho_cabelo = JRequest::getVar('tamanho_cabelo',null);
+		$cor_cabelo = JRequest::getVar('cor_cabelo',null);
 		
 		
 		
@@ -5741,22 +5741,82 @@ class AngelgirlsController extends JControllerLegacy{
 		
 		
 		if(isset($olhos) && $olhos!=""){
-			$query->where ( ' p.olhos =  ' .$db->quote($olhos));
+			if(is_array($olhos)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($olhos); $i++ ){
+					$queryVar = $queryVar . ' p.olhos = ' .$db->quote($olhos[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.olhos =  ' .$db->quote($olhos));
+			}
 		}
 		if(isset($pele) && $pele!=""){
-			$query->where ( ' p.pele =  ' .$db->quote($pele));
+			if(is_array($pele)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($pele); $i++ ){
+					$queryVar = $queryVar . ' p.pele = ' .$db->quote($pele[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.pele =  ' .$db->quote($pele));
+			}
 		}
 		if(isset($etinia) && $etinia!=""){
-			$query->where ( ' p.etinia =  ' .$db->quote($etinia));
+			if(is_array($etinia)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($etinia); $i++ ){
+					$queryVar = $queryVar . ' p.etinia = ' .$db->quote($etinia[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.etinia =  ' .$db->quote($etinia));
+			}
 		}
 		if(isset($cabelo) && $cabelo!=""){
-			$query->where ( ' p.cabelo =  ' .$db->quote($cabelo));
+			if(is_array($cabelo)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($cabelo); $i++ ){
+					$queryVar = $queryVar . ' p.cabelo = ' .$db->quote($cabelo[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.cabelo =  ' .$db->quote($cabelo));
+			}
 		}
 		if(isset($tamanho_cabelo) && $tamanho_cabelo!=""){
-			$query->where ( ' p.tamanho_cabelo =  ' .$db->quote($tamanho_cabelo));
+			if(is_array($tamanho_cabelo)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($tamanho_cabelo); $i++ ){
+					$queryVar = $queryVar . ' p.tamanho_cabelo = ' .$db->quote($tamanho_cabelo[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.tamanho_cabelo =  ' .$db->quote($tamanho_cabelo));
+			}
 		}
 		if(isset($cor_cabelo) && $cor_cabelo!=""){
-			$query->where ( ' p.cor_cabelo =  ' .$db->quote($cor_cabelo));
+			if(is_array($cor_cabelo)){
+				$queryVar = "";
+				for( $i = 0; $i< sizeof($cor_cabelo); $i++ ){
+					$queryVar = $queryVar . ' p.cor_cabelo = ' .$db->quote($cor_cabelo[$i]) . ' Or';
+				}
+				$queryVar = substr($queryVar, 0,strlen($queryVar) - 2 );
+				$query->where ( $queryVar);
+			}
+			else{
+				$query->where ( ' p.cor_cabelo =  ' .$db->quote($cor_cabelo));
+			}
 		}
 		
 		

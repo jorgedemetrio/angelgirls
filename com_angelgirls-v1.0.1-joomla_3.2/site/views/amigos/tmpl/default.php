@@ -174,83 +174,64 @@ Amigos.URLBuscaPerfil = "'.JRoute::_('index.php?option=com_angelgirls&view=perfi
 									<input class="validate-inteiro" style="width: 45%;" type="number" name="calsado_final" id="calsado_final" size="32" maxlength="2" placeholder="<?php echo JText::_('M&aacute;ximo'); ?>"/>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="olhos"> <?php echo JText::_('Olhos'); ?></label>
-									<select name="olhos" id="olhos" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="NEGROS" class="text-transform: capitalize;">NEGROS</option>
-										<option value="AZUIS" class="text-transform: capitalize;">AZUIS</option>
-										<option value="VERDES" class="text-transform: capitalize;">VERDES</option>
-										<option value="CASTANHOS" class="text-transform: capitalize;">CASTANHOS</option>
-										<option value="MEL" class="text-transform: capitalize;">MEL</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-									</select>
+									<label class="control-label"><?php echo JText::_('Olhos'); ?></label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosNegros" value="NEGROS"/> <label for="olhosNegros">Negros</label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosAzuis" value="AZUIS"/> <label for="olhosAzuis">Azuis</label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosVerdes" value="VERDES"/> <label for="olhosVerdes">Verdes</label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosCastanhos" value="CASTANHOS"/> <label for="olhosCastanhos">CASTANHOS</label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosMel" value="MEL"/> <label for="olhosMel">Mel/Castanho Claros</label>
+									<input type="checkbox" class="form-control" name="olhos[]" id="olhosOutros" value="OUTRO"/> <label for="olhosOutros">Outros</label>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="pele"> <?php echo JText::_('Pele'); ?></label>
-									<select name="pele" id="pele" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="CALCASIANA" class="text-transform: capitalize;">CALCASIANA</option>
-										<option value="BRANCA" class="text-transform: capitalize;">BRANCA</option>
-										<option value="PARDA" class="text-transform: capitalize;">PARDA</option>
-										<option value="MORENA" class="text-transform: capitalize;">MORENA</option>
-										<option value="NEGRA" class="text-transform: capitalize;">NEGRA</option>
-										<option value="AMARELA" class="text-transform: capitalize;">AMARELA</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-									</select>
+									<label class="control-label"> <?php echo JText::_('Pele'); ?></label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleCalcasiana" value="CALCASIANA"/> <label for="peleCalcasiana">Calcasiana</label> 
+									<input type="checkbox" class="form-control" name="pele[]" id="peleBranca" value="BRANCA"/> <label for="peleBranca">Branca</label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleParda" value="PARDA"/> <label for="peleParda">Parda</label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleMorena" value="MORENA"/> <label for="peleMorena">Morena</label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleNegra" value="NEGRA"/> <label for="peleNegra">Negra</label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleAmarela" value="AMARELA"/> <label for="peleAmarela">Amarela</label>
+									<input type="checkbox" class="form-control" name="pele[]" id="peleOutro" value="OUTRO"/> <label for="peleOutro">Outro</label>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="etinia"> <?php echo JText::_('Etinia'); ?></label>
-									<select name="etinia" id="etinia" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="AZIATICA" class="text-transform: capitalize;">AZIATICA</option>
-										<option value="AFRO" class="text-transform: capitalize;">AFRO</option>
-										<option value="EURPEIA" class="text-transform: capitalize;">EURPEIA</option>
-										<option value="ORIENTAL" class="text-transform: capitalize;">ORIENTAL</option>
-										<option value="LATINA" class="text-transform: capitalize;">LATINA</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-									</select>
+									<label class="control-label"> <?php echo JText::_('Etinia'); ?></label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaAziatica" value="AZIATICA"/> <label for="etiniaAziatica">Calcasiana</label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaAfro" value="AFRO"/> <label for="etiniaAfro">Afro</label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaEuropeia" value="EURPEIA"/> <label for="etiniaEuropeia">Europeia</label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaOriental" value="ORIENTAL"/> <label for="etiniaOriental">Oriental</label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaLatina" value="LATINA" /> <label for="etiniaLatina">Latina</label>
+									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaOutro" value="OUTRO"/> <label for="etiniaOutro">Outra</label>
 								</div>
 					
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="cabelo"> <?php echo JText::_('Tipo de Cabelo'); ?></label>
-									<select name="cabelo" id="cabelo" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="LIZO" class="text-transform: capitalize;">LIZO</option>
-										<option value="ENCARACOLADO" class="text-transform: capitalize;">ENCARACOLADO</option>
-										<option value="CACHIADO" class="text-transform: capitalize;">CACHIADO</option>
-										<option value="ONDULADOS" class="text-transform: capitalize;">ONDULADOS</option>
-										<option value="CRESPO" class="text-transform: capitalize;">CRESPO</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-										<option value="SEM" class="text-transform: capitalize;">SEM</option>
-									</select>
+									<label class="control-label"> <?php echo JText::_('Tipo de Cabelo'); ?></label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloLizo" value="LIZO"/> <label for="cabeloLizo">Lizo</label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloEncaracolado" value="ENCARACOLADO"/> <label for="cabeloEncaracolado">Encaracolado</label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloCachiado" value="CACHIADO"/> <label for="cabeloCachiado">Cachiado</label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloOndulado" value="ONDULADOS"/> <label for="cabeloOndulado">Ondulado</label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloCrespo" value="CRESPO"/> <label for="cabeloCrespo">Crespo</label>
+									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloOutro" value="OUTRO"/> <label for="cabeloOutro">Outro Tipo</label>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label class="control-label"  for="tamanho_cabelo"> <?php echo JText::_('Tamanho do Cabelo'); ?></label>
-									<select name="tamanho_cabelo" id="tamanho_cabelo" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="MUITO CURTO" class="text-transform: capitalize;">MUITO CURTO</option>
-										<option value="CURTO" class="text-transform: capitalize;">CURTO</option>
-										<option value="MEDIO" class="text-transform: capitalize;">MEDIO</option>
-										<option value="LONGO"< class="text-transform: capitalize;">LONGO</option>
-										<option value="MUITO LONGO" class="text-transform: capitalize;">MUITO LONGO</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-										<option value="SEM" class="text-transform: capitalize;">SEM</option>
-									</select>
+									<label class="control-label"> <?php echo JText::_('Tamanho do Cabelo'); ?></label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoCabeloMuitoCurto" value="MUITO CURTO"/> <label for="tamanhoCabeloMuitoCurto">Muito Curto</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoCurto" value="CURTO"/> <label for="tamanhoCurto">Curto</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoMedio" value="MEDIO"/> <label for="tamanhoMedio">Medio</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoLongo" value="LONGO"/> <label for="tamanhoLongo">Longo</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoMuitoLongo" value="MUITO LONGO"/> <label for="tamanhoMuitoLongo">Muito Longo</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoOutro" value="OUTRO"/> <label for="tamanhoOutro">Outro</label>
+									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoSem" value="SEM"/> <label for="tamanhoSem">Sem cabelo</label>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label" for="cor_cabelo"> <?php echo JText::_('Cor do Cabelo'); ?></label>
-									<select name="cor_cabelo" id="cor_cabelo" class="form-control" style="width: 90%;">
-										<option></option>
-										<option value="BRANCO" class="text-transform: capitalize;">BRANCO</option>
-										<option value="LOIRA CLARA" class="text-transform: capitalize;">LOIRA CLARA</option>
-										<option value="LOIRA" class="text-transform: capitalize;">LOIRA</option>
-										<option value="LOIRO ESCURO" class="text-transform: capitalize;">LOIRO ESCURO</option>
-										<option value="COLORIDO" class="text-transform: capitalize;">COLORIDO</option>
-										<option value="RUIVA" class="text-transform: capitalize;">RUIVA</option>
-										<option value="CASTANHO" class="text-transform: capitalize;">CASTANHO</option>
-										<option value="NEGRO" class="text-transform: capitalize;">NEGRO</option>
-										<option value="OUTRO" class="text-transform: capitalize;">OUTRO</option>
-									</select>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloBranco" value="BRANCO"/> <label for="corCabeloBranco">Branco</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloLoiroClaro" value="LOIRA CLARA"/> <label for="corCabeloLoiroClaro">Loiro Claro</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloLoira" value="LOIRA"/> <label for="corCabeloLoira">Loiro</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corcabeloLoiroEscuro" value="LOIRO ESCURO"/> <label for="corcabeloLoiroEscuro">Loiro Escuro</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloColorido" value="COLORIDO"/> <label for="corCabeloColorido">Colorido</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloRuivo" value="RUIVA"/> <label for="corCabeloRuivo">Ruivo</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloCastanho" value="CASTANHO"/> <label for="corCabeloCastanho">Castanho</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloNegro" value="NEGRO"/> <label for="corCabeloNegro">Negro</label>
+									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloOutro" value="OUTRO"/> <label for="corCabeloOutro">Outros</label>
 								</div>
 							</div>
 						</div>
