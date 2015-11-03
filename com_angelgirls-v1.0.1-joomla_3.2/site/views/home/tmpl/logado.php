@@ -11,8 +11,14 @@ $conteudos = JRequest::getVar ( 'conteudos' );
 $perfil = JRequest::getVar ( 'perfil' );
 ?>
 <script>
+
 	AngelGirls.URLPost = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=post&task=salvarPostJson',false));?>';
 	AngelGirls.URLRemovePost = '<?php echo(JRoute::_('index.php?option=com_angelgirls&view=post&task=excluirPostJson',false));?>';
+
+	jQuery(document).ready(function (){
+		AngelGirls.PostItEffects();
+	});
+	
 	function removerPost(id){
 		AngelGirls.Processando().show();
 		jQuery.post(AngelGirls.URLRemovePost,{ id: id},
@@ -35,7 +41,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 				var $combo = '<div class="dropdown pull-right"><button class="btn btn-default dropdown-toggle" type="button" id="opcoesPost" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ' +
 					  	' title="Op&ccedil;&otile;es de edi&ccedil;&atile;o"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button> <ul class="dropdown-menu" aria-labelledby="opcoesPost"> ' +
 					    '<li><a href="JavaScript: removerPost(\''+dado.id2+'\')"><span class="glyphicon glyphicon-remove-circle" style="color:red"></span> Remover</a></li></ul></div>';
-				jQuery('.content').first().before('<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="'+dado.id2+'" data-tipo="POST" data-data="'+(new Date())+'"><div class="thumbnail">'+$combo+'<div class="caption" style="display:inline-block;"><h4><div class="gostar pull-right" data-gostei="NAO" data-id="'+dado.id2+'" data-area="POST" data-gostaram="0"></div></h4><p>'+jQuery('#texto').val()+'</p></div></div></div>');
+				jQuery('.content').first().before('<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="'+dado.id2+'" data-tipo="POST" data-data="'+(new Date())+'"><div class="thumbnail content-thumbnail">'+$combo+'<div class="caption" style="display:inline-block;"><h4><div class="gostar pull-right" data-gostei="NAO" data-id="'+dado.id2+'" data-area="POST" data-gostaram="0"></div></h4><p>'+jQuery('#texto').val()+'</p></div></div></div>');
 				AngelGirls.ResetGostar();
 				jQuery('#texto').val('');
 			}
@@ -82,30 +88,29 @@ $perfil = JRequest::getVar ( 'perfil' );
 					$urlImg = null;
 					?>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="<?php echo($conteudo->token);?>" data-tipo="<?php echo($conteudo->tipo);?>" data-data="<?php echo($conteudo->data_publicado);?>">
-						<div class="thumbnail ">
-							<?php if($perfil->id_usuario == $conteudo->opt1) :?>
-							<div class="dropdown pull-right">
-							  <button class="btn btn-default dropdown-toggle" type="button" id="opcoesPost" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
-							  	title="Op&ccedil;&otile;es de edi&ccedil;&atile;o">
-							    <span class="glyphicon glyphicon-cog"></span>
-							    <span class="caret"></span>
-							  </button>
-							  <ul class="dropdown-menu" aria-labelledby="opcoesPost">
-							    <li><a href="JavaScript: removerPost('<?php echo($conteudo->token);?>')"><span class="glyphicon glyphicon-remove-circle" style="color:red"></span> Remover</a></li>
-							    <!-- li><a href="#"><span class="glyphicon glyphicon-edit" style="color:blue"></span> Alterar</a></li-->
-							  </ul>
-							</div>
-							<?php endif;?>
-							<div class="caption" style="display:inline-block; width: 95%">
+						<div class="thumbnail content-thumbnail content-post jquery-shadow-perspective">
+							<div class="caption" style="display:inline-block; width: 100%; overflow: hidden;">
+								<?php if($perfil->id_usuario == $conteudo->opt1) :?>
+								<div class="dropdown pull-right">
+								  <button class="btn btn-default dropdown-toggle" type="button" id="opcoesPost" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+								  	title="Op&ccedil;&otile;es de edi&ccedil;&atile;o">
+								    <span class="glyphicon glyphicon-cog"></span>
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="opcoesPost">
+								    <li><a href="JavaScript: removerPost('<?php echo($conteudo->token);?>')"><span class="glyphicon glyphicon-remove-circle" style="color:red"></span> Remover</a></li>
+								    <!-- li><a href="#"><span class="glyphicon glyphicon-edit" style="color:blue"></span> Alterar</a></li-->
+								  </ul>
+								</div>
+								<?php endif;?>
 								<h4><a href="<?php 
 								$tipoPessoa = strtolower( $conteudo->autor2);
 								echo(JRoute::_('index.php?option=com_angelgirls&view='.$tipoPessoa.'&task='.$tipoPessoa.'&id='.$conteudo->autorid1.':'.$tipoPessoa.'-'.strtolower(str_replace(" ","-",$conteudo->autor1)),false));?>">
 								<?php echo(JText::_('Por') . ' ' .  $conteudo->autor1) ; ?> 
 								</a></h4>
 								<p>
-									<div class="gostar pull-right" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='<?php echo($area); ?>' data-gostaram='<?php echo($conteudo->audiencia);?>'></div>
+								<div class="gostar pull-right" data-gostei='<?php echo($conteudo->gostei);?>' data-id='<?php echo($conteudo->id);?>' data-area='<?php echo($area); ?>' data-gostaram='<?php echo($conteudo->audiencia);?>'></div>
 									<small><small><?php echo(JFactory::getDate($conteudo->data_publicado)->format('d/m/Y H:i'));?></small> </small> 
-									
 								</p>
 								<p><?php echo($conteudo->descricao);?></p>
 								
@@ -119,7 +124,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 					$titulo = $conteudo->titulo;
 					?>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="<?php echo($conteudo->token);?>" data-tipo="<?php echo($conteudo->tipo);?>" data-data="<?php echo($conteudo->data_publicado);?>">
-						<div class="thumbnail ">
+						<div class="thumbnail content-thumbnail ">
 							<?php if(isset($urlImg)) : ?>
 							<a href="<?php echo($url); ?>">
 								<img class="img-responsive" style="width: 90%;  margin: 10px; display:inline-block;"
@@ -140,7 +145,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 					$titulo = $conteudo->titulo;
 					$area ='sessao';?>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="<?php echo($conteudo->token);?>" data-tipo="<?php echo($conteudo->tipo);?>" data-data="<?php echo($conteudo->data_publicado);?>">
-						<div class="thumbnail ">
+						<div class="thumbnail content-thumbnail ">
 							<?php if(isset($urlImg)) : ?>
 							<a href="<?php echo($url); ?>">
 								<img class="img-responsive" style="width: 90%;  margin: 10px; display:inline-block;"
@@ -162,7 +167,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 					$titulo = 'Voc&ecirc; j&aacute; conhece a modelo ' . $conteudo->titulo . '?';
 					$botao = '<p class="text-center"><a href="'. $url .'" class="btn">Conhe&ccedil;a os trabalhos dessa musa.</a></p>';?>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="<?php echo($conteudo->token);?>" data-tipo="<?php echo($conteudo->tipo);?>" data-data="<?php echo($conteudo->data_publicado);?>">
-						<div class="thumbnail ">
+						<div class="thumbnail content-thumbnail ">
 							<?php if(isset($urlImg)) : ?>
 							<a href="<?php echo($url); ?>">
 								<img class="img-responsive" style="width: 90%;  margin: 10px; display:inline-block;"
@@ -181,7 +186,7 @@ $perfil = JRequest::getVar ( 'perfil' );
 <?php				break;
 				default?>
 					<div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3 content"  data-id="<?php echo($conteudo->token);?>" data-tipo="<?php echo($conteudo->tipo);?>" data-data="<?php echo($conteudo->data_publicado);?>">
-						<div class="thumbnail ">
+						<div class="thumbnail content-thumbnail ">
 							<?php if(isset($urlImg)) : ?>
 							<a href="<?php echo($url); ?>">
 								<img class="img-responsive" style="width: 90%;  margin: 10px; display:inline-block;"

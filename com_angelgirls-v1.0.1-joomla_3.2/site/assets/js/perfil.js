@@ -30,7 +30,7 @@ jQuery(document).ready(function(){
 	}); 
 	
 	
-	setTimeout(function(){
+	/*setTimeout(function(){
 		jQuery('#estado_reside').change();
 	},1500);
 	setTimeout(function(){
@@ -39,7 +39,7 @@ jQuery(document).ready(function(){
 
 	setTimeout(function(){
 		jQuery('#estado_endereco').change();
-	},1900);
+	},1900);*/
 
 	
 	jQuery('#btnCancelarSalvarEndereco').click(function(){

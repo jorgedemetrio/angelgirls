@@ -1,5 +1,5 @@
 <?php
-$sessoes = JRequest::getVar('sessoes');
+$sessoes = JRequest::getVar('albuns');
 foreach($sessoes as $conteudo){ ?>
 <div class="col col-xs-12 col-sm-4 col-md-3 col-lg-2">
 	<div class="thumbnail">

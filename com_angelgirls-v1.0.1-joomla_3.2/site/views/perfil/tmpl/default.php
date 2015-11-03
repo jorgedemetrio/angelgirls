@@ -34,6 +34,8 @@ $perfil = JRequest::getVar('perfil');
 $this->item = $perfil; 
 
 $ufs = JRequest::getVar('ufs');
+$cidadesNasceu = JRequest::getVar('cidades_nasceu');
+$cidades = JRequest::getVar('cidades');
 
 
 
@@ -207,6 +209,13 @@ JFactory::getDocument()->addStyleDeclaration('
 							<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
 							<select name="id_cidade" id="id_cidade" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" data-validation="required" required style="width: 90%;">
 								<option></option>
+								<?php
+								foreach ($cidades as $f){ 
+								?>
+								<option value="<?php echo($f->nome) ?>"<?php echo($f->id==$this->item->id_cidade?" selected":"");?>><?php echo($f->nome) ?></option>
+								<?php 
+								}
+								?>
 							</select>
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
@@ -226,6 +235,13 @@ JFactory::getDocument()->addStyleDeclaration('
 							<label class="control-label"  for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label>
 							<select name="id_cidade_nasceu" id="id_cidade_nasceu" data-value="<?php echo($this->item->id_cidade_nasceu);?>" class="form-control" data-validation="required" required style="width: 90%;">
 								<option></option>
+								<?php
+								foreach ($cidadesNasceu as $f){ 
+								?>
+								<option value="<?php echo($f->nome) ?>"<?php echo($f->id==$this->item->id_cidade_nasceu?" selected":"");?>><?php echo($f->nome) ?></option>
+								<?php 
+								}
+								?>
 							</select>
 						</div>
 						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
@@ -446,6 +462,13 @@ JFactory::getDocument()->addStyleDeclaration('
 								<label class="control-label"  for="id_cidade_endereco"> <?php echo JText::_('Cidade'); ?></label>
 								<select name="id_cidade_endereco" id="id_cidade_endereco" data-value="<?php echo($this->item->id_cidade);?>" class="form-control" style="width: 90%;">
 									<option></option>
+									<?php
+									foreach ($cidades as $f){ 
+									?>
+									<option value="<?php echo($f->nome) ?>"<?php echo($f->id==$this->item->id_cidade?" selected":"");?>><?php echo($f->nome) ?></option>
+									<?php 
+									}
+									?>
 								</select>
 							</div>
 		

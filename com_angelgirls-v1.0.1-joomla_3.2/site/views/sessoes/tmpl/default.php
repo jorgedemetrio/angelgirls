@@ -100,7 +100,7 @@ if($dataFim!=''){
 				</select>
 			</div>
 			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">
-				<label class="control-label"  for="id_modelo"><?php echo JText::_('Com a modelo'); ?></label>
+				<label class="control-label"  for="id_modelo"><?php echo JText::_('Do(a) fotografo(a)'); ?></label>
 				<select name="id_fotografo" id="id_fotografo" class="form-control"/>
 					<option></option>
 					<?php foreach($fotografos as $conteudo){
@@ -171,7 +171,7 @@ jQuery(document).ready(function() {
 	});
 	
 	
-	if(lidos>=AngelgirlsController::LIMIT_DEFAULT){
+	if(lidos>=<?php echo(AngelgirlsController::LIMIT_DEFAULT)?>){
 		jQuery('#carregando').css('display','');
 		temMais=true;
 	}

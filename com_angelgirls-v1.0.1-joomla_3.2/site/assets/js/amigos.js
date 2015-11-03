@@ -1,5 +1,5 @@
 var Amigos = new Object();
-
+var temMais = false;
 
 jQuery(document).scroll(function(){
 	
@@ -33,66 +33,7 @@ jQuery(document).scroll(function(){
 		 }
 	}
 	
-	jQuery('#nivel').change(function(){
-		jQuery('#nivelVal').html(
-				jQuery('#nivel').val()==0?'Todos':jQuery('#nivel').val()); 
-	});
 
-	jQuery('#tipo').change(function(){
-		if(jQuery('#tipo').val()=='MODELO'){
-			jQuery('#extraModeloFiltros').css('display','none');
-			jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
-			jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
-			jQuery('#extraModelo').fadeIn(500);
-		}
-	});
-
-	jQuery('#dadosForm').submit(function(){
-		AngelGirls.Processando().show();
-		jQuery('#listaResultado').html('');
-		jQuery.post(Amigos.URLBuscaPerfil,
-				{busca: jQuery('#busca').val(),
-					tipo: jQuery('#tipo').val(),
-					estado: jQuery('#estado').val(),
-					id_cidade: jQuery('#id_cidade').val(),
-					nivel: jQuery('#nivel').val(),
-					idade_init: jQuery('#idade_init').val(),
-					idade_fim: jQuery('#idade_fim').val(),
-					pontos_init: jQuery('#pontos_init').val(),
-					pontos_fim: jQuery('#pontos_fim').val(),
-					sexo: jQuery('#sexo').val(),
-					altura_inicial: jQuery('#altura_inicial').val(),
-					altura_final: jQuery('#altura_final').val(),
-					peso_inicial: jQuery('#peso_inicial').val(),
-					peso_final: jQuery('#peso_final').val(),
-					calsado_inicial: jQuery('#calsado_inicial').val(),
-					calsado_final: jQuery('#calsado_final').val(),
-					olhos: jQuery('#olhos').val(),
-					pele: jQuery('#pele').val(),
-					etinia: jQuery('#etinia').val(),
-					cabelo: jQuery('#cabelo').val(),
-					tamanho_cabelo: jQuery('#tamanho_cabelo').val(),
-					cor_cabelo: jQuery('#cor_cabelo').val()}, 
-			function(html){
-					AngelGirls.Processando().hide();
-					if(html.trim().length>0){
-						jQuery('#listaResultado').html(html);
-						setTimeout(function(){
-							jQuery('.thumbnail').each(function(){
-								var $this = jQuery(this);
-								if($this.hasClass('fade') && !$this.hasClass('in')){
-									$this.addClass('in');
-								}
-							});
-						},500); 
-					}
-					else{
-						alert('N&atilde;o encontramos registros!');
-					}
-
-		},'html');
-		return false;
-	});
 });
 
 
@@ -107,6 +48,114 @@ jQuery(document).ready(function(){
 					$this.addClass('in');
 				}
 			});
+		});
+		
+		jQuery('#nivel').change(function(){
+			jQuery('#nivelVal').html(
+					jQuery('#nivel').val()==0?'Todos':jQuery('#nivel').val()); 
+		});
+
+		jQuery('#tipo').change(function(){
+			if(jQuery('#tipo').val()=='MODELO'){
+				jQuery('#extraModeloFiltros').css('display','none');
+				jQuery('#iconeFiltroModelo').addClass('glyphicon-plus');
+				jQuery('#iconeFiltroModelo').removeClass('glyphicon glyphicon-minus');
+				jQuery('#extraModelo').fadeIn(500);
+			}
+		});
+
+		jQuery('#dadosForm').submit(function(){
+			AngelGirls.Processando().show();
+			jQuery('#listaResultado').html('');
+			
+			var dataSubmit = {busca: jQuery('#busca').val(),
+					tipo: jQuery('#tipo').val(),
+					estado: jQuery('#estado').val(),
+					id_cidade: jQuery('#id_cidade').val(),
+					nivel: jQuery('#nivel').val(),
+					idade_init: jQuery('#idade_init').val(),
+					idade_fim: jQuery('#idade_fim').val(),
+					pontos_init: jQuery('#pontos_init').val(),
+					pontos_fim: jQuery('#pontos_fim').val(),
+					sexo: jQuery('#sexo').val(),
+					altura_inicial: jQuery('#che altura_inicial').val(),
+					altura_final: jQuery('#altura_final').val(),
+					peso_inicial: jQuery('#peso_inicial').val(),
+					peso_final: jQuery('#peso_final').val(),
+					calsado_inicial: jQuery('#calsado_inicial').val(),
+					calsado_final: jQuery('#calsado_final').val()}
+			
+			
+			if(jQuery('input[name="olhos"]:checked')){
+				var itens = jQuery('input[name="olhos"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.olhos = lista;
+			}
+			if(jQuery('input[name="pele"]:checked')){
+				var itens = jQuery('input[name="pele"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.pele = lista;
+			}
+			if(jQuery('input[name="etinia"]:checked')){
+				var itens = jQuery('input[name="etinia"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.etinia = lista;
+			}
+			if(jQuery('input[name="cabelo"]:checked')){
+				var itens = jQuery('input[name="cabelo"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.cabelo = lista;
+			}
+			if(jQuery('input[name="tamanho_cabelo"]:checked')){
+				var itens = jQuery('input[name="tamanho_cabelo"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.tamanho_cabelo = lista;
+			}
+			if(jQuery('input[name="cor_cabelo"]:checked')){
+				var itens = jQuery('input[name="cor_cabelo"]:checked');
+				var lista = new Array(itens.length);
+				for(var i =0; i< itens.length;i++){
+					lista[i] = itens[i].value;
+				}
+				dataSubmit.cor_cabelo = lista;
+			}
+
+			
+			jQuery.post(Amigos.URLBuscaPerfil, dataSubmit, 
+				function(html){
+						AngelGirls.Processando().hide();
+						if(html.trim().length>0){
+							jQuery('#listaResultado').html(html);
+							setTimeout(function(){
+								jQuery('.thumbnail').each(function(){
+									var $this = jQuery(this);
+									if($this.hasClass('fade') && !$this.hasClass('in')){
+										$this.addClass('in');
+									}
+								});
+							},500); 
+						}
+						else{
+							alert('N&atilde;o encontramos registros!');
+						}
+
+			},'html');
+			return false;
 		});
 
 });

@@ -91,6 +91,34 @@ AngelGirls.FrameModal = function(titulo, url, legandaBotaoOk, destino, tamanho){
 	jQuery('#modalWindowbody').removeClass('alert');
 }
 
+AngelGirls.PostItEffects = function(){
+	$(".content-post").css('background','#FFFFBC');
+	$(".content-post").css('background','#FFFFBC');	
+	$(".content-post").css('-webkit-box-shadow','0 15px 10px rgba(0, 0, 0, 0.7)');
+	$(".content-post").css('-moz-box-shadow','0 15px 10px rgba(0, 0, 0, 0.7)');
+	$(".content-post").css('box-shadow','0 15px 10px rgba(0, 0, 0, 0.7)');
+	$(".content-post").css('-webkit-box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset');
+	$(".content-post").css('-moz-box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset');
+	$(".content-post").css('box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset');
+	setTimeout(function() {
+		$(".content-post").each(function(){
+			$this = $(this);
+			if($this.attr('data-ajustado')!='FEITO'){
+				var P =  Math.floor((Math.random() * 7) *(Math.random()*5>2?-1:1) +1);
+				$this.css('transition','2s');
+				$this.css('-webkit-box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset');
+				$this.css('-moz-box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset');
+				$this.css('box-shadow','0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset');
+				$this.css('background','#FFFFBC');
+				$this.css('-ms-transform','rotate('+P+'deg)');
+			    $this.css('-webkit-transform','rotate('+P+'deg)');
+			    $this.css('transform','rotate('+P+'deg)');
+			    $this.attr('data-ajustado','FEITO');
+			}
+		});
+	}, 2000);
+}
+
 AngelGirls.FrameModalHide = function(){
 	jQuery('#modalWindow').modal('hide');
 }
@@ -117,7 +145,7 @@ AngelGirls.ResetGostar = function(){
 		$objetoRef = jQuery(this);
 		if(!$objetoRef.attr('data-checado') && $objetoRef.attr('data-checado')!='SIM'){
 			if($objetoRef.attr('data-gostei')=='SIM'){
-				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou"></span></span>');
+				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart" aria-hidden="true" title="Gostou" style="color:red;"></span></span>');
 			}
 			else{
 				$objetoRef.html('<span class="badge" title="Gostou">'+$objetoRef.attr('data-gostaram')+' <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" title="Gostar"></span></span>');
@@ -254,18 +282,12 @@ AngelGirls.CarregarDadosInformativos = function(){
 
 
 jQuery(document).ready(function(){
-	//jQuery('.caixaMensagens').html('<a href="#"><span class="badge" title="Mensagens" style="color: #CACACA;"><span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Mensagens"></span></span></a>');
 
 	AngelGirls.ProcessandoMensagensInterval = setInterval(function(){
 		AngelGirls.CarregarDadosInformativos();
 	}, 30000);
 	
-//	var source = new EventSource(document.PathBase+'index.php?option=com_angelgirls&view=sessoes&task=checarDados');
-//	source.onmessage = function(event) {
-//		console.log('DADO');
-//	    console.log(event);
-//	};
-	
+
 	AngelGirls.CarregarDadosInformativos();
 	
 	jQuery(".validate-numeric").mask("#.##0,00", {reverse: true});
@@ -279,22 +301,7 @@ jQuery(document).ready(function(){
 	jQuery(".validate-telefone-simples").mask("99999-9999");
 
 		
-//	jQuery('.table-responsive .table').each(function(){
-//		var $this = jQuery(this);
-//		var maximoItensParam=$this.attr('data-item-per-page');
-//		if(maximoItensParam){
-//			var maximoItens =  parseInt(maximoItensParam);
-//			var $linhas = $this.find('tbody tr');
-//			if($linhas.length > maximoItens){
-//				AngelGirls.TablePagined[] = $this;
-//				for(var i=maximoItens-1; i<maximoItens;i++){
-//					$linhas[i].
-//					
-//					
-//				}
-//			}
-//		}
-//	});
+
 		
 	jQuery(".estado").change(function(){
 		$objeto = jQuery(this);

@@ -36,7 +36,7 @@ if($dataFim!=''){
 <?php AngelgirlsController::GetMenuLateral(); ?>
 	<div id="conteudo" class="col col-xs-12 col-sm-9 col-md-9 col-lg-10">
 		<div class="page-header">
-			<h1>Sess&otilde;es de fotos sensuais <small>com as modelos mais bonitas, gatas e gostosas</small></h1>
+			<h1>Albuns de fotos</h1>
 		</div>
 		<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data" >
 			<?php echo JHtml::_('form.token');?>
@@ -48,7 +48,7 @@ if($dataFim!=''){
 			<div class="btn-toolbar pull-right" role="toolbar">
 				<?php if(isset($perfil)) : ?>
 				<div class="btn-group" role="group"  aria-label="Funções">
-					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarSessao&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
+					<a href="<?php echo(JRoute::_('index.php?option=com_angelgirls&view=sessoes&task=carregarEditarAlbum&Itemid='.JRequest::getVar ( 'Itemid' )));?>" class="btn btn-success" type="button" id="novo"><?php echo JText::_('Nova'); ?>
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</a>
 				</div>
@@ -85,32 +85,6 @@ if($dataFim!=''){
 					<option value="4"<?php echo($ordem==4?' SELECTED':'')?>>Titulos de Z->A</option>
 				</select>
 			</div>
-		
-			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">
-				<label class="control-label"  for="id_modelo"><?php echo JText::_('Com a modelo'); ?></label>
-				<select name="id_modelo" id="id_modelo" class="form-control"/>
-					<option></option>
-					<?php foreach($modelos as $conteudo){ 
-					$img =  JRoute::_('index.php?option=com_angelgirls&view=modelo&task=loadImage&id='.$conteudo->id.':ico');
-					?>
-					<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idModelo==$conteudo->id?" selected":"") ?>>
-					<?php echo($conteudo->nome);?></option>
-				    <?php 
-					}?>
-				</select>
-			</div>
-			<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-6">
-				<label class="control-label"  for="id_modelo"><?php echo JText::_('Com a modelo'); ?></label>
-				<select name="id_fotografo" id="id_fotografo" class="form-control"/>
-					<option></option>
-					<?php foreach($fotografos as $conteudo){
-						$img =  JRoute::_('index.php?option=com_angelgirls&view=fotografo&task=loadImage&id='.$conteudo->id.':ico');
-					?>
-					<option value="<?php echo($conteudo->id);?>" data-foto="<?php echo($img); ?>" title="<?php echo($conteudo->nome);?>"<?php echo($idFotografo==$conteudo->id?" selected":"") ?>><?php echo($conteudo->nome);?></option>
-				    <?php 
-					}?>
-				</select>
-			</div>
 			<?php if(isset($perfil)) : ?>
 			<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align: right;">
 				<div style="text-align: right; margin-top: 0px;" title='Deve clicar em "Filtrar" para ter efeito.' class="checkbox-iten" data-hidden-value="SIM" data-hidden-label="<?php echo JText::_('Somente as Minhas'); ?>" data-hidden-id='somente_minha' id="somente_minha_bt"  name="somente_minha_bt"
@@ -129,10 +103,10 @@ if($dataFim!=''){
 			</div>
 		</div>
 		</form>
-		<h2>Sess&otilde;es</h2>
+		<h2>Albuns</h2>
 		<div class="row" id="linha">
 		<?php
-		require_once 'sessoes_html.php';
+		require_once 'album_html.php';
 		?>
 		</div>
 		<div class="row" id="carregando" style="display: none">
@@ -171,7 +145,7 @@ jQuery(document).ready(function() {
 	});
 	
 	
-	if(lidos>=AngelgirlsController::LIMIT_DEFAULT){
+	if(lidos>=<?php echo(AngelgirlsController::LIMIT_DEFAULT)?>){
 		jQuery('#carregando').css('display','');
 		temMais=true;
 	}

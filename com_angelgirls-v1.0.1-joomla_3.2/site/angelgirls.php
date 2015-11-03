@@ -26,9 +26,12 @@ if(!defined('VERSAO_ANGELGIRLS')){
 // Set the component css/js
 $document = JFactory::getDocument();
 
-$document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css?v='.VERSAO_ANGELGIRLS);
+
 $document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap-theme.css?v='.VERSAO_ANGELGIRLS);
 $document->addStyleSheet('components/com_angelgirls/assets/css/bootstrap.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/jquery.shadow.css?v='.VERSAO_ANGELGIRLS);
+$document->addStyleSheet('components/com_angelgirls/assets/css/angelgirls.css?v='.VERSAO_ANGELGIRLS);
+
 
 
 // $document->addStyleSheet('components/com_angelgirls/assets/css/jquery-ui.min.css');

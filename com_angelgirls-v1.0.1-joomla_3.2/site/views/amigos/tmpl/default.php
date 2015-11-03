@@ -158,80 +158,93 @@ Amigos.URLBuscaPerfil = "'.JRoute::_('index.php?option=com_angelgirls&view=perfi
 						<div id="extraModelo" style="display:none">
 						<h4><a href="JavaScript: Amigos.ExibirModeloDetalhes(); "><?php echo JText::_('Filtros avan&ccedil;ado para modelo'); ?> <span class="glyphicon glyphicon-plus" id="iconeFiltroModelo"></span></a></h4>
 							<div id="extraModeloFiltros" style="display:none">
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 									<label class="control-label"  for="altura_inicial"><?php echo JText::_('Altura'); ?></label>
 									<input class="validate-numeric form-control" style="width: 45%;" type="text" name="altura_inicial" id="altura_inicial" maxlength="4" placeholder="<?php echo JText::_('0,0'); ?>"/>
 									<input class="validate-numeric form-control" style="width: 45%;" type="text" name="altura_final" id="altura_final"  maxlength="4" placeholder="<?php echo JText::_('M&aacute;xima'); ?>"/>
 								</div>
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 									<label class="control-label"  for="peso_inicial"><?php echo JText::_('Peso'); ?></label>
 									<input class="validate-inteiro form-control" style="width: 45%;" type="number" name="peso_inicial" id="peso_inicial" size="32" maxlength="3"  placeholder="<?php echo JText::_('0,0'); ?>"/>
 									<input class="validate-inteiro form-control" style="width: 45%;" type="number" name="peso_final" id="peso_final" size="32" maxlength="3"  placeholder="<?php echo JText::_('M&aacute;ximo');?>"/>
 								</div>
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 									<label class="control-label"  for="calsado"> <?php echo JText::_('Tamanho dos Calsados'); ?></label>
 									<input class="validate-inteiro" style="width: 45%;" type="number" name="calsado_inicial" id="calsado_inicial" size="32" maxlength="2" placeholder="<?php echo JText::_('0'); ?>"/>
 									<input class="validate-inteiro" style="width: 45%;" type="number" name="calsado_final" id="calsado_final" size="32" maxlength="2" placeholder="<?php echo JText::_('M&aacute;ximo'); ?>"/>
 								</div>
+								<div style="width: 99%; border-bottom: 1px solid #000; margin: 10px">&nbsp;<!-- SEPARADOR --></div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"><?php echo JText::_('Olhos'); ?></label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosNegros" value="NEGROS"/> <label for="olhosNegros">Negros</label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosAzuis" value="AZUIS"/> <label for="olhosAzuis">Azuis</label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosVerdes" value="VERDES"/> <label for="olhosVerdes">Verdes</label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosCastanhos" value="CASTANHOS"/> <label for="olhosCastanhos">CASTANHOS</label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosMel" value="MEL"/> <label for="olhosMel">Mel/Castanho Claros</label>
-									<input type="checkbox" class="form-control" name="olhos[]" id="olhosOutros" value="OUTRO"/> <label for="olhosOutros">Outros</label>
+									<div class="checkbox">
+										<label for="olhosNegros"><input type="checkbox" name="olhos" id="olhosNegros" value="NEGROS"/> Negros</label>
+										<label for="olhosAzuis"><input type="checkbox" name="olhos" id="olhosAzuis" value="AZUIS"/> Azuis</label>
+										<label for="olhosVerdes"><input type="checkbox" name="olhos" id="olhosVerdes" value="VERDES"/> Verdes</label>
+										<label for="olhosCastanhos"><input type="checkbox" name="olhos" id="olhosCastanhos" value="CASTANHOS"/> Castanhos</label>
+										<label for="olhosMel"><input type="checkbox" name="olhos" id="olhosMel" value="MEL"/> Mel/Castanho Claros</label>
+										<label for="olhosOutros"><input type="checkbox" name="olhos" id="olhosOutros" value="OUTRO"/> Outros</label>
+									</div>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"> <?php echo JText::_('Pele'); ?></label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleCalcasiana" value="CALCASIANA"/> <label for="peleCalcasiana">Calcasiana</label> 
-									<input type="checkbox" class="form-control" name="pele[]" id="peleBranca" value="BRANCA"/> <label for="peleBranca">Branca</label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleParda" value="PARDA"/> <label for="peleParda">Parda</label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleMorena" value="MORENA"/> <label for="peleMorena">Morena</label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleNegra" value="NEGRA"/> <label for="peleNegra">Negra</label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleAmarela" value="AMARELA"/> <label for="peleAmarela">Amarela</label>
-									<input type="checkbox" class="form-control" name="pele[]" id="peleOutro" value="OUTRO"/> <label for="peleOutro">Outro</label>
+									<div class="checkbox">
+										<label for="peleCalcasiana"><input type="checkbox" name="pele" id="peleCalcasiana" value="CALCASIANA"/> Calcasiana</label> 
+										<label for="peleBranca"><input type="checkbox" name="pele" id="peleBranca" value="BRANCA"/> Branca</label>
+										<label for="peleParda"><input type="checkbox" name="pele" id="peleParda" value="PARDA"/> Parda</label>
+										<label for="peleMorena"><input type="checkbox" name="pele" id="peleMorena" value="MORENA"/> Morena</label>
+										<label for="peleNegra"><input type="checkbox" name="pele" id="peleNegra" value="NEGRA"/> Negra</label>
+										<label for="peleAmarela"><input type="checkbox" name="pele" id="peleAmarela" value="AMARELA"/> Amarela</label>
+										<label for="peleOutro"><input type="checkbox" name="pele" id="peleOutro" value="OUTRO"/> Outro</label>
+									</div>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"> <?php echo JText::_('Etinia'); ?></label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaAziatica" value="AZIATICA"/> <label for="etiniaAziatica">Calcasiana</label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaAfro" value="AFRO"/> <label for="etiniaAfro">Afro</label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaEuropeia" value="EURPEIA"/> <label for="etiniaEuropeia">Europeia</label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaOriental" value="ORIENTAL"/> <label for="etiniaOriental">Oriental</label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaLatina" value="LATINA" /> <label for="etiniaLatina">Latina</label>
-									<input type="checkbox" class="form-control" name="etinia[]" id="etiniaOutro" value="OUTRO"/> <label for="etiniaOutro">Outra</label>
+									<div class="checkbox">
+										<label for="etiniaAziatica"><input type="checkbox" name="etinia" id="etiniaAziatica" value="AZIATICA"/> Calcasiana</label>
+										<label for="etiniaAfro"><input type="checkbox" name="etinia" id="etiniaAfro" value="AFRO"/> Afro</label>
+										<label for="etiniaEuropeia"><input type="checkbox" name="etinia" id="etiniaEuropeia" value="EURPEIA"/> Europeia</label>
+										<label for="etiniaOriental"><input type="checkbox" name="etinia" id="etiniaOriental" value="ORIENTAL"/> Oriental</label>
+										<label for="etiniaLatina"><input type="checkbox" name="etinia" id="etiniaLatina" value="LATINA" /> Latina</label>
+										<label for="etiniaOutro"><input type="checkbox" name="etinia" id="etiniaOutro" value="OUTRO"/> Outra</label>
+									</div>
 								</div>
 					
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"> <?php echo JText::_('Tipo de Cabelo'); ?></label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloLizo" value="LIZO"/> <label for="cabeloLizo">Lizo</label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloEncaracolado" value="ENCARACOLADO"/> <label for="cabeloEncaracolado">Encaracolado</label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloCachiado" value="CACHIADO"/> <label for="cabeloCachiado">Cachiado</label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloOndulado" value="ONDULADOS"/> <label for="cabeloOndulado">Ondulado</label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloCrespo" value="CRESPO"/> <label for="cabeloCrespo">Crespo</label>
-									<input type="checkbox" class="form-control" name="cabelo[]" id="cabeloOutro" value="OUTRO"/> <label for="cabeloOutro">Outro Tipo</label>
+									<div class="checkbox">
+										<label for="cabeloLizo"><input type="checkbox" name="cabelo" id="cabeloLizo" value="LIZO"/> Lizo</label>
+										<label for="cabeloEncaracolado"><input type="checkbox" name="cabelo" id="cabeloEncaracolado" value="ENCARACOLADO"/> Encaracolado</label>
+										<label for="cabeloCachiado"><input type="checkbox" name="cabelo" id="cabeloCachiado" value="CACHIADO"/> Cachiado</label>
+										<label for="cabeloOndulado"><input type="checkbox" name="cabelo" id="cabeloOndulado" value="ONDULADOS"/> Ondulado</label>
+										<label for="cabeloCrespo"><input type="checkbox" name="cabelo" id="cabeloCrespo" value="CRESPO"/> Crespo</label>
+										<label for="cabeloOutro"><input type="checkbox" name="cabelo" id="cabeloOutro" value="OUTRO"/> Outro Tipo</label>
+									</div>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label"> <?php echo JText::_('Tamanho do Cabelo'); ?></label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoCabeloMuitoCurto" value="MUITO CURTO"/> <label for="tamanhoCabeloMuitoCurto">Muito Curto</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoCurto" value="CURTO"/> <label for="tamanhoCurto">Curto</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoMedio" value="MEDIO"/> <label for="tamanhoMedio">Medio</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoLongo" value="LONGO"/> <label for="tamanhoLongo">Longo</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoMuitoLongo" value="MUITO LONGO"/> <label for="tamanhoMuitoLongo">Muito Longo</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoOutro" value="OUTRO"/> <label for="tamanhoOutro">Outro</label>
-									<input type="checkbox" class="form-control" name="tamanho_cabelo[]" id="tamanhoSem" value="SEM"/> <label for="tamanhoSem">Sem cabelo</label>
+									<div class="checkbox">
+										<label for="tamanhoCabeloMuitoCurto"><input type="checkbox" name="tamanho_cabelo" id="tamanhoCabeloMuitoCurto" value="MUITO CURTO"/> Muito Curto</label>
+										<label for="tamanhoCurto"><input type="checkbox" name="tamanho_cabelo" id="tamanhoCurto" value="CURTO"/> Curto</label>
+										<label for="tamanhoMedio"><input type="checkbox" name="tamanho_cabelo" id="tamanhoMedio" value="MEDIO"/> Medio</label>
+										<label for="tamanhoLongo"><input type="checkbox" name="tamanho_cabelo" id="tamanhoLongo" value="LONGO"/> Longo</label>
+										<label for="tamanhoMuitoLongo"><input type="checkbox" name="tamanho_cabelo" id="tamanhoMuitoLongo" value="MUITO LONGO"/> Muito Longo</label>
+										<label for="tamanhoOutro"><input type="checkbox" name="tamanho_cabelo" id="tamanhoOutro" value="OUTRO"/> Outro</label>
+										<label for="tamanhoSem"><input type="checkbox" name="tamanho_cabelo" id="tamanhoSem" value="SEM"/> Sem cabelo</label>
+									</div>
 								</div>
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 									<label class="control-label" for="cor_cabelo"> <?php echo JText::_('Cor do Cabelo'); ?></label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloBranco" value="BRANCO"/> <label for="corCabeloBranco">Branco</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloLoiroClaro" value="LOIRA CLARA"/> <label for="corCabeloLoiroClaro">Loiro Claro</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloLoira" value="LOIRA"/> <label for="corCabeloLoira">Loiro</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corcabeloLoiroEscuro" value="LOIRO ESCURO"/> <label for="corcabeloLoiroEscuro">Loiro Escuro</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloColorido" value="COLORIDO"/> <label for="corCabeloColorido">Colorido</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloRuivo" value="RUIVA"/> <label for="corCabeloRuivo">Ruivo</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloCastanho" value="CASTANHO"/> <label for="corCabeloCastanho">Castanho</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloNegro" value="NEGRO"/> <label for="corCabeloNegro">Negro</label>
-									<input type="checkbox" class="form-control" name="cor_cabelo[]" id="corCabeloOutro" value="OUTRO"/> <label for="corCabeloOutro">Outros</label>
+									<div class="checkbox">
+										<label for="corCabeloBranco"><input type="checkbox" name="cor_cabelo" id="corCabeloBranco" value="BRANCO"/> Branco</label>
+										<label for="corCabeloLoiroClaro"><input type="checkbox" name="cor_cabelo" id="corCabeloLoiroClaro" value="LOIRA CLARA"/> Loiro Claro</label>
+										<label for="corCabeloLoira"><input type="checkbox" name="cor_cabelo" id="corCabeloLoira" value="LOIRA"/> Loiro</label>
+										<label for="corcabeloLoiroEscuro"><input type="checkbox" name="cor_cabelo" id="corcabeloLoiroEscuro" value="LOIRO ESCURO"/> Loiro Escuro</label>
+										<label for="corCabeloColorido"><input type="checkbox" name="cor_cabelo" id="corCabeloColorido" value="COLORIDO"/> Colorido</label>
+										<label for="corCabeloRuivo"><input type="checkbox" name="cor_cabelo" id="corCabeloRuivo" value="RUIVA"/> Ruivo</label>
+										<label for="corCabeloCastanho"><input type="checkbox" name="cor_cabelo" id="corCabeloCastanho" value="CASTANHO"/> Castanho</label>
+										<label for="corCabeloNegro"><input type="checkbox" name="cor_cabelo" id="corCabeloNegro" value="NEGRO"/> Negro</label>
+										<label for="corCabeloOutro"><input type="checkbox" name="cor_cabelo" id="corCabeloOutro" value="OUTRO"/> Outros</label>
+									</div>
 								</div>
 							</div>
 						</div>
