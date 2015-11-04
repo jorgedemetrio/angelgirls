@@ -109,7 +109,7 @@ input[type=\'file\']{
 			<div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<label class="control-label"  for="meta_descricao"><?php echo JText::_('Descri&ccedil;&atilde;o R&aacute;pida'); ?></label>
-					<textarea class="required form-control" style="width: 90%;" rows="8" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite muitos caractes especiais e enteres, com at&eacute; 250 caracteres.'); ?>"><?php echo JRequest::getVar('meta_descricao');?></textarea>
+					<textarea class="required form-control" style="width: 90%;" rows="8" type="text" name="meta_descricao"  id="meta_descricao" size="32" maxlength="250" placeholder="<?php echo JText::_('Descri&ccedil;&atilde;o r&aacute;pida sobre voc&ecirc;. Evite caractes especiais, e at&eacute; 250 caracteres.'); ?>"><?php echo JRequest::getVar('meta_descricao');?></textarea>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="telefone"><?php echo JText::_('Telefone'); ?></label>
@@ -184,7 +184,17 @@ input[type=\'file\']{
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade"><?php echo JText::_('Cidade Que Reside'); ?></label>
 					<select name="id_cidade" id="id_cidade" class="form-control required" style="width: 90%;">
-						<option>Selecione um estado</option>
+						<option></option>
+						<?php
+						$cidades = JRequest::getVar('cidades_reside');
+						if(isset($cidades)){
+							foreach ($cidades as $f){ 
+							?>
+							<option value="<?php echo($f->id) ?>"<?php echo(JRequest::getVar('id_cidade')==$f->id?" selected":"");?>><?php echo($f->nome) ?></option>
+							<?php 
+							}
+						}
+						?>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
@@ -203,7 +213,17 @@ input[type=\'file\']{
 				<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<label class="control-label"  for="id_cidade_nasceu"> <?php echo JText::_('Cidade Que Nasceu'); ?></label>
 					<select name="id_cidade_nasceu" id="id_cidade_nasceu" class="form-control required" style="width: 90%;">
-						<option>Selecione um estado</option>
+						<option></option>
+						<?php
+						$cidades = JRequest::getVar('cidades_nasceu');
+						if(isset($cidades)){
+							foreach ($cidades as $f){ 
+							?>
+							<option value="<?php echo($f->id) ?>"<?php echo(JRequest::getVar('id_cidade_nasceu')==$f->id?" selected":"");?>><?php echo($f->nome) ?></option>
+							<?php 
+							}
+						}
+						?>
 					</select>
 				</div>
 				<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">

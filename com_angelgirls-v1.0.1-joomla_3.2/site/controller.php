@@ -7681,6 +7681,14 @@ class AngelgirlsController extends JControllerLegacy{
 		$app = JFactory::getApplication(); 
 		$app->logout();
 		JRequest::setVar ( 'ufs', $this->getUFs());
+		$estado_reside = JRequest::getVar('estado_reside',null);
+		$estado_nasceu = JRequest::getVar('estado_nasceu',null);
+		if(isset($estado_reside)){
+			JRequest::setVar ( 'cidades_reside', $this->getCidadesByUf($estado_reside));
+		}
+		if(isset($estado_nasceu)){
+			JRequest::setVar ( 'cidades_nasceu', $this->getCidadesByUf($estado_nasceu));
+		}
 	}
 	
 	private function getUFs(){
