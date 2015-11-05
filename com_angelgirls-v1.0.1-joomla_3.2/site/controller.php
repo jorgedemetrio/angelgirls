@@ -4214,7 +4214,7 @@ class AngelgirlsController extends JControllerLegacy{
 		JRequest::setVar ('perfil', $this::getPerfilLogado() );
 		$album = $this->getAlbumById($id);
 		if(isset($album) && $album->status_dado == StatusDado::PUBLICADO){
-			JError::raiseWarning(100,JText::_('A Sess&atilde;o que tentou acessar j&aacute; foi publicada por isso n&atilde;o pode ser editada.'));
+			JError::raiseWarning(100,JText::_('O Album que tentou acessar j&aacute; foi publicada por isso n&atilde;o pode ser editada.'));
 			$album == null;
 			$id = 0;
 			$this->RegistroNaoEncontado();
@@ -4893,45 +4893,12 @@ class AngelgirlsController extends JControllerLegacy{
 	
 	
 		$query = $db->getQuery ( true );
-		$query->select('`s`.`id`,`s`.`titulo`,`s`.`tipo`,`s`.`nome_foto`,`s`.`token`,`s`.`executada`,`s`.`descricao`,`s`.`historia`,`s`.`comentario_fotografo`,`s`.`comentario_modelos`,
-			`s`.`comentario_equipe`,`s`.`meta_descricao`,`s`.`id_agenda`,`s`.`id_tema`,`s`.`id_modelo_principal`,`s`.`id_modelo_secundaria`,
-			`s`.`id_locacao`,`s`.`id_fotografo_principal`,`s`.`id_fotografo_secundario`,`s`.`id_figurino_principal`,`s`.`id_figurino_secundario`,
+		$query->select('`s`.`id`,`s`.`titulo`,`s`.`token`,`s`.`executada`,`s`.`descricao`,`s`.`meta_descricao`,
 			`s`.`audiencia_gostou`,`s`.`audiencia_ngostou`,`s`.`audiencia_view`,`s`.`publicar`,`s`.`status_dado`,`s`.`id_usuario_criador`,
-			`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`,`s`.`status_modelo_principal`,`s`.`status_modelo_secundaria`,`s`.`status_fotografo_principal`,`s`.`status_fotografo_secundario`,
-			`tema`.`nome` AS `nome_tema`,`tema`.`descricao` AS `descricao_tema`,`tema`.`nome_foto` AS `foto_tema`,`tema`.`audiencia_gostou` AS `gostou_tema`,
-			CASE isnull(`vt_album`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_album`,
-			CASE isnull(`vt_fo1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot1`,
-			CASE isnull(`vt_fo2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_fot2`,
-			CASE isnull(`mod1`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod1`,
-			CASE isnull(`mod2`.`data_criado` ) WHEN 1 THEN \'NAO\' ELSE \'SIM\' END AS `gostei_mod2`,
-			`fot1`.`nome_artistico` AS `fotografo1`,`fot1`.`audiencia_gostou` AS `gostou_fot1`,`fot1`.`nome_foto` AS `foto_fot1`, `fot1`.`meta_descricao` AS `desc_fot1`, `fot1`.`token` AS `token_fot1`,
-			`fot2`.`nome_artistico` AS `fotografo2`,`fot2`.`audiencia_gostou` AS `gostou_fot2`,`fot2`.`nome_foto` AS `foto_fot2`, `fot2`.`meta_descricao` AS `desc_fot1`, `fot2`.`token` AS `token_fot2`,
-			`loc`.`nome` AS `nome_locacao`,`loc`.`nome_foto` AS `foto_locacao`,`loc`.`audiencia_gostou` AS `gostou_locacao`,
-			`mod1`.`nome_artistico` AS `modelo1`,`mod1`.`foto_perfil` AS `foto_mod1`,`mod1`.`audiencia_gostou` AS `gostou_mo1`, `mod1`.`meta_descricao` AS `desc_mo1` , `mod1`.`token` AS `token_mod1`,
-			`mod2`.`nome_artistico` AS `modelo2`,`mod2`.`foto_perfil` AS `foto_mod2`,`mod2`.`audiencia_gostou` AS `gostou_mo2`, `mod2`.`meta_descricao` AS `desc_mo2` , `mod2`.`token` AS `token_mod2`,
-			`fig1`.`nome` AS `figurino1`,`fig1`.`audiencia_gostou` AS `gostou_fig1`,
-			`fig2`.`nome` AS `figurino2`,`fig2`.`audiencia_gostou` AS `gostou_fig2`')
+			`s`.`id_usuario_alterador`,`s`.`data_criado`,`s`.`data_alterado`')
 				->from ('#__angelgirls_album AS s')
-				->join ( 'INNER', '#__angelgirls_modelo AS mod1 ON (mod1.id = s.id_modelo_principal)' )
-				->join ( 'INNER', '#__angelgirls_fotografo AS fot1 ON (fot1.id = s.id_fotografo_principal)' )
-				->join ( 'LEFT', '#__angelgirls_tema AS tema  ON (tema.id = s.id_tema)' )
-				->join ( 'LEFT', '#__angelgirls_modelo AS mod2 ON (mod2.id = s.id_modelo_secundaria)' )
-				->join ( 'LEFT', '#__angelgirls_figurino AS fig1 ON (fig1.id = s.id_figurino_principal)' )
-				->join ( 'LEFT', '#__angelgirls_figurino AS fig2 ON (fig2.id = s.id_figurino_secundario)' )
-				->join ( 'LEFT', '#__angelgirls_locacao AS loc ON (loc.id = s.id_locacao)' )
-				->join ( 'LEFT', '#__angelgirls_fotografo AS fot2 ON (fot2.id = s.id_fotografo_secundario)' )
 				->join ( 'LEFT', '(SELECT data_criado, id_album FROM #__angelgirls_vt_album WHERE id_usuario='.$user->id.') vt_album ON s.id = vt_album.id_album')
-				->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo1 ON fot1.id = vt_fo1.id_fotografo')
-				->join ( 'LEFT', '(SELECT data_criado, id_fotografo FROM #__angelgirls_vt_fotografo WHERE id_usuario='.$user->id.') vt_fo2 ON fot2.id = vt_fo2.id_fotografo')
-				->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod1 ON mod1.id = vt_mod1.id_modelo')
-				->join ( 'LEFT', '(SELECT data_criado, id_modelo FROM #__angelgirls_vt_modelo WHERE id_usuario='.$user->id.') vt_mod2 ON mod2.id = vt_mod2.id_modelo')
-				->where ('(((' . $db->quoteName ( 's.id_usuario_criador' ) . ' = ' . $user->id.' AND '. $db->quoteName ( 's.status_dado' ) . ' NOT IN (' . $db->quote(StatusDado::REMOVIDO) . '))
-				 OR ('. $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::ANALIZE) . ') AND  `s`.`id_fotografo_principal` IN (SELECT id FROM #__angelgirls_fotografo WHERE id_usuario = ' . $user->id.')  AND `s`.`status_fotografo_principal` = 0 )
-				 OR ('. $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::ANALIZE) . ') AND  `s`.`id_fotografo_secundario` IN (SELECT id FROM #__angelgirls_fotografo WHERE id_usuario = ' . $user->id.') AND `s`.`status_fotografo_secundario` = 0 )
-				 OR ('. $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::ANALIZE) . ') AND  `s`.`id_modelo_principal` IN (SELECT id FROM #__angelgirls_modelo WHERE id_usuario = ' . $user->id.') AND `s`.`status_modelo_principal` = 0 )
-				 OR ('. $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::ANALIZE) . ') AND  `s`.`id_modelo_secundaria` IN (SELECT id FROM #__angelgirls_modelo WHERE id_usuario = ' . $user->id.') AND `s`.`status_modelo_secundaria` = 0 )
-				) OR (' . $db->quoteName ( 's.status_dado' ) . ' IN (' . $db->quote(StatusDado::PUBLICADO) . ') AND s.publicar <= NOW() ))' )
-					->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
+				->where ( $db->quoteName ( 's.id' ) . " =  " . $id );
 		$db->setQuery ( $query );
 	
 		$result = $db->loadObject();
