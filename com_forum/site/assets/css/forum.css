@@ -1,0 +1,212 @@
+.thumbnail{
+	transition: all 2s;
+	-webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.content-post{
+	transition: all 2s;
+	background: #FFFFBC;
+	-webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.content-thumbnail{
+	transition: all 2s;
+	-webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+
+
+ul .token-input-list{
+	width: 100%; 
+	height: 42px;
+}
+
+.navigation .nav-pills{
+	height: 35px;
+}
+#tabelaComSessoes_wrapper .row {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+#tabelaComSessoes_wrapper  {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.btnReprovar{
+	color: red ;
+}
+.btnAprovar{
+	color: green ;
+}
+
+.btnReprovar:hover{
+	color:#F18383;
+}
+.btnAprovar:hover{
+	color:#03EF03 ;
+}
+
+.btn-foto{
+	height: 30px; 
+	width: 30px; 
+	nomargin: 0px 5px 0px 0px; 
+	vertical-align: middle; 
+	text-align: center; 
+}
+
+.form-control:valid { }
+.form-control:invalid {border:1px solid #990000; }
+
+.itemCarroussel p{
+	text-overflow: ellipsis;
+	width: 100%; 
+	white-space: nowrap;
+	overflow: hidden;
+	direction: ltr;
+}
+
+.carousel-caption p{
+	text-overflow: ellipsis;
+	width: 100%; 
+	white-space: nowrap;
+	overflow: hidden;
+	direction: ltr;	
+}
+
+.item-carrossel{
+	overflow: hidden;
+	height: 450px; 
+}
+.itemCarroussel.ative{
+	
+}
+
+.tab-content{
+	box-sizing: border-box;
+	background-color: rgba(255,255,255, 0.75);
+	padding: 20px;
+    border-bottom: 1px solid #DDD;
+    border-left: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+    border-radius: 0 0 10px 10px;
+}
+
+
+@media (max-width: 768px){
+	#itensLateraisCarrossel{
+		display: none;
+	}
+}
+
+#imagelightbox
+{
+    position: fixed;
+    z-index: 9999;
+     -ms-touch-action: none;
+    touch-action: none;
+}
+
+.checkbox-iten:HOVER{
+	cursor:pointer;	
+}
+.checkbox-iten{
+	min-width: 40px;
+	display:inline-block;
+	margin-top:20px; 
+}
+.gostar{
+	 width: 20px;
+	 text-align: center;
+	 display: inline-block; 
+	 vertical-align: top;
+	 margin-left: 5px;
+	 margin-right: 10px;
+}
+.gostar:hover{
+	 cursor: pointer;
+}
+
+td.padrao:hover{
+	 cursor: not-allowed;
+}
+
+td.editavel:hover{
+	  cursor: pointer;
+	  color:#9F0096;
+}
+
+td.editavel{
+	  text-transform: capitalize;
+}
+td.padrao{
+	  text-transform: capitalize;
+}
+
+.uploadarea:hover{
+	cursor: pointer;
+}
+
+.ajuda:hover{
+	cursor: help;
+}
+
+.zoominImagem:hover{
+	cursor:zoom-in;
+}
+
+.carregando:hover, #carregandoInicial:hover, #pleaseWaitDialog:hover{
+	NO___cur_sor:progress;
+	cursor:wait;
+}
+
+
+
+.dropdown-menu .divider {
+    border-bottom: 1px solid #C3C3C3;
+}
+
+div > #jform_email1, div > #jform_email2, div > #jform_email1-lbl, div > #jform_email2-lbl{
+	display: none;
+}
+
+ul li .caixaMensagens .badge {
+margin-top: 8px;
+}
+
+ul li .sessoesAprovar .badge {
+margin-top: 8px;
+}
+
+.valorInformacao{
+	background-color: rgba(255,0,0,0.7);
+    width: 15px;
+    height: 15px;
+    position: absolute;
+	margin-left: -8px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.4);
+    border-radius: 3px;
+    display: inline-block;
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: 9px;
+    padding-top: 0px;
+    padding-bottom: 3px;
+    text-align: center;
+    color: #fff;
+}

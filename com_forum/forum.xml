@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.2" method="upgrade">
+	<name>COM_ANGELGIRLS</name>
+	<creationDate>September 01, 2015</creationDate>
+	<author>Jorge Demetrio</author>
+	<authorEmail>jorge.demetrio@alldreams.com.br</authorEmail>
+	<authorUrl>www.alldreams.com.br</authorUrl>
+	<copyright>Copyright (C) 2015. All Rights Reserved</copyright>
+	<license>GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html</license>
+	<version>1.0.0</version>
+	<description><![CDATA[
+		<h1>Angel Girls (v.1.0.0)</h1>
+		<div style="clear: both;"></div>
+		<p>Componente de gestor de galerias.. <strong>Built for Joomla 3.2.</strong></p>
+		<p>Created by <a href="http://www.alldreams.com.br" target="_blank">Jorge Demetrio | www.alldreams.com.br</a>
+	]]></description>
+
+	<!-- Runs on install/uninstall/update; New in Joomla 2.5 -->
+	<scriptfile>script.php</scriptfile>
+
+	<files folder="site">
+		<filename>controller.php</filename>
+		<filename>index.html</filename>
+		<filename>router.php</filename>
+		<filename>forum.php</filename>
+		<folder>assets</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<folder>views</folder>
+	</files>
+    
+	<install>
+        <sql>
+            <file charset="utf8" driver="mysql">install/installsql.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file charset="utf8" driver="mysql">install/uninstallsql.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+	
+	<administration>
+		<!--menu img="components/com_forum/assets/images/icons/forum-16x16.png">COM_ANGELGIRLS_MENU</menu-->
+		<submenu>
+			<!-- Instead of link you can specify individual link attributes -->
+			<menu option="com_forum" view="foruns">COM_FORUM_MENU_GALERIAS</menu>
+			<menu option="com_forum" view="forum">COM_FORUM_MENU_FOTOS</menu>
+			<menu link="option=com_categories&amp;extension=com_forum">COM_FORUM_MENU_MENU_CATEGORIES</menu>
+		</submenu>
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+			<filename>forum.php</filename>
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>views</folder>
+		</files>
+
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_forum.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_forum.sys.ini</language>
+		</languages>
+
+	</administration>
+</extension>
